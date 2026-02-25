@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Разрешаем HTTP (cleartext) для API-сервера: Android 9+ по умолчанию блокирует не-HTTPS -->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">178.156.234.23</domain>
+    </domain-config>
+</network-security-config>

@@ -1,0 +1,25 @@
+You are working on a Flutter app.
+
+General:
+- Prefer small, reviewable diffs.
+- Never change unrelated files.
+- Preserve existing architecture and naming unless asked.
+- If you add a dependency, update pubspec.yaml and explain why.
+
+Flutter/Dart:
+- Use null-safety.
+- Prefer const constructors where possible.
+- Use Flutter lints and keep analysis clean.
+- Avoid breaking widget rebuild performance; keep build() pure.
+
+State management:
+- Do not introduce a new state management library unless requested.
+- If an existing approach is present (Provider/Riverpod/BLoC/setState), follow it.
+
+Code quality:
+- Add/adjust tests when changing logic (unit/widget tests if project has them).
+- Keep formatting with dart format.
+
+When asked to implement features:
+- First propose a short plan.
+- Then implement with minimal changes and provide the exact files changed.
