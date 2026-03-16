@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'api/auth_service.dart';
+import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
 
 /// Экран при запуске: проигрывает видеоролик, по окончании переходит на вход.
@@ -81,7 +82,7 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
               const SizedBox(height: 24),
               FilledButton(
                 onPressed: _goToLogin,
-                child: const Text('Continue'),
+                child: Text(AppLocalizations.of(context)!.continueButton),
               ),
             ],
           ),

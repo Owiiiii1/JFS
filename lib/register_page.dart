@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'api/auth_service.dart';
 import 'client_home_page.dart';
+import 'gen_l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key, required this.auth});
@@ -64,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration failed: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.registrationFailed(e.toString()))),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -80,7 +81,7 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Sign up'),
+        title: Text(AppLocalizations.of(context)!.signUp),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -93,7 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Create account',
+                    AppLocalizations.of(context)!.createAccount,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -103,13 +104,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   TextFormField(
                     controller: _nameController,
                     textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.name,
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (v) {
                       final value = (v ?? '').trim();
-                      if (value.isEmpty) return 'Name is required';
+                      if (value.isEmpty) return AppLocalizations.of(context)!.nameRequired;
                       return null;
                     },
                   ),
@@ -119,15 +120,15 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     autocorrect: false,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.email,
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (v) {
                       final value = (v ?? '').trim();
-                      if (value.isEmpty) return 'Email is required';
+                      if (value.isEmpty) return AppLocalizations.of(context)!.emailRequired;
                       if (!RegExp(r'^[\w.-]+@[\w.-]+\.\w+$').hasMatch(value)) {
-                        return 'Enter a valid email';
+                        return AppLocalizations.of(context)!.enterValidEmail;
                       }
                       return null;
                     },
@@ -138,17 +139,17 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     inputFormatters: [_phoneAllow],
-                    decoration: const InputDecoration(
-                      labelText: 'Phone',
-                      hintText: '+1234567890',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.phone,
+                      hintText: AppLocalizations.of(context)!.phoneHint,
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (v) {
                       final value = (v ?? '').trim();
-                      if (value.isEmpty) return 'Phone is required';
-                      if (!value.startsWith('+')) return 'Phone must start with +';
+                      if (value.isEmpty) return AppLocalizations.of(context)!.phoneRequired;
+                      if (!value.startsWith('+')) return AppLocalizations.of(context)!.phoneMustStartWithPlus;
                       final digits = value.replaceAll(RegExp(r'\D'), '');
-                      if (digits.length < 10) return 'Enter a valid phone number';
+                      if (digits.length < 10) return AppLocalizations.of(context)!.enterValidPhone;
                       return null;
                     },
                   ),
@@ -159,8 +160,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     obscureText: !_isPasswordVisible,
                     autofillHints: const [AutofillHints.newPassword],
                     decoration: InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'At least 8 characters',
+                      labelText: AppLocalizations.of(context)!.password,
+                      hintText: AppLocalizations.of(context)!.atLeast8Chars,
                       border: const OutlineInputBorder(),
                       suffixIcon: IconButton(
                         onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
@@ -169,7 +170,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     validator: (v) {
                       final value = v ?? '';
-                      if (value.length < 8) return 'Password must be at least 8 characters';
+                      if (value.length < 8) return AppLocalizations.of(context)!.passwordMinLength;
                       return null;
                     },
                   ),
@@ -180,9 +181,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     obscureText: !_isPasswordConfirmVisible,
                     autofillHints: const [AutofillHints.newPassword],
                     decoration: InputDecoration(
-                      labelText: 'Confirm password',
+                      labelText: AppLocalizations.of(context)!.confirmPassword,
                       border: const OutlineInputBorder(),
-suffixIcon: IconButton(
+                      suffixIcon: IconButton(
                           onPressed: () => setState(
                               () => _isPasswordConfirmVisible = !_isPasswordConfirmVisible),
                           icon: Icon(_isPasswordConfirmVisible ? Icons.visibility_off : Icons.visibility),
@@ -190,7 +191,7 @@ suffixIcon: IconButton(
                     ),
                     validator: (v) {
                       if ((v ?? '') != _passwordController.text) {
-                        return 'Passwords do not match';
+                        return AppLocalizations.of(context)!.passwordsDoNotMatch;
                       }
                       return null;
                     },
@@ -219,7 +220,7 @@ suffixIcon: IconButton(
                     onPressed: _isLoading
                         ? null
                         : () => Navigator.of(context).pop(),
-                    child: const Text('Back to sign in'),
+                    child: Text(AppLocalizations.of(context)!.backToSignIn),
                   ),
                 ],
               ),

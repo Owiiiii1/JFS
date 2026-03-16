@@ -1,0 +1,19 @@
+---
+description: Domain context for JFS mobile and admin
+alwaysApply: true
+---
+
+# JFS Domain Context
+
+- The mobile app (`jfs_application`) is a Flutter app with two parts: `Client` and `Staff`.
+- The `Staff` flow is used to administer a children's fashion show.
+- Staff scans each child's QR code as the child passes stage checkpoints.
+- The admin system (`YFS`) is built with Laravel + Filament.
+- `YFS` manages event structure, participants, stages, and operational data.
+- Flutter and Laravel/Filament must stay aligned through REST API contracts.
+
+# Implementation Guidance
+
+- Keep request/response formats and route names consistent between mobile and backend.
+- When changing scan/stage logic in Flutter, verify required backend API support in `YFS`.
+- Avoid introducing domain terms that conflict with existing Client/Staff naming.

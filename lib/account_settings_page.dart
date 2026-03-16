@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'api/auth_service.dart';
+import 'gen_l10n/app_localizations.dart';
 
-/// Экран настроек: просмотр данных пользователя и режим редактирования (сохранение — заглушка).
+/// Экран настроек: просмотр и редактирование данных пользователя (имя, email, телефон). Сохранение через API.
 class AccountSettingsPage extends StatefulWidget {
   const AccountSettingsPage({super.key, required this.user, required this.auth});
 
@@ -53,20 +54,32 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
 
     setState(() => _isSaving = true);
 
-    // TODO: вызов API сохранения профиля (данные для подключения запроса укажете позже)
-    await Future.delayed(const Duration(milliseconds: 300));
-
-    if (!mounted) return;
-    setState(() {
-      _data = {
-        ..._data,
-        'name': _nameController.text.trim(),
-        'email': _emailController.text.trim(),
-        'phone': _phoneController.text.trim(),
-      };
-      _isEditing = false;
-      _isSaving = false;
-    });
+    try {
+      await widget.auth.updateProfile(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        phone: _phoneController.text.trim(),
+      );
+      if (!mounted) return;
+      setState(() {
+        _data = {
+          ..._data,
+          'name': _nameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'phone': _phoneController.text.trim(),
+        };
+        _isEditing = false;
+        _isSaving = false;
+      });
+      if (!mounted) return;
+      Navigator.of(context).pop(_data);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
   }
 
   @override
@@ -74,7 +87,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(_isEditing ? 'Edit profile' : 'Account settings'),
+        title: Text(_isEditing ? AppLocalizations.of(context)!.editProfile : AppLocalizations.of(context)!.accountSettings),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
@@ -86,20 +99,17 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     final name = (_data['name'] ?? '').toString().trim();
     final email = (_data['email'] ?? '').toString().trim();
     final phone = (_data['phone'] ?? '').toString().trim();
-    final role = (_data['role'] ?? '').toString();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _DataRow(label: 'Name', value: name.isNotEmpty ? name : '—'),
+          _DataRow(label: AppLocalizations.of(context)!.name, value: name.isNotEmpty ? name : '—'),
           const SizedBox(height: 16),
-          _DataRow(label: 'Email', value: email.isNotEmpty ? email : '—'),
+          _DataRow(label: AppLocalizations.of(context)!.email, value: email.isNotEmpty ? email : '—'),
           const SizedBox(height: 16),
-          _DataRow(label: 'Phone', value: phone.isNotEmpty ? phone : '—'),
-          const SizedBox(height: 16),
-          _DataRow(label: 'Role', value: role.isNotEmpty ? role : '—'),
+          _DataRow(label: AppLocalizations.of(context)!.phone, value: phone.isNotEmpty ? phone : '—'),
           const SizedBox(height: 32),
           SizedBox(
             height: 48,
@@ -109,7 +119,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                 foregroundColor: Colors.black,
               ),
               onPressed: _startEditing,
-              child: const Text('Edit'),
+              child: Text(AppLocalizations.of(context)!.edit),
             ),
           ),
         ],
@@ -129,15 +139,15 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
               controller: _nameController,
               textCapitalization: TextCapitalization.words,
               style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                labelStyle: TextStyle(color: Colors.white70),
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.name,
+                labelStyle: const TextStyle(color: Colors.white70),
+                border: const OutlineInputBorder(),
+                enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
               ),
               validator: (v) {
                 final value = (v ?? '').trim();
-                if (value.isEmpty) return 'Name is required';
+                if (value.isEmpty) return AppLocalizations.of(context)!.nameRequired;
                 return null;
               },
             ),
@@ -147,16 +157,16 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
               keyboardType: TextInputType.emailAddress,
               autocorrect: false,
               style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                labelStyle: TextStyle(color: Colors.white70),
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.email,
+                labelStyle: const TextStyle(color: Colors.white70),
+                border: const OutlineInputBorder(),
+                enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
               ),
               validator: (v) {
                 final value = (v ?? '').trim();
-                if (value.isEmpty) return 'Email is required';
-                if (!RegExp(r'^[\w.-]+@[\w.-]+\.\w+$').hasMatch(value)) return 'Enter a valid email';
+                if (value.isEmpty) return AppLocalizations.of(context)!.emailRequired;
+                if (!RegExp(r'^[\w.-]+@[\w.-]+\.\w+$').hasMatch(value)) return AppLocalizations.of(context)!.enterValidEmail;
                 return null;
               },
             ),
@@ -166,34 +176,21 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
               keyboardType: TextInputType.phone,
               inputFormatters: [_phoneAllow],
               style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: 'Phone',
-                hintText: '+1234567890',
-                labelStyle: TextStyle(color: Colors.white70),
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.phone,
+                hintText: AppLocalizations.of(context)!.phoneHint,
+                labelStyle: const TextStyle(color: Colors.white70),
+                border: const OutlineInputBorder(),
+                enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
               ),
               validator: (v) {
                 final value = (v ?? '').trim();
-                if (value.isEmpty) return 'Phone is required';
-                if (!value.startsWith('+')) return 'Phone must start with +';
+                if (value.isEmpty) return AppLocalizations.of(context)!.phoneRequired;
+                if (!value.startsWith('+')) return AppLocalizations.of(context)!.phoneMustStartWithPlus;
                 final digits = value.replaceAll(RegExp(r'\D'), '');
-                if (digits.length < 10) return 'Enter a valid phone number';
+                if (digits.length < 10) return AppLocalizations.of(context)!.enterValidPhone;
                 return null;
               },
-            ),
-            const SizedBox(height: 16),
-            // Role только для отображения в режиме редактирования
-            TextFormField(
-              initialValue: (_data['role'] ?? '').toString(),
-              readOnly: true,
-              style: const TextStyle(color: Colors.white54),
-              decoration: const InputDecoration(
-                labelText: 'Role',
-                labelStyle: TextStyle(color: Colors.white54),
-                border: OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
-              ),
             ),
             const SizedBox(height: 32),
             SizedBox(
@@ -210,7 +207,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         height: 24,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save'),
+                    : Text(AppLocalizations.of(context)!.save),
               ),
             ),
           ],

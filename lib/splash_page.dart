@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
+import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -26,7 +27,7 @@ class _SplashPageState extends State<SplashPage> {
         if (!mounted) return;
         // Пока заглушка: просто показываем, что токен валиден.
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Token valid. Next: Home page.')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.tokenValidNext)),
         );
         return;
       } else {
@@ -42,12 +43,12 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
         child: Text(
-          'Loading...',
-          style: TextStyle(color: Colors.white, fontSize: 18),
+          AppLocalizations.of(context)!.loading,
+          style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
       ),
     );

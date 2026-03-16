@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
 import 'client_home_page.dart';
+import 'gen_l10n/app_localizations.dart';
 import 'register_page.dart';
 import 'staff_home_page.dart';
 
@@ -57,7 +58,7 @@ final next = (role == 'worker')
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sign in failed: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.signInFailed(e.toString()))),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -104,7 +105,7 @@ final next = (role == 'worker')
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Sign in',
+                                  AppLocalizations.of(context)!.signIn,
                                   style: theme.textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -115,14 +116,14 @@ final next = (role == 'worker')
                                   controller: _emailController,
                                   keyboardType: TextInputType.emailAddress,
                                   autofillHints: const [AutofillHints.username, AutofillHints.email],
-                                  decoration: const InputDecoration(
-                                    labelText: 'Email',
-                                    border: OutlineInputBorder(),
+                                  decoration: InputDecoration(
+                                    labelText: AppLocalizations.of(context)!.email,
+                                    border: const OutlineInputBorder(),
                                   ),
                                   validator: (v) {
                                     final value = (v ?? '').trim();
-                                    if (value.isEmpty) return 'Email is required';
-                                    if (!value.contains('@')) return 'Enter a valid email';
+                                    if (value.isEmpty) return AppLocalizations.of(context)!.emailRequired;
+                                    if (!value.contains('@')) return AppLocalizations.of(context)!.enterValidEmail;
                                     return null;
                                   },
                                 ),
@@ -133,18 +134,18 @@ final next = (role == 'worker')
                                   obscureText: !_isPasswordVisible,
                                   autofillHints: const [AutofillHints.password],
                                   decoration: InputDecoration(
-                                    labelText: 'Password',
+                                    labelText: AppLocalizations.of(context)!.password,
                                     border: const OutlineInputBorder(),
                                     suffixIcon: IconButton(
                                       onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
                                       icon: Icon(_isPasswordVisible ? Icons.visibility_off : Icons.visibility),
-                                      tooltip: _isPasswordVisible ? 'Hide password' : 'Show password',
+                                      tooltip: _isPasswordVisible ? AppLocalizations.of(context)!.hidePassword : AppLocalizations.of(context)!.showPassword,
                                     ),
                                   ),
                                   validator: (v) {
                                     final value = v ?? '';
-                                    if (value.isEmpty) return 'Password is required';
-                                    return null; // не ограничиваем длину, пусть сервер решает
+                                    if (value.isEmpty) return AppLocalizations.of(context)!.passwordRequired;
+                                    return null;
                                   },
                                   onFieldSubmitted: (_) => _onSignIn(),
                                 ),
@@ -166,7 +167,7 @@ final next = (role == 'worker')
                                             height: 22,
                                             child: CircularProgressIndicator(strokeWidth: 2),
                                           )
-                                        : const Text('Sign in'),
+                                        : Text(AppLocalizations.of(context)!.signIn),
                                   ),
                                 ),
                                 const SizedBox(height: 12),
@@ -179,7 +180,7 @@ final next = (role == 'worker')
                                       side: const BorderSide(color: Colors.white),
                                     ),
                                     onPressed: _isLoading ? null : _onSignUp,
-                                    child: const Text('Sign up'),
+                                    child: Text(AppLocalizations.of(context)!.signUp),
                                   ),
                                 ),
                               ],

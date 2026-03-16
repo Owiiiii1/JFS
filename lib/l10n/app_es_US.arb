@@ -1,0 +1,160 @@
+{
+  "@@locale": "es_US",
+  "signIn": "Iniciar sesión",
+  "signUp": "Registrarse",
+  "email": "Correo electrónico",
+  "password": "Contraseña",
+  "emailRequired": "Ingresa tu correo electrónico",
+  "enterValidEmail": "Ingresa un correo electrónico válido",
+  "passwordRequired": "Ingresa tu contraseña",
+  "hidePassword": "Ocultar contraseña",
+  "showPassword": "Mostrar contraseña",
+  "signInFailed": "Error al iniciar sesión: {error}",
+  "@signInFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "createAccount": "Crear cuenta",
+  "name": "Nombre",
+  "nameRequired": "Ingresa tu nombre",
+  "phone": "Teléfono",
+  "phoneRequired": "Ingresa tu teléfono",
+  "phoneMustStartWithPlus": "El teléfono debe comenzar con +",
+  "enterValidPhone": "Ingresa un número de teléfono válido",
+  "confirmPassword": "Confirmar contraseña",
+  "passwordsDoNotMatch": "Las contraseñas no coinciden",
+  "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+  "atLeast8Chars": "Al menos 8 caracteres",
+  "backToSignIn": "Volver a iniciar sesión",
+  "registrationFailed": "Error al registrarse: {error}",
+  "@registrationFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "account": "Cuenta",
+  "editInfo": "EDITAR INFORMACIÓN",
+  "fullName": "Nombre completo",
+  "retry": "Reintentar",
+  "accountSettings": "Configuración de la cuenta",
+  "editProfile": "Editar perfil",
+  "save": "Guardar",
+  "edit": "Editar",
+  "role": "Rol",
+  "myChildren": "Mis hijos",
+  "addChild": "Agregar hijo",
+  "noChildrenAddedYet": "Aún no has agregado hijos",
+  "ageLabel": "Edad",
+  "settings": "Configuración",
+  "appLanguage": "Idioma de la app",
+  "unitsOfMeasurement": "Unidades de medida",
+  "metricUnits": "Métrico (cm, kg)",
+  "imperialUnits": "Americano (in, lb)",
+  "systemLanguage": "Sistema",
+  "languageRussian": "Ruso",
+  "languageEnglish": "Inglés",
+  "languageUkrainian": "Ucraniano",
+  "languageSpanishUS": "Español (EE. UU.)",
+  "addChildTitle": "Agregar hijo",
+  "firstName": "Nombre",
+  "lastName": "Apellido",
+  "birthdate": "Fecha de nacimiento",
+  "chooseDate": "Elige la fecha",
+  "create": "Crear",
+  "enterFirstName": "Ingresa el nombre",
+  "mainPhoto": "Foto principal",
+  "changePhoto": "Cambiar",
+  "deletePhoto": "Eliminar",
+  "addPhoto": "Agregar foto",
+  "photoSaved": "Foto guardada",
+  "photoDeleted": "Foto eliminada",
+  "photoAdded": "Foto agregada",
+  "extraPhotos": "Fotos adicionales",
+  "cancel": "Cancelar",
+  "clear": "Limpiar",
+  "height": "Estatura",
+  "weight": "Peso",
+  "shoulders": "Hombros",
+  "chest": "Pecho",
+  "waist": "Cintura",
+  "hips": "Caderas",
+  "currentParticipation": "Participación actual",
+  "unknownError": "Error desconocido",
+  "model": "Modelo: {name}",
+  "@model": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "active": "ACTIVO",
+  "journeyProgress": "PROGRESO",
+  "stepOf": "Paso {completed} de {total}",
+  "@stepOf": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "next": "Siguiente: {text}",
+  "@next": {
+    "placeholders": {
+      "text": { "type": "String" }
+    }
+  },
+  "viewProgress": "VER PROGRESO",
+  "noActiveEvents": "No hay eventos activos",
+  "becomeModelTitle": "Comienza la carrera de modelo de tu hijo hoy",
+  "becomeAModel": "SER MODELO",
+  "latestHighlights": "Últimos destacados",
+  "viewAll": "VER TODO",
+  "quickActions": "Acciones rápidas",
+  "upcomingShows": "Próximos\nshows",
+  "manageKids": "Mis\nhijos",
+  "navHome": "Inicio",
+  "navEvents": "Eventos",
+  "navProfile": "Perfil",
+  "navInfo": "Info",
+  "continueButton": "Continuar",
+  "loading": "Cargando...",
+  "signOut": "Cerrar sesión",
+  "tokenValidNext": "Sesión válida. Siguiente: Inicio.",
+  "homePageTitle": "Inicio",
+  "youAreSignedIn": "Has iniciado sesión{name}.",
+  "@youAreSignedIn": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "yourRole": "Tu rol: {role}",
+  "@yourRole": {
+    "placeholders": {
+      "role": { "type": "String" }
+    }
+  },
+  "phoneHint": "+1234567890",
+  "enterValidEmailShort": "Ingresa un correo válido",
+  "phoneMustStartWithPlusShort": "El teléfono debe comenzar con +",
+  "comingSoon": "Próximamente",
+  "hello": "Hola",
+  "helloName": "Hola, {name}",
+  "@helloName": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "noRolesAssigned": "Aún no tienes roles asignados. Contacta a la administración.",
+  "signedInAs": "Sesión iniciada como {name}",
+  "@signedInAs": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "staff": "Personal",
+  "birthdateDialogTitle": "Fecha de nacimiento",
+  "nextShowsTitle": "Próximos shows",
+  "nextShowsSeason": "Temporada 2026",
+  "details": "Detalles",
+  "contact": "Contacto",
+  "registrationOpen": "Registro abierto"
+}

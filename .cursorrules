@@ -1,25 +1,53 @@
-You are working on a Flutter app.
+You are working on a full-stack project consisting of two parts:
+- jfs_application (C:\MobAPP\JFS\jfs_application) — mobile app on Flutter/Dart.
+- YFS (C:\Users\owlni\PhpstormProjects\YFS) — admin panel on Laravel (PHP). Contains the database; the mobile app communicates with it via REST API to fetch and send data.
+
+Domain context:
+- The Flutter app has two user-facing parts: Client and Staff.
+- The Staff part is used to administer a children's fashion show by scanning each child's QR code at every stage checkpoint.
+- The YFS admin panel is built with Laravel + Filament and is used by administrators to configure and manage the event data and workflow.
+- Flutter and Laravel/Filament parts must stay aligned through API contracts.
 
 General:
 - Prefer small, reviewable diffs.
 - Never change unrelated files.
 - Preserve existing architecture and naming unless asked.
-- If you add a dependency, update pubspec.yaml and explain why.
+- If you add a dependency, update pubspec.yaml (Flutter) or composer.json (Laravel) and explain why.
+- When working on an API endpoint, keep the Flutter side and the Laravel side consistent (request/response format, route names, etc.).
 
-Flutter/Dart:
+Flutter/Dart (jfs_application):
 - Use null-safety.
 - Prefer const constructors where possible.
 - Use Flutter lints and keep analysis clean.
 - Avoid breaking widget rebuild performance; keep build() pure.
 
-State management:
+Laravel/PHP (YFS):
+- Follow PSR-12 coding style.
+- Use Eloquent models and Laravel conventions (Form Requests, Resources, etc.).
+- Keep migrations and seeders up to date when changing DB schema.
+
+State management (Flutter):
 - Do not introduce a new state management library unless requested.
 - If an existing approach is present (Provider/Riverpod/BLoC/setState), follow it.
 
 Code quality:
-- Add/adjust tests when changing logic (unit/widget tests if project has them).
-- Keep formatting with dart format.
+- Add/adjust tests when changing logic (unit/widget tests for Flutter, PHPUnit for Laravel if the project has them).
+- Keep formatting with dart format (Flutter) and pint/php-cs-fixer (Laravel).
 
 When asked to implement features:
 - First propose a short plan.
-- Then implement with minimal changes and provide the exact files changed.
+- Then implement with minimal changes.
+
+After EVERY response, include a summary block at the end:
+
+---
+### Changes summary
+**Files created:**
+- (list or "none")
+
+**Files deleted:**
+- (list or "none")
+
+**Files modified:**
+- (list or "none")
+---
