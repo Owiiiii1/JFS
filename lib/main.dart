@@ -6,6 +6,24 @@ import 'app_settings.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'intro_video_page.dart';
 
+/// Базовый URL API без завершающего «/». Не читается из Laravel `.env` — только из сборки
+/// (`--dart-define=API_BASE_URL=...`). Если на сервере просто добавили вход по домену, а по IP
+/// всё тот же Laravel, приложение с [defaultValue] по-прежнему ходит на IP, пока вы явно не
+/// соберёте его с другим `API_BASE_URL`.
+/// Пример: `flutter run --dart-define=API_BASE_URL=https://api.example.com`
+const String _kApiBaseUrl = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'http://178.156.234.23',
+);
+
+String _normalizeApiBase(String raw) {
+  var s = raw.trim();
+  while (s.endsWith('/')) {
+    s = s.substring(0, s.length - 1);
+  }
+  return s;
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppSettings.load();
@@ -21,6 +39,7 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   static const _supportedLocaleLanguages = ['en', 'ru', 'uk', 'es'];
+  static const _fontFamily = 'HelveticaNeueCyr';
 
   @override
   void initState() {
@@ -34,6 +53,17 @@ class _AppState extends State<App> {
   void dispose() {
     AppSettings.onLocaleChanged = null;
     super.dispose();
+  }
+
+  ThemeData _buildTheme() {
+    final baseDark = ThemeData(brightness: Brightness.dark, useMaterial3: true);
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      fontFamily: _fontFamily,
+      textTheme: baseDark.textTheme.apply(fontFamily: _fontFamily),
+      primaryTextTheme: baseDark.primaryTextTheme.apply(fontFamily: _fontFamily),
+    );
   }
 
   Locale? _resolveLocale() {
@@ -55,7 +85,7 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = AuthService('http://178.156.234.23');
+    final auth = AuthService(_normalizeApiBase(_kApiBaseUrl));
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -82,10 +112,7 @@ class _AppState extends State<App> {
         }
         return const Locale('en');
       },
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      ),
+      theme: _buildTheme(),
       home: IntroVideoPage(auth: auth),
     );
   }

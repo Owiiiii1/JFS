@@ -32,11 +32,13 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  intl: ^0.20.2
   http: ^1.2.2
   flutter_secure_storage: ^9.2.2
   image_picker: ^1.0.7
   shared_preferences: ^2.2.2
   url_launcher: ^6.2.5
+  package_info_plus: ^8.1.2
   flutter_widget_from_html: ^0.17.1
   mobile_scanner: ^6.0.2
 
@@ -44,6 +46,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   video_player: ^2.10.1
+  pdfx: ^2.9.2
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +82,29 @@ flutter:
   assets:
     - assets/logo.png
     - assets/intro_logo.mp4
+
+  fonts:
+    - family: HelveticaNeueCyr
+      fonts:
+        - asset: assets/fonts/helveticaneuecyr_thin.otf
+          weight: 100
+        - asset: assets/fonts/helveticaneuecyr_ultralight.otf
+          weight: 200
+        - asset: assets/fonts/helveticaneuecyr_ultralightitalic.otf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/helveticaneuecyr_roman.otf
+          weight: 400
+        - asset: assets/fonts/helveticaneuecyr_roman.otf
+          weight: 500
+        - asset: assets/fonts/helveticaneuecyr_roman.otf
+          weight: 600
+        - asset: assets/fonts/helveticaneuecyr_roman.otf
+          weight: 700
+        - asset: assets/fonts/helveticaneuecyr_black.otf
+          weight: 800
+        - asset: assets/fonts/helveticaneuecyr_black.otf
+          weight: 900
 
   # To add assets to your application, add an assets section, like this:
   # assets:

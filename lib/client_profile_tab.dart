@@ -94,7 +94,7 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
               AppLocalizations.of(context)!.account,
               style: const TextStyle(
                 fontSize: 28,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w400,
                 color: Colors.white,
               ),
             ),
@@ -189,7 +189,7 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
               AppLocalizations.of(context)!.myChildren,
               style: const TextStyle(
                 fontSize: 24,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w400,
                 color: Colors.white,
               ),
             ),
@@ -335,7 +335,7 @@ class _InfoField extends StatelessWidget {
           value.isNotEmpty ? value : '—',
           style: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w400,
             color: Colors.white,
           ),
           overflow: TextOverflow.ellipsis,
@@ -420,10 +420,10 @@ class _ChildCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${child.firstName} ${child.lastName}',
+                        child.firstName,
                         style: const TextStyle(
                           fontSize: 18,
-                          fontWeight: FontWeight.w300,
+                          fontWeight: FontWeight.w400,
                           color: Colors.white,
                         ),
                       ),

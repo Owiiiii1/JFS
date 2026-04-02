@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+
+import 'app_rich_html_body.dart';
 
 /// Экран с заголовком сверху и текстом снизу (для блока «О нас»).
 class BlockDetailPage extends StatelessWidget {
@@ -46,8 +47,8 @@ class BlockDetailPage extends StatelessWidget {
     }
     final isHtml = text.contains('<') && text.contains('>');
     if (isHtml && baseUrl != null) {
-      return HtmlWidget(
-        text,
+      return buildAppRichHtmlBody(
+        html: text,
         textStyle: TextStyle(
           fontSize: 15,
           height: 1.5,
@@ -57,8 +58,8 @@ class BlockDetailPage extends StatelessWidget {
       );
     }
     if (isHtml) {
-      return HtmlWidget(
-        text,
+      return buildAppRichHtmlBody(
+        html: text,
         textStyle: TextStyle(
           fontSize: 15,
           height: 1.5,

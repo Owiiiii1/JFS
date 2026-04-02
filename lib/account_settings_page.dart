@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
+import 'login_page.dart';
 
 /// Экран настроек: просмотр и редактирование данных пользователя (имя, email, телефон). Сохранение через API.
 class AccountSettingsPage extends StatefulWidget {
@@ -17,6 +18,9 @@ class AccountSettingsPage extends StatefulWidget {
 class _AccountSettingsPageState extends State<AccountSettingsPage> {
   bool _isEditing = false;
   bool _isSaving = false;
+
+  bool get _isClient =>
+      (widget.user['role'] ?? '').toString().toLowerCase() == 'client';
 
   /// Локальная копия данных для отображения и после сохранения
   late Map<String, dynamic> _data;
@@ -79,6 +83,110 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
       );
+    }
+  }
+
+  Future<void> _onDeleteAccountPressed() async {
+    final l10n = AppLocalizations.of(context)!;
+    final first = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        title: Text(
+          l10n.deleteAccountConfirmTitle,
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: Text(
+          l10n.deleteAccountConfirmMessage,
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red.shade800),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.deleteAccountContinue),
+          ),
+        ],
+      ),
+    );
+    if (first != true || !mounted) return;
+
+    final second = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        title: Text(
+          l10n.deleteAccountSecondTitle,
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            l10n.deleteAccountSecondMessage,
+            style: const TextStyle(color: Colors.white70, height: 1.4),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red.shade900),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.deleteAccountConfirmAction),
+          ),
+        ],
+      ),
+    );
+    if (second != true || !mounted) return;
+
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          backgroundColor: Colors.grey[900],
+          content: Row(
+            children: [
+              const CircularProgressIndicator(color: Colors.white),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Text(
+                  l10n.deleteAccountWorking,
+                  style: const TextStyle(color: Colors.white70),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    try {
+      await widget.auth.deleteClientAccount();
+      await widget.auth.clearToken();
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<void>(
+          builder: (_) => LoginPage(auth: widget.auth),
+        ),
+        (route) => false,
+      );
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceFirst('Exception: ', '')),
+          ),
+        );
+      }
     }
   }
 
@@ -210,6 +318,22 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     : Text(AppLocalizations.of(context)!.save),
               ),
             ),
+            if (_isClient) ...[
+              const SizedBox(height: 40),
+              Center(
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red.shade300,
+                    textStyle: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  onPressed: _isSaving ? null : _onDeleteAccountPressed,
+                  child: Text(AppLocalizations.of(context)!.deleteAccount),
+                ),
+              ),
+            ],
           ],
         ),
       ),

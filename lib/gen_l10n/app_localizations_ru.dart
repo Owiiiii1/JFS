@@ -41,6 +41,26 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get apiEndpointNotFoundHint =>
+      'Сервер не нашёл API (404). Укажите в сборке корень сайта без «/api» в конце — приложение само обращается к /api/app/login. Если Laravel в подпапке, добавьте путь до каталога public (например https://example.com/myapp/public).';
+
+  @override
+  String get notificationsTitle => 'Уведомления';
+
+  @override
+  String get notificationsLoadFailed =>
+      'Не удалось загрузить уведомления. Попробуйте снова.';
+
+  @override
+  String get notificationsEmpty => 'Пока нет уведомлений.';
+
+  @override
+  String get notificationsNewMark => 'Новое';
+
+  @override
+  String get notificationDetailsTitle => 'Уведомление';
+
+  @override
   String get createAccount => 'Создать аккаунт';
 
   @override
@@ -88,7 +108,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get editInfo => 'РЕДАКТИРОВАТЬ';
 
   @override
-  String get fullName => 'Полное имя';
+  String get fullName => 'Имя';
 
   @override
   String get retry => 'Повторить';
@@ -98,6 +118,32 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get editProfile => 'Редактировать профиль';
+
+  @override
+  String get deleteAccount => 'Удалить аккаунт';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Удалить аккаунт?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'Вы уверены, что хотите навсегда удалить аккаунт? Это действие нельзя отменить.';
+
+  @override
+  String get deleteAccountSecondTitle => 'Что будет удалено';
+
+  @override
+  String get deleteAccountSecondMessage =>
+      'Будет безвозвратно удалено из наших систем:\n\n• ваш аккаунт и профиль;\n• все дети, привязанные к аккаунту;\n• все назначения на мероприятия, прогресс по этапам, билеты и выбор обедов;\n• фотографии и другие данные детей;\n• участие в чатах мероприятий и уведомления в приложении.\n\nНекоторые платёжные или бухгалтерские записи могут сохраняться, если этого требует закон.';
+
+  @override
+  String get deleteAccountContinue => 'Продолжить';
+
+  @override
+  String get deleteAccountConfirmAction => 'Удалить навсегда';
+
+  @override
+  String get deleteAccountWorking => 'Удаление аккаунта…';
 
   @override
   String get save => 'Сохранить';
@@ -122,6 +168,30 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settings => 'Настройки';
+
+  @override
+  String get aboutTheApp => 'О приложении';
+
+  @override
+  String get aboutAppDisplayName => 'YoungFashionShow';
+
+  @override
+  String get aboutPublisherLine => 'YOUNGFASHIONSHOW';
+
+  @override
+  String get aboutVersionLabel => 'ВЕРСИЯ';
+
+  @override
+  String get aboutReleaseDateLabel => 'ДАТА ВЫПУСКА';
+
+  @override
+  String get aboutDevelopedByPrefix => 'РАЗРАБОТАНО:';
+
+  @override
+  String get aboutDeveloperBrand => 'OWLSOLUTIONS';
+
+  @override
+  String get aboutLinkCouldNotOpen => 'Не удалось открыть ссылку.';
 
   @override
   String get appLanguage => 'Язык приложения';
@@ -155,6 +225,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get firstName => 'Имя';
+
+  @override
+  String get gender => 'Пол';
+
+  @override
+  String get genderBoy => 'Мальчик';
+
+  @override
+  String get genderGirl => 'Девочка';
 
   @override
   String get lastName => 'Фамилия';
@@ -237,6 +316,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get journeyProgress => 'ПРОГРЕСС';
 
   @override
+  String get journeyPreparationPhase => 'ПОДГОТОВКА';
+
+  @override
+  String get journeyMainEventTitle => 'ОСНОВНОЙ ИВЕНТ';
+
+  @override
+  String get journeyMainEventSubtitle => 'ГЛАВНОЕ ШОУ';
+
+  @override
   String stepOf(int completed, int total) {
     return 'Шаг $completed из $total';
   }
@@ -248,6 +336,253 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get viewProgress => 'СМОТРЕТЬ ПРОГРЕСС';
+
+  @override
+  String get eventSettings => 'НАСТРОЙКИ ИВЕНТА';
+
+  @override
+  String get eventSettingsPlaceholder =>
+      'Здесь скоро появятся настройки ивента.';
+
+  @override
+  String get eventSettingsConfigurationPortal => 'ПОРТАЛ НАСТРОЕК';
+
+  @override
+  String get eventSettingsMainHeadline => 'Настройки ивента';
+
+  @override
+  String get eventSettingsMealTitle => 'Выбор питания';
+
+  @override
+  String get eventSettingsMealSubtitle => 'Выберите блюдо на текущий ивент';
+
+  @override
+  String get eventSettingsMealCta => 'МЕНЮ';
+
+  @override
+  String get eventSettingsRehearsalTitle => 'Запись на репетицию';
+
+  @override
+  String get eventSettingsRehearsalSubtitle =>
+      'Забронируйте место на репетицию';
+
+  @override
+  String get eventSettingsRehearsalCta => 'ЗАПИСАТЬСЯ';
+
+  @override
+  String get rehearsalModalTitle => 'Запись на репетицию';
+
+  @override
+  String get rehearsalSelectDate => 'Выберите дату';
+
+  @override
+  String get rehearsalAvailableSlots => 'Доступные слоты';
+
+  @override
+  String get rehearsalFreeLabel => 'Свободно:';
+
+  @override
+  String get rehearsalNoSlotsConfigured =>
+      'Для этого ивента слотов репетиций пока нет.';
+
+  @override
+  String get rehearsalLoadError =>
+      'Не удалось загрузить слоты. Попробуйте снова.';
+
+  @override
+  String get rehearsalBrandNotAssigned =>
+      'Ребенку не назначен пакет. Бронирование репетиций недоступно.';
+
+  @override
+  String get rehearsalFull => 'Мест нет';
+
+  @override
+  String get rehearsalConfirmBooking => 'Подтвердить запись';
+
+  @override
+  String get rehearsalBookingFooterNote =>
+      'По возможности изменения вносите за 24 часа до слота.';
+
+  @override
+  String get rehearsalBookedTitle => 'Репетиция забронирована';
+
+  @override
+  String get rehearsalChangeBooking => 'Изменить бронирование';
+
+  @override
+  String get rehearsalProgramLabel => 'Описание';
+
+  @override
+  String get rehearsalArriveEarly => 'Приходите за 15 минут до начала.';
+
+  @override
+  String get rehearsalBookingSaved => 'Запись сохранена';
+
+  @override
+  String get rehearsalBookingError => 'Не удалось выполнить запись.';
+
+  @override
+  String get rehearsalSelectChild => 'Ребёнок';
+
+  @override
+  String get rehearsalUpdateBooking => 'Изменить запись';
+
+  @override
+  String get rehearsalCancelChange => 'Отмена';
+
+  @override
+  String get rehearsalChangeBookingLockedHint =>
+      'Организатор закрыл смену записи. Напишите в поддержку, если нужна помощь.';
+
+  @override
+  String get rehearsalMilestoneTitle => 'Репетиция';
+
+  @override
+  String rehearsalBrandMilestoneTitle(String brandName) {
+    return 'Репетиция бренда: $brandName';
+  }
+
+  @override
+  String get rehearsalBrandMilestoneShort => 'Репетиция бренда';
+
+  @override
+  String get rehearsalNextBookHint =>
+      'Запишитесь на репетицию в настройках ивента.';
+
+  @override
+  String get eventSettingsPackingTitle => 'Что взять с собой?';
+
+  @override
+  String get eventSettingsPackingSubtitle => '';
+
+  @override
+  String get eventSettingsPackingCta => 'ОТКРЫТЬ СПИСОК';
+
+  @override
+  String get eventPackingLoadFailed =>
+      'Не удалось загрузить информацию. Попробуйте снова.';
+
+  @override
+  String get eventPackingEmpty =>
+      'Для этого ивента информация пока не добавлена.';
+
+  @override
+  String get eventSettingsBrandTitle => 'Требования бренда';
+
+  @override
+  String get eventSettingsBrandSubtitle =>
+      'Ознакомьтесь с рекомендациями бренда для участия в ивенте';
+
+  @override
+  String get eventSettingsBrandCta => 'РУКОВОДСТВО';
+
+  @override
+  String get brandRequirementsLoadFailed =>
+      'Не удалось загрузить требования бренда. Попробуйте снова.';
+
+  @override
+  String get brandRequirementsEmpty =>
+      'Для этого ивента требования брендов пока не добавлены.';
+
+  @override
+  String get brandRequirementsEmptyItem =>
+      'Для этого бренда требования пока не заполнены.';
+
+  @override
+  String get eventSettingsChatTitle => 'Общий чат';
+
+  @override
+  String get eventSettingsChatSubtitle =>
+      'Общий чат с участниками группы и менеджерами';
+
+  @override
+  String get eventSettingsChatCta => 'ОТКРЫТЬ ЧАТ';
+
+  @override
+  String get chatRoomsLoadFailed =>
+      'Не удалось загрузить комнаты чата. Попробуйте снова.';
+
+  @override
+  String get chatNoRooms =>
+      'Для ваших брендов в этом ивенте пока нет чат-комнат.';
+
+  @override
+  String get chatNoMessagesYet => 'Сообщений пока нет';
+
+  @override
+  String get chatLoadFailed =>
+      'Не удалось загрузить сообщения. Попробуйте снова.';
+
+  @override
+  String get chatSendFailed =>
+      'Не удалось отправить сообщение. Попробуйте снова.';
+
+  @override
+  String get chatMessagePlaceholder => 'Сообщение в чат...';
+
+  @override
+  String get chatReply => 'Ответить';
+
+  @override
+  String get chatReplyCancel => 'Отмена';
+
+  @override
+  String chatReplyingTo(String name) {
+    return 'Ответ для $name';
+  }
+
+  @override
+  String get chatReplyPreviewPhoto => 'Фото';
+
+  @override
+  String eventSettingsChatMoreParticipants(int count) {
+    return '+$count';
+  }
+
+  @override
+  String get mealChoiceTitle => 'Выбор обеда';
+
+  @override
+  String get mealSelectChildLabel => 'Ребёнок';
+
+  @override
+  String get mealSelectDishLabel => 'Блюдо';
+
+  @override
+  String get mealSave => 'ЗАКАЗАТЬ';
+
+  @override
+  String get mealNoMealsConfigured =>
+      'Для этого ивента пока не добавлены блюда.';
+
+  @override
+  String get mealSaved => 'Сохранено';
+
+  @override
+  String get mealSaveError => 'Не удалось сохранить. Попробуйте снова.';
+
+  @override
+  String get mealOrdersClosed => 'Приём заказов закрыт';
+
+  @override
+  String get mealPaid => 'Оплачено';
+
+  @override
+  String get mealPaidDetail => 'Обед по этому ивенту оплачен.';
+
+  @override
+  String get mealPayInBrowser =>
+      'Завершите оплату в браузере и вернитесь в приложение.';
+
+  @override
+  String get mealCheckoutError => 'Не удалось начать оплату. Попробуйте снова.';
+
+  @override
+  String get mealAwaitingPayment => 'Заказ оформлен — ожидает оплаты';
+
+  @override
+  String get mealAwaitingPaymentDetail =>
+      'Блюдо сохранено. Завершите оплату в браузере; статус обновится после подтверждения Stripe.';
 
   @override
   String get noActiveEvents => 'Нет активных событий';
@@ -266,6 +601,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get quickActions => 'Быстрые действия';
+
+  @override
+  String get fillOutApplication => 'Заполнить\nзаявку';
 
   @override
   String get upcomingShows => 'Ближайшие\nпоказы';
@@ -359,4 +697,57 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get registrationOpen => 'Регистрация открыта';
+
+  @override
+  String get myTicketsButton => 'МОИ БИЛЕТЫ';
+
+  @override
+  String get myTicketsTitle => 'Мои билеты';
+
+  @override
+  String get selectEventForTickets => 'Выберите мероприятие';
+
+  @override
+  String get ticketsMomName => 'Имя родителя';
+
+  @override
+  String get ticketsEventDate => 'Дата';
+
+  @override
+  String get ticketsOpenPdf => 'ОТКРЫТЬ';
+
+  @override
+  String get ticketsPdfUnavailable => 'PDF пока недоступен';
+
+  @override
+  String get ticketsBuy => 'КУПИТЬ БИЛЕТ';
+
+  @override
+  String get ticketsBuyNoLink =>
+      'Ссылка на покупку не задана. Укажите в админке ссылку на магазин билетов для ивента или сайт в разделе Info.';
+
+  @override
+  String get ticketsBuyCouldNotOpen => 'Не удалось открыть ссылку.';
+
+  @override
+  String get ticketsBuySubtitle => 'Доступны VIP и стандартные места';
+
+  @override
+  String get ticketsNoEvents => 'Пока нет событий с билетами';
+
+  @override
+  String get ticketsNoneForEvent => 'Нет билетов на это событие';
+
+  @override
+  String get ticketsLoadError => 'Не удалось загрузить билеты';
+
+  @override
+  String get ticketsEventsLoadError => 'Не удалось загрузить события';
+
+  @override
+  String get pdfViewerTitle => 'Билет';
+
+  @override
+  String get contactFormLinkMissing =>
+      'Ссылка на форму не задана. Укажите «Ссылка на форму» в общих настройках приложения в админке.';
 }

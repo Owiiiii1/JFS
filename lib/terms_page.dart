@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'api/auth_service.dart';
+import 'app_rich_html_body.dart';
 
 const _kCardBg = Color(0xFF121212);
 
@@ -75,68 +75,62 @@ class _TermsPageState extends State<TermsPage> {
               child: CircularProgressIndicator(color: Colors.white54),
             )
           : _error != null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _error!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        TextButton(
-                          onPressed: _load,
-                          child: const Text('Retry'),
-                        ),
-                      ],
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _error!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
-                  ),
-                )
-              : SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (_data != null) ...[
-                        if (_photoUrl(_data!).isNotEmpty)
-                          AspectRatio(
-                            aspectRatio: 16 / 10,
-                            child: Image.network(
-                              _photoUrl(_data!),
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
-                                color: _kCardBg,
-                                child: const Icon(
-                                  Icons.image_not_supported_outlined,
-                                  size: 48,
-                                  color: Colors.white24,
-                                ),
-                              ),
-                            ),
-                          )
-                        else
-                          Container(
-                            height: 200,
+                    const SizedBox(height: 16),
+                    TextButton(onPressed: _load, child: const Text('Retry')),
+                  ],
+                ),
+              ),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (_data != null) ...[
+                    if (_photoUrl(_data!).isNotEmpty)
+                      AspectRatio(
+                        aspectRatio: 16 / 10,
+                        child: Image.network(
+                          _photoUrl(_data!),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
                             color: _kCardBg,
                             child: const Icon(
-                              Icons.image_outlined,
+                              Icons.image_not_supported_outlined,
                               size: 48,
                               color: Colors.white24,
                             ),
                           ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-                          child: _buildBody(),
                         ),
-                      ],
-                    ],
-                  ),
-                ),
+                      )
+                    else
+                      Container(
+                        height: 200,
+                        color: _kCardBg,
+                        child: const Icon(
+                          Icons.image_outlined,
+                          size: 48,
+                          color: Colors.white24,
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+                      child: _buildBody(),
+                    ),
+                  ],
+                ],
+              ),
+            ),
     );
   }
 
@@ -147,8 +141,8 @@ class _TermsPageState extends State<TermsPage> {
     }
     final isHtml = body.contains('<') && body.contains('>');
     if (isHtml) {
-      return HtmlWidget(
-        body,
+      return buildAppRichHtmlBody(
+        html: body,
         textStyle: TextStyle(
           fontSize: 15,
           height: 1.5,

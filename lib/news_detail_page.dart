@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'api/auth_service.dart';
+import 'app_rich_html_body.dart';
 
 const _kCardBg = Color(0xFF121212);
 
 /// Экран детали новости: сверху картинка, ниже заголовок, ниже текст.
 class NewsDetailPage extends StatelessWidget {
-  const NewsDetailPage({
-    super.key,
-    required this.news,
-    required this.baseUrl,
-  });
+  const NewsDetailPage({super.key, required this.news, required this.baseUrl});
 
   final AppNewsItem news;
   final String baseUrl;
@@ -88,8 +84,8 @@ class NewsDetailPage extends StatelessWidget {
     // Если в тексте есть HTML-теги — рендерим как HTML (форматирование, картинки из админки).
     final isHtml = body.contains('<') && body.contains('>');
     if (isHtml) {
-      return HtmlWidget(
-        body,
+      return buildAppRichHtmlBody(
+        html: body,
         textStyle: TextStyle(
           fontSize: 15,
           height: 1.5,

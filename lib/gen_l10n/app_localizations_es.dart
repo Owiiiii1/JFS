@@ -41,6 +41,26 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get apiEndpointNotFoundHint =>
+      'El servidor no encontró la API (404). Usa la raíz del sitio sin «/api» al final; la app llama a /api/app/login sola. Si Laravel está en una subcarpeta, incluye la ruta hasta public (p. ej. https://example.com/myapp/public).';
+
+  @override
+  String get notificationsTitle => 'Notificaciones';
+
+  @override
+  String get notificationsLoadFailed =>
+      'No se pudieron cargar las notificaciones. Inténtalo de nuevo.';
+
+  @override
+  String get notificationsEmpty => 'Aún no hay notificaciones.';
+
+  @override
+  String get notificationsNewMark => 'Nuevo';
+
+  @override
+  String get notificationDetailsTitle => 'Notificación';
+
+  @override
   String get createAccount => 'Crear cuenta';
 
   @override
@@ -89,7 +109,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get editInfo => 'EDITAR INFORMACIÓN';
 
   @override
-  String get fullName => 'Nombre completo';
+  String get fullName => 'Nombre';
 
   @override
   String get retry => 'Reintentar';
@@ -99,6 +119,32 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get editProfile => 'Editar perfil';
+
+  @override
+  String get deleteAccount => 'Eliminar cuenta';
+
+  @override
+  String get deleteAccountConfirmTitle => '¿Eliminar cuenta?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      '¿Seguro que quieres eliminar tu cuenta de forma permanente? Esta acción no se puede deshacer.';
+
+  @override
+  String get deleteAccountSecondTitle => 'Qué se eliminará';
+
+  @override
+  String get deleteAccountSecondMessage =>
+      'Se eliminará de forma permanente de nuestros sistemas:\n\n• Tu cuenta y perfil\n• Todos los niños vinculados a tu cuenta\n• Todas las asignaciones a eventos, progreso en etapas, entradas y comidas\n• Fotos y demás datos de los niños\n• Tu acceso a chats de eventos y notificaciones en la app\n\nAlgunos registros de pago o contables pueden conservarse cuando lo exija la ley.';
+
+  @override
+  String get deleteAccountContinue => 'Continuar';
+
+  @override
+  String get deleteAccountConfirmAction => 'Eliminar para siempre';
+
+  @override
+  String get deleteAccountWorking => 'Eliminando cuenta…';
 
   @override
   String get save => 'Guardar';
@@ -123,6 +169,30 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settings => 'Configuración';
+
+  @override
+  String get aboutTheApp => 'Acerca de la app';
+
+  @override
+  String get aboutAppDisplayName => 'YoungFashionShow';
+
+  @override
+  String get aboutPublisherLine => 'YOUNGFASHIONSHOW';
+
+  @override
+  String get aboutVersionLabel => 'VERSIÓN';
+
+  @override
+  String get aboutReleaseDateLabel => 'FECHA DE LANZAMIENTO';
+
+  @override
+  String get aboutDevelopedByPrefix => 'Desarrollado por:';
+
+  @override
+  String get aboutDeveloperBrand => 'OWLSOLUTIONS';
+
+  @override
+  String get aboutLinkCouldNotOpen => 'No se pudo abrir el enlace.';
 
   @override
   String get appLanguage => 'Idioma de la app';
@@ -156,6 +226,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get firstName => 'Nombre';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get genderBoy => 'Boy';
+
+  @override
+  String get genderGirl => 'Girl';
 
   @override
   String get lastName => 'Apellido';
@@ -238,6 +317,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get journeyProgress => 'PROGRESO';
 
   @override
+  String get journeyPreparationPhase => 'FASE DE PREPARACIÓN';
+
+  @override
+  String get journeyMainEventTitle => 'EVENTO PRINCIPAL';
+
+  @override
+  String get journeyMainEventSubtitle => 'EXCLUSIVO PASARELA';
+
+  @override
   String stepOf(int completed, int total) {
     return 'Paso $completed de $total';
   }
@@ -249,6 +337,254 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get viewProgress => 'VER PROGRESO';
+
+  @override
+  String get eventSettings => 'AJUSTES DEL EVENTO';
+
+  @override
+  String get eventSettingsPlaceholder =>
+      'Pronto verás aquí los ajustes del evento.';
+
+  @override
+  String get eventSettingsConfigurationPortal => 'PORTAL DE CONFIGURACIÓN';
+
+  @override
+  String get eventSettingsMainHeadline => 'Ajustes del evento';
+
+  @override
+  String get eventSettingsMealTitle => 'Selección de comidas';
+
+  @override
+  String get eventSettingsMealSubtitle =>
+      'Elige un plato para el evento actual';
+
+  @override
+  String get eventSettingsMealCta => 'GESTIONAR MENÚ';
+
+  @override
+  String get eventSettingsRehearsalTitle => 'Reserva de ensayo';
+
+  @override
+  String get eventSettingsRehearsalSubtitle =>
+      'Reserva tu plaza para el ensayo';
+
+  @override
+  String get eventSettingsRehearsalCta => 'RESERVAR';
+
+  @override
+  String get rehearsalModalTitle => 'Reserva de ensayo';
+
+  @override
+  String get rehearsalSelectDate => 'Elige fecha';
+
+  @override
+  String get rehearsalAvailableSlots => 'Horarios disponibles';
+
+  @override
+  String get rehearsalFreeLabel => 'Libres:';
+
+  @override
+  String get rehearsalNoSlotsConfigured =>
+      'Aún no hay franjas de ensayo para este evento.';
+
+  @override
+  String get rehearsalLoadError =>
+      'No se pudieron cargar las franjas. Inténtalo de nuevo.';
+
+  @override
+  String get rehearsalBrandNotAssigned =>
+      'No hay marca asignada para este niño. La reserva de ensayos no está disponible.';
+
+  @override
+  String get rehearsalFull => 'Completo';
+
+  @override
+  String get rehearsalConfirmBooking => 'Confirmar reserva';
+
+  @override
+  String get rehearsalBookingFooterNote =>
+      'Si es posible, cambia con 24 h de antelación.';
+
+  @override
+  String get rehearsalBookedTitle => 'Ensayo reservado';
+
+  @override
+  String get rehearsalChangeBooking => 'Cambiar reserva';
+
+  @override
+  String get rehearsalProgramLabel => 'Descripción';
+
+  @override
+  String get rehearsalArriveEarly => 'Llega 15 minutos antes.';
+
+  @override
+  String get rehearsalBookingSaved => 'Reserva guardada';
+
+  @override
+  String get rehearsalBookingError => 'No se pudo completar la reserva.';
+
+  @override
+  String get rehearsalSelectChild => 'Niño/a';
+
+  @override
+  String get rehearsalUpdateBooking => 'Actualizar reserva';
+
+  @override
+  String get rehearsalCancelChange => 'Cancelar';
+
+  @override
+  String get rehearsalChangeBookingLockedHint =>
+      'El organizador cerró los cambios de reserva. Contacta soporte si necesitas ayuda.';
+
+  @override
+  String get rehearsalMilestoneTitle => 'Ensayo';
+
+  @override
+  String rehearsalBrandMilestoneTitle(String brandName) {
+    return 'Ensayo de marca: $brandName';
+  }
+
+  @override
+  String get rehearsalBrandMilestoneShort => 'Ensayo de marca';
+
+  @override
+  String get rehearsalNextBookHint =>
+      'Reserva tu ensayo en Ajustes del evento.';
+
+  @override
+  String get eventSettingsPackingTitle => '¿Qué llevar contigo?';
+
+  @override
+  String get eventSettingsPackingSubtitle => '';
+
+  @override
+  String get eventSettingsPackingCta => 'VER LISTA';
+
+  @override
+  String get eventPackingLoadFailed =>
+      'No se pudo cargar la información. Inténtalo de nuevo.';
+
+  @override
+  String get eventPackingEmpty =>
+      'Aún no se añadió información para este evento.';
+
+  @override
+  String get eventSettingsBrandTitle => 'Requisitos de marca';
+
+  @override
+  String get eventSettingsBrandSubtitle =>
+      'Consulta las recomendaciones de la marca para participar en el evento';
+
+  @override
+  String get eventSettingsBrandCta => 'VER GUÍAS';
+
+  @override
+  String get brandRequirementsLoadFailed =>
+      'No se pudieron cargar los requisitos de marca. Inténtalo de nuevo.';
+
+  @override
+  String get brandRequirementsEmpty =>
+      'Aún no se añadieron requisitos de marca para este evento.';
+
+  @override
+  String get brandRequirementsEmptyItem =>
+      'Aún no se añadió texto de requisitos para esta marca.';
+
+  @override
+  String get eventSettingsChatTitle => 'Chat grupal';
+
+  @override
+  String get eventSettingsChatSubtitle =>
+      'Chat grupal con participantes del grupo y managers';
+
+  @override
+  String get eventSettingsChatCta => 'ABRIR CHAT';
+
+  @override
+  String get chatRoomsLoadFailed =>
+      'No se pudieron cargar las salas de chat. Inténtalo de nuevo.';
+
+  @override
+  String get chatNoRooms =>
+      'Aún no hay salas de chat para tus marcas en este evento.';
+
+  @override
+  String get chatNoMessagesYet => 'Sin mensajes todavía';
+
+  @override
+  String get chatLoadFailed =>
+      'No se pudieron cargar los mensajes. Inténtalo de nuevo.';
+
+  @override
+  String get chatSendFailed =>
+      'No se pudo enviar el mensaje. Inténtalo de nuevo.';
+
+  @override
+  String get chatMessagePlaceholder => 'Mensaje al grupo...';
+
+  @override
+  String get chatReply => 'Responder';
+
+  @override
+  String get chatReplyCancel => 'Cancelar';
+
+  @override
+  String chatReplyingTo(String name) {
+    return 'Respondiendo a $name';
+  }
+
+  @override
+  String get chatReplyPreviewPhoto => 'Foto';
+
+  @override
+  String eventSettingsChatMoreParticipants(int count) {
+    return '+$count';
+  }
+
+  @override
+  String get mealChoiceTitle => 'Elegir comida';
+
+  @override
+  String get mealSelectChildLabel => 'Niño/a';
+
+  @override
+  String get mealSelectDishLabel => 'Plato';
+
+  @override
+  String get mealSave => 'PEDIR';
+
+  @override
+  String get mealNoMealsConfigured => 'Aún no hay platos para este evento.';
+
+  @override
+  String get mealSaved => 'Guardado';
+
+  @override
+  String get mealSaveError => 'No se pudo guardar. Inténtalo de nuevo.';
+
+  @override
+  String get mealOrdersClosed => 'El plazo para elegir el menú está cerrado';
+
+  @override
+  String get mealPaid => 'Pagado';
+
+  @override
+  String get mealPaidDetail => 'El menú de este evento está pagado.';
+
+  @override
+  String get mealPayInBrowser =>
+      'Completa el pago en el navegador y vuelve a la app.';
+
+  @override
+  String get mealCheckoutError =>
+      'No se pudo iniciar el pago. Inténtalo de nuevo.';
+
+  @override
+  String get mealAwaitingPayment => 'Pedido registrado — pendiente de pago';
+
+  @override
+  String get mealAwaitingPaymentDetail =>
+      'Tu plato está guardado. Termina el pago en el navegador; el estado se actualizará cuando Stripe lo confirme.';
 
   @override
   String get noActiveEvents => 'No hay eventos activos';
@@ -267,6 +603,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get quickActions => 'Acciones rápidas';
+
+  @override
+  String get fillOutApplication => 'Completar\nsolicitud';
 
   @override
   String get upcomingShows => 'Próximos\nshows';
@@ -360,6 +699,59 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get registrationOpen => 'Registro abierto';
+
+  @override
+  String get myTicketsButton => 'MIS ENTRADAS';
+
+  @override
+  String get myTicketsTitle => 'Mis entradas';
+
+  @override
+  String get selectEventForTickets => 'Selecciona el evento';
+
+  @override
+  String get ticketsMomName => 'Nombre del padre/madre';
+
+  @override
+  String get ticketsEventDate => 'Fecha';
+
+  @override
+  String get ticketsOpenPdf => 'ABRIR';
+
+  @override
+  String get ticketsPdfUnavailable => 'PDF aún no disponible';
+
+  @override
+  String get ticketsBuy => 'COMPRAR ENTRADA';
+
+  @override
+  String get ticketsBuyNoLink =>
+      'No hay enlace de compra. Añade la URL de la tienda de entradas para este evento en el admin o en la web en Info.';
+
+  @override
+  String get ticketsBuyCouldNotOpen => 'No se pudo abrir el enlace.';
+
+  @override
+  String get ticketsBuySubtitle => 'Asientos VIP y estándar disponibles';
+
+  @override
+  String get ticketsNoEvents => 'Aún no hay eventos con entradas';
+
+  @override
+  String get ticketsNoneForEvent => 'No hay entradas para este evento';
+
+  @override
+  String get ticketsLoadError => 'No se pudieron cargar las entradas';
+
+  @override
+  String get ticketsEventsLoadError => 'No se pudieron cargar los eventos';
+
+  @override
+  String get pdfViewerTitle => 'Entrada';
+
+  @override
+  String get contactFormLinkMissing =>
+      'No hay enlace al formulario. Añade la URL en Ajustes generales de la app en el panel.';
 }
 
 /// The translations for Spanish Castilian, as used in the United States (`es_US`).
@@ -399,6 +791,26 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   }
 
   @override
+  String get apiEndpointNotFoundHint =>
+      'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsLoadFailed =>
+      'Could not load notifications. Try again.';
+
+  @override
+  String get notificationsEmpty => 'No notifications yet.';
+
+  @override
+  String get notificationsNewMark => 'New';
+
+  @override
+  String get notificationDetailsTitle => 'Notification';
+
+  @override
   String get createAccount => 'Crear cuenta';
 
   @override
@@ -447,7 +859,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get editInfo => 'EDITAR INFORMACIÓN';
 
   @override
-  String get fullName => 'Nombre completo';
+  String get fullName => 'Nombre';
 
   @override
   String get retry => 'Reintentar';
@@ -457,6 +869,32 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get editProfile => 'Editar perfil';
+
+  @override
+  String get deleteAccount => 'Eliminar cuenta';
+
+  @override
+  String get deleteAccountConfirmTitle => '¿Eliminar cuenta?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      '¿Seguro que quieres eliminar tu cuenta de forma permanente? Esta acción no se puede deshacer.';
+
+  @override
+  String get deleteAccountSecondTitle => 'Qué se eliminará';
+
+  @override
+  String get deleteAccountSecondMessage =>
+      'Se eliminará de forma permanente de nuestros sistemas:\n\n• Tu cuenta y perfil\n• Todos los niños vinculados a tu cuenta\n• Todas las asignaciones a eventos, progreso en etapas, entradas y comidas\n• Fotos y demás datos de los niños\n• Tu acceso a chats de eventos y notificaciones en la app\n\nAlgunos registros de pago o contables pueden conservarse cuando lo exija la ley.';
+
+  @override
+  String get deleteAccountContinue => 'Continuar';
+
+  @override
+  String get deleteAccountConfirmAction => 'Eliminar para siempre';
+
+  @override
+  String get deleteAccountWorking => 'Eliminando cuenta…';
 
   @override
   String get save => 'Guardar';
@@ -481,6 +919,30 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get settings => 'Configuración';
+
+  @override
+  String get aboutTheApp => 'Acerca de la app';
+
+  @override
+  String get aboutAppDisplayName => 'YoungFashionShow';
+
+  @override
+  String get aboutPublisherLine => 'YOUNGFASHIONSHOW';
+
+  @override
+  String get aboutVersionLabel => 'VERSIÓN';
+
+  @override
+  String get aboutReleaseDateLabel => 'FECHA DE LANZAMIENTO';
+
+  @override
+  String get aboutDevelopedByPrefix => 'Desarrollado por:';
+
+  @override
+  String get aboutDeveloperBrand => 'OWLSOLUTIONS';
+
+  @override
+  String get aboutLinkCouldNotOpen => 'No se pudo abrir el enlace.';
 
   @override
   String get appLanguage => 'Idioma de la app';
@@ -596,6 +1058,15 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get journeyProgress => 'PROGRESO';
 
   @override
+  String get journeyPreparationPhase => 'FASE DE PREPARACIÓN';
+
+  @override
+  String get journeyMainEventTitle => 'EVENTO PRINCIPAL';
+
+  @override
+  String get journeyMainEventSubtitle => 'EXCLUSIVO PASARELA';
+
+  @override
   String stepOf(int completed, int total) {
     return 'Paso $completed de $total';
   }
@@ -607,6 +1078,249 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get viewProgress => 'VER PROGRESO';
+
+  @override
+  String get eventSettings => 'AJUSTES DEL EVENTO';
+
+  @override
+  String get eventSettingsPlaceholder =>
+      'Pronto verás aquí los ajustes del evento.';
+
+  @override
+  String get eventSettingsConfigurationPortal => 'PORTAL DE CONFIGURACIÓN';
+
+  @override
+  String get eventSettingsMainHeadline => 'Ajustes del evento';
+
+  @override
+  String get eventSettingsMealTitle => 'Selección de comidas';
+
+  @override
+  String get eventSettingsMealSubtitle =>
+      'Elige un plato para el evento actual';
+
+  @override
+  String get eventSettingsMealCta => 'GESTIONAR MENÚ';
+
+  @override
+  String get eventSettingsRehearsalTitle => 'Reserva de ensayo';
+
+  @override
+  String get eventSettingsRehearsalSubtitle =>
+      'Reserva tu plaza para el ensayo';
+
+  @override
+  String get eventSettingsRehearsalCta => 'RESERVAR';
+
+  @override
+  String get rehearsalModalTitle => 'Rehearsal booking';
+
+  @override
+  String get rehearsalSelectDate => 'Select date';
+
+  @override
+  String get rehearsalAvailableSlots => 'Available slots';
+
+  @override
+  String get rehearsalFreeLabel => 'Available:';
+
+  @override
+  String get rehearsalNoSlotsConfigured =>
+      'No rehearsal slots for this event yet.';
+
+  @override
+  String get rehearsalLoadError => 'Could not load slots. Try again.';
+
+  @override
+  String get rehearsalBrandNotAssigned =>
+      'Brand is not assigned for this child. Rehearsal booking is unavailable.';
+
+  @override
+  String get rehearsalFull => 'Full';
+
+  @override
+  String get rehearsalConfirmBooking => 'Confirm booking';
+
+  @override
+  String get rehearsalBookingFooterNote =>
+      'Changes must be made 24 hours before the session when possible.';
+
+  @override
+  String get rehearsalBookedTitle => 'Your rehearsal is booked';
+
+  @override
+  String get rehearsalChangeBooking => 'Change booking';
+
+  @override
+  String get rehearsalProgramLabel => 'Details';
+
+  @override
+  String get rehearsalArriveEarly => 'Please arrive 15 minutes early.';
+
+  @override
+  String get rehearsalBookingSaved => 'Booking saved';
+
+  @override
+  String get rehearsalBookingError => 'Could not complete booking.';
+
+  @override
+  String get rehearsalSelectChild => 'Child';
+
+  @override
+  String get rehearsalUpdateBooking => 'Update booking';
+
+  @override
+  String get rehearsalCancelChange => 'Cancel';
+
+  @override
+  String get rehearsalChangeBookingLockedHint =>
+      'The organizer has closed booking changes. Contact support if you need help.';
+
+  @override
+  String get rehearsalMilestoneTitle => 'Rehearsal';
+
+  @override
+  String rehearsalBrandMilestoneTitle(String brandName) {
+    return 'Brand rehearsal: $brandName';
+  }
+
+  @override
+  String get rehearsalBrandMilestoneShort => 'Brand rehearsal';
+
+  @override
+  String get rehearsalNextBookHint =>
+      'Book your rehearsal slot in Event settings.';
+
+  @override
+  String get eventSettingsPackingTitle => '¿Qué llevar contigo?';
+
+  @override
+  String get eventSettingsPackingSubtitle => '';
+
+  @override
+  String get eventSettingsPackingCta => 'VER LISTA';
+
+  @override
+  String get eventPackingLoadFailed =>
+      'Could not load packing info. Try again.';
+
+  @override
+  String get eventPackingEmpty =>
+      'Packing information has not been added for this event yet.';
+
+  @override
+  String get eventSettingsBrandTitle => 'Requisitos de marca';
+
+  @override
+  String get eventSettingsBrandSubtitle =>
+      'Consulta las recomendaciones de la marca para participar en el evento';
+
+  @override
+  String get eventSettingsBrandCta => 'VER GUÍAS';
+
+  @override
+  String get brandRequirementsLoadFailed =>
+      'Could not load brand requirements. Try again.';
+
+  @override
+  String get brandRequirementsEmpty =>
+      'No brand requirements have been added for this event yet.';
+
+  @override
+  String get brandRequirementsEmptyItem =>
+      'No requirements text has been added for this brand yet.';
+
+  @override
+  String get eventSettingsChatTitle => 'Chat grupal';
+
+  @override
+  String get eventSettingsChatSubtitle =>
+      'Chat grupal con participantes del grupo y managers';
+
+  @override
+  String get eventSettingsChatCta => 'ABRIR CHAT';
+
+  @override
+  String get chatRoomsLoadFailed => 'Could not load chat rooms. Try again.';
+
+  @override
+  String get chatNoRooms =>
+      'No chat rooms are available for your brands in this event yet.';
+
+  @override
+  String get chatNoMessagesYet => 'No messages yet';
+
+  @override
+  String get chatLoadFailed => 'Could not load chat messages. Try again.';
+
+  @override
+  String get chatSendFailed => 'Could not send message. Try again.';
+
+  @override
+  String get chatMessagePlaceholder => 'Message group...';
+
+  @override
+  String get chatReply => 'Reply';
+
+  @override
+  String get chatReplyCancel => 'Cancel';
+
+  @override
+  String chatReplyingTo(String name) {
+    return 'Replying to $name';
+  }
+
+  @override
+  String get chatReplyPreviewPhoto => 'Photo';
+
+  @override
+  String eventSettingsChatMoreParticipants(int count) {
+    return '+$count';
+  }
+
+  @override
+  String get mealChoiceTitle => 'Elegir comida';
+
+  @override
+  String get mealSelectChildLabel => 'Niño/a';
+
+  @override
+  String get mealSelectDishLabel => 'Plato';
+
+  @override
+  String get mealSave => 'ORDER';
+
+  @override
+  String get mealNoMealsConfigured => 'Aún no hay platos para este evento.';
+
+  @override
+  String get mealSaved => 'Guardado';
+
+  @override
+  String get mealSaveError => 'No se pudo guardar. Inténtalo de nuevo.';
+
+  @override
+  String get mealOrdersClosed => 'El plazo para elegir el menú está cerrado';
+
+  @override
+  String get mealPaid => 'Paid';
+
+  @override
+  String get mealPaidDetail => 'Lunch for this event is paid.';
+
+  @override
+  String get mealPayInBrowser =>
+      'Complete payment in the browser, then return to the app.';
+
+  @override
+  String get mealCheckoutError => 'Could not start payment. Try again.';
+
+  @override
+  String get mealAwaitingPayment => 'Order placed — awaiting payment';
+
+  @override
+  String get mealAwaitingPaymentDetail =>
+      'Your dish is saved. Finish payment in the browser; status will update after Stripe confirms it.';
 
   @override
   String get noActiveEvents => 'No hay eventos activos';
@@ -625,6 +1339,9 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get quickActions => 'Acciones rápidas';
+
+  @override
+  String get fillOutApplication => 'Completar\nsolicitud';
 
   @override
   String get upcomingShows => 'Próximos\nshows';
@@ -718,4 +1435,57 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get registrationOpen => 'Registro abierto';
+
+  @override
+  String get myTicketsButton => 'MIS ENTRADAS';
+
+  @override
+  String get myTicketsTitle => 'Mis entradas';
+
+  @override
+  String get selectEventForTickets => 'Selecciona el evento';
+
+  @override
+  String get ticketsMomName => 'Nombre del padre/madre';
+
+  @override
+  String get ticketsEventDate => 'Fecha';
+
+  @override
+  String get ticketsOpenPdf => 'ABRIR';
+
+  @override
+  String get ticketsPdfUnavailable => 'PDF aún no disponible';
+
+  @override
+  String get ticketsBuy => 'COMPRAR ENTRADA';
+
+  @override
+  String get ticketsBuyNoLink =>
+      'No hay enlace de compra. Añade la URL de la tienda de entradas para este evento en el admin o en la web en Info.';
+
+  @override
+  String get ticketsBuyCouldNotOpen => 'No se pudo abrir el enlace.';
+
+  @override
+  String get ticketsBuySubtitle => 'Asientos VIP y estándar disponibles';
+
+  @override
+  String get ticketsNoEvents => 'Aún no hay eventos con entradas';
+
+  @override
+  String get ticketsNoneForEvent => 'No hay entradas para este evento';
+
+  @override
+  String get ticketsLoadError => 'No se pudieron cargar las entradas';
+
+  @override
+  String get ticketsEventsLoadError => 'No se pudieron cargar los eventos';
+
+  @override
+  String get pdfViewerTitle => 'Entrada';
+
+  @override
+  String get contactFormLinkMissing =>
+      'No hay enlace al formulario. Añade la URL en Ajustes generales de la app en el panel.';
 }

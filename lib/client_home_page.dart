@@ -8,10 +8,14 @@ import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
 import 'about_page.dart';
 import 'client_event_progress_tab.dart';
+import 'client_event_settings_page.dart';
 import 'faq_sections_page.dart';
 import 'news_detail_page.dart';
+import 'about_app_page.dart';
 import 'settings_page.dart';
 import 'terms_page.dart';
+import 'my_tickets_sheet.dart';
+import 'notifications_page.dart';
 
 const _kGold = Color(0xFFD4AF37);
 const _kGoldLight = Color(0xFFF3E5AB);
@@ -47,6 +51,13 @@ class _ClientHomePageState extends State<ClientHomePage>
 
   List<AppNewsItem>? _news;
   bool _newsLoading = false;
+  int _unreadNotifications = 0;
+
+  bool get _canPurchaseTickets =>
+      !_loading &&
+      _error == null &&
+      _dashboard != null &&
+      _dashboard!.activeChild != null;
 
   @override
   void initState() {
@@ -54,9 +65,12 @@ class _ClientHomePageState extends State<ClientHomePage>
     WidgetsBinding.instance.addObserver(this);
     _loadDashboard();
     _loadNews();
+    _loadInfoSettings();
+    _refreshUnreadSilently();
     _dashboardRefreshTimer = Timer.periodic(const Duration(seconds: 20), (_) {
       if (!mounted) return;
       _refreshDashboardSilently();
+      _refreshUnreadSilently();
     });
   }
 
@@ -71,6 +85,7 @@ class _ClientHomePageState extends State<ClientHomePage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _refreshDashboardSilently();
+      _refreshUnreadSilently();
     }
   }
 
@@ -85,7 +100,7 @@ class _ClientHomePageState extends State<ClientHomePage>
       debugPrint('[ClientDashboard] children=${dashboard.children.length}');
       for (final c in dashboard.children) {
         debugPrint(
-          '[ClientDashboard] child=${c.firstName} ${c.lastName}, '
+          '[ClientDashboard] child=${c.firstName}, '
           'hasAssignment=${c.activeAssignment != null}',
         );
       }
@@ -113,6 +128,26 @@ class _ClientHomePageState extends State<ClientHomePage>
       });
     } catch (_) {
       // Silent refresh intentionally ignores transient errors.
+    }
+  }
+
+  Future<void> _refreshUnreadSilently() async {
+    try {
+      final count = await widget.auth.getUnreadNotificationsCount();
+      if (!mounted) return;
+      setState(() => _unreadNotifications = count);
+    } catch (_) {
+      // Silent badge refresh intentionally ignores transient errors.
+    }
+  }
+
+  Future<void> _openNotifications() async {
+    final changed = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => NotificationsPage(auth: widget.auth)));
+    if (!mounted) return;
+    if (changed == true) {
+      _refreshUnreadSilently();
     }
   }
 
@@ -209,6 +244,31 @@ class _ClientHomePageState extends State<ClientHomePage>
     );
   }
 
+  void _openEventSettingsPage(ChildWithAssignment child) {
+    final a = child.activeAssignment;
+    final eventId = a?.event.id ?? 0;
+    final name = a?.event.name ?? '';
+    final childrenInEvent = _dashboard?.children
+            .where((c) => c.activeAssignment?.event.id == eventId)
+            .toList() ??
+        [child];
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ClientEventSettingsPage(
+          auth: widget.auth,
+          eventName: name,
+          eventId: eventId,
+          childrenInEvent: childrenInEvent,
+          onMealChoiceSaved: () {
+            if (mounted) {
+              _refreshDashboardSilently();
+            }
+          },
+        ),
+      ),
+    );
+  }
+
   void _signOut() {
     widget.auth.clearToken();
     Navigator.of(context).pushAndRemoveUntil(
@@ -229,10 +289,21 @@ class _ClientHomePageState extends State<ClientHomePage>
           icon: const Icon(Icons.menu, color: Colors.white),
           color: Colors.grey[900],
           onSelected: (v) {
+            if (v == 'about_app') {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const AboutAppPage(),
+                ),
+              );
+            }
             if (v == 'settings') _openSettings();
             if (v == 'sign_out') _signOut();
           },
           itemBuilder: (_) => [
+            PopupMenuItem(
+              value: 'about_app',
+              child: Text(AppLocalizations.of(context)!.aboutTheApp),
+            ),
             PopupMenuItem(
               value: 'settings',
               child: Text(AppLocalizations.of(context)!.settings),
@@ -260,9 +331,10 @@ class _ClientHomePageState extends State<ClientHomePage>
                     Icons.notifications_outlined,
                     color: Colors.white,
                   ),
-                  onPressed: () {},
+                  onPressed: _openNotifications,
                 ),
-                const Positioned(right: 12, top: 12, child: _GoldDot()),
+                if (_unreadNotifications > 0)
+                  const Positioned(right: 12, top: 12, child: _GoldDot()),
               ],
             ),
           ),
@@ -559,16 +631,122 @@ class _ClientHomePageState extends State<ClientHomePage>
     }
   }
 
+  String? _normalizeHttpUrl(String raw) {
+    final t = raw.trim();
+    if (t.isEmpty) return null;
+    if (t.startsWith('http://') || t.startsWith('https://')) return t;
+    return 'https://$t';
+  }
+
+  /// Ссылка из админки «Ссылка на форму» (общие настройки приложения).
+  Future<void> _openContactFormUrl() async {
+    final l10n = AppLocalizations.of(context)!;
+    final raw = _infoSettings?.contactFormUrl;
+    if (raw == null || raw.trim().isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.contactFormLinkMissing)),
+      );
+      return;
+    }
+    final normalized = _normalizeHttpUrl(raw);
+    if (normalized == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.contactFormLinkMissing)),
+      );
+      return;
+    }
+    final uri = Uri.tryParse(normalized);
+    if (uri == null || !uri.hasScheme) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
+      );
+      return;
+    }
+    try {
+      if (!await canLaunchUrl(uri)) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
+        );
+        return;
+      }
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!ok && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
+        );
+      }
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Events tab
   // ---------------------------------------------------------------------------
 
   Widget _buildEventsContent() {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(
+            width: double.infinity,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                gradient: const LinearGradient(
+                  colors: [_kGold, _kGoldLight, _kGoldDark],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFBBF24).withValues(alpha: 0.22),
+                    blurRadius: 14,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Material(
+                type: MaterialType.transparency,
+                child: InkWell(
+                  onTap: () {
+                    showMyTicketsSheet(
+                      context,
+                      auth: widget.auth,
+                      canPurchaseTickets: _canPurchaseTickets,
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(999),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    child: Center(
+                      child: Text(
+                        l10n.myTicketsButton,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.8,
+                          color: Color(0xFF1A1408),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 28),
           _buildCurrentParticipationForEventsTab(),
           const SizedBox(height: 36),
           _buildNextShowsSection(),
@@ -591,7 +769,7 @@ class _ClientHomePageState extends State<ClientHomePage>
               l10n.nextShowsTitle,
               style: const TextStyle(
                 fontSize: 28,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w400,
                 color: Colors.white,
               ),
             ),
@@ -654,7 +832,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                 title: event.name,
                 subtitle: _formatUpcomingEventSubtitle(event),
                 onDetails: () {},
-                onContact: () {},
+                onContact: _openContactFormUrl,
               ),
             );
           }),
@@ -834,14 +1012,8 @@ class _ClientHomePageState extends State<ClientHomePage>
     final progress = totalStages > 0 ? completed / totalStages : 0.0;
     final parentProgress = a.parentProgress;
 
-    String? nextStageText;
-    for (final ps in a.preparatoryStages) {
-      if (ps.scheduledAt != null && ps.scheduledAt!.isAfter(DateTime.now())) {
-        nextStageText = AppLocalizations.of(context)!.next(ps.name);
-        nextStageText += ' (${_formatDate(ps.scheduledAt!)})';
-        break;
-      }
-    }
+    final l10nCard = AppLocalizations.of(context)!;
+    final nextStageText = _nextPreparatoryHint(a, l10nCard);
 
     return Container(
       decoration: BoxDecoration(
@@ -884,7 +1056,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                     Text(
                       AppLocalizations.of(
                         context,
-                      )!.model('${child.firstName} ${child.lastName}'),
+                      )!.model(child.firstName),
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.grey[500],
@@ -994,7 +1166,7 @@ class _ClientHomePageState extends State<ClientHomePage>
 
           const SizedBox(height: 22),
 
-          // CTA button
+          // CTA buttons
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -1021,6 +1193,36 @@ class _ClientHomePageState extends State<ClientHomePage>
                   ),
                   SizedBox(width: 8),
                   Icon(Icons.arrow_forward_ios, size: 14),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () => _openEventSettingsPage(child),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: const BorderSide(color: _kGold),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.eventSettings,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.settings_outlined, size: 18),
                 ],
               ),
             ),
@@ -1212,6 +1414,23 @@ class _ClientHomePageState extends State<ClientHomePage>
                       style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                     ),
                   ],
+                  ...() {
+                    final prepHint = _nextPreparatoryHint(a, l10n);
+                    if (prepHint == null) {
+                      return <Widget>[];
+                    }
+                    return [
+                      const SizedBox(height: 10),
+                      Text(
+                        prepHint,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ];
+                  }(),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -1239,6 +1458,36 @@ class _ClientHomePageState extends State<ClientHomePage>
                           ),
                           const SizedBox(width: 8),
                           const Icon(Icons.arrow_forward_ios, size: 14),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () => _openEventSettingsPage(child),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: const BorderSide(color: _kGold),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            l10n.eventSettings,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.settings_outlined, size: 18),
                         ],
                       ),
                     ),
@@ -1291,7 +1540,7 @@ class _ClientHomePageState extends State<ClientHomePage>
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: _openContactFormUrl,
               style: ElevatedButton.styleFrom(
                 backgroundColor: _kGold,
                 foregroundColor: Colors.black,
@@ -1409,24 +1658,13 @@ class _ClientHomePageState extends State<ClientHomePage>
       children: [
         _buildSectionTitle(AppLocalizations.of(context)!.quickActions),
         const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _ActionCard(
-                icon: Icons.calendar_month,
-                label: AppLocalizations.of(context)!.upcomingShows,
-                onTap: () {},
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _ActionCard(
-                icon: Icons.group,
-                label: AppLocalizations.of(context)!.manageKids,
-                onTap: () {},
-              ),
-            ),
-          ],
+        SizedBox(
+          width: double.infinity,
+          child: _ActionCard(
+            icon: Icons.assignment_outlined,
+            label: AppLocalizations.of(context)!.fillOutApplication,
+            onTap: _openContactFormUrl,
+          ),
         ),
       ],
     );
@@ -1486,6 +1724,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                 onTap: () {
                   setState(() => _currentTab = 1);
                   _refreshDashboardSilently();
+                  _loadInfoSettings();
                   if (_upcomingEvents == null && !_upcomingLoading) {
                     _loadUpcomingEvents();
                   }
@@ -1519,6 +1758,30 @@ class _ClientHomePageState extends State<ClientHomePage>
   // ---------------------------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------------------------
+
+  /// Next incomplete preparatory milestone (including rehearsal booking).
+  String? _nextPreparatoryHint(ActiveAssignment a, AppLocalizations l10n) {
+    if (a.preparatoryStages.isEmpty) {
+      return null;
+    }
+    final idx = a.preparatoryStages.indexWhere((p) => !p.isCompleted);
+    if (idx < 0) {
+      return null;
+    }
+    final p = a.preparatoryStages[idx];
+    if (p.isRehearsalMilestone && p.scheduledAt == null) {
+      return l10n.rehearsalNextBookHint;
+    }
+    if (p.scheduledAt != null && p.scheduledAt!.isAfter(DateTime.now())) {
+      final name = p.displayTitle(l10n);
+      return '${l10n.next(name)} (${_formatDate(p.scheduledAt!)})';
+    }
+    final title = p.displayTitle(l10n);
+    if (title.isNotEmpty) {
+      return l10n.next(title);
+    }
+    return null;
+  }
 
   static String _formatDate(DateTime date) {
     const months = [
@@ -1677,7 +1940,7 @@ class _ClientEventProgressPageState extends State<_ClientEventProgressPage> {
                       assignment: _child?.activeAssignment,
                       childFullName: _child == null
                           ? ''
-                          : '${_child!.firstName} ${_child!.lastName}'.trim(),
+                          : _child!.firstName,
                       onOpenInfo: widget.onOpenInfo,
                       onOpenGallery: widget.onOpenGallery,
                     )),
@@ -2010,7 +2273,7 @@ class _UpcomingEventCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 13,
                               color: Colors.white.withOpacity(0.7),
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                           const SizedBox(height: 20),

@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'api/auth_service.dart';
+import 'app_rich_html_body.dart';
 
 // Как в разделе Info: чёрный фон
 const _kCardBg = Color(0xFF121212);
 
 /// Экран статьи FAQ: сверху картинка из админки, под ней контент с форматированием (референс).
 class FaqArticleDetailPage extends StatelessWidget {
-  const FaqArticleDetailPage({
-    super.key,
-    required this.article,
-    this.baseUrl,
-  });
+  const FaqArticleDetailPage({super.key, required this.article, this.baseUrl});
 
   final FaqArticleItem article;
   final String? baseUrl;
@@ -22,7 +18,9 @@ class FaqArticleDetailPage extends StatelessWidget {
     if (u.startsWith('http')) return u;
     final base = baseUrl ?? '';
     if (base.isEmpty) return u;
-    return base.endsWith('/') ? '$base${u.replaceFirst(RegExp(r'^/'), '')}' : '$base$u';
+    return base.endsWith('/')
+        ? '$base${u.replaceFirst(RegExp(r'^/'), '')}'
+        : '$base$u';
   }
 
   @override
@@ -108,23 +106,19 @@ class FaqArticleDetailPage extends StatelessWidget {
   Widget _placeholder() {
     return Container(
       color: _kCardBg,
-      child: const Icon(
-        Icons.image_outlined,
-        size: 48,
-        color: Colors.white24,
-      ),
+      child: const Icon(Icons.image_outlined, size: 48, color: Colors.white24),
     );
   }
 
   Widget _buildContent() {
-    final text = article.body ?? '';
-    if (text.isEmpty) {
+    final raw = article.body ?? '';
+    if (raw.isEmpty) {
       return const SizedBox.shrink();
     }
-    final isHtml = text.contains('<') && text.contains('>');
+    final isHtml = raw.contains('<') && raw.contains('>');
     if (isHtml && baseUrl != null) {
-      return HtmlWidget(
-        text,
+      return buildAppRichHtmlBody(
+        html: raw,
         textStyle: TextStyle(
           fontSize: 15,
           height: 1.6,
@@ -134,8 +128,8 @@ class FaqArticleDetailPage extends StatelessWidget {
       );
     }
     if (isHtml) {
-      return HtmlWidget(
-        text,
+      return buildAppRichHtmlBody(
+        html: raw,
         textStyle: TextStyle(
           fontSize: 15,
           height: 1.6,
@@ -144,7 +138,7 @@ class FaqArticleDetailPage extends StatelessWidget {
       );
     }
     return Text(
-      text,
+      raw,
       style: TextStyle(
         fontSize: 15,
         height: 1.6,

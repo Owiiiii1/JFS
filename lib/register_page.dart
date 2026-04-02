@@ -64,8 +64,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
     } catch (e) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      final message = e is ApiEndpointNotFoundException
+          ? l10n.apiEndpointNotFoundHint
+          : l10n.registrationFailed(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.registrationFailed(e.toString()))),
+        SnackBar(content: Text(message)),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

@@ -15,14 +15,13 @@ class CreateChildPage extends StatefulWidget {
 class _CreateChildPageState extends State<CreateChildPage> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
+  String? _gender;
   DateTime? _birthdate;
   bool _saving = false;
 
   @override
   void dispose() {
     _firstNameController.dispose();
-    _lastNameController.dispose();
     super.dispose();
   }
 
@@ -39,7 +38,7 @@ class _CreateChildPageState extends State<CreateChildPage> {
     try {
       final child = await widget.auth.createChild(
         firstName: firstName,
-        lastName: _lastNameController.text.trim(),
+        gender: _gender,
         birthdate: _birthdate,
       );
       if (!mounted) return;
@@ -101,11 +100,12 @@ class _CreateChildPageState extends State<CreateChildPage> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _lastNameController,
+                    DropdownButtonFormField<String>(
+                      value: _gender,
+                      dropdownColor: const Color(0xFF121212),
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: 'Фамилия',
+                        labelText: AppLocalizations.of(context)!.gender,
                         labelStyle: TextStyle(color: Colors.grey[400]),
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey[700]!),
@@ -114,6 +114,17 @@ class _CreateChildPageState extends State<CreateChildPage> {
                           borderSide: BorderSide(color: Color(0xFFD4AF37)),
                         ),
                       ),
+                      items: [
+                        DropdownMenuItem(
+                          value: 'male',
+                          child: Text(AppLocalizations.of(context)!.genderBoy),
+                        ),
+                        DropdownMenuItem(
+                          value: 'female',
+                          child: Text(AppLocalizations.of(context)!.genderGirl),
+                        ),
+                      ],
+                      onChanged: (value) => setState(() => _gender = value),
                     ),
                     const SizedBox(height: 20),
                     InkWell(

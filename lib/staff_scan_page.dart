@@ -2,20 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'api/auth_service.dart';
 import 'app_settings.dart';
+import 'staff_info_child_profile_page.dart';
 
 /// Окно сканера QR: референс — тёмный фон, оранжевая рамка и кнопки.
-/// Открывается с главной (кнопка Scan) и из «Прочее» (Scan for Info).
+/// Главная: этап. [scanForInfo]: только ивент → lookup → экран профиля.
 class StaffScanPage extends StatefulWidget {
   const StaffScanPage({
     super.key,
     required this.auth,
     required this.accent,
     required this.backgroundColor,
+    this.scanForInfo = false,
   });
 
   final AuthService auth;
   final Color accent;
   final Color backgroundColor;
+  /// Режим «Прочее» → Scan for Info (без выбранного этапа).
+  final bool scanForInfo;
 
   @override
   State<StaffScanPage> createState() => _StaffScanPageState();
@@ -78,6 +82,38 @@ class _StaffScanPageState extends State<StaffScanPage> {
   }
 
   Future<void> _onScanned(String code) async {
+    if (_processing) return;
+
+    if (widget.scanForInfo) {
+      setState(() => _processing = true);
+      await _controller.stop();
+      try {
+        final detail = await widget.auth.scanInfoLookup(badgeCode: code);
+        if (!mounted) return;
+        await Navigator.of(context).pushReplacement(
+          MaterialPageRoute<void>(
+            builder: (_) => StaffInfoChildProfilePage(
+              detail: detail,
+              baseUrl: widget.auth.baseUrl,
+              accent: widget.accent,
+              backgroundColor: widget.backgroundColor,
+            ),
+          ),
+        );
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$e'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        setState(() => _processing = false);
+        await _controller.start();
+      }
+      return;
+    }
+
     final eventId = AppSettings.staffActiveEventId;
     final stageId = AppSettings.staffActiveStageId;
     final stageType = AppSettings.staffActiveStageType ?? 'main';
@@ -152,9 +188,9 @@ class _StaffScanPageState extends State<StaffScanPage> {
               ),
             ),
           ),
-          const Text(
-            'Scan QR Code',
-            style: TextStyle(
+          Text(
+            widget.scanForInfo ? 'Scan for Info' : 'Scan QR Code',
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -264,8 +300,11 @@ class _StaffScanPageState extends State<StaffScanPage> {
         borderRadius: BorderRadius.circular(24),
       ),
       child: Text(
-        'Align QR Code within the frame',
+        widget.scanForInfo
+            ? 'Scan child or parent badge to view profile'
+            : 'Align QR Code within the frame',
         style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16),
+        textAlign: TextAlign.center,
       ),
     );
   }

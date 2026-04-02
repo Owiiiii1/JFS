@@ -1,8 +1,16 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'api/auth_service.dart';
+import 'client_home_page.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
+import 'staff_home_page.dart';
 
 /// Экран при запуске: проигрывает видеоролик, по окончании переходит на вход.
 class IntroVideoPage extends StatefulWidget {
@@ -15,19 +23,64 @@ class IntroVideoPage extends StatefulWidget {
 }
 
 class _IntroVideoPageState extends State<IntroVideoPage> {
-  late VideoPlayerController _controller;
+  VideoPlayerController? _controller;
+  bool _checkingVersion = true;
+  bool _updateRequired = false;
+  String? _storeUrl;
   bool _initialized = false;
   String? _error;
+  bool _checkingSession = false;
+  Timer? _videoEndFallbackTimer;
+  bool _introExitStarted = false;
 
   @override
   void initState() {
     super.initState();
+    _checkVersionAndStart();
+  }
+
+  Future<void> _checkVersionAndStart() async {
+    try {
+      String? platform;
+      if (Platform.isAndroid) {
+        platform = 'android';
+      } else if (Platform.isIOS) {
+        platform = 'ios';
+      }
+
+      if (platform != null) {
+        final info = await PackageInfo.fromPlatform();
+        final result = await widget.auth.checkAppVersion(
+          platform: platform,
+          version: info.version,
+        );
+
+        if (!mounted) return;
+
+        if (!result.allowed) {
+          setState(() {
+            _checkingVersion = false;
+            _updateRequired = true;
+            _storeUrl = result.storeUrl;
+          });
+          return;
+        }
+      }
+    } catch (_) {}
+
+    if (!mounted) return;
+    setState(() => _checkingVersion = false);
+    _initializeVideo();
+  }
+
+  void _initializeVideo() {
     _controller = VideoPlayerController.asset('assets/intro_logo.mp4')
       ..initialize().then((_) {
         if (!mounted) return;
         setState(() => _initialized = true);
-        _controller.play();
-        _controller.setLooping(false);
+        _controller?.play();
+        _controller?.setLooping(false);
+        _scheduleVideoEndFallback();
       }).catchError((Object e) {
         if (!mounted) return;
         setState(() {
@@ -35,33 +88,152 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
           _error = e.toString();
         });
       });
-    _controller.addListener(_onVideoUpdate);
+    _controller?.addListener(_onVideoUpdate);
+  }
+
+  void _scheduleVideoEndFallback() {
+    final c = _controller;
+    if (c == null || !c.value.isInitialized) return;
+    final d = c.value.duration;
+    if (d.inMilliseconds <= 0) return;
+    _videoEndFallbackTimer?.cancel();
+    _videoEndFallbackTimer = Timer(d + const Duration(seconds: 2), () {
+      if (!mounted || _introExitStarted) return;
+      _completeIntroFromVideo();
+    });
+  }
+
+  void _completeIntroFromVideo() {
+    final controller = _controller;
+    if (controller == null) return;
+    controller.removeListener(_onVideoUpdate);
+    _goToLoginOrHome();
   }
 
   void _onVideoUpdate() {
-    if (!mounted || !_controller.value.isInitialized) return;
-    if (_controller.value.position >= _controller.value.duration &&
-        _controller.value.duration.inMilliseconds > 0) {
-      _controller.removeListener(_onVideoUpdate);
-      _goToLogin();
+    final controller = _controller;
+    if (!mounted || controller == null || !controller.value.isInitialized) return;
+    final durationMs = controller.value.duration.inMilliseconds;
+    if (durationMs <= 0) return;
+    final posMs = controller.value.position.inMilliseconds;
+    // На части устройств position никогда не достигает duration — ловим «почти конец» и остановку.
+    const toleranceMs = 500;
+    final nearEnd = posMs >= durationMs - toleranceMs;
+    final stoppedNearEnd =
+        !controller.value.isPlaying && posMs >= durationMs - toleranceMs * 2;
+    if (nearEnd || stoppedNearEnd) {
+      _completeIntroFromVideo();
     }
   }
 
-  void _goToLogin() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => LoginPage(auth: widget.auth)),
-    );
+  Future<void> _goToLoginOrHome() async {
+    if (_introExitStarted) return;
+    _introExitStarted = true;
+    _videoEndFallbackTimer?.cancel();
+    _controller?.removeListener(_onVideoUpdate);
+
+    setState(() => _checkingSession = true);
+    try {
+      final user = await widget.auth.restoreSessionIfPossible();
+      if (!mounted) return;
+      if (user != null) {
+        final role = (user['role'] ?? '').toString().toLowerCase();
+        final next = role == 'worker'
+            ? StaffHomePage(auth: widget.auth, user: user)
+            : ClientHomePage(auth: widget.auth, user: user);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => next),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => LoginPage(auth: widget.auth)),
+        );
+      }
+    } catch (e, st) {
+      if (kDebugMode) {
+        debugPrint('restoreSessionIfPossible failed: $e\n$st');
+      }
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => LoginPage(auth: widget.auth)),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _checkingSession = false);
+      }
+    }
+  }
+
+  Future<void> _openStore() async {
+    final url = _storeUrl;
+    if (url == null || url.isEmpty) {
+      return;
+    }
+
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      return;
+    }
+
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   @override
   void dispose() {
-    _controller.removeListener(_onVideoUpdate);
-    _controller.dispose();
+    _videoEndFallbackTimer?.cancel();
+    _controller?.removeListener(_onVideoUpdate);
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_checkingSession) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.white),
+        ),
+      );
+    }
+
+    if (_checkingVersion) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.white),
+        ),
+      );
+    }
+
+    if (_updateRequired) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.system_update, color: Colors.white70, size: 56),
+                const SizedBox(height: 16),
+                const Text(
+                  'Please update the app to continue.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                const SizedBox(height: 24),
+                FilledButton(
+                  onPressed: _storeUrl != null ? _openStore : null,
+                  child: const Text('Update app'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     if (_error != null) {
       return Scaffold(
         backgroundColor: Colors.black,
@@ -81,7 +253,7 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
               ),
               const SizedBox(height: 24),
               FilledButton(
-                onPressed: _goToLogin,
+                onPressed: _goToLoginOrHome,
                 child: Text(AppLocalizations.of(context)!.continueButton),
               ),
             ],
@@ -99,7 +271,17 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
       );
     }
 
-    final ar = _controller.value.aspectRatio;
+    final controller = _controller;
+    if (controller == null) {
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.white),
+        ),
+      );
+    }
+
+    final ar = controller.value.aspectRatio;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -108,14 +290,14 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
           Center(
             child: AspectRatio(
               aspectRatio: ar > 0 ? ar : 16 / 9,
-              child: VideoPlayer(_controller),
+              child: VideoPlayer(controller),
             ),
           ),
           // Тап по экрану — пропустить и перейти к входу
           Positioned.fill(
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: _goToLogin,
+              onTap: _goToLoginOrHome,
             ),
           ),
         ],

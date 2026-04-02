@@ -57,8 +57,12 @@ final next = (role == 'worker')
       );
     } catch (e) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      final message = e is ApiEndpointNotFoundException
+          ? l10n.apiEndpointNotFoundHint
+          : l10n.signInFailed(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.signInFailed(e.toString()))),
+        SnackBar(content: Text(message)),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

@@ -41,6 +41,26 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get apiEndpointNotFoundHint =>
+      'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsLoadFailed =>
+      'Could not load notifications. Try again.';
+
+  @override
+  String get notificationsEmpty => 'No notifications yet.';
+
+  @override
+  String get notificationsNewMark => 'New';
+
+  @override
+  String get notificationDetailsTitle => 'Notification';
+
+  @override
   String get createAccount => 'Create account';
 
   @override
@@ -88,7 +108,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editInfo => 'EDIT INFO';
 
   @override
-  String get fullName => 'Full Name';
+  String get fullName => 'Name';
 
   @override
   String get retry => 'Retry';
@@ -98,6 +118,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editProfile => 'Edit profile';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Delete account?';
+
+  @override
+  String get deleteAccountConfirmMessage =>
+      'Are you sure you want to permanently delete your account? This cannot be undone.';
+
+  @override
+  String get deleteAccountSecondTitle => 'What will be deleted';
+
+  @override
+  String get deleteAccountSecondMessage =>
+      'The following will be permanently removed from our systems:\n\n• Your account and profile\n• All children linked to your account\n• All event assignments, stage progress, tickets, and meal selections\n• Photos and other data stored for your children\n• Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.';
+
+  @override
+  String get deleteAccountContinue => 'Continue';
+
+  @override
+  String get deleteAccountConfirmAction => 'Delete permanently';
+
+  @override
+  String get deleteAccountWorking => 'Deleting account…';
 
   @override
   String get save => 'Save';
@@ -122,6 +168,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings => 'Settings';
+
+  @override
+  String get aboutTheApp => 'About the app';
+
+  @override
+  String get aboutAppDisplayName => 'YoungFashionShow';
+
+  @override
+  String get aboutPublisherLine => 'YOUNGFASHIONSHOW';
+
+  @override
+  String get aboutVersionLabel => 'VERSION';
+
+  @override
+  String get aboutReleaseDateLabel => 'RELEASE DATE';
+
+  @override
+  String get aboutDevelopedByPrefix => 'Developed by:';
+
+  @override
+  String get aboutDeveloperBrand => 'OWLSOLUTIONS';
+
+  @override
+  String get aboutLinkCouldNotOpen => 'Could not open the link.';
 
   @override
   String get appLanguage => 'App language';
@@ -155,6 +225,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get firstName => 'First name';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get genderBoy => 'Boy';
+
+  @override
+  String get genderGirl => 'Girl';
 
   @override
   String get lastName => 'Last name';
@@ -237,6 +316,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journeyProgress => 'JOURNEY PROGRESS';
 
   @override
+  String get journeyPreparationPhase => 'PREPARATION PHASE';
+
+  @override
+  String get journeyMainEventTitle => 'THE MAIN EVENT';
+
+  @override
+  String get journeyMainEventSubtitle => 'RUNWAY EXCLUSIVE';
+
+  @override
   String stepOf(int completed, int total) {
     return 'Step $completed of $total';
   }
@@ -248,6 +336,248 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewProgress => 'VIEW PROGRESS';
+
+  @override
+  String get eventSettings => 'EVENT SETTINGS';
+
+  @override
+  String get eventSettingsPlaceholder =>
+      'Event settings will appear here soon.';
+
+  @override
+  String get eventSettingsConfigurationPortal => 'CONFIGURATION PORTAL';
+
+  @override
+  String get eventSettingsMainHeadline => 'Event Settings';
+
+  @override
+  String get eventSettingsMealTitle => 'Meal Selection';
+
+  @override
+  String get eventSettingsMealSubtitle => 'Choose a meal for the current event';
+
+  @override
+  String get eventSettingsMealCta => 'MANAGE MENU';
+
+  @override
+  String get eventSettingsRehearsalTitle => 'Rehearsal Booking';
+
+  @override
+  String get eventSettingsRehearsalSubtitle => 'Book your spot for rehearsal';
+
+  @override
+  String get eventSettingsRehearsalCta => 'BOOK NOW';
+
+  @override
+  String get rehearsalModalTitle => 'Rehearsal booking';
+
+  @override
+  String get rehearsalSelectDate => 'Select date';
+
+  @override
+  String get rehearsalAvailableSlots => 'Available slots';
+
+  @override
+  String get rehearsalFreeLabel => 'Available:';
+
+  @override
+  String get rehearsalNoSlotsConfigured =>
+      'No rehearsal slots for this event yet.';
+
+  @override
+  String get rehearsalLoadError => 'Could not load slots. Try again.';
+
+  @override
+  String get rehearsalBrandNotAssigned =>
+      'Brand is not assigned for this child. Rehearsal booking is unavailable.';
+
+  @override
+  String get rehearsalFull => 'Full';
+
+  @override
+  String get rehearsalConfirmBooking => 'Confirm booking';
+
+  @override
+  String get rehearsalBookingFooterNote =>
+      'Changes must be made 24 hours before the session when possible.';
+
+  @override
+  String get rehearsalBookedTitle => 'Your rehearsal is booked';
+
+  @override
+  String get rehearsalChangeBooking => 'Change booking';
+
+  @override
+  String get rehearsalProgramLabel => 'Details';
+
+  @override
+  String get rehearsalArriveEarly => 'Please arrive 15 minutes early.';
+
+  @override
+  String get rehearsalBookingSaved => 'Booking saved';
+
+  @override
+  String get rehearsalBookingError => 'Could not complete booking.';
+
+  @override
+  String get rehearsalSelectChild => 'Child';
+
+  @override
+  String get rehearsalUpdateBooking => 'Update booking';
+
+  @override
+  String get rehearsalCancelChange => 'Cancel';
+
+  @override
+  String get rehearsalChangeBookingLockedHint =>
+      'The organizer has closed booking changes. Contact support if you need help.';
+
+  @override
+  String get rehearsalMilestoneTitle => 'Rehearsal';
+
+  @override
+  String rehearsalBrandMilestoneTitle(String brandName) {
+    return 'Brand rehearsal: $brandName';
+  }
+
+  @override
+  String get rehearsalBrandMilestoneShort => 'Brand rehearsal';
+
+  @override
+  String get rehearsalNextBookHint =>
+      'Book your rehearsal slot in Event settings.';
+
+  @override
+  String get eventSettingsPackingTitle => 'What to bring?';
+
+  @override
+  String get eventSettingsPackingSubtitle => '';
+
+  @override
+  String get eventSettingsPackingCta => 'VIEW LIST';
+
+  @override
+  String get eventPackingLoadFailed =>
+      'Could not load packing info. Try again.';
+
+  @override
+  String get eventPackingEmpty =>
+      'Packing information has not been added for this event yet.';
+
+  @override
+  String get eventSettingsBrandTitle => 'Brand Requirements';
+
+  @override
+  String get eventSettingsBrandSubtitle =>
+      'Read the brand\'s recommendations for taking part in the event';
+
+  @override
+  String get eventSettingsBrandCta => 'VIEW GUIDELINES';
+
+  @override
+  String get brandRequirementsLoadFailed =>
+      'Could not load brand requirements. Try again.';
+
+  @override
+  String get brandRequirementsEmpty =>
+      'No brand requirements have been added for this event yet.';
+
+  @override
+  String get brandRequirementsEmptyItem =>
+      'No requirements text has been added for this brand yet.';
+
+  @override
+  String get eventSettingsChatTitle => 'Group Chat';
+
+  @override
+  String get eventSettingsChatSubtitle =>
+      'Group chat with group participants and managers';
+
+  @override
+  String get eventSettingsChatCta => 'OPEN CHAT';
+
+  @override
+  String get chatRoomsLoadFailed => 'Could not load chat rooms. Try again.';
+
+  @override
+  String get chatNoRooms =>
+      'No chat rooms are available for your brands in this event yet.';
+
+  @override
+  String get chatNoMessagesYet => 'No messages yet';
+
+  @override
+  String get chatLoadFailed => 'Could not load chat messages. Try again.';
+
+  @override
+  String get chatSendFailed => 'Could not send message. Try again.';
+
+  @override
+  String get chatMessagePlaceholder => 'Message group...';
+
+  @override
+  String get chatReply => 'Reply';
+
+  @override
+  String get chatReplyCancel => 'Cancel';
+
+  @override
+  String chatReplyingTo(String name) {
+    return 'Replying to $name';
+  }
+
+  @override
+  String get chatReplyPreviewPhoto => 'Photo';
+
+  @override
+  String eventSettingsChatMoreParticipants(int count) {
+    return '+$count';
+  }
+
+  @override
+  String get mealChoiceTitle => 'Choose lunch';
+
+  @override
+  String get mealSelectChildLabel => 'Child';
+
+  @override
+  String get mealSelectDishLabel => 'Dish';
+
+  @override
+  String get mealSave => 'ORDER';
+
+  @override
+  String get mealNoMealsConfigured =>
+      'No dishes have been added for this event yet.';
+
+  @override
+  String get mealSaved => 'Saved';
+
+  @override
+  String get mealSaveError => 'Could not save. Try again.';
+
+  @override
+  String get mealOrdersClosed => 'Order acceptance is closed';
+
+  @override
+  String get mealPaid => 'Paid';
+
+  @override
+  String get mealPaidDetail => 'Lunch for this event is paid.';
+
+  @override
+  String get mealPayInBrowser =>
+      'Complete payment in the browser, then return to the app.';
+
+  @override
+  String get mealCheckoutError => 'Could not start payment. Try again.';
+
+  @override
+  String get mealAwaitingPayment => 'Order placed — awaiting payment';
+
+  @override
+  String get mealAwaitingPaymentDetail =>
+      'Your dish is saved. Finish payment in the browser; status will update after Stripe confirms it.';
 
   @override
   String get noActiveEvents => 'No active events';
@@ -266,6 +596,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quickActions => 'Quick Actions';
+
+  @override
+  String get fillOutApplication => 'Fill Out\nApplication';
 
   @override
   String get upcomingShows => 'Upcoming\nShows';
@@ -359,4 +692,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registrationOpen => 'Registration Open';
+
+  @override
+  String get myTicketsButton => 'MY TICKETS';
+
+  @override
+  String get myTicketsTitle => 'My tickets';
+
+  @override
+  String get selectEventForTickets => 'Select event';
+
+  @override
+  String get ticketsMomName => 'Parent name';
+
+  @override
+  String get ticketsEventDate => 'Date';
+
+  @override
+  String get ticketsOpenPdf => 'OPEN';
+
+  @override
+  String get ticketsPdfUnavailable => 'PDF not available yet';
+
+  @override
+  String get ticketsBuy => 'BUY TICKET';
+
+  @override
+  String get ticketsBuyNoLink =>
+      'No purchase link is set. Add a ticket store URL for this event in the admin, or a website URL in Info.';
+
+  @override
+  String get ticketsBuyCouldNotOpen => 'Could not open the link.';
+
+  @override
+  String get ticketsBuySubtitle => 'VIP and standard seats available';
+
+  @override
+  String get ticketsNoEvents => 'No events with tickets yet';
+
+  @override
+  String get ticketsNoneForEvent => 'No tickets for this event';
+
+  @override
+  String get ticketsLoadError => 'Could not load tickets';
+
+  @override
+  String get ticketsEventsLoadError => 'Could not load events';
+
+  @override
+  String get pdfViewerTitle => 'Ticket';
+
+  @override
+  String get contactFormLinkMissing =>
+      'No form link is set. Add «Contact / signup form URL» in Application settings in the admin.';
 }

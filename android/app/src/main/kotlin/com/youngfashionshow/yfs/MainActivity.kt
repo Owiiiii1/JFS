@@ -1,4 +1,4 @@
-package com.example.jfs_application
+package com.youngfashionshow.yfs
 
 import io.flutter.embedding.android.FlutterActivity
 

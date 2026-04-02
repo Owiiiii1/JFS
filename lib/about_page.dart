@@ -5,7 +5,7 @@ import 'block_detail_page.dart';
 const _kCardBg = Color(0xFF121212);
 const _kAccentGray = Color(0xFF8E8E93);
 
-/// Экран «О нас»: логотип YFS, фото сверху, текст после фото, блок «Common Inquiries» — 4 кнопки.
+/// Экран «О нас»: в AppBar тот же логотип, что в шапке клиентского приложения (`assets/logo.png`).
 /// По нажатию на блок открывается экран с названием и текстом блока.
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key, required this.auth});
@@ -61,8 +61,15 @@ class _AboutPageState extends State<AboutPage> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
+        surfaceTintColor: Colors.transparent,
         foregroundColor: Colors.white,
         elevation: 0,
+        centerTitle: true,
+        title: Image.asset(
+          'assets/logo.png',
+          height: 32,
+          filterQuality: FilterQuality.high,
+        ),
       ),
       body: _loading
           ? const Center(
@@ -97,29 +104,6 @@ class _AboutPageState extends State<AboutPage> {
                   child: Column(
                     children: [
                       const SizedBox(height: 8),
-                      // YFS header (as in reference)
-                      const Text(
-                        'YFS',
-                        style: TextStyle(
-                          fontFamily: 'serif',
-                          fontSize: 42,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: -1,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Young Fashion Show',
-                        style: TextStyle(
-                          fontSize: 10,
-                          letterSpacing: 0.4,
-                          fontWeight: FontWeight.w600,
-                          color: _kAccentGray,
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      // About Us section
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -178,7 +162,7 @@ class _AboutPageState extends State<AboutPage> {
                                 fontSize: 15,
                                 height: 1.5,
                                 color: Colors.white.withOpacity(0.85),
-                                fontWeight: FontWeight.w300,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
+import 'gen_l10n/app_localizations.dart';
 
 const _kPrimary = Color(0xFFec5b13);
 const _kBgDark = Color(0xFF000000);
@@ -228,11 +229,14 @@ class _StaffChildDetailPageState extends State<StaffChildDetailPage> {
   }
 
   List<Widget> _buildCoreDetailsRows(SupervisorChildDetail d) {
+    final l10n = AppLocalizations.of(context)!;
     final rows = <MapEntry<String, String>>[];
+    if (d.gender != null && d.gender!.isNotEmpty) {
+      rows.add(MapEntry(l10n.gender, d.gender == 'female' ? l10n.genderGirl : l10n.genderBoy));
+    }
     if (d.age != null) rows.add(MapEntry('Age', '${d.age} years old'));
     if (d.birthdate != null) rows.add(MapEntry('Birthdate', _formatBirthdate(d.birthdate!)));
     if (d.heightValue != null) rows.add(MapEntry('Height', _formatHeight(d)));
-    if (d.weightValue != null) rows.add(MapEntry('Weight', _formatWeight(d)));
     final notes = d.notes?.trim();
     if (notes != null && notes.isNotEmpty) rows.add(MapEntry('Notes', notes));
 
@@ -259,16 +263,6 @@ class _StaffChildDetailPageState extends State<StaffChildDetailPage> {
             : 'cm'
         : 'cm';
     return '${d.heightValue!.toStringAsFixed(0)} $unit';
-  }
-
-  String _formatWeight(SupervisorChildDetail d) {
-    if (d.weightValue == null) return '—';
-    final unit = (d.weightUnit?.trim().isNotEmpty ?? false)
-        ? d.weightUnit!.toLowerCase() == 'imperial'
-            ? 'lb'
-            : 'kg'
-        : 'kg';
-    return '${d.weightValue!.toStringAsFixed(0)} $unit';
   }
 
   String _formatBirthdate(DateTime d) {

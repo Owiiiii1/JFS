@@ -26,11 +26,9 @@ class ChildEditPage extends StatefulWidget {
 
 class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
   late String _firstName;
-  late String _lastName;
+  late String? _gender;
   late DateTime? _birthdate;
   late double? _heightValue;
-  late double? _weightValue;
-  late double? _shoulderValue;
   late double? _chestValue;
   late double? _waistValue;
   late double? _hipsValue;
@@ -79,11 +77,9 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
   void _syncFromChild() {
     final c = widget.child;
     _firstName = c.firstName;
-    _lastName = c.lastName;
+    _gender = c.gender;
     _birthdate = c.birthdate;
     _heightValue = c.heightValue;
-    _weightValue = c.weightValue;
-    _shoulderValue = c.shoulderValue;
     _chestValue = c.chestValue;
     _waistValue = c.waistValue;
     _hipsValue = c.hipsValue;
@@ -135,10 +131,6 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
   /// Значения в state хранятся в метрике (см, кг). Для отображения переводим в выбранные единицы.
   double? get _displayHeight =>
       _heightValue != null ? AppSettings.lengthFromMetric(_heightValue!) : null;
-  double? get _displayWeight =>
-      _weightValue != null ? AppSettings.weightFromMetric(_weightValue!) : null;
-  double? get _displayShoulder =>
-      _shoulderValue != null ? AppSettings.lengthFromMetric(_shoulderValue!) : null;
   double? get _displayChest =>
       _chestValue != null ? AppSettings.lengthFromMetric(_chestValue!) : null;
   double? get _displayWaist =>
@@ -151,7 +143,7 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('$_firstName $_lastName'),
+        title: Text(_firstName),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
@@ -181,15 +173,14 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                   ),
                   const SizedBox(height: 16),
                   _EditableRow(
-                    label: AppLocalizations.of(context)!.lastName,
-                    value: _lastName.isEmpty ? '—' : _lastName,
-                    onTap: () => _showEditText(
+                    label: AppLocalizations.of(context)!.gender,
+                    value: _genderLabel(context, _gender),
+                    onTap: () => _showEditGender(
                       context: context,
-                      label: AppLocalizations.of(context)!.lastName,
-                      value: _lastName,
+                      current: _gender,
                       onSave: (v) async {
-                        await _update({'last_name': v});
-                        setState(() => _lastName = v);
+                        await _update({'gender': v});
+                        setState(() => _gender = v);
                       },
                     ),
                   ),
@@ -224,36 +215,6 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                         final metric = v != null ? AppSettings.lengthToMetric(v) : null;
                         await _update({'height_value': metric});
                         setState(() => _heightValue = metric);
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _EditableRow(
-                    label: '${AppLocalizations.of(context)!.weight} (${AppSettings.weightUnitLabel})',
-                    value: _num(_displayWeight),
-                    onTap: () => _showEditNumber(
-                      context: context,
-                      label: '${AppLocalizations.of(context)!.weight} (${AppSettings.weightUnitLabel})',
-                      value: _displayWeight,
-                      onSave: (v) async {
-                        final metric = v != null ? AppSettings.weightToMetric(v) : null;
-                        await _update({'weight_value': metric});
-                        setState(() => _weightValue = metric);
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _EditableRow(
-                    label: '${AppLocalizations.of(context)!.shoulders} (${AppSettings.lengthUnitLabel})',
-                    value: _num(_displayShoulder),
-                    onTap: () => _showEditNumber(
-                      context: context,
-                      label: '${AppLocalizations.of(context)!.shoulders} (${AppSettings.lengthUnitLabel})',
-                      value: _displayShoulder,
-                      onSave: (v) async {
-                        final metric = v != null ? AppSettings.lengthToMetric(v) : null;
-                        await _update({'shoulder_value': metric});
-                        setState(() => _shoulderValue = metric);
                       },
                     ),
                   ),
@@ -802,6 +763,85 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                 onPressed: () async {
                   Navigator.of(ctx).pop();
                   if (picked != null) await onSave(picked);
+                },
+                child: Text(AppLocalizations.of(context)!.save),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  static String _genderLabel(BuildContext context, String? gender) {
+    return switch (gender) {
+      'male' => AppLocalizations.of(context)!.genderBoy,
+      'female' => AppLocalizations.of(context)!.genderGirl,
+      _ => '—',
+    };
+  }
+
+  static void _showEditGender({
+    required BuildContext context,
+    required String? current,
+    required Future<void> Function(String?) onSave,
+  }) {
+    String? selected = current;
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            backgroundColor: const Color(0xFF121212),
+            title: Text(
+              AppLocalizations.of(context)!.gender,
+              style: const TextStyle(color: Colors.white),
+            ),
+            content: DropdownButtonFormField<String>(
+              value: selected,
+              dropdownColor: const Color(0xFF121212),
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.gender,
+                labelStyle: TextStyle(color: Colors.grey[400]),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey[700]!),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFD4AF37)),
+                ),
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: 'male',
+                  child: Text(AppLocalizations.of(context)!.genderBoy),
+                ),
+                DropdownMenuItem(
+                  value: 'female',
+                  child: Text(AppLocalizations.of(context)!.genderGirl),
+                ),
+              ],
+              onChanged: (value) => setDialogState(() => selected = value),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(
+                  AppLocalizations.of(context)!.cancel,
+                  style: const TextStyle(color: Colors.white70),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+                  await onSave(null);
+                },
+                child: const Text('Очистить', style: TextStyle(color: Colors.white70)),
+              ),
+              FilledButton(
+                onPressed: () async {
+                  Navigator.of(ctx).pop();
+                  await onSave(selected);
                 },
                 child: Text(AppLocalizations.of(context)!.save),
               ),

@@ -163,6 +163,42 @@ abstract class AppLocalizations {
   /// **'Sign in failed: {error}'**
   String signInFailed(String error);
 
+  /// No description provided for @apiEndpointNotFoundHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).'**
+  String get apiEndpointNotFoundHint;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load notifications. Try again.'**
+  String get notificationsLoadFailed;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet.'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationsNewMark.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get notificationsNewMark;
+
+  /// No description provided for @notificationDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get notificationDetailsTitle;
+
   /// No description provided for @createAccount.
   ///
   /// In en, this message translates to:
@@ -256,7 +292,7 @@ abstract class AppLocalizations {
   /// No description provided for @fullName.
   ///
   /// In en, this message translates to:
-  /// **'Full Name'**
+  /// **'Name'**
   String get fullName;
 
   /// No description provided for @retry.
@@ -276,6 +312,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit profile'**
   String get editProfile;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get deleteAccountConfirmTitle;
+
+  /// No description provided for @deleteAccountConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to permanently delete your account? This cannot be undone.'**
+  String get deleteAccountConfirmMessage;
+
+  /// No description provided for @deleteAccountSecondTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What will be deleted'**
+  String get deleteAccountSecondTitle;
+
+  /// No description provided for @deleteAccountSecondMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The following will be permanently removed from our systems:\n\n• Your account and profile\n• All children linked to your account\n• All event assignments, stage progress, tickets, and meal selections\n• Photos and other data stored for your children\n• Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.'**
+  String get deleteAccountSecondMessage;
+
+  /// No description provided for @deleteAccountContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get deleteAccountContinue;
+
+  /// No description provided for @deleteAccountConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete permanently'**
+  String get deleteAccountConfirmAction;
+
+  /// No description provided for @deleteAccountWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting account…'**
+  String get deleteAccountWorking;
 
   /// No description provided for @save.
   ///
@@ -324,6 +408,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
+
+  /// No description provided for @aboutTheApp.
+  ///
+  /// In en, this message translates to:
+  /// **'About the app'**
+  String get aboutTheApp;
+
+  /// No description provided for @aboutAppDisplayName.
+  ///
+  /// In en, this message translates to:
+  /// **'YoungFashionShow'**
+  String get aboutAppDisplayName;
+
+  /// No description provided for @aboutPublisherLine.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUNGFASHIONSHOW'**
+  String get aboutPublisherLine;
+
+  /// No description provided for @aboutVersionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'VERSION'**
+  String get aboutVersionLabel;
+
+  /// No description provided for @aboutReleaseDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'RELEASE DATE'**
+  String get aboutReleaseDateLabel;
+
+  /// No description provided for @aboutDevelopedByPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Developed by:'**
+  String get aboutDevelopedByPrefix;
+
+  /// No description provided for @aboutDeveloperBrand.
+  ///
+  /// In en, this message translates to:
+  /// **'OWLSOLUTIONS'**
+  String get aboutDeveloperBrand;
+
+  /// No description provided for @aboutLinkCouldNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link.'**
+  String get aboutLinkCouldNotOpen;
 
   /// No description provided for @appLanguage.
   ///
@@ -390,6 +522,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'First name'**
   String get firstName;
+
+  /// No description provided for @gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// No description provided for @genderBoy.
+  ///
+  /// In en, this message translates to:
+  /// **'Boy'**
+  String get genderBoy;
+
+  /// No description provided for @genderGirl.
+  ///
+  /// In en, this message translates to:
+  /// **'Girl'**
+  String get genderGirl;
 
   /// No description provided for @lastName.
   ///
@@ -547,6 +697,24 @@ abstract class AppLocalizations {
   /// **'JOURNEY PROGRESS'**
   String get journeyProgress;
 
+  /// No description provided for @journeyPreparationPhase.
+  ///
+  /// In en, this message translates to:
+  /// **'PREPARATION PHASE'**
+  String get journeyPreparationPhase;
+
+  /// No description provided for @journeyMainEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'THE MAIN EVENT'**
+  String get journeyMainEventTitle;
+
+  /// No description provided for @journeyMainEventSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'RUNWAY EXCLUSIVE'**
+  String get journeyMainEventSubtitle;
+
   /// No description provided for @stepOf.
   ///
   /// In en, this message translates to:
@@ -564,6 +732,444 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'VIEW PROGRESS'**
   String get viewProgress;
+
+  /// No description provided for @eventSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'EVENT SETTINGS'**
+  String get eventSettings;
+
+  /// No description provided for @eventSettingsPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Event settings will appear here soon.'**
+  String get eventSettingsPlaceholder;
+
+  /// No description provided for @eventSettingsConfigurationPortal.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFIGURATION PORTAL'**
+  String get eventSettingsConfigurationPortal;
+
+  /// No description provided for @eventSettingsMainHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Settings'**
+  String get eventSettingsMainHeadline;
+
+  /// No description provided for @eventSettingsMealTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Meal Selection'**
+  String get eventSettingsMealTitle;
+
+  /// No description provided for @eventSettingsMealSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a meal for the current event'**
+  String get eventSettingsMealSubtitle;
+
+  /// No description provided for @eventSettingsMealCta.
+  ///
+  /// In en, this message translates to:
+  /// **'MANAGE MENU'**
+  String get eventSettingsMealCta;
+
+  /// No description provided for @eventSettingsRehearsalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rehearsal Booking'**
+  String get eventSettingsRehearsalTitle;
+
+  /// No description provided for @eventSettingsRehearsalSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book your spot for rehearsal'**
+  String get eventSettingsRehearsalSubtitle;
+
+  /// No description provided for @eventSettingsRehearsalCta.
+  ///
+  /// In en, this message translates to:
+  /// **'BOOK NOW'**
+  String get eventSettingsRehearsalCta;
+
+  /// No description provided for @rehearsalModalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rehearsal booking'**
+  String get rehearsalModalTitle;
+
+  /// No description provided for @rehearsalSelectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get rehearsalSelectDate;
+
+  /// No description provided for @rehearsalAvailableSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'Available slots'**
+  String get rehearsalAvailableSlots;
+
+  /// No description provided for @rehearsalFreeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Available:'**
+  String get rehearsalFreeLabel;
+
+  /// No description provided for @rehearsalNoSlotsConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'No rehearsal slots for this event yet.'**
+  String get rehearsalNoSlotsConfigured;
+
+  /// No description provided for @rehearsalLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load slots. Try again.'**
+  String get rehearsalLoadError;
+
+  /// No description provided for @rehearsalBrandNotAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand is not assigned for this child. Rehearsal booking is unavailable.'**
+  String get rehearsalBrandNotAssigned;
+
+  /// No description provided for @rehearsalFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get rehearsalFull;
+
+  /// No description provided for @rehearsalConfirmBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm booking'**
+  String get rehearsalConfirmBooking;
+
+  /// No description provided for @rehearsalBookingFooterNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes must be made 24 hours before the session when possible.'**
+  String get rehearsalBookingFooterNote;
+
+  /// No description provided for @rehearsalBookedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rehearsal is booked'**
+  String get rehearsalBookedTitle;
+
+  /// No description provided for @rehearsalChangeBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Change booking'**
+  String get rehearsalChangeBooking;
+
+  /// No description provided for @rehearsalProgramLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get rehearsalProgramLabel;
+
+  /// No description provided for @rehearsalArriveEarly.
+  ///
+  /// In en, this message translates to:
+  /// **'Please arrive 15 minutes early.'**
+  String get rehearsalArriveEarly;
+
+  /// No description provided for @rehearsalBookingSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking saved'**
+  String get rehearsalBookingSaved;
+
+  /// No description provided for @rehearsalBookingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete booking.'**
+  String get rehearsalBookingError;
+
+  /// No description provided for @rehearsalSelectChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Child'**
+  String get rehearsalSelectChild;
+
+  /// No description provided for @rehearsalUpdateBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Update booking'**
+  String get rehearsalUpdateBooking;
+
+  /// No description provided for @rehearsalCancelChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get rehearsalCancelChange;
+
+  /// No description provided for @rehearsalChangeBookingLockedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The organizer has closed booking changes. Contact support if you need help.'**
+  String get rehearsalChangeBookingLockedHint;
+
+  /// No description provided for @rehearsalMilestoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rehearsal'**
+  String get rehearsalMilestoneTitle;
+
+  /// No description provided for @rehearsalBrandMilestoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand rehearsal: {brandName}'**
+  String rehearsalBrandMilestoneTitle(String brandName);
+
+  /// No description provided for @rehearsalBrandMilestoneShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand rehearsal'**
+  String get rehearsalBrandMilestoneShort;
+
+  /// No description provided for @rehearsalNextBookHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Book your rehearsal slot in Event settings.'**
+  String get rehearsalNextBookHint;
+
+  /// No description provided for @eventSettingsPackingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What to bring?'**
+  String get eventSettingsPackingTitle;
+
+  /// No description provided for @eventSettingsPackingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **''**
+  String get eventSettingsPackingSubtitle;
+
+  /// No description provided for @eventSettingsPackingCta.
+  ///
+  /// In en, this message translates to:
+  /// **'VIEW LIST'**
+  String get eventSettingsPackingCta;
+
+  /// No description provided for @eventPackingLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load packing info. Try again.'**
+  String get eventPackingLoadFailed;
+
+  /// No description provided for @eventPackingEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Packing information has not been added for this event yet.'**
+  String get eventPackingEmpty;
+
+  /// No description provided for @eventSettingsBrandTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand Requirements'**
+  String get eventSettingsBrandTitle;
+
+  /// No description provided for @eventSettingsBrandSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the brand\'s recommendations for taking part in the event'**
+  String get eventSettingsBrandSubtitle;
+
+  /// No description provided for @eventSettingsBrandCta.
+  ///
+  /// In en, this message translates to:
+  /// **'VIEW GUIDELINES'**
+  String get eventSettingsBrandCta;
+
+  /// No description provided for @brandRequirementsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load brand requirements. Try again.'**
+  String get brandRequirementsLoadFailed;
+
+  /// No description provided for @brandRequirementsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No brand requirements have been added for this event yet.'**
+  String get brandRequirementsEmpty;
+
+  /// No description provided for @brandRequirementsEmptyItem.
+  ///
+  /// In en, this message translates to:
+  /// **'No requirements text has been added for this brand yet.'**
+  String get brandRequirementsEmptyItem;
+
+  /// No description provided for @eventSettingsChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Chat'**
+  String get eventSettingsChatTitle;
+
+  /// No description provided for @eventSettingsChatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Group chat with group participants and managers'**
+  String get eventSettingsChatSubtitle;
+
+  /// No description provided for @eventSettingsChatCta.
+  ///
+  /// In en, this message translates to:
+  /// **'OPEN CHAT'**
+  String get eventSettingsChatCta;
+
+  /// No description provided for @chatRoomsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load chat rooms. Try again.'**
+  String get chatRoomsLoadFailed;
+
+  /// No description provided for @chatNoRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'No chat rooms are available for your brands in this event yet.'**
+  String get chatNoRooms;
+
+  /// No description provided for @chatNoMessagesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet'**
+  String get chatNoMessagesYet;
+
+  /// No description provided for @chatLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load chat messages. Try again.'**
+  String get chatLoadFailed;
+
+  /// No description provided for @chatSendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send message. Try again.'**
+  String get chatSendFailed;
+
+  /// No description provided for @chatMessagePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Message group...'**
+  String get chatMessagePlaceholder;
+
+  /// No description provided for @chatReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get chatReply;
+
+  /// No description provided for @chatReplyCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get chatReplyCancel;
+
+  /// No description provided for @chatReplyingTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Replying to {name}'**
+  String chatReplyingTo(String name);
+
+  /// No description provided for @chatReplyPreviewPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get chatReplyPreviewPhoto;
+
+  /// No description provided for @eventSettingsChatMoreParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count}'**
+  String eventSettingsChatMoreParticipants(int count);
+
+  /// No description provided for @mealChoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose lunch'**
+  String get mealChoiceTitle;
+
+  /// No description provided for @mealSelectChildLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Child'**
+  String get mealSelectChildLabel;
+
+  /// No description provided for @mealSelectDishLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Dish'**
+  String get mealSelectDishLabel;
+
+  /// No description provided for @mealSave.
+  ///
+  /// In en, this message translates to:
+  /// **'ORDER'**
+  String get mealSave;
+
+  /// No description provided for @mealNoMealsConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'No dishes have been added for this event yet.'**
+  String get mealNoMealsConfigured;
+
+  /// No description provided for @mealSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get mealSaved;
+
+  /// No description provided for @mealSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save. Try again.'**
+  String get mealSaveError;
+
+  /// No description provided for @mealOrdersClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Order acceptance is closed'**
+  String get mealOrdersClosed;
+
+  /// No description provided for @mealPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get mealPaid;
+
+  /// No description provided for @mealPaidDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Lunch for this event is paid.'**
+  String get mealPaidDetail;
+
+  /// No description provided for @mealPayInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete payment in the browser, then return to the app.'**
+  String get mealPayInBrowser;
+
+  /// No description provided for @mealCheckoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start payment. Try again.'**
+  String get mealCheckoutError;
+
+  /// No description provided for @mealAwaitingPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Order placed — awaiting payment'**
+  String get mealAwaitingPayment;
+
+  /// No description provided for @mealAwaitingPaymentDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Your dish is saved. Finish payment in the browser; status will update after Stripe confirms it.'**
+  String get mealAwaitingPaymentDetail;
 
   /// No description provided for @noActiveEvents.
   ///
@@ -600,6 +1206,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Quick Actions'**
   String get quickActions;
+
+  /// No description provided for @fillOutApplication.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill Out\nApplication'**
+  String get fillOutApplication;
 
   /// No description provided for @upcomingShows.
   ///
@@ -768,6 +1380,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Registration Open'**
   String get registrationOpen;
+
+  /// No description provided for @myTicketsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'MY TICKETS'**
+  String get myTicketsButton;
+
+  /// No description provided for @myTicketsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My tickets'**
+  String get myTicketsTitle;
+
+  /// No description provided for @selectEventForTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Select event'**
+  String get selectEventForTickets;
+
+  /// No description provided for @ticketsMomName.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent name'**
+  String get ticketsMomName;
+
+  /// No description provided for @ticketsEventDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get ticketsEventDate;
+
+  /// No description provided for @ticketsOpenPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'OPEN'**
+  String get ticketsOpenPdf;
+
+  /// No description provided for @ticketsPdfUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF not available yet'**
+  String get ticketsPdfUnavailable;
+
+  /// No description provided for @ticketsBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'BUY TICKET'**
+  String get ticketsBuy;
+
+  /// No description provided for @ticketsBuyNoLink.
+  ///
+  /// In en, this message translates to:
+  /// **'No purchase link is set. Add a ticket store URL for this event in the admin, or a website URL in Info.'**
+  String get ticketsBuyNoLink;
+
+  /// No description provided for @ticketsBuyCouldNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link.'**
+  String get ticketsBuyCouldNotOpen;
+
+  /// No description provided for @ticketsBuySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'VIP and standard seats available'**
+  String get ticketsBuySubtitle;
+
+  /// No description provided for @ticketsNoEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No events with tickets yet'**
+  String get ticketsNoEvents;
+
+  /// No description provided for @ticketsNoneForEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'No tickets for this event'**
+  String get ticketsNoneForEvent;
+
+  /// No description provided for @ticketsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load tickets'**
+  String get ticketsLoadError;
+
+  /// No description provided for @ticketsEventsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load events'**
+  String get ticketsEventsLoadError;
+
+  /// No description provided for @pdfViewerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket'**
+  String get pdfViewerTitle;
+
+  /// No description provided for @contactFormLinkMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No form link is set. Add «Contact / signup form URL» in Application settings in the admin.'**
+  String get contactFormLinkMissing;
 }
 
 class _AppLocalizationsDelegate

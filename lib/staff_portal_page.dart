@@ -6,6 +6,8 @@ import 'login_page.dart';
 import 'staff_child_detail_page.dart';
 import 'staff_scan_page.dart';
 import 'staff_settings_page.dart';
+import 'notifications_page.dart';
+import 'about_app_page.dart';
 
 // Референс Event Details: тёмно-коричневый фон, коричневый (primary) для кнопок и виджетов
 const _kBgDark = Color(0xFF000000);
@@ -38,11 +40,33 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   bool _supervisorChildrenLoading = false;
   String? _supervisorChildrenError;
   int? _supervisorChildrenEventId;
+  int _unreadNotifications = 0;
 
   @override
   void initState() {
     super.initState();
     _initSelectedRole();
+    _refreshUnreadSilently();
+  }
+
+  Future<void> _refreshUnreadSilently() async {
+    try {
+      final count = await widget.auth.getUnreadNotificationsCount();
+      if (!mounted) return;
+      setState(() => _unreadNotifications = count);
+    } catch (_) {
+      // Silent badge refresh intentionally ignores transient errors.
+    }
+  }
+
+  Future<void> _openNotifications() async {
+    final changed = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => NotificationsPage(auth: widget.auth)));
+    if (!mounted) return;
+    if (changed == true) {
+      _refreshUnreadSilently();
+    }
   }
 
   void _initSelectedRole() {
@@ -209,20 +233,21 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                       color: Colors.white,
                       size: 26,
                     ),
-                    onPressed: () {},
+                    onPressed: _openNotifications,
                   ),
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: accent,
-                        shape: BoxShape.circle,
+                  if (_unreadNotifications > 0)
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: accent,
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ],
@@ -245,6 +270,21 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            ListTile(
+              leading: const Icon(Icons.info_outline, color: Colors.white70),
+              title: Text(
+                AppLocalizations.of(context)!.aboutTheApp,
+                style: const TextStyle(color: Colors.white),
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const AboutAppPage(),
+                  ),
+                );
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.white70),
               title: Text(
@@ -572,7 +612,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             subtitle: 'General purpose assets & ID scanner',
             accent: accent,
             large: true,
-            onTap: () => _openScanner(context),
+            onTap: () => _openScanner(context, scanForInfo: true),
           ),
           const SizedBox(height: 16),
           Row(
@@ -671,13 +711,14 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     );
   }
 
-  void _openScanner(BuildContext context) {
+  void _openScanner(BuildContext context, {bool scanForInfo = false}) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => StaffScanPage(
           auth: widget.auth,
           accent: _kPrimary,
           backgroundColor: _kBgDark,
+          scanForInfo: scanForInfo,
         ),
       ),
     );
@@ -991,7 +1032,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           Expanded(
             flex: 2,
             child: Text(
-              '${c.firstName} ${c.lastName}'.trim(),
+              c.firstName,
               style: const TextStyle(color: Colors.white, fontSize: 14),
               overflow: TextOverflow.ellipsis,
             ),
