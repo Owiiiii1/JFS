@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
 import 'faq_article_detail_page.dart';
+import 'gen_l10n/app_localizations.dart';
 
 // Как в разделе Info: чёрный фон, золотой акцент
 const _kGold = Color(0xFFD4AF37);
@@ -124,7 +125,7 @@ class _FaqArticlesPageState extends State<FaqArticlesPage> {
                         const SizedBox(height: 16),
                         TextButton(
                           onPressed: _load,
-                          child: const Text('Retry'),
+                          child: Text(AppLocalizations.of(context)!.retry),
                         ),
                       ],
                     ),

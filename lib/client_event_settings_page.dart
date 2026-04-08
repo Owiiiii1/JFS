@@ -30,6 +30,35 @@ const double _kBeforeCtaGap = 14;
 
 bool _l10nLineNotEmpty(String s) => s.trim().isNotEmpty;
 
+/// Порядок: основной бренд → второй → family look; без дубликатов.
+List<int> _orderedBrandIdsForAssignment(ActiveAssignment? a) {
+  if (a == null) return [];
+  final ids = <int>[];
+  void add(int? id) {
+    final v = id ?? 0;
+    if (v > 0 && !ids.contains(v)) ids.add(v);
+  }
+  add(a.brandId);
+  add(a.secondBrandId);
+  add(a.familyLookBrandId);
+  return ids;
+}
+
+BrandRequirementInfo _brandRequirementRowForId(
+  int brandId,
+  List<BrandRequirementInfo> fromApi,
+) {
+  for (final i in fromApi) {
+    if (i.brandId == brandId) return i;
+  }
+  return BrandRequirementInfo(
+    brandId: brandId,
+    brandName: '',
+    imageUrl: null,
+    bodyHtml: null,
+  );
+}
+
 void _openMealChoiceSheet(
   BuildContext context, {
   required AuthService auth,
@@ -65,6 +94,8 @@ class ClientEventSettingsPage extends StatefulWidget {
     required this.eventName,
     required this.eventId,
     required this.childrenInEvent,
+    /// Ребёнок, выбранный на главной (над карточкой ивента); для требований брендов.
+    this.contextChildId,
     this.onMealChoiceSaved,
   });
 
@@ -72,6 +103,7 @@ class ClientEventSettingsPage extends StatefulWidget {
   final String eventName;
   final int eventId;
   final List<ChildWithAssignment> childrenInEvent;
+  final int? contextChildId;
   final VoidCallback? onMealChoiceSaved;
 
   static const String _fontFamily = 'HelveticaNeueCyr';
@@ -113,7 +145,9 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
           .where((c) => c.activeAssignment?.event.id == widget.eventId)
           .toList();
       if (filtered.isNotEmpty) {
-        setState(() => _childrenInEvent = filtered);
+        setState(() {
+          _childrenInEvent = filtered;
+        });
       }
     } catch (_) {
       // Тихо при фоновом обновлении (сеть / таймаут).
@@ -178,25 +212,117 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
     }
   }
 
-  Future<void> _openBrandRequirementsPage() async {
+  ChildWithAssignment? _resolveChildForBrands() {
+    if (_childrenInEvent.isEmpty) return null;
+    final id = widget.contextChildId;
+    if (id != null) {
+      for (final c in _childrenInEvent) {
+        if (c.id == id) return c;
+      }
+    }
+    return _childrenInEvent.first;
+  }
+
+  Future<void> _openBrandRequirementsFlow() async {
     final l10n = AppLocalizations.of(context)!;
-    try {
-      final items = await widget.auth.getEventBrandRequirements(widget.eventId);
+    if (widget.eventId <= 0) return;
+
+    final child = _resolveChildForBrands();
+    if (child == null) return;
+
+    final brandIds = _orderedBrandIdsForAssignment(child.activeAssignment);
+    if (brandIds.isEmpty) {
       if (!mounted) return;
-      await Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => ClientBrandRequirementsPage(
-            items: items,
-            baseUrl: widget.auth.baseUrl,
-          ),
-        ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.rehearsalBrandNotAssigned)),
       );
+      return;
+    }
+
+    List<BrandRequirementInfo> apiItems;
+    try {
+      apiItems = await widget.auth.getEventBrandRequirements(widget.eventId);
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.brandRequirementsLoadFailed)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.brandRequirementsLoadFailed)),
+      );
+      return;
     }
+
+    if (!mounted) return;
+
+    final rows = brandIds
+        .map((id) => _brandRequirementRowForId(id, apiItems))
+        .toList();
+
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: _kSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetCtx) {
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.brandRequirementsPickBrandTitle,
+                  style: const TextStyle(
+                    fontFamily: ClientEventSettingsPage._fontFamily,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: _kOnSurface,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                for (final row in rows) ...[
+                  FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: _kPrimary,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      final title = row.brandName.trim().isEmpty
+                          ? l10n.brandRequirementsBrandNumber(row.brandId)
+                          : row.brandName.trim();
+                      Navigator.of(sheetCtx).pop();
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => ClientBrandRequirementsPage(
+                            items: [row],
+                            baseUrl: widget.auth.baseUrl,
+                            appBarTitle: title,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      row.brandName.trim().isEmpty
+                          ? l10n.brandRequirementsBrandNumber(row.brandId)
+                          : row.brandName.trim(),
+                      style: const TextStyle(
+                        fontFamily: ClientEventSettingsPage._fontFamily,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _openChatRoomsPage() async {
@@ -309,7 +435,7 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
                                 child: _BrandCard(
                                   l10n: l10n,
                                   onOpen: widget.eventId > 0
-                                      ? _openBrandRequirementsPage
+                                      ? _openBrandRequirementsFlow
                                       : null,
                                 ),
                               ),
@@ -346,7 +472,7 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
                       _BrandCard(
                         l10n: l10n,
                         onOpen: widget.eventId > 0
-                            ? _openBrandRequirementsPage
+                            ? _openBrandRequirementsFlow
                             : null,
                       ),
                     ],

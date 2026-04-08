@@ -5,10 +5,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'gen_l10n/app_localizations.dart';
 
+const _kFontFamilyLuxenta = 'Luxenta';
+
 const Color _kGoldPrimary = Color(0xFFF2CA50);
 const Color _kGoldDeep = Color(0xFFD4AF37);
 const Color _kMuted = Color(0xFF9A9A9A);
-const Color _kPublisherMuted = Color(0xFFD0C5AF);
 
 /// Дата релиза для экрана «О приложении» (месяц/год показываются по локали).
 /// Обновляйте при публикации новой версии в сторах.
@@ -87,15 +88,12 @@ class _AboutAppPageState extends State<AboutAppPage> {
                     icon: const Icon(Icons.close, color: _kGoldPrimary, size: 22),
                     tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                   ),
-                  const Expanded(
-                    child: Text(
-                      'YFS',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: _kGoldPrimary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 4,
+                  Expanded(
+                    child: Center(
+                      child: Image.asset(
+                        'assets/logo.png',
+                        height: 32,
+                        filterQuality: FilterQuality.high,
                       ),
                     ),
                   ),
@@ -117,25 +115,15 @@ class _AboutAppPageState extends State<AboutAppPage> {
                         children: [
                           const SizedBox(height: 32),
                           Text(
-                            l10n.aboutAppDisplayName,
+                            l10n.aboutAppDisplayName.toUpperCase(),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
+                              fontFamily: _kFontFamilyLuxenta,
                               color: _kGoldDeep,
                               fontSize: 28,
                               fontWeight: FontWeight.w600,
                               height: 1.15,
                               letterSpacing: 0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            l10n.aboutPublisherLine,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: _kPublisherMuted,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 2.4,
                             ),
                           ),
                           const SizedBox(height: 56),

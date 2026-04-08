@@ -151,12 +151,23 @@
   "eventSettingsPackingCta": "ОТКРЫТЬ СПИСОК",
   "eventPackingLoadFailed": "Не удалось загрузить информацию. Попробуйте снова.",
   "eventPackingEmpty": "Для этого ивента информация пока не добавлена.",
+  "eventDescriptionTitle": "Описание ивента",
+  "eventProgressShowGallery": "Галерея",
+  "eventDescriptionLoadFailed": "Не удалось загрузить описание. Попробуйте снова.",
+  "eventDescriptionEmpty": "Для этого ивента пока не добавлено текстовое описание.",
   "eventSettingsBrandTitle": "Требования бренда",
   "eventSettingsBrandSubtitle": "Ознакомьтесь с рекомендациями бренда для участия в ивенте",
   "eventSettingsBrandCta": "РУКОВОДСТВО",
   "brandRequirementsLoadFailed": "Не удалось загрузить требования бренда. Попробуйте снова.",
   "brandRequirementsEmpty": "Для этого ивента требования брендов пока не добавлены.",
   "brandRequirementsEmptyItem": "Для этого бренда требования пока не заполнены.",
+  "brandRequirementsPickBrandTitle": "Выберите бренд",
+  "brandRequirementsBrandNumber": "Бренд {brandId}",
+  "@brandRequirementsBrandNumber": {
+    "placeholders": {
+      "brandId": { "type": "int" }
+    }
+  },
   "eventSettingsChatTitle": "Общий чат",
   "eventSettingsChatSubtitle": "Общий чат с участниками группы и менеджерами",
   "eventSettingsChatCta": "ОТКРЫТЬ ЧАТ",
@@ -251,8 +262,72 @@
   "ticketsNoneForEvent": "Нет билетов на это событие",
   "ticketsLoadError": "Не удалось загрузить билеты",
   "ticketsEventsLoadError": "Не удалось загрузить события",
+  "faqBrandCatalogTitle": "Бренды одежды",
   "pdfViewerTitle": "Билет",
-  "contactFormLinkMissing": "Ссылка на форму не задана. Укажите «Ссылка на форму» в общих настройках приложения в админке."
+  "contactFormLinkMissing": "Ссылка на форму не задана. Укажите «Ссылка на форму» в общих настройках приложения в админке.",
+  "infoHubTitle": "Информационный центр",
+  "infoMenuAboutYfs": "О YFS",
+  "infoMenuGeneralFaq": "Общий FAQ",
+  "infoMenuContactManager": "Связаться с менеджером",
+  "infoFooterBrand": "YFS",
+  "infoFooterCopyright": "© 2024 Young Fashion Series. Все права защищены.",
+  "parentProgressLabel": "Прогресс родителя: {completed}/{total}",
+  "@parentProgressLabel": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "appUpdateRequiredMessage": "Обновите приложение, чтобы продолжить.",
+  "appUpdateButton": "Обновить приложение",
+  "showAll": "Показать все",
+  "staffNoneSelected": "— Нет —",
+  "staffScanFailed": "Ошибка сканирования: {error}",
+  "@staffScanFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "staffScanSelectEventStageFirst": "Выберите активное событие и этап в настройках персонала перед сканированием.",
+  "staffScanProcessed": "Сканирование выполнено",
+  "chatCouldNotPickPhoto": "Не удалось выбрать фото",
+  "staffChildProfileTitle": "Профиль ребёнка",
+  "staffCurrentStage": "ТЕКУЩИЙ ЭТАП",
+  "staffProgressPercentComplete": "{percent}% завершено",
+  "@staffProgressPercentComplete": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "staffChildDetailEmpty": "Нет данных о ребёнке в БД",
+  "staffLoadFailed": "Не удалось загрузить",
+  "staffGuardianLiaison": "КУРАТОР",
+  "staffAssignedBrand": "НАЗНАЧЕННЫЙ БРЕНД",
+  "staffSupervisor": "СУПЕРВАЙЗЕР",
+  "staffSectionCoreDetails": "Основные данные",
+  "staffSectionParentContact": "Контакт родителя",
+  "staffPhaseWithName": "Фаза: {stageName}",
+  "@staffPhaseWithName": {
+    "placeholders": {
+      "stageName": { "type": "String" }
+    }
+  },
+  "staffNoCurrentStage": "Нет текущего этапа",
+  "staffAgeYearsOld": "{age} лет",
+  "@staffAgeYearsOld": {
+    "placeholders": {
+      "age": { "type": "int" }
+    }
+  },
+  "staffNotesLabel": "Заметки",
+  "staffParentRoleDefault": "Родитель",
+  "contactManagerIntro": "Вы можете оставить сообщение по любому вопросу — с вами свяжутся в ближайшее время.",
+  "contactManagerMessageLabel": "Ваше сообщение",
+  "contactManagerMessageRequired": "Введите текст сообщения",
+  "contactManagerSend": "Отправить",
+  "contactManagerSent": "Сообщение отправлено. Мы свяжемся с вами в ближайшее время.",
+  "contactManagerSendFailed": "Не удалось отправить. Попробуйте позже.",
+  "contactManagerServiceUnavailable": "Связь временно недоступна. Попробуйте позже."
 }
 
 

@@ -174,12 +174,23 @@
   "eventSettingsPackingCta": "VER LISTA",
   "eventPackingLoadFailed": "Could not load packing info. Try again.",
   "eventPackingEmpty": "Packing information has not been added for this event yet.",
+  "eventDescriptionTitle": "Event info",
+  "eventProgressShowGallery": "Show gallery",
+  "eventDescriptionLoadFailed": "Could not load event description. Try again.",
+  "eventDescriptionEmpty": "No description has been added for this event yet.",
   "eventSettingsBrandTitle": "Requisitos de marca",
   "eventSettingsBrandSubtitle": "Consulta las recomendaciones de la marca para participar en el evento",
   "eventSettingsBrandCta": "VER GUÍAS",
   "brandRequirementsLoadFailed": "Could not load brand requirements. Try again.",
   "brandRequirementsEmpty": "No brand requirements have been added for this event yet.",
   "brandRequirementsEmptyItem": "No requirements text has been added for this brand yet.",
+  "brandRequirementsPickBrandTitle": "Choose a brand",
+  "brandRequirementsBrandNumber": "Brand {brandId}",
+  "@brandRequirementsBrandNumber": {
+    "placeholders": {
+      "brandId": { "type": "int" }
+    }
+  },
   "eventSettingsChatTitle": "Chat grupal",
   "eventSettingsChatSubtitle": "Chat grupal con participantes del grupo y managers",
   "eventSettingsChatCta": "ABRIR CHAT",
@@ -292,8 +303,72 @@
   "ticketsNoneForEvent": "No hay entradas para este evento",
   "ticketsLoadError": "No se pudieron cargar las entradas",
   "ticketsEventsLoadError": "No se pudieron cargar los eventos",
+  "faqBrandCatalogTitle": "Marcas de ropa",
   "pdfViewerTitle": "Entrada",
-  "contactFormLinkMissing": "No hay enlace al formulario. Añade la URL en Ajustes generales de la app en el panel."
+  "contactFormLinkMissing": "No hay enlace al formulario. Añade la URL en Ajustes generales de la app en el panel.",
+  "infoHubTitle": "Centro de información",
+  "infoMenuAboutYfs": "Acerca de YFS",
+  "infoMenuGeneralFaq": "FAQ general",
+  "infoMenuContactManager": "Contactar al gestor",
+  "infoFooterBrand": "YFS",
+  "infoFooterCopyright": "© 2024 Young Fashion Series. Todos los derechos reservados.",
+  "parentProgressLabel": "Progreso del padre/madre: {completed}/{total}",
+  "@parentProgressLabel": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "appUpdateRequiredMessage": "Actualiza la aplicación para continuar.",
+  "appUpdateButton": "Actualizar aplicación",
+  "showAll": "Ver todo",
+  "staffNoneSelected": "— Ninguno —",
+  "staffScanFailed": "Error al escanear: {error}",
+  "@staffScanFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "staffScanSelectEventStageFirst": "Selecciona el evento y la etapa activos en Ajustes del personal antes de escanear.",
+  "staffScanProcessed": "Escaneo procesado",
+  "chatCouldNotPickPhoto": "No se pudo elegir la foto",
+  "staffChildProfileTitle": "Perfil del niño",
+  "staffCurrentStage": "ETAPA ACTUAL",
+  "staffProgressPercentComplete": "{percent}% completado",
+  "@staffProgressPercentComplete": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "staffChildDetailEmpty": "No hay datos del niño en la base de datos",
+  "staffLoadFailed": "Error al cargar",
+  "staffGuardianLiaison": "ENLACE CON TUTORES",
+  "staffAssignedBrand": "MARCA ASIGNADA",
+  "staffSupervisor": "SUPERVISOR",
+  "staffSectionCoreDetails": "Datos principales",
+  "staffSectionParentContact": "Contacto del padre/madre",
+  "staffPhaseWithName": "Fase: {stageName}",
+  "@staffPhaseWithName": {
+    "placeholders": {
+      "stageName": { "type": "String" }
+    }
+  },
+  "staffNoCurrentStage": "Sin etapa actual",
+  "staffAgeYearsOld": "{age} años",
+  "@staffAgeYearsOld": {
+    "placeholders": {
+      "age": { "type": "int" }
+    }
+  },
+  "staffNotesLabel": "Notas",
+  "staffParentRoleDefault": "Padre/madre",
+  "contactManagerIntro": "Puedes dejar un mensaje sobre cualquier consulta; nos pondremos en contacto contigo lo antes posible.",
+  "contactManagerMessageLabel": "Tu mensaje",
+  "contactManagerMessageRequired": "Escribe tu mensaje",
+  "contactManagerSend": "Enviar",
+  "contactManagerSent": "Tu mensaje se ha enviado. Nos pondremos en contacto contigo pronto.",
+  "contactManagerSendFailed": "No se pudo enviar. Inténtalo más tarde.",
+  "contactManagerServiceUnavailable": "El contacto no está disponible temporalmente. Inténtalo más tarde."
 }
 
 

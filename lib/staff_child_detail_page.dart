@@ -67,15 +67,16 @@ class _StaffChildDetailPageState extends State<StaffChildDetailPage> {
   }
 
   Widget _buildError() {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(_error ?? 'Failed to load', style: const TextStyle(color: Colors.white70), textAlign: TextAlign.center),
+            Text(_error ?? l10n.staffLoadFailed, style: const TextStyle(color: Colors.white70), textAlign: TextAlign.center),
             const SizedBox(height: 12),
-            TextButton(onPressed: _load, child: const Text('Retry')),
+            TextButton(onPressed: _load, child: Text(l10n.retry)),
           ],
         ),
       ),
@@ -83,6 +84,7 @@ class _StaffChildDetailPageState extends State<StaffChildDetailPage> {
   }
 
   Widget _buildContent(SupervisorChildDetail d) {
+    final l10n = AppLocalizations.of(context)!;
     final progress = (d.progressPercent.clamp(0, 100)) / 100.0;
     return Column(
       children: [
@@ -92,8 +94,8 @@ class _StaffChildDetailPageState extends State<StaffChildDetailPage> {
             children: [
               _roundIcon(Icons.arrow_back, onTap: () => Navigator.of(context).pop()),
               const SizedBox(width: 8),
-              const Expanded(
-                child: Text('Child Profile', style: TextStyle(color: Colors.white, fontSize: 26 / 1.4, fontWeight: FontWeight.bold)),
+              Expanded(
+                child: Text(l10n.staffChildProfileTitle, style: const TextStyle(color: Colors.white, fontSize: 26 / 1.4, fontWeight: FontWeight.bold)),
               ),
               _roundIcon(Icons.more_vert, onTap: () {}),
             ],
@@ -138,9 +140,9 @@ class _StaffChildDetailPageState extends State<StaffChildDetailPage> {
                     children: [
                       Row(
                         children: [
-                          const Text('CURRENT STAGE', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                          Text(l10n.staffCurrentStage, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                           const Spacer(),
-                          Text('${d.progressPercent}% Complete', style: const TextStyle(color: _kPrimary, fontWeight: FontWeight.bold, fontSize: 12)),
+                          Text(l10n.staffProgressPercentComplete(d.progressPercent), style: const TextStyle(color: _kPrimary, fontWeight: FontWeight.bold, fontSize: 12)),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -151,18 +153,18 @@ class _StaffChildDetailPageState extends State<StaffChildDetailPage> {
                       const SizedBox(height: 10),
                       Text(
                         d.currentStageName != null && d.currentStageName!.isNotEmpty
-                            ? 'Phase: ${d.currentStageName}'
-                            : 'No current stage',
+                            ? l10n.staffPhaseWithName(d.currentStageName!)
+                            : l10n.staffNoCurrentStage,
                         style: const TextStyle(color: Colors.white70, fontSize: 14),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 18),
-                _sectionTitle(Icons.info, 'Core Details'),
+                _sectionTitle(Icons.info, l10n.staffSectionCoreDetails),
                 ..._buildCoreDetailsRows(d),
                 const SizedBox(height: 18),
-                _sectionTitle(Icons.family_restroom, 'Parent Contact'),
+                _sectionTitle(Icons.family_restroom, l10n.staffSectionParentContact),
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -184,7 +186,7 @@ class _StaffChildDetailPageState extends State<StaffChildDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(d.parentName ?? '—', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                            Text(d.parentRole ?? 'Parent', style: const TextStyle(color: Colors.white54, fontSize: 12)),
+                            Text(d.parentRole ?? l10n.staffParentRoleDefault, style: const TextStyle(color: Colors.white54, fontSize: 12)),
                           ],
                         ),
                       ),
@@ -234,17 +236,17 @@ class _StaffChildDetailPageState extends State<StaffChildDetailPage> {
     if (d.gender != null && d.gender!.isNotEmpty) {
       rows.add(MapEntry(l10n.gender, d.gender == 'female' ? l10n.genderGirl : l10n.genderBoy));
     }
-    if (d.age != null) rows.add(MapEntry('Age', '${d.age} years old'));
-    if (d.birthdate != null) rows.add(MapEntry('Birthdate', _formatBirthdate(d.birthdate!)));
-    if (d.heightValue != null) rows.add(MapEntry('Height', _formatHeight(d)));
+    if (d.age != null) rows.add(MapEntry(l10n.ageLabel, l10n.staffAgeYearsOld(d.age!)));
+    if (d.birthdate != null) rows.add(MapEntry(l10n.birthdate, _formatBirthdate(d.birthdate!)));
+    if (d.heightValue != null) rows.add(MapEntry(l10n.height, _formatHeight(d)));
     final notes = d.notes?.trim();
-    if (notes != null && notes.isNotEmpty) rows.add(MapEntry('Notes', notes));
+    if (notes != null && notes.isNotEmpty) rows.add(MapEntry(l10n.staffNotesLabel, notes));
 
     if (rows.isEmpty) {
-      return const [
+      return [
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 8),
-          child: Text('No child details in DB', style: TextStyle(color: Colors.white54)),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(l10n.staffChildDetailEmpty, style: const TextStyle(color: Colors.white54)),
         ),
       ];
     }

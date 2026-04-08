@@ -1,10 +1,17 @@
+import 'dart:async';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'api/auth_service.dart';
 import 'app_route_observer.dart';
 import 'app_settings.dart';
+import 'firebase_options.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'intro_video_page.dart';
+import 'push/firebase_background.dart';
+import 'push/push_token_service.dart';
 
 /// Базовый URL API без завершающего «/». Не читается из Laravel `.env` — только из сборки
 /// (`--dart-define=API_BASE_URL=...`). Если на сервере просто добавили вход по домену, а по IP
@@ -24,9 +31,11 @@ String _normalizeApiBase(String raw) {
   return s;
 }
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppSettings.load();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(const App());
 }
 
@@ -41,17 +50,28 @@ class _AppState extends State<App> {
   static const _supportedLocaleLanguages = ['en', 'ru', 'uk', 'es'];
   static const _fontFamily = 'HelveticaNeueCyr';
 
+  late final AuthService _auth;
+  late final PushTokenService _push;
+
   @override
   void initState() {
     super.initState();
+    _auth = AuthService(_normalizeApiBase(_kApiBaseUrl));
+    _push = PushTokenService(_auth);
+    PushTokenServiceHolder.instance = _push;
     AppSettings.onLocaleChanged = () {
       if (mounted) setState(() {});
     };
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_push.installMessagingPipeline());
+    });
   }
 
   @override
   void dispose() {
     AppSettings.onLocaleChanged = null;
+    PushTokenServiceHolder.instance = null;
+    unawaited(_push.dispose());
     super.dispose();
   }
 
@@ -85,8 +105,6 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = AuthService(_normalizeApiBase(_kApiBaseUrl));
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorObservers: [appRouteObserver],
@@ -113,7 +131,7 @@ class _AppState extends State<App> {
         return const Locale('en');
       },
       theme: _buildTheme(),
-      home: IntroVideoPage(auth: auth),
+      home: IntroVideoPage(auth: _auth),
     );
   }
 }

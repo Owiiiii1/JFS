@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyAPk3V3OxB4FE2IrmFWBFzlsNhS4dPVkSY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>398138058975</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.youngfashionshow.yfs</string>
+	<key>PROJECT_ID</key>
+	<string>yfs-app-76da1</string>
+	<key>STORAGE_BUCKET</key>
+	<string>yfs-app-76da1.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:398138058975:ios:d800766ec095ed3e22a16a</string>
+</dict>
+</plist>

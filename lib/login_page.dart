@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
+import 'push/push_token_service.dart';
 import 'client_home_page.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'register_page.dart';
@@ -44,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
 
       // сохраняем токен (пригодится позже)
       await widget.auth.saveToken(result.token);
+      unawaited(PushTokenServiceHolder.instance?.syncWithBackendIfLoggedIn());
 
       final role = (result.user['role'] ?? '').toString().toLowerCase();
 

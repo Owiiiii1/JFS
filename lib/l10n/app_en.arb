@@ -189,12 +189,23 @@
   "eventSettingsPackingCta": "VIEW LIST",
   "eventPackingLoadFailed": "Could not load packing info. Try again.",
   "eventPackingEmpty": "Packing information has not been added for this event yet.",
+  "eventDescriptionTitle": "Event info",
+  "eventProgressShowGallery": "Show gallery",
+  "eventDescriptionLoadFailed": "Could not load event description. Try again.",
+  "eventDescriptionEmpty": "No description has been added for this event yet.",
   "eventSettingsBrandTitle": "Brand Requirements",
   "eventSettingsBrandSubtitle": "Read the brand's recommendations for taking part in the event",
   "eventSettingsBrandCta": "VIEW GUIDELINES",
   "brandRequirementsLoadFailed": "Could not load brand requirements. Try again.",
   "brandRequirementsEmpty": "No brand requirements have been added for this event yet.",
   "brandRequirementsEmptyItem": "No requirements text has been added for this brand yet.",
+  "brandRequirementsPickBrandTitle": "Choose a brand",
+  "brandRequirementsBrandNumber": "Brand {brandId}",
+  "@brandRequirementsBrandNumber": {
+    "placeholders": {
+      "brandId": { "type": "int" }
+    }
+  },
   "eventSettingsChatTitle": "Group Chat",
   "eventSettingsChatSubtitle": "Group chat with group participants and managers",
   "eventSettingsChatCta": "OPEN CHAT",
@@ -311,8 +322,72 @@
   "ticketsNoneForEvent": "No tickets for this event",
   "ticketsLoadError": "Could not load tickets",
   "ticketsEventsLoadError": "Could not load events",
+  "faqBrandCatalogTitle": "Clothing brands",
   "pdfViewerTitle": "Ticket",
-  "contactFormLinkMissing": "No form link is set. Add «Contact / signup form URL» in Application settings in the admin."
+  "contactFormLinkMissing": "No form link is set. Add «Contact / signup form URL» in Application settings in the admin.",
+  "infoHubTitle": "Information Hub",
+  "infoMenuAboutYfs": "About YFS",
+  "infoMenuGeneralFaq": "General FAQ",
+  "infoMenuContactManager": "Contact Manager",
+  "infoFooterBrand": "YFS",
+  "infoFooterCopyright": "© 2024 Young Fashion Series. All rights reserved.",
+  "parentProgressLabel": "Parent progress: {completed}/{total}",
+  "@parentProgressLabel": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "appUpdateRequiredMessage": "Please update the app to continue.",
+  "appUpdateButton": "Update app",
+  "showAll": "Show all",
+  "staffNoneSelected": "— None —",
+  "staffScanFailed": "Scan failed: {error}",
+  "@staffScanFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "staffScanSelectEventStageFirst": "Select active event and stage in Staff Settings before scanning.",
+  "staffScanProcessed": "Scan processed",
+  "chatCouldNotPickPhoto": "Could not pick photo",
+  "staffChildProfileTitle": "Child Profile",
+  "staffCurrentStage": "CURRENT STAGE",
+  "staffProgressPercentComplete": "{percent}% Complete",
+  "@staffProgressPercentComplete": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "staffChildDetailEmpty": "No child details in DB",
+  "staffLoadFailed": "Failed to load",
+  "staffGuardianLiaison": "GUARDIAN LIAISON",
+  "staffAssignedBrand": "ASSIGNED BRAND",
+  "staffSupervisor": "SUPERVISOR",
+  "staffSectionCoreDetails": "Core Details",
+  "staffSectionParentContact": "Parent Contact",
+  "staffPhaseWithName": "Phase: {stageName}",
+  "@staffPhaseWithName": {
+    "placeholders": {
+      "stageName": { "type": "String" }
+    }
+  },
+  "staffNoCurrentStage": "No current stage",
+  "staffAgeYearsOld": "{age} years old",
+  "@staffAgeYearsOld": {
+    "placeholders": {
+      "age": { "type": "int" }
+    }
+  },
+  "staffNotesLabel": "Notes",
+  "staffParentRoleDefault": "Parent",
+  "contactManagerIntro": "You can leave a message about any question. We will get back to you as soon as possible.",
+  "contactManagerMessageLabel": "Your message",
+  "contactManagerMessageRequired": "Please enter your message",
+  "contactManagerSend": "Send",
+  "contactManagerSent": "Your message has been sent. We will contact you soon.",
+  "contactManagerSendFailed": "Could not send. Try again later.",
+  "contactManagerServiceUnavailable": "Contact is temporarily unavailable. Please try again later."
 }
 
 

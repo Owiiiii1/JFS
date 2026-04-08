@@ -708,7 +708,7 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
               Navigator.of(ctx).pop();
               await onSave(null);
             },
-            child: const Text('Очистить', style: TextStyle(color: Colors.white70)),
+            child: Text(AppLocalizations.of(context)!.clear, style: const TextStyle(color: Colors.white70)),
           ),
           FilledButton(
             onPressed: () async {
@@ -757,7 +757,7 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                   Navigator.of(ctx).pop();
                   await onSave(null);
                 },
-                child: const Text('Очистить', style: TextStyle(color: Colors.white70)),
+                child: Text(AppLocalizations.of(context)!.clear, style: const TextStyle(color: Colors.white70)),
               ),
               FilledButton(
                 onPressed: () async {
@@ -836,7 +836,7 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                   Navigator.of(ctx).pop();
                   await onSave(null);
                 },
-                child: const Text('Очистить', style: TextStyle(color: Colors.white70)),
+                child: Text(AppLocalizations.of(context)!.clear, style: const TextStyle(color: Colors.white70)),
               ),
               FilledButton(
                 onPressed: () async {

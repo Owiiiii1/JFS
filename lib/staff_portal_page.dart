@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
+import 'push/push_token_service.dart';
 import 'app_settings.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
@@ -291,9 +294,11 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 AppLocalizations.of(context)!.signOut,
                 style: const TextStyle(color: Colors.white),
               ),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(ctx);
+                await PushTokenServiceHolder.instance?.deactivateCurrentOnBackend();
                 widget.auth.clearToken();
+                if (!context.mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (_) => LoginPage(auth: widget.auth),
@@ -851,7 +856,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                     vertical: 12,
                   ),
                 ),
-                child: const Text('Show all'),
+                child: Text(AppLocalizations.of(context)!.showAll),
               ),
             ],
           ),
@@ -1369,7 +1374,7 @@ class _StaffEventDetailContentState extends State<_StaffEventDetailContent> {
                 style: TextStyle(color: Colors.white70, fontSize: 14),
               ),
               const SizedBox(height: 16),
-              TextButton(onPressed: _load, child: const Text('Retry')),
+              TextButton(onPressed: _load, child: Text(AppLocalizations.of(context)!.retry)),
             ],
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
 import 'block_detail_page.dart';
+import 'gen_l10n/app_localizations.dart';
 
 const _kCardBg = Color(0xFF121212);
 const _kAccentGray = Color(0xFF8E8E93);
@@ -93,7 +94,7 @@ class _AboutPageState extends State<AboutPage> {
                         const SizedBox(height: 16),
                         TextButton(
                           onPressed: _load,
-                          child: const Text('Retry'),
+                          child: Text(AppLocalizations.of(context)!.retry),
                         ),
                       ],
                     ),

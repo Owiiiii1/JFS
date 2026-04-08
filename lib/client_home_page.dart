@@ -1,21 +1,28 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'api/auth_service.dart';
 import 'client_profile_tab.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
 import 'about_page.dart';
+import 'client_event_description_page.dart';
 import 'client_event_progress_tab.dart';
+import 'contact_manager_page.dart';
 import 'client_event_settings_page.dart';
 import 'faq_sections_page.dart';
 import 'news_detail_page.dart';
 import 'about_app_page.dart';
 import 'settings_page.dart';
-import 'terms_page.dart';
 import 'my_tickets_sheet.dart';
 import 'notifications_page.dart';
+import 'push/push_token_service.dart';
+
+/// Заголовки ивента на карточке активного события (семейство из pubspec).
+const _kFontFamilyLuxenta = 'Luxenta';
 
 const _kGold = Color(0xFFD4AF37);
 const _kGoldLight = Color(0xFFF3E5AB);
@@ -36,6 +43,7 @@ class ClientHomePage extends StatefulWidget {
 class _ClientHomePageState extends State<ClientHomePage>
     with WidgetsBindingObserver {
   int _currentTab = 0;
+  int? _selectedDashboardChildId;
   ClientDashboard? _dashboard;
   bool _loading = true;
   String? _error;
@@ -58,6 +66,29 @@ class _ClientHomePageState extends State<ClientHomePage>
       _error == null &&
       _dashboard != null &&
       _dashboard!.activeChild != null;
+
+  ChildWithAssignment? get _selectedDashboardChild {
+    final dashboard = _dashboard;
+    if (dashboard == null || dashboard.children.isEmpty) return null;
+    final selectedId = _selectedDashboardChildId;
+    if (selectedId != null) {
+      for (final c in dashboard.children) {
+        if (c.id == selectedId) return c;
+      }
+    }
+    return dashboard.activeChild ?? dashboard.children.first;
+  }
+
+  int? _resolveDashboardChildId(ClientDashboard dashboard) {
+    if (dashboard.children.isEmpty) return null;
+    final selectedId = _selectedDashboardChildId;
+    if (selectedId != null) {
+      for (final c in dashboard.children) {
+        if (c.id == selectedId) return selectedId;
+      }
+    }
+    return dashboard.activeChild?.id ?? dashboard.children.first.id;
+  }
 
   @override
   void initState() {
@@ -106,6 +137,7 @@ class _ClientHomePageState extends State<ClientHomePage>
       }
       setState(() {
         _dashboard = dashboard;
+        _selectedDashboardChildId = _resolveDashboardChildId(dashboard);
         _loading = false;
       });
     } catch (e) {
@@ -124,6 +156,7 @@ class _ClientHomePageState extends State<ClientHomePage>
       if (!mounted) return;
       setState(() {
         _dashboard = dashboard;
+        _selectedDashboardChildId = _resolveDashboardChildId(dashboard);
         _error = null;
       });
     } catch (_) {
@@ -142,9 +175,9 @@ class _ClientHomePageState extends State<ClientHomePage>
   }
 
   Future<void> _openNotifications() async {
-    final changed = await Navigator.of(
-      context,
-    ).push<bool>(MaterialPageRoute(builder: (_) => NotificationsPage(auth: widget.auth)));
+    final changed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => NotificationsPage(auth: widget.auth)),
+    );
     if (!mounted) return;
     if (changed == true) {
       _refreshUnreadSilently();
@@ -228,17 +261,7 @@ class _ClientHomePageState extends State<ClientHomePage>
           auth: widget.auth,
           childId: childId,
           title: AppLocalizations.of(context)!.viewProgress,
-          onOpenInfo: () {
-            Navigator.of(context).pop();
-            setState(() => _currentTab = 3);
-            if (_infoSettings == null && !_infoSettingsLoading) {
-              _loadInfoSettings();
-            }
-          },
-          onOpenGallery: () {
-            Navigator.of(context).pop();
-            setState(() => _currentTab = 0);
-          },
+          onOpenGallery: () {},
         ),
       ),
     );
@@ -248,7 +271,8 @@ class _ClientHomePageState extends State<ClientHomePage>
     final a = child.activeAssignment;
     final eventId = a?.event.id ?? 0;
     final name = a?.event.name ?? '';
-    final childrenInEvent = _dashboard?.children
+    final childrenInEvent =
+        _dashboard?.children
             .where((c) => c.activeAssignment?.event.id == eventId)
             .toList() ??
         [child];
@@ -259,6 +283,7 @@ class _ClientHomePageState extends State<ClientHomePage>
           eventName: name,
           eventId: eventId,
           childrenInEvent: childrenInEvent,
+          contextChildId: _selectedDashboardChild?.id ?? child.id,
           onMealChoiceSaved: () {
             if (mounted) {
               _refreshDashboardSilently();
@@ -269,7 +294,9 @@ class _ClientHomePageState extends State<ClientHomePage>
     );
   }
 
-  void _signOut() {
+  Future<void> _signOut() async {
+    await PushTokenServiceHolder.instance?.deactivateCurrentOnBackend();
+    if (!mounted) return;
     widget.auth.clearToken();
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => LoginPage(auth: widget.auth)),
@@ -291,9 +318,7 @@ class _ClientHomePageState extends State<ClientHomePage>
           onSelected: (v) {
             if (v == 'about_app') {
               Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => const AboutAppPage(),
-                ),
+                MaterialPageRoute<void>(builder: (_) => const AboutAppPage()),
               );
             }
             if (v == 'settings') _openSettings();
@@ -378,111 +403,103 @@ class _ClientHomePageState extends State<ClientHomePage>
   // ---------------------------------------------------------------------------
 
   Widget _buildInfoContent() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-      child: Column(
-        children: [
-          // Header: title + info icon
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'Information Hub',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: -0.5,
-                  fontStyle: FontStyle.italic,
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header: title + info icon
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.infoHubTitle,
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white24),
+                      ),
+                      child: const Icon(
+                        Icons.info_outline,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white24),
+                const SizedBox(height: 32),
+                _buildInfoPhotoPlaceholder(),
+                const SizedBox(height: 40),
+                _InfoMenuRow(
+                  icon: Icons.history_edu,
+                  label: AppLocalizations.of(context)!.infoMenuAboutYfs,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => AboutPage(auth: widget.auth),
+                      ),
+                    );
+                  },
                 ),
-                child: const Icon(
-                  Icons.info_outline,
-                  color: Colors.white70,
-                  size: 20,
+                Divider(height: 1, color: Colors.white.withOpacity(0.05)),
+                _InfoMenuRow(
+                  icon: Icons.help_outline,
+                  label: AppLocalizations.of(context)!.infoMenuGeneralFaq,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => FaqSectionsPage(auth: widget.auth),
+                      ),
+                    );
+                  },
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 32),
-          // Фото раздела Info (из настроек приложения в админке)
-          _buildInfoPhotoPlaceholder(),
-          const SizedBox(height: 40),
-          // Menu list (with dividers)
-          _InfoMenuRow(
-            icon: Icons.history_edu,
-            label: 'About YFS',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => AboutPage(auth: widget.auth),
+                Divider(height: 1, color: Colors.white.withOpacity(0.05)),
+                _InfoMenuRow(
+                  icon: Icons.contact_support,
+                  label: AppLocalizations.of(context)!.infoMenuContactManager,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            ContactManagerPage(auth: widget.auth),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-          Divider(height: 1, color: Colors.white.withOpacity(0.05)),
-          _InfoMenuRow(
-            icon: Icons.help_outline,
-            label: 'General FAQ',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => FaqSectionsPage(auth: widget.auth),
-                ),
-              );
-            },
-          ),
-          Divider(height: 1, color: Colors.white.withOpacity(0.05)),
-          _InfoMenuRow(
-            icon: Icons.contact_support,
-            label: 'Contact Manager',
-            onTap: () {},
-          ),
-          Divider(height: 1, color: Colors.white.withOpacity(0.05)),
-          _InfoMenuRow(
-            icon: Icons.gavel,
-            label: 'Terms & Conditions',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => TermsPage(auth: widget.auth),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 80),
-          // Footer: socials + copyright
-          _buildInfoFooterSocials(),
-          const SizedBox(height: 32),
-          Text(
-            'YFS',
-            style: TextStyle(
-              fontSize: 16,
-              fontStyle: FontStyle.italic,
-              color: Colors.white.withOpacity(0.4),
-              letterSpacing: 2,
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            '© 2024 Young Fashion Series. All rights reserved.',
-            style: TextStyle(
-              fontSize: 8,
-              color: Colors.white.withOpacity(0.3),
-              letterSpacing: 1.5,
+        ),
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: _buildInfoFooterSocials(),
             ),
           ),
-          const SizedBox(height: 40),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -574,52 +591,54 @@ class _ClientHomePageState extends State<ClientHomePage>
 
   Widget _buildInfoFooterSocials() {
     final s = _infoSettings;
-    final instagram = s?.socialInstagram;
-    final twitter = s?.socialTwitter;
-    final youtube = s?.socialYoutube;
-    String fullUrl(String? u) =>
-        u != null && u.isNotEmpty && !u.startsWith('http')
-        ? '${widget.auth.baseUrl}$u'
-        : u ?? '';
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
-          icon: const Icon(
-            Icons.camera_alt_outlined,
-            color: Colors.white38,
-            size: 26,
-          ),
-          onPressed: () {
-            final url = fullUrl(instagram);
-            if (url.isNotEmpty) _openUrl(url);
-          },
+        _infoSocialIconButton(
+          icon: FontAwesomeIcons.instagram,
+          rawUrl: s?.socialInstagram,
         ),
-        const SizedBox(width: 24),
-        IconButton(
-          icon: const Icon(
-            Icons.alternate_email,
-            color: Colors.white38,
-            size: 26,
-          ),
-          onPressed: () {
-            final url = fullUrl(twitter);
-            if (url.isNotEmpty) _openUrl(url);
-          },
+        const SizedBox(width: 20),
+        _infoSocialIconButton(
+          icon: FontAwesomeIcons.youtube,
+          rawUrl: s?.socialYoutube,
         ),
-        const SizedBox(width: 24),
-        IconButton(
-          icon: const Icon(
-            Icons.play_circle_outline,
-            color: Colors.white38,
-            size: 26,
-          ),
-          onPressed: () {
-            final url = fullUrl(youtube);
-            if (url.isNotEmpty) _openUrl(url);
-          },
+        const SizedBox(width: 20),
+        _infoSocialIconButton(
+          icon: FontAwesomeIcons.facebookF,
+          rawUrl: s?.socialFacebook,
+        ),
+        const SizedBox(width: 20),
+        _infoSocialIconButton(
+          icon: FontAwesomeIcons.tiktok,
+          rawUrl: s?.socialTiktok,
         ),
       ],
+    );
+  }
+
+  /// Открывает ссылку из админки; относительные пути к API — через baseUrl; иначе https:// при отсутствии схемы.
+  Widget _infoSocialIconButton({
+    required IconData icon,
+    required String? rawUrl,
+  }) {
+    return IconButton(
+      icon: FaIcon(icon, color: Colors.white38, size: 22),
+      onPressed: () {
+        if (rawUrl == null || rawUrl.trim().isEmpty) return;
+        final t = rawUrl.trim();
+        final String resolved;
+        if (t.startsWith('http://') || t.startsWith('https://')) {
+          resolved = t;
+        } else if (t.startsWith('/')) {
+          resolved = '${widget.auth.baseUrl}$t';
+        } else {
+          final n = _normalizeHttpUrl(t);
+          if (n == null) return;
+          resolved = n;
+        }
+        _openUrl(resolved);
+      },
     );
   }
 
@@ -644,46 +663,46 @@ class _ClientHomePageState extends State<ClientHomePage>
     final raw = _infoSettings?.contactFormUrl;
     if (raw == null || raw.trim().isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.contactFormLinkMissing)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.contactFormLinkMissing)));
       return;
     }
     final normalized = _normalizeHttpUrl(raw);
     if (normalized == null) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.contactFormLinkMissing)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.contactFormLinkMissing)));
       return;
     }
     final uri = Uri.tryParse(normalized);
     if (uri == null || !uri.hasScheme) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)));
       return;
     }
     try {
       if (!await canLaunchUrl(uri)) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)));
         return;
       }
       final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!ok && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)));
       }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)));
       }
     }
   }
@@ -729,7 +748,10 @@ class _ClientHomePageState extends State<ClientHomePage>
                   },
                   borderRadius: BorderRadius.circular(999),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 18,
+                      horizontal: 12,
+                    ),
                     child: Center(
                       child: Text(
                         l10n.myTicketsButton,
@@ -739,6 +761,9 @@ class _ClientHomePageState extends State<ClientHomePage>
                           letterSpacing: 1.8,
                           color: Color(0xFF1A1408),
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
@@ -762,22 +787,33 @@ class _ClientHomePageState extends State<ClientHomePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              l10n.nextShowsTitle,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
+            Expanded(
+              child: Text(
+                l10n.nextShowsTitle,
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
               ),
             ),
+            const SizedBox(width: 8),
             Padding(
-              padding: const EdgeInsets.only(left: 12, bottom: 4),
-              child: Text(
-                l10n.nextShowsSeason,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              padding: const EdgeInsets.only(bottom: 4),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 120),
+                child: Text(
+                  l10n.nextShowsSeason,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                ),
               ),
             ),
           ],
@@ -840,7 +876,7 @@ class _ClientHomePageState extends State<ClientHomePage>
     );
   }
 
-  static String _formatUpcomingEventSubtitle(UpcomingEvent event) {
+  String _formatUpcomingEventSubtitle(UpcomingEvent event) {
     final parts = <String>[];
     if (event.startsAt != null) {
       final s = event.startsAt!;
@@ -859,22 +895,9 @@ class _ClientHomePageState extends State<ClientHomePage>
     return parts.join(' • ');
   }
 
-  static String _formatEventDate(DateTime d) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[d.month - 1]} ${d.day}, ${d.year}';
+  String _formatEventDate(DateTime d) {
+    final loc = Localizations.localeOf(context).toString();
+    return DateFormat.yMMMd(loc).format(d);
   }
 
   Widget _buildHomeContent() {
@@ -886,8 +909,6 @@ class _ClientHomePageState extends State<ClientHomePage>
           _buildCurrentParticipation(),
           const SizedBox(height: 36),
           _buildHighlights(),
-          const SizedBox(height: 36),
-          _buildQuickActions(),
           const SizedBox(height: 40),
           _buildQuote(),
           const SizedBox(height: 24),
@@ -909,6 +930,9 @@ class _ClientHomePageState extends State<ClientHomePage>
         color: Colors.grey[600],
         letterSpacing: 2.5,
       ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      softWrap: true,
     );
   }
 
@@ -917,13 +941,14 @@ class _ClientHomePageState extends State<ClientHomePage>
   // ---------------------------------------------------------------------------
 
   Widget _buildCurrentParticipation() {
+    final selectedChild = _selectedDashboardChild;
     final Widget content;
     if (_loading) {
       content = _buildLoadingCard();
     } else if (_error != null) {
       content = _buildErrorCard();
-    } else if (_dashboard?.activeChild != null) {
-      content = _buildEventCard(_dashboard!.activeChild!);
+    } else if (selectedChild?.activeAssignment != null) {
+      content = _buildEventCard(selectedChild!);
     } else {
       content = _buildBecomeModelButton();
     }
@@ -932,6 +957,10 @@ class _ClientHomePageState extends State<ClientHomePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle(AppLocalizations.of(context)!.currentParticipation),
+        if ((_dashboard?.children.length ?? 0) > 1) ...[
+          const SizedBox(height: 10),
+          _buildDashboardChildSwitcher(),
+        ],
         const SizedBox(height: 12),
         content,
       ],
@@ -940,13 +969,14 @@ class _ClientHomePageState extends State<ClientHomePage>
 
   /// Текущее участие на вкладке Events: карточка как в референсе (фото фона, ACTIVE, прогресс, кнопка).
   Widget _buildCurrentParticipationForEventsTab() {
+    final selectedChild = _selectedDashboardChild;
     final Widget content;
     if (_loading) {
       content = _buildLoadingCard();
     } else if (_error != null) {
       content = _buildErrorCard();
-    } else if (_dashboard?.activeChild != null) {
-      content = _buildCurrentParticipationEventCard(_dashboard!.activeChild!);
+    } else if (selectedChild?.activeAssignment != null) {
+      content = _buildCurrentParticipationEventCard(selectedChild!);
     } else {
       content = _buildBecomeModelButton();
     }
@@ -955,9 +985,50 @@ class _ClientHomePageState extends State<ClientHomePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle(AppLocalizations.of(context)!.currentParticipation),
+        if ((_dashboard?.children.length ?? 0) > 1) ...[
+          const SizedBox(height: 10),
+          _buildDashboardChildSwitcher(),
+        ],
         const SizedBox(height: 12),
         content,
       ],
+    );
+  }
+
+  Widget _buildDashboardChildSwitcher() {
+    final children = _dashboard?.children ?? const <ChildWithAssignment>[];
+    final selectedId = _selectedDashboardChild?.id;
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: children.map((child) {
+          final isSelected = child.id == selectedId;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: ChoiceChip(
+              label: Text(
+                child.firstName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              selected: isSelected,
+              onSelected: (_) {
+                setState(() => _selectedDashboardChildId = child.id);
+              },
+              backgroundColor: Colors.white.withOpacity(0.04),
+              selectedColor: _kGold.withOpacity(0.2),
+              side: BorderSide(
+                color: isSelected ? _kGold.withOpacity(0.6) : Colors.white24,
+              ),
+              labelStyle: TextStyle(
+                color: isSelected ? _kGoldLight : Colors.white70,
+                fontWeight: FontWeight.w600,
+              ),
+              visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -990,6 +1061,8 @@ class _ClientHomePageState extends State<ClientHomePage>
             _error ?? AppLocalizations.of(context)!.unknownError,
             textAlign: TextAlign.center,
             style: const TextStyle(color: Colors.white70, fontSize: 13),
+            maxLines: 8,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 16),
           ElevatedButton(
@@ -1047,21 +1120,26 @@ class _ClientHomePageState extends State<ClientHomePage>
                     Text(
                       a.event.name,
                       style: const TextStyle(
+                        fontFamily: _kFontFamilyLuxenta,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      AppLocalizations.of(
-                        context,
-                      )!.model(child.firstName),
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.model(child.firstName),
+                      style: const TextStyle(
                         fontSize: 13,
-                        color: Colors.grey[500],
-                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w500,
+                        color: _kGold,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
                     ),
                   ],
                 ),
@@ -1084,7 +1162,6 @@ class _ClientHomePageState extends State<ClientHomePage>
                     color: _kGold,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.2,
-                    fontStyle: FontStyle.italic,
                   ),
                 ),
               ),
@@ -1095,23 +1172,33 @@ class _ClientHomePageState extends State<ClientHomePage>
 
           // Progress header
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                AppLocalizations.of(context)!.journeyProgress,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[500],
-                  letterSpacing: 2,
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.journeyProgress,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[500],
+                    letterSpacing: 2,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                 ),
               ),
-              Text(
-                AppLocalizations.of(context)!.stepOf(completed, totalStages),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: _kGold,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  AppLocalizations.of(context)!.stepOf(completed, totalStages),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: _kGold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
                 ),
               ),
             ],
@@ -1119,8 +1206,14 @@ class _ClientHomePageState extends State<ClientHomePage>
           if (a.familyLook && parentProgress != null) ...[
             const SizedBox(height: 8),
             Text(
-              'Parent progress: ${parentProgress.completedStages}/${parentProgress.totalStages}',
+              AppLocalizations.of(context)!.parentProgressLabel(
+                parentProgress.completedStages,
+                parentProgress.totalStages,
+              ),
               style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
             ),
           ],
           const SizedBox(height: 8),
@@ -1158,9 +1251,11 @@ class _ClientHomePageState extends State<ClientHomePage>
               nextStageText,
               style: TextStyle(
                 fontSize: 11,
-                color: Colors.grey[600],
-                fontStyle: FontStyle.italic,
+                color: Colors.grey[500],
               ),
+              maxLines: 5,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
             ),
           ],
 
@@ -1183,12 +1278,17 @@ class _ClientHomePageState extends State<ClientHomePage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    AppLocalizations.of(context)!.viewProgress,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                      letterSpacing: 1.5,
+                  Flexible(
+                    child: Text(
+                      AppLocalizations.of(context)!.viewProgress,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                        letterSpacing: 1.5,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   SizedBox(width: 8),
@@ -1213,12 +1313,17 @@ class _ClientHomePageState extends State<ClientHomePage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    AppLocalizations.of(context)!.eventSettings,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                      letterSpacing: 1.5,
+                  Flexible(
+                    child: Text(
+                      AppLocalizations.of(context)!.eventSettings,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                        letterSpacing: 1.5,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -1340,11 +1445,15 @@ class _ClientHomePageState extends State<ClientHomePage>
                         Text(
                           a.event.name,
                           style: const TextStyle(
+                            fontFamily: _kFontFamilyLuxenta,
                             fontSize: 26,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                             letterSpacing: -0.5,
                           ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: true,
                         ),
                         if (dateText.isNotEmpty) ...[
                           const SizedBox(height: 4),
@@ -1355,6 +1464,9 @@ class _ClientHomePageState extends State<ClientHomePage>
                               color: _kGold,
                               fontWeight: FontWeight.w500,
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
                           ),
                         ],
                       ],
@@ -1396,13 +1508,17 @@ class _ClientHomePageState extends State<ClientHomePage>
                         ),
                       ),
                       const SizedBox(width: 16),
-                      Text(
-                        l10n.stepOf(completed, totalStages),
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.grey[500],
-                          fontStyle: FontStyle.italic,
+                      Flexible(
+                        child: Text(
+                          l10n.stepOf(completed, totalStages),
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[500],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.end,
                         ),
                       ),
                     ],
@@ -1410,8 +1526,14 @@ class _ClientHomePageState extends State<ClientHomePage>
                   if (a.familyLook && parentProgress != null) ...[
                     const SizedBox(height: 10),
                     Text(
-                      'Parent progress: ${parentProgress.completedStages}/${parentProgress.totalStages}',
+                      l10n.parentProgressLabel(
+                        parentProgress.completedStages,
+                        parentProgress.totalStages,
+                      ),
                       style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
                     ),
                   ],
                   ...() {
@@ -1425,9 +1547,11 @@ class _ClientHomePageState extends State<ClientHomePage>
                         prepHint,
                         style: TextStyle(
                           fontSize: 11,
-                          color: Colors.grey[600],
-                          fontStyle: FontStyle.italic,
+                          color: Colors.grey[500],
                         ),
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
                       ),
                     ];
                   }(),
@@ -1448,12 +1572,17 @@ class _ClientHomePageState extends State<ClientHomePage>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            l10n.viewProgress,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              letterSpacing: 1.5,
+                          Flexible(
+                            child: Text(
+                              l10n.viewProgress,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                letterSpacing: 1.5,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -1478,12 +1607,17 @@ class _ClientHomePageState extends State<ClientHomePage>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            l10n.eventSettings,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              letterSpacing: 1.5,
+                          Flexible(
+                            child: Text(
+                              l10n.eventSettings,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                letterSpacing: 1.5,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -1529,12 +1663,19 @@ class _ClientHomePageState extends State<ClientHomePage>
           Text(
             AppLocalizations.of(context)!.noActiveEvents,
             style: const TextStyle(fontSize: 16, color: Colors.white70),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            softWrap: true,
           ),
           const SizedBox(height: 8),
           Text(
             AppLocalizations.of(context)!.becomeModelTitle,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            softWrap: true,
           ),
           const SizedBox(height: 24),
           SizedBox(
@@ -1557,6 +1698,9 @@ class _ClientHomePageState extends State<ClientHomePage>
                   fontSize: 14,
                   letterSpacing: 2,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
             ),
           ),
@@ -1574,9 +1718,14 @@ class _ClientHomePageState extends State<ClientHomePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionTitle(AppLocalizations.of(context)!.latestHighlights),
+            Expanded(
+              child: _buildSectionTitle(
+                AppLocalizations.of(context)!.latestHighlights,
+              ),
+            ),
+            const SizedBox(width: 8),
             GestureDetector(
               onTap: () {},
               child: Text(
@@ -1587,6 +1736,8 @@ class _ClientHomePageState extends State<ClientHomePage>
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -1649,28 +1800,6 @@ class _ClientHomePageState extends State<ClientHomePage>
   }
 
   // ---------------------------------------------------------------------------
-  // Quick Actions
-  // ---------------------------------------------------------------------------
-
-  Widget _buildQuickActions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle(AppLocalizations.of(context)!.quickActions),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: _ActionCard(
-            icon: Icons.assignment_outlined,
-            label: AppLocalizations.of(context)!.fillOutApplication,
-            onTap: _openContactFormUrl,
-          ),
-        ),
-      ],
-    );
-  }
-
-  // ---------------------------------------------------------------------------
   // Quote
   // ---------------------------------------------------------------------------
 
@@ -1684,9 +1813,13 @@ class _ClientHomePageState extends State<ClientHomePage>
           style: TextStyle(
             fontSize: 16,
             fontStyle: FontStyle.italic,
-            color: Color(0xFF4A4A4A),
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
             height: 1.6,
           ),
+          maxLines: 6,
+          overflow: TextOverflow.ellipsis,
+          softWrap: true,
         ),
       ),
     );
@@ -1707,46 +1840,54 @@ class _ClientHomePageState extends State<ClientHomePage>
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _NavItem(
-                icon: Icons.home_outlined,
-                activeIcon: Icons.home,
-                label: AppLocalizations.of(context)!.navHome,
-                isActive: _currentTab == 0,
-                onTap: () => setState(() => _currentTab = 0),
+              Expanded(
+                child: _NavItem(
+                  icon: Icons.home_outlined,
+                  activeIcon: Icons.home,
+                  label: AppLocalizations.of(context)!.navHome,
+                  isActive: _currentTab == 0,
+                  onTap: () => setState(() => _currentTab = 0),
+                ),
               ),
-              _NavItem(
-                icon: Icons.event_outlined,
-                activeIcon: Icons.event,
-                label: AppLocalizations.of(context)!.navEvents,
-                isActive: _currentTab == 1,
-                onTap: () {
-                  setState(() => _currentTab = 1);
-                  _refreshDashboardSilently();
-                  _loadInfoSettings();
-                  if (_upcomingEvents == null && !_upcomingLoading) {
-                    _loadUpcomingEvents();
-                  }
-                },
-              ),
-              _NavItem(
-                icon: Icons.person_outline,
-                activeIcon: Icons.person,
-                label: AppLocalizations.of(context)!.navProfile,
-                isActive: _currentTab == 2,
-                onTap: () => setState(() => _currentTab = 2),
-              ),
-              _NavItem(
-                icon: Icons.info_outline,
-                activeIcon: Icons.info,
-                label: AppLocalizations.of(context)!.navInfo,
-                isActive: _currentTab == 3,
-                onTap: () {
-                  setState(() => _currentTab = 3);
-                  if (_infoSettings == null && !_infoSettingsLoading)
+              Expanded(
+                child: _NavItem(
+                  icon: Icons.event_outlined,
+                  activeIcon: Icons.event,
+                  label: AppLocalizations.of(context)!.navEvents,
+                  isActive: _currentTab == 1,
+                  onTap: () {
+                    setState(() => _currentTab = 1);
+                    _refreshDashboardSilently();
                     _loadInfoSettings();
-                },
+                    if (_upcomingEvents == null && !_upcomingLoading) {
+                      _loadUpcomingEvents();
+                    }
+                  },
+                ),
+              ),
+              Expanded(
+                child: _NavItem(
+                  icon: Icons.person_outline,
+                  activeIcon: Icons.person,
+                  label: AppLocalizations.of(context)!.navProfile,
+                  isActive: _currentTab == 2,
+                  onTap: () => setState(() => _currentTab = 2),
+                ),
+              ),
+              Expanded(
+                child: _NavItem(
+                  icon: Icons.info_outline,
+                  activeIcon: Icons.info,
+                  label: AppLocalizations.of(context)!.navInfo,
+                  isActive: _currentTab == 3,
+                  onTap: () {
+                    setState(() => _currentTab = 3);
+                    if (_infoSettings == null && !_infoSettingsLoading) {
+                      _loadInfoSettings();
+                    }
+                  },
+                ),
               ),
             ],
           ),
@@ -1774,7 +1915,7 @@ class _ClientHomePageState extends State<ClientHomePage>
     }
     if (p.scheduledAt != null && p.scheduledAt!.isAfter(DateTime.now())) {
       final name = p.displayTitle(l10n);
-      return '${l10n.next(name)} (${_formatDate(p.scheduledAt!)})';
+      return '${l10n.next(name)} (${_formatShortEventDate(p.scheduledAt!)})';
     }
     final title = p.displayTitle(l10n);
     if (title.isNotEmpty) {
@@ -1783,22 +1924,9 @@ class _ClientHomePageState extends State<ClientHomePage>
     return null;
   }
 
-  static String _formatDate(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[date.month - 1]} ${date.day}';
+  String _formatShortEventDate(DateTime date) {
+    final loc = Localizations.localeOf(context).toString();
+    return DateFormat.MMMd(loc).format(date);
   }
 }
 
@@ -1828,14 +1956,12 @@ class _ClientEventProgressPage extends StatefulWidget {
     required this.auth,
     required this.childId,
     required this.title,
-    required this.onOpenInfo,
     required this.onOpenGallery,
   });
 
   final AuthService auth;
   final int childId;
   final String title;
-  final VoidCallback onOpenInfo;
   final VoidCallback onOpenGallery;
 
   @override
@@ -1938,10 +2064,19 @@ class _ClientEventProgressPageState extends State<_ClientEventProgressPage> {
                     )
                   : ClientEventProgressTab(
                       assignment: _child?.activeAssignment,
-                      childFullName: _child == null
-                          ? ''
-                          : _child!.firstName,
-                      onOpenInfo: widget.onOpenInfo,
+                      childFullName: _child == null ? '' : _child!.firstName,
+                      onOpenInfo: () {
+                        final a = _child?.activeAssignment;
+                        if (a == null || !context.mounted) return;
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => ClientEventDescriptionPage(
+                              auth: widget.auth,
+                              eventId: a.event.id,
+                            ),
+                          ),
+                        );
+                      },
                       onOpenGallery: widget.onOpenGallery,
                     )),
       ),
@@ -2045,58 +2180,6 @@ class _NewsHighlightCard extends StatelessWidget {
   }
 }
 
-class _ActionCard extends StatelessWidget {
-  const _ActionCard({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 26),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white10),
-        ),
-        child: Column(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: _kGold.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: _kGold, size: 24),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              label.toUpperCase(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-                letterSpacing: 1.2,
-                height: 1.4,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.icon,
@@ -2119,22 +2202,29 @@ class _NavItem extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(isActive ? activeIcon : icon, color: color, size: 26),
-            const SizedBox(height: 4),
-            Text(
-              label.toUpperCase(),
-              style: TextStyle(
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-                color: color,
-                letterSpacing: 1,
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(isActive ? activeIcon : icon, color: color, size: 26),
+              const SizedBox(height: 4),
+              Text(
+                label.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                  letterSpacing: 1,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -2247,6 +2337,8 @@ class _UpcomingEventCard extends StatelessWidget {
                             color: Colors.white,
                             letterSpacing: 1.5,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
@@ -2261,11 +2353,15 @@ class _UpcomingEventCard extends StatelessWidget {
                           Text(
                             title,
                             style: const TextStyle(
+                              fontFamily: _kFontFamilyLuxenta,
                               fontSize: 26,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
                               letterSpacing: -0.5,
                             ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -2275,6 +2371,9 @@ class _UpcomingEventCard extends StatelessWidget {
                               color: Colors.white.withOpacity(0.7),
                               fontWeight: FontWeight.w400,
                             ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
                           ),
                           const SizedBox(height: 20),
                           Row(
@@ -2301,6 +2400,9 @@ class _UpcomingEventCard extends StatelessWidget {
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 1.5,
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                               ),
@@ -2326,6 +2428,9 @@ class _UpcomingEventCard extends StatelessWidget {
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 1.5,
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                               ),
@@ -2379,6 +2484,9 @@ class _InfoMenuRow extends StatelessWidget {
                   color: Colors.white,
                   letterSpacing: 0.5,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
               ),
             ),
             Icon(Icons.chevron_right, color: Colors.white30, size: 24),

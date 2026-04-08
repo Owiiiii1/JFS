@@ -208,9 +208,9 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
                   style: TextStyle(color: Colors.white54),
                 ),
                 items: [
-                  const DropdownMenuItem<int?>(
+                  DropdownMenuItem<int?>(
                     value: null,
-                    child: Text('— None —'),
+                    child: Text(AppLocalizations.of(context)!.staffNoneSelected),
                   ),
                   ..._upcomingEvents.map(
                     (e) => DropdownMenuItem<int?>(
@@ -280,9 +280,9 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
                   style: TextStyle(color: Colors.white54),
                 ),
                 items: [
-                  const DropdownMenuItem<int?>(
+                  DropdownMenuItem<int?>(
                     value: null,
-                    child: Text('— None —'),
+                    child: Text(AppLocalizations.of(context)!.staffNoneSelected),
                   ),
                   ..._eventStages.map(
                     (s) => DropdownMenuItem<int?>(

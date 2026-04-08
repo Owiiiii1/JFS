@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'api/auth_service.dart';
+import 'push/push_token_service.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
 
@@ -168,6 +169,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     );
 
     try {
+      await PushTokenServiceHolder.instance?.deactivateCurrentOnBackend();
       await widget.auth.deleteClientAccount();
       await widget.auth.clearToken();
       if (!mounted) return;

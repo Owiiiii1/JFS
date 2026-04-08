@@ -168,7 +168,9 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Could not pick photo')));
+      ).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.chatCouldNotPickPhoto)),
+      );
     }
   }
 

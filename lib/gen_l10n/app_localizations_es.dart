@@ -469,6 +469,20 @@ class AppLocalizationsEs extends AppLocalizations {
       'Aún no se añadió información para este evento.';
 
   @override
+  String get eventDescriptionTitle => 'Información del evento';
+
+  @override
+  String get eventProgressShowGallery => 'Galería';
+
+  @override
+  String get eventDescriptionLoadFailed =>
+      'No se pudo cargar la descripción. Inténtalo de nuevo.';
+
+  @override
+  String get eventDescriptionEmpty =>
+      'Aún no hay descripción de texto para este evento.';
+
+  @override
   String get eventSettingsBrandTitle => 'Requisitos de marca';
 
   @override
@@ -489,6 +503,14 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get brandRequirementsEmptyItem =>
       'Aún no se añadió texto de requisitos para esta marca.';
+
+  @override
+  String get brandRequirementsPickBrandTitle => 'Elige una marca';
+
+  @override
+  String brandRequirementsBrandNumber(int brandId) {
+    return 'Marca $brandId';
+  }
 
   @override
   String get eventSettingsChatTitle => 'Chat grupal';
@@ -747,11 +769,143 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ticketsEventsLoadError => 'No se pudieron cargar los eventos';
 
   @override
+  String get faqBrandCatalogTitle => 'Marcas de ropa';
+
+  @override
   String get pdfViewerTitle => 'Entrada';
 
   @override
   String get contactFormLinkMissing =>
       'No hay enlace al formulario. Añade la URL en Ajustes generales de la app en el panel.';
+
+  @override
+  String get infoHubTitle => 'Centro de información';
+
+  @override
+  String get infoMenuAboutYfs => 'Acerca de YFS';
+
+  @override
+  String get infoMenuGeneralFaq => 'FAQ general';
+
+  @override
+  String get infoMenuContactManager => 'Contactar al gestor';
+
+  @override
+  String get infoFooterBrand => 'YFS';
+
+  @override
+  String get infoFooterCopyright =>
+      '© 2024 Young Fashion Series. Todos los derechos reservados.';
+
+  @override
+  String parentProgressLabel(int completed, int total) {
+    return 'Progreso del padre/madre: $completed/$total';
+  }
+
+  @override
+  String get appUpdateRequiredMessage =>
+      'Actualiza la aplicación para continuar.';
+
+  @override
+  String get appUpdateButton => 'Actualizar aplicación';
+
+  @override
+  String get showAll => 'Ver todo';
+
+  @override
+  String get staffNoneSelected => '— Ninguno —';
+
+  @override
+  String staffScanFailed(String error) {
+    return 'Error al escanear: $error';
+  }
+
+  @override
+  String get staffScanSelectEventStageFirst =>
+      'Selecciona el evento y la etapa activos en Ajustes del personal antes de escanear.';
+
+  @override
+  String get staffScanProcessed => 'Escaneo procesado';
+
+  @override
+  String get chatCouldNotPickPhoto => 'No se pudo elegir la foto';
+
+  @override
+  String get staffChildProfileTitle => 'Perfil del niño';
+
+  @override
+  String get staffCurrentStage => 'ETAPA ACTUAL';
+
+  @override
+  String staffProgressPercentComplete(int percent) {
+    return '$percent% completado';
+  }
+
+  @override
+  String get staffChildDetailEmpty =>
+      'No hay datos del niño en la base de datos';
+
+  @override
+  String get staffLoadFailed => 'Error al cargar';
+
+  @override
+  String get staffGuardianLiaison => 'ENLACE CON TUTORES';
+
+  @override
+  String get staffAssignedBrand => 'MARCA ASIGNADA';
+
+  @override
+  String get staffSupervisor => 'SUPERVISOR';
+
+  @override
+  String get staffSectionCoreDetails => 'Datos principales';
+
+  @override
+  String get staffSectionParentContact => 'Contacto del padre/madre';
+
+  @override
+  String staffPhaseWithName(String stageName) {
+    return 'Fase: $stageName';
+  }
+
+  @override
+  String get staffNoCurrentStage => 'Sin etapa actual';
+
+  @override
+  String staffAgeYearsOld(int age) {
+    return '$age años';
+  }
+
+  @override
+  String get staffNotesLabel => 'Notas';
+
+  @override
+  String get staffParentRoleDefault => 'Padre/madre';
+
+  @override
+  String get contactManagerIntro =>
+      'Puedes dejar un mensaje sobre cualquier consulta; nos pondremos en contacto contigo lo antes posible.';
+
+  @override
+  String get contactManagerMessageLabel => 'Tu mensaje';
+
+  @override
+  String get contactManagerMessageRequired => 'Escribe tu mensaje';
+
+  @override
+  String get contactManagerSend => 'Enviar';
+
+  @override
+  String get contactManagerSent =>
+      'Tu mensaje se ha enviado. Nos pondremos en contacto contigo pronto.';
+
+  @override
+  String get contactManagerSendFailed =>
+      'No se pudo enviar. Inténtalo más tarde.';
+
+  @override
+  String get contactManagerServiceUnavailable =>
+      'El contacto no está disponible temporalmente. Inténtalo más tarde.';
 }
 
 /// The translations for Spanish Castilian, as used in the United States (`es_US`).
@@ -1209,6 +1363,20 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
       'Packing information has not been added for this event yet.';
 
   @override
+  String get eventDescriptionTitle => 'Event info';
+
+  @override
+  String get eventProgressShowGallery => 'Show gallery';
+
+  @override
+  String get eventDescriptionLoadFailed =>
+      'Could not load event description. Try again.';
+
+  @override
+  String get eventDescriptionEmpty =>
+      'No description has been added for this event yet.';
+
+  @override
   String get eventSettingsBrandTitle => 'Requisitos de marca';
 
   @override
@@ -1229,6 +1397,14 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   @override
   String get brandRequirementsEmptyItem =>
       'No requirements text has been added for this brand yet.';
+
+  @override
+  String get brandRequirementsPickBrandTitle => 'Choose a brand';
+
+  @override
+  String brandRequirementsBrandNumber(int brandId) {
+    return 'Brand $brandId';
+  }
 
   @override
   String get eventSettingsChatTitle => 'Chat grupal';
@@ -1483,9 +1659,141 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get ticketsEventsLoadError => 'No se pudieron cargar los eventos';
 
   @override
+  String get faqBrandCatalogTitle => 'Marcas de ropa';
+
+  @override
   String get pdfViewerTitle => 'Entrada';
 
   @override
   String get contactFormLinkMissing =>
       'No hay enlace al formulario. Añade la URL en Ajustes generales de la app en el panel.';
+
+  @override
+  String get infoHubTitle => 'Centro de información';
+
+  @override
+  String get infoMenuAboutYfs => 'Acerca de YFS';
+
+  @override
+  String get infoMenuGeneralFaq => 'FAQ general';
+
+  @override
+  String get infoMenuContactManager => 'Contactar al gestor';
+
+  @override
+  String get infoFooterBrand => 'YFS';
+
+  @override
+  String get infoFooterCopyright =>
+      '© 2024 Young Fashion Series. Todos los derechos reservados.';
+
+  @override
+  String parentProgressLabel(int completed, int total) {
+    return 'Progreso del padre/madre: $completed/$total';
+  }
+
+  @override
+  String get appUpdateRequiredMessage =>
+      'Actualiza la aplicación para continuar.';
+
+  @override
+  String get appUpdateButton => 'Actualizar aplicación';
+
+  @override
+  String get showAll => 'Ver todo';
+
+  @override
+  String get staffNoneSelected => '— Ninguno —';
+
+  @override
+  String staffScanFailed(String error) {
+    return 'Error al escanear: $error';
+  }
+
+  @override
+  String get staffScanSelectEventStageFirst =>
+      'Selecciona el evento y la etapa activos en Ajustes del personal antes de escanear.';
+
+  @override
+  String get staffScanProcessed => 'Escaneo procesado';
+
+  @override
+  String get chatCouldNotPickPhoto => 'No se pudo elegir la foto';
+
+  @override
+  String get staffChildProfileTitle => 'Perfil del niño';
+
+  @override
+  String get staffCurrentStage => 'ETAPA ACTUAL';
+
+  @override
+  String staffProgressPercentComplete(int percent) {
+    return '$percent% completado';
+  }
+
+  @override
+  String get staffChildDetailEmpty =>
+      'No hay datos del niño en la base de datos';
+
+  @override
+  String get staffLoadFailed => 'Error al cargar';
+
+  @override
+  String get staffGuardianLiaison => 'ENLACE CON TUTORES';
+
+  @override
+  String get staffAssignedBrand => 'MARCA ASIGNADA';
+
+  @override
+  String get staffSupervisor => 'SUPERVISOR';
+
+  @override
+  String get staffSectionCoreDetails => 'Datos principales';
+
+  @override
+  String get staffSectionParentContact => 'Contacto del padre/madre';
+
+  @override
+  String staffPhaseWithName(String stageName) {
+    return 'Fase: $stageName';
+  }
+
+  @override
+  String get staffNoCurrentStage => 'Sin etapa actual';
+
+  @override
+  String staffAgeYearsOld(int age) {
+    return '$age años';
+  }
+
+  @override
+  String get staffNotesLabel => 'Notas';
+
+  @override
+  String get staffParentRoleDefault => 'Padre/madre';
+
+  @override
+  String get contactManagerIntro =>
+      'Puedes dejar un mensaje sobre cualquier consulta; nos pondremos en contacto contigo lo antes posible.';
+
+  @override
+  String get contactManagerMessageLabel => 'Tu mensaje';
+
+  @override
+  String get contactManagerMessageRequired => 'Escribe tu mensaje';
+
+  @override
+  String get contactManagerSend => 'Enviar';
+
+  @override
+  String get contactManagerSent =>
+      'Tu mensaje se ha enviado. Nos pondremos en contacto contigo pronto.';
+
+  @override
+  String get contactManagerSendFailed =>
+      'No se pudo enviar. Inténtalo más tarde.';
+
+  @override
+  String get contactManagerServiceUnavailable =>
+      'El contacto no está disponible temporalmente. Inténtalo más tarde.';
 }

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'api/auth_service.dart';
+import 'push/push_token_service.dart';
 import 'client_home_page.dart';
 import 'gen_l10n/app_localizations.dart';
 
@@ -55,6 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       await widget.auth.saveToken(result.token);
+      unawaited(PushTokenServiceHolder.instance?.syncWithBackendIfLoggedIn());
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
@@ -216,7 +220,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               height: 22,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Create account'),
+                          : Text(AppLocalizations.of(context)!.createAccount),
                     ),
                   ),
                   const SizedBox(height: 12),

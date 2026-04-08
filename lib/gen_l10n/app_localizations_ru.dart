@@ -467,6 +467,20 @@ class AppLocalizationsRu extends AppLocalizations {
       'Для этого ивента информация пока не добавлена.';
 
   @override
+  String get eventDescriptionTitle => 'Описание ивента';
+
+  @override
+  String get eventProgressShowGallery => 'Галерея';
+
+  @override
+  String get eventDescriptionLoadFailed =>
+      'Не удалось загрузить описание. Попробуйте снова.';
+
+  @override
+  String get eventDescriptionEmpty =>
+      'Для этого ивента пока не добавлено текстовое описание.';
+
+  @override
   String get eventSettingsBrandTitle => 'Требования бренда';
 
   @override
@@ -487,6 +501,14 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get brandRequirementsEmptyItem =>
       'Для этого бренда требования пока не заполнены.';
+
+  @override
+  String get brandRequirementsPickBrandTitle => 'Выберите бренд';
+
+  @override
+  String brandRequirementsBrandNumber(int brandId) {
+    return 'Бренд $brandId';
+  }
 
   @override
   String get eventSettingsChatTitle => 'Общий чат';
@@ -745,9 +767,140 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ticketsEventsLoadError => 'Не удалось загрузить события';
 
   @override
+  String get faqBrandCatalogTitle => 'Бренды одежды';
+
+  @override
   String get pdfViewerTitle => 'Билет';
 
   @override
   String get contactFormLinkMissing =>
       'Ссылка на форму не задана. Укажите «Ссылка на форму» в общих настройках приложения в админке.';
+
+  @override
+  String get infoHubTitle => 'Информационный центр';
+
+  @override
+  String get infoMenuAboutYfs => 'О YFS';
+
+  @override
+  String get infoMenuGeneralFaq => 'Общий FAQ';
+
+  @override
+  String get infoMenuContactManager => 'Связаться с менеджером';
+
+  @override
+  String get infoFooterBrand => 'YFS';
+
+  @override
+  String get infoFooterCopyright =>
+      '© 2024 Young Fashion Series. Все права защищены.';
+
+  @override
+  String parentProgressLabel(int completed, int total) {
+    return 'Прогресс родителя: $completed/$total';
+  }
+
+  @override
+  String get appUpdateRequiredMessage =>
+      'Обновите приложение, чтобы продолжить.';
+
+  @override
+  String get appUpdateButton => 'Обновить приложение';
+
+  @override
+  String get showAll => 'Показать все';
+
+  @override
+  String get staffNoneSelected => '— Нет —';
+
+  @override
+  String staffScanFailed(String error) {
+    return 'Ошибка сканирования: $error';
+  }
+
+  @override
+  String get staffScanSelectEventStageFirst =>
+      'Выберите активное событие и этап в настройках персонала перед сканированием.';
+
+  @override
+  String get staffScanProcessed => 'Сканирование выполнено';
+
+  @override
+  String get chatCouldNotPickPhoto => 'Не удалось выбрать фото';
+
+  @override
+  String get staffChildProfileTitle => 'Профиль ребёнка';
+
+  @override
+  String get staffCurrentStage => 'ТЕКУЩИЙ ЭТАП';
+
+  @override
+  String staffProgressPercentComplete(int percent) {
+    return '$percent% завершено';
+  }
+
+  @override
+  String get staffChildDetailEmpty => 'Нет данных о ребёнке в БД';
+
+  @override
+  String get staffLoadFailed => 'Не удалось загрузить';
+
+  @override
+  String get staffGuardianLiaison => 'КУРАТОР';
+
+  @override
+  String get staffAssignedBrand => 'НАЗНАЧЕННЫЙ БРЕНД';
+
+  @override
+  String get staffSupervisor => 'СУПЕРВАЙЗЕР';
+
+  @override
+  String get staffSectionCoreDetails => 'Основные данные';
+
+  @override
+  String get staffSectionParentContact => 'Контакт родителя';
+
+  @override
+  String staffPhaseWithName(String stageName) {
+    return 'Фаза: $stageName';
+  }
+
+  @override
+  String get staffNoCurrentStage => 'Нет текущего этапа';
+
+  @override
+  String staffAgeYearsOld(int age) {
+    return '$age лет';
+  }
+
+  @override
+  String get staffNotesLabel => 'Заметки';
+
+  @override
+  String get staffParentRoleDefault => 'Родитель';
+
+  @override
+  String get contactManagerIntro =>
+      'Вы можете оставить сообщение по любому вопросу — с вами свяжутся в ближайшее время.';
+
+  @override
+  String get contactManagerMessageLabel => 'Ваше сообщение';
+
+  @override
+  String get contactManagerMessageRequired => 'Введите текст сообщения';
+
+  @override
+  String get contactManagerSend => 'Отправить';
+
+  @override
+  String get contactManagerSent =>
+      'Сообщение отправлено. Мы свяжемся с вами в ближайшее время.';
+
+  @override
+  String get contactManagerSendFailed =>
+      'Не удалось отправить. Попробуйте позже.';
+
+  @override
+  String get contactManagerServiceUnavailable =>
+      'Связь временно недоступна. Попробуйте позже.';
 }

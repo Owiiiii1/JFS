@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'gen_l10n/app_localizations.dart';
 import 'api/auth_service.dart'
     show StaffMainProgressStage, SupervisorChildDetail;
 
@@ -165,9 +166,9 @@ class StaffInfoChildProfilePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _guardianCard(d, accent),
+                _guardianCard(context, d, accent),
                 const SizedBox(height: 24),
-                _brandCard(d, accent, supPhoto),
+                _brandCard(context, d, accent, supPhoto),
                 const SizedBox(height: 28),
                 _showProgressHeader(accent),
                 const SizedBox(height: 16),
@@ -494,7 +495,8 @@ class StaffInfoChildProfilePage extends StatelessWidget {
     fontFamily: 'HelveticaNeueCyr',
   );
 
-  Widget _guardianCard(SupervisorChildDetail d, Color accent) {
+  Widget _guardianCard(BuildContext context, SupervisorChildDetail d, Color accent) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         color: _surfaceLow,
@@ -516,7 +518,7 @@ class StaffInfoChildProfilePage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('GUARDIAN LIAISON', style: _labelGold(accent)),
+              Text(l10n.staffGuardianLiaison, style: _labelGold(accent)),
               const SizedBox(height: 6),
               const Text(
                 'Contact Details',
@@ -591,7 +593,8 @@ class StaffInfoChildProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _brandCard(SupervisorChildDetail d, Color accent, String? supPhoto) {
+  Widget _brandCard(BuildContext context, SupervisorChildDetail d, Color accent, String? supPhoto) {
+    final l10n = AppLocalizations.of(context)!;
     final name = d.supervisorName ?? '—';
     return Container(
       decoration: BoxDecoration(
@@ -614,7 +617,7 @@ class StaffInfoChildProfilePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('ASSIGNED BRAND', style: _labelGrey),
+                Text(l10n.staffAssignedBrand, style: _labelGrey),
                 const SizedBox(height: 6),
                 Text(
                   d.brandName ?? '—',
@@ -638,7 +641,7 @@ class StaffInfoChildProfilePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('SUPERVISOR', style: _labelGrey),
+                    Text(l10n.staffSupervisor, style: _labelGrey),
                     const SizedBox(height: 4),
                     Text(
                       name,

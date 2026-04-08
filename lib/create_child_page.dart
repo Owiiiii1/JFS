@@ -25,10 +25,6 @@ class _CreateChildPageState extends State<CreateChildPage> {
     super.dispose();
   }
 
-  static String _formatDate(DateTime d) {
-    return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-  }
-
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final firstName = _firstNameController.text.trim();
@@ -58,10 +54,11 @@ class _CreateChildPageState extends State<CreateChildPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.addChildTitle),
+        title: Text(l10n.addChildTitle),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
@@ -80,7 +77,7 @@ class _CreateChildPageState extends State<CreateChildPage> {
                       controller: _firstNameController,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: 'Имя *',
+                        labelText: '${l10n.firstName} *',
                         labelStyle: TextStyle(color: Colors.grey[400]),
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey[700]!),
@@ -94,7 +91,7 @@ class _CreateChildPageState extends State<CreateChildPage> {
                       ),
                       validator: (v) {
                         if (v == null || v.trim().isEmpty) {
-                          return AppLocalizations.of(context)!.enterFirstName;
+                          return l10n.enterFirstName;
                         }
                         return null;
                       },
@@ -105,7 +102,7 @@ class _CreateChildPageState extends State<CreateChildPage> {
                       dropdownColor: const Color(0xFF121212),
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.gender,
+                        labelText: l10n.gender,
                         labelStyle: TextStyle(color: Colors.grey[400]),
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey[700]!),
@@ -117,11 +114,11 @@ class _CreateChildPageState extends State<CreateChildPage> {
                       items: [
                         DropdownMenuItem(
                           value: 'male',
-                          child: Text(AppLocalizations.of(context)!.genderBoy),
+                          child: Text(l10n.genderBoy),
                         ),
                         DropdownMenuItem(
                           value: 'female',
-                          child: Text(AppLocalizations.of(context)!.genderGirl),
+                          child: Text(l10n.genderGirl),
                         ),
                       ],
                       onChanged: (value) => setState(() => _gender = value),
@@ -131,6 +128,7 @@ class _CreateChildPageState extends State<CreateChildPage> {
                       onTap: () async {
                         final picked = await showDatePicker(
                           context: context,
+                          locale: Localizations.localeOf(context),
                           initialDate: _birthdate ?? DateTime.now(),
                           firstDate: DateTime(1990),
                           lastDate: DateTime.now(),
@@ -142,7 +140,7 @@ class _CreateChildPageState extends State<CreateChildPage> {
                       borderRadius: BorderRadius.circular(4),
                       child: InputDecorator(
                         decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.birthdate,
+                          labelText: l10n.birthdate,
                           labelStyle: TextStyle(color: Colors.grey[400]),
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey[700]!),
@@ -153,8 +151,9 @@ class _CreateChildPageState extends State<CreateChildPage> {
                         ),
                         child: Text(
                           _birthdate != null
-                              ? _formatDate(_birthdate!)
-                              : 'Выберите дату',
+                              ? MaterialLocalizations.of(context)
+                                  .formatMediumDate(_birthdate!)
+                              : l10n.chooseDate,
                           style: TextStyle(
                             color: _birthdate != null
                                 ? Colors.white
@@ -171,7 +170,7 @@ class _CreateChildPageState extends State<CreateChildPage> {
                         foregroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: Text(AppLocalizations.of(context)!.create),
+                      child: Text(l10n.create),
                     ),
                   ],
                 ),

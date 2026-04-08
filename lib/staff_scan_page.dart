@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'api/auth_service.dart';
 import 'app_settings.dart';
+import 'gen_l10n/app_localizations.dart';
 import 'staff_info_child_profile_page.dart';
 
 /// Окно сканера QR: референс — тёмный фон, оранжевая рамка и кнопки.
@@ -102,9 +103,10 @@ class _StaffScanPageState extends State<StaffScanPage> {
         );
       } catch (e) {
         if (!mounted) return;
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$e'),
+            content: Text(l10n.staffScanFailed(e.toString())),
             backgroundColor: Colors.redAccent,
           ),
         );
@@ -120,11 +122,10 @@ class _StaffScanPageState extends State<StaffScanPage> {
     final roleCode = AppSettings.staffSelectedRoleCode;
     if (eventId == null || stageId == null) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Select active event and stage in Staff Settings before scanning.',
-            ),
+          SnackBar(
+            content: Text(l10n.staffScanSelectEventStageFirst),
             backgroundColor: Colors.redAccent,
           ),
         );
@@ -143,10 +144,11 @@ class _StaffScanPageState extends State<StaffScanPage> {
         roleCode: roleCode,
       );
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            result.message.isNotEmpty ? result.message : 'Scan processed',
+            result.message.isNotEmpty ? result.message : l10n.staffScanProcessed,
           ),
           backgroundColor: result.isSuccess ? widget.accent : Colors.redAccent,
         ),
@@ -159,9 +161,10 @@ class _StaffScanPageState extends State<StaffScanPage> {
       }
     } catch (e) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Scan failed: $e'),
+          content: Text(l10n.staffScanFailed(e.toString())),
           backgroundColor: Colors.redAccent,
         ),
       );

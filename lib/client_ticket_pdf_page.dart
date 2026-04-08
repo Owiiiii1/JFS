@@ -14,10 +14,14 @@ class ClientTicketPdfPage extends StatefulWidget {
     super.key,
     required this.auth,
     required this.pdfUrl,
+    this.appBarTitle,
   });
 
   final AuthService auth;
   final String pdfUrl;
+
+  /// Если задан — заголовок AppBar (например каталог брендов). Иначе — [AppLocalizations.pdfViewerTitle] («Билет» / «Ticket»).
+  final String? appBarTitle;
 
   @override
   State<ClientTicketPdfPage> createState() => _ClientTicketPdfPageState();
@@ -123,7 +127,7 @@ class _ClientTicketPdfPageState extends State<ClientTicketPdfPage> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: Text(l10n.pdfViewerTitle),
+        title: Text(widget.appBarTitle ?? l10n.pdfViewerTitle),
       ),
       body: body,
     );

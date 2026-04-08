@@ -5,11 +5,33 @@ import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
 
+/// Семейство шрифтов для названия ивента (как на главной).
+const _kFontFamilyLuxenta = 'Luxenta';
+
 const _kLuxuryBlack = Color(0xFF0A0A0A);
 const _kLuxuryGray = Color(0xFF1A1A1A);
 const _kProgressGold = Color(0xFFC5A059);
 
-class ClientEventProgressTab extends StatelessWidget {
+/// One row in the journey timeline (may expand a single API prep stage, e.g. multiple main rehearsals).
+class _ExpandedPrepRow {
+  const _ExpandedPrepRow({
+    required this.prep,
+    required this.prepIndex,
+    this.booking,
+    this.bookingIndex,
+    this.bookingTotal,
+  });
+
+  final PreparatoryStageInfo prep;
+  final int prepIndex;
+  final RehearsalBookingInfo? booking;
+  final int? bookingIndex;
+  final int? bookingTotal;
+}
+
+enum _TimelineActor { child, mom, dad }
+
+class ClientEventProgressTab extends StatefulWidget {
   const ClientEventProgressTab({
     super.key,
     required this.assignment,
@@ -24,18 +46,54 @@ class ClientEventProgressTab extends StatelessWidget {
   final VoidCallback onOpenGallery;
 
   @override
+  State<ClientEventProgressTab> createState() => _ClientEventProgressTabState();
+}
+
+class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
+  _TimelineActor _selectedActor = _TimelineActor.child;
+
+  @override
   Widget build(BuildContext context) {
+    final assignment = widget.assignment;
     if (assignment == null) {
       return Center(
         child: Text(
           AppLocalizations.of(context)!.noActiveEvents,
           style: const TextStyle(color: Colors.white70, fontSize: 16),
+          textAlign: TextAlign.center,
+          maxLines: 4,
+          overflow: TextOverflow.ellipsis,
         ),
       );
     }
 
-    final a = assignment!;
-    final milestones = _buildMilestones(context, a);
+    final a = assignment;
+    final availableActors = _availableActors(a);
+    if (!availableActors.contains(_selectedActor)) {
+      _selectedActor = availableActors.first;
+    }
+
+    final milestones = switch (_selectedActor) {
+      _TimelineActor.child => _buildMilestones(context, a),
+      _TimelineActor.mom => _buildParentMilestones(
+        context,
+        a,
+        participantSlot: 1,
+      ),
+      _TimelineActor.dad => _buildParentMilestones(
+        context,
+        a,
+        participantSlot: 2,
+      ),
+    };
+
+    final headerLine = switch (_selectedActor) {
+      _TimelineActor.child => widget.childFullName.isEmpty
+          ? AppLocalizations.of(context)!.journeyProgress
+          : widget.childFullName.toUpperCase(),
+      _TimelineActor.mom => _actorLabel(context, _TimelineActor.mom).toUpperCase(),
+      _TimelineActor.dad => _actorLabel(context, _TimelineActor.dad).toUpperCase(),
+    };
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
@@ -45,41 +103,57 @@ class ClientEventProgressTab extends StatelessWidget {
           Text(
             a.event.name,
             style: const TextStyle(
+              fontFamily: _kFontFamilyLuxenta,
               color: Colors.white,
-              fontSize: 42,
+              fontSize: 26,
               height: 1.05,
               fontWeight: FontWeight.w500,
-              fontStyle: FontStyle.italic,
             ),
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            softWrap: true,
           ),
           const SizedBox(height: 4),
           Text(
-            childFullName.isEmpty
-                ? AppLocalizations.of(context)!.journeyProgress
-                : childFullName.toUpperCase(),
+            headerLine,
             style: const TextStyle(
               color: _kProgressGold,
-              fontSize: 10,
+              fontSize: 12,
               letterSpacing: 3.2,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w400,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            softWrap: true,
           ),
+          if (availableActors.length > 1) ...[
+            const SizedBox(height: 14),
+            _ActorSwitch(
+              selected: _selectedActor,
+              actors: availableActors,
+              labelFor: (actor) => _actorLabel(context, actor),
+              onChanged: (actor) {
+                if (_selectedActor == actor) return;
+                setState(() => _selectedActor = actor);
+              },
+            ),
+          ],
           const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
                 child: _TopActionButton(
                   icon: Icons.info_outline,
-                  label: 'Event info',
-                  onTap: onOpenInfo,
+                  label: AppLocalizations.of(context)!.eventDescriptionTitle,
+                  onTap: widget.onOpenInfo,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: _TopActionButton(
                   icon: Icons.photo_library_outlined,
-                  label: 'Show gallery',
-                  onTap: onOpenGallery,
+                  label: AppLocalizations.of(context)!.eventProgressShowGallery,
+                  onTap: widget.onOpenGallery,
                 ),
               ),
             ],
@@ -99,6 +173,193 @@ class ClientEventProgressTab extends StatelessWidget {
     );
   }
 
+  List<_TimelineActor> _availableActors(ActiveAssignment a) {
+    final out = <_TimelineActor>[_TimelineActor.child];
+    final hasMom = a.parentTimelines.any((t) => t.participantSlot == 1);
+    final hasDad = a.parentTimelines.any((t) => t.participantSlot == 2);
+    if (hasMom) out.add(_TimelineActor.mom);
+    if (hasDad) out.add(_TimelineActor.dad);
+    return out;
+  }
+
+  String _actorLabel(BuildContext context, _TimelineActor actor) {
+    final lang = Localizations.localeOf(context).languageCode.toLowerCase();
+    switch (actor) {
+      case _TimelineActor.child:
+        if (lang == 'ru') return 'Ребенок';
+        if (lang == 'uk') return 'Дитина';
+        if (lang == 'es') return 'Niño';
+        return 'Child';
+      case _TimelineActor.mom:
+        if (lang == 'ru') return 'Мама';
+        if (lang == 'uk') return 'Мама';
+        if (lang == 'es') return 'Mamá';
+        return 'Mom';
+      case _TimelineActor.dad:
+        if (lang == 'ru') return 'Папа';
+        if (lang == 'uk') return 'Тато';
+        if (lang == 'es') return 'Papá';
+        return 'Dad';
+    }
+  }
+
+  static List<_ExpandedPrepRow> _expandedPreparatoryRows(ActiveAssignment a) {
+    final out = <_ExpandedPrepRow>[];
+    for (var pi = 0; pi < a.preparatoryStages.length; pi++) {
+      final prep = a.preparatoryStages[pi];
+      final bookings = a.rehearsalBookings;
+      if (prep.isRehearsalMilestone && bookings.length > 1) {
+        final n = bookings.length;
+        for (var i = 0; i < n; i++) {
+          out.add(
+            _ExpandedPrepRow(
+              prep: prep,
+              prepIndex: pi,
+              booking: bookings[i],
+              bookingIndex: i + 1,
+              bookingTotal: n,
+            ),
+          );
+        }
+      } else {
+        out.add(_ExpandedPrepRow(prep: prep, prepIndex: pi));
+      }
+    }
+    return out;
+  }
+
+  static bool _isRehearsalTimelineRow(_ExpandedPrepRow row) {
+    final p = row.prep;
+    return p.isRehearsalMilestone || p.isBrandRehearsalMilestone;
+  }
+
+  /// Slot date/time from API (`Y-m-d`, `H:i`) for sorting when [RehearsalBookingInfo.startsAt] is absent.
+  static DateTime? _parseSlotDateTimeForSort(String slotDate, String slotTime) {
+    final d = slotDate.trim();
+    if (d.isEmpty) return null;
+    var t = slotTime.trim();
+    if (t.length > 5) t = t.substring(0, 5);
+    try {
+      final dp = d.split('-');
+      if (dp.length != 3) return null;
+      final year = int.parse(dp[0]);
+      final month = int.parse(dp[1]);
+      final day = int.parse(dp[2]);
+      var hour = 0;
+      var minute = 0;
+      if (t.isNotEmpty) {
+        final tp = t.split(':');
+        hour = int.parse(tp[0]);
+        if (tp.length > 1) minute = int.parse(tp[1]);
+      }
+      return DateTime(year, month, day, hour, minute);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static DateTime? _effectiveSortDateForPrepRow(_ExpandedPrepRow row) {
+    final b = row.booking;
+    if (b != null) {
+      if (b.startsAt != null) return b.startsAt;
+      return _parseSlotDateTimeForSort(b.slotDate, b.slotTime);
+    }
+    return row.prep.scheduledAt;
+  }
+
+  static int _compareRehearsalPrepRowsByDate(_ExpandedPrepRow a, _ExpandedPrepRow b) {
+    final da = _effectiveSortDateForPrepRow(a);
+    final db = _effectiveSortDateForPrepRow(b);
+    if (da == null && db == null) {
+      final byPrep = a.prepIndex.compareTo(b.prepIndex);
+      if (byPrep != 0) return byPrep;
+      return (a.bookingIndex ?? 0).compareTo(b.bookingIndex ?? 0);
+    }
+    if (da == null) return 1;
+    if (db == null) return -1;
+    final byDate = da.compareTo(db);
+    if (byDate != 0) return byDate;
+    final byPrep = a.prepIndex.compareTo(b.prepIndex);
+    if (byPrep != 0) return byPrep;
+    return (a.bookingIndex ?? 0).compareTo(b.bookingIndex ?? 0);
+  }
+
+  /// Оставляет порядок не‑репетиций как в API; все репетиции (основные слоты + брендовые) — по возрастанию даты.
+  static List<_ExpandedPrepRow> _sortRehearsalRowsChronologically(
+    List<_ExpandedPrepRow> rows,
+  ) {
+    final rehearsalIndices = <int>[];
+    for (var i = 0; i < rows.length; i++) {
+      if (_isRehearsalTimelineRow(rows[i])) {
+        rehearsalIndices.add(i);
+      }
+    }
+    if (rehearsalIndices.length <= 1) return rows;
+    final sortedRehearsals = rehearsalIndices.map((i) => rows[i]).toList()
+      ..sort(_compareRehearsalPrepRowsByDate);
+    final out = List<_ExpandedPrepRow>.from(rows);
+    for (var k = 0; k < rehearsalIndices.length; k++) {
+      out[rehearsalIndices[k]] = sortedRehearsals[k];
+    }
+    return out;
+  }
+
+  /// Один активный этап в предварительной фазе: среди незавершённых — ближайший по времени к «сейчас».
+  /// Сначала ближайший с датой ≥ now; если таких нет — самый поздний из уже прошедших (все ещё incomplete).
+  /// Без дат — порядок как в таймлайне: [prepIndex], [bookingIndex].
+  static int? _pickCurrentExpandedPrepIndex(List<_ExpandedPrepRow> expandedPrep) {
+    final now = DateTime.now();
+    final incomplete = <int>[];
+    for (var ei = 0; ei < expandedPrep.length; ei++) {
+      if (!expandedPrep[ei].prep.isCompleted) {
+        incomplete.add(ei);
+      }
+    }
+    if (incomplete.isEmpty) return null;
+
+    /// Отрицательное, если [eiA] предпочтительнее [eiB] как «текущий».
+    int cmpNearestToNow(int eiA, int eiB) {
+      final rowA = expandedPrep[eiA];
+      final rowB = expandedPrep[eiB];
+      final da = _effectiveSortDateForPrepRow(rowA);
+      final db = _effectiveSortDateForPrepRow(rowB);
+      if (da == null && db == null) {
+        return _compareRehearsalPrepRowsByDate(rowA, rowB);
+      }
+      if (da == null) return 1;
+      if (db == null) return -1;
+
+      final aFuture = !da.isBefore(now);
+      final bFuture = !db.isBefore(now);
+      if (aFuture && bFuture) {
+        return da.compareTo(db);
+      }
+      if (aFuture != bFuture) {
+        return aFuture ? -1 : 1;
+      }
+      return db.compareTo(da);
+    }
+
+    var best = incomplete.first;
+    for (var k = 1; k < incomplete.length; k++) {
+      final ei = incomplete[k];
+      if (cmpNearestToNow(ei, best) < 0) {
+        best = ei;
+      }
+    }
+    return best;
+  }
+
+  static String _rehearsalBookingSubtitle(RehearsalBookingInfo b) {
+    final d = b.slotDate.trim();
+    final t = b.slotTime.trim();
+    final core = [d, t].where((s) => s.isNotEmpty).join(' • ');
+    if (core.isEmpty) return '';
+    final p = b.place.trim();
+    if (p.isEmpty) return core;
+    return '$core · $p';
+  }
+
   static List<_JourneyMilestone> _buildMilestones(
     BuildContext context,
     ActiveAssignment a,
@@ -109,7 +370,11 @@ class ClientEventProgressTab extends StatelessWidget {
     final parentCompletedTotal = a.parentProgress?.completedStages ?? 0;
     var mainIndex = 0;
 
-    final prepCount = a.preparatoryStages.length;
+    final expandedPrep = _sortRehearsalRowsChronologically(
+      _expandedPreparatoryRows(a),
+    );
+    final prepRowCount = expandedPrep.length;
+    final prepListCount = a.preparatoryStages.length;
     final mainCount = a.mainStages.length;
     final totalStages = math.max(
       1,
@@ -117,11 +382,11 @@ class ClientEventProgressTab extends StatelessWidget {
     );
     final syntheticMainCount = math.max(
       0,
-      totalStages - prepCount - mainCount,
+      totalStages - prepListCount - mainCount,
     );
     final hasMainSection = mainCount + syntheticMainCount > 0;
 
-    if (prepCount > 0) {
+    if (prepRowCount > 0) {
       items.add(
         _JourneyMilestone(
           rowKind: _JourneyRowKind.preparationPhaseLabel,
@@ -137,25 +402,83 @@ class ClientEventProgressTab extends StatelessWidget {
       );
     }
 
-    for (final prep in a.preparatoryStages) {
-      final timelineSubtitle = prep.scheduledAt != null
-          ? _formatDateTime(prep.scheduledAt!)
-          : '';
-      final desc = prep.description?.trim();
-      final prepTitle = prep.displayTitle(l10n);
-      final rehearsalHint = prep.isRehearsalMilestone &&
+    final mainRehearsalChronoRankBySlotId = <int, int>{};
+    final multiMainByPrep = <int, List<_ExpandedPrepRow>>{};
+    for (final row in expandedPrep) {
+      if (row.booking != null &&
+          row.prep.isRehearsalMilestone &&
+          row.bookingTotal != null &&
+          row.bookingTotal! > 1) {
+        multiMainByPrep.putIfAbsent(row.prepIndex, () => []).add(row);
+      }
+    }
+    for (final list in multiMainByPrep.values) {
+      final sorted = List<_ExpandedPrepRow>.from(list)
+        ..sort(_compareRehearsalPrepRowsByDate);
+      for (var i = 0; i < sorted.length; i++) {
+        mainRehearsalChronoRankBySlotId[sorted[i].booking!.slotId] = i + 1;
+      }
+    }
+
+    for (final row in expandedPrep) {
+      final prep = row.prep;
+      final b = row.booking;
+      final String title;
+      if (b != null &&
+          row.bookingTotal != null &&
+          row.bookingTotal! > 1 &&
+          prep.isRehearsalMilestone) {
+        final r =
+            mainRehearsalChronoRankBySlotId[b.slotId] ?? row.bookingIndex ?? 1;
+        title =
+            '${l10n.rehearsalMilestoneTitle} ($r/${row.bookingTotal})';
+      } else {
+        title = prep.displayTitle(l10n);
+      }
+
+      final DateTime? rawDate;
+      final String timelineSubtitle;
+      final String? address;
+      final String? detailDesc;
+      if (b != null) {
+        // Prefer API slot_date + slot_time so the timeline matches the admin grid (event-local wall clock).
+        final wallFromSlot = _rehearsalSlotWallClockLabel(b);
+        if (wallFromSlot != null) {
+          rawDate = null;
+          timelineSubtitle = wallFromSlot;
+        } else {
+          rawDate = b.startsAt;
+          timelineSubtitle = rawDate != null
+              ? _formatDateTime(rawDate)
+              : _rehearsalBookingSubtitle(b);
+        }
+        address = b.place.trim().isNotEmpty ? b.place : prep.address;
+        final slotDesc = b.description.trim();
+        detailDesc = slotDesc.isNotEmpty ? slotDesc : null;
+      } else {
+        rawDate = prep.scheduledAt;
+        timelineSubtitle = prep.scheduledAt != null
+            ? _formatDateTime(prep.scheduledAt!)
+            : '';
+        address = prep.address;
+        final desc = prep.description?.trim();
+        detailDesc = desc != null && desc.isNotEmpty ? desc : null;
+      }
+
+      final rehearsalHint =
+          prep.isRehearsalMilestone &&
               !prep.isCompleted &&
-              prep.scheduledAt == null
+              prep.scheduledAt == null &&
+              a.rehearsalBookings.isEmpty
           ? l10n.rehearsalNextBookHint
           : null;
       items.add(
         _JourneyMilestone(
-          title: prepTitle,
+          title: title,
           subtitle: timelineSubtitle,
-          rawDate: prep.scheduledAt,
-          address: prep.address,
-          detailDescription:
-              desc != null && desc.isNotEmpty ? desc : null,
+          rawDate: rawDate,
+          address: address,
+          detailDescription: detailDesc,
           rehearsalBookingHint: rehearsalHint,
           isMainStage: false,
           parentDots: 0,
@@ -165,7 +488,7 @@ class ClientEventProgressTab extends StatelessWidget {
       );
     }
 
-    if (prepCount > 0 && hasMainSection) {
+    if (prepRowCount > 0 && hasMainSection) {
       items.add(
         _JourneyMilestone(
           rowKind: _JourneyRowKind.mainEventDivider,
@@ -185,12 +508,15 @@ class ClientEventProgressTab extends StatelessWidget {
       final title = stage.name.trim().isEmpty
           ? (stage.id > 0 ? 'Stage #${stage.id}' : 'Stage')
           : stage.name.trim();
+      final mainDesc = stage.description?.trim();
       items.add(
         _JourneyMilestone(
           title: title,
           subtitle: '',
           rawDate: null,
           address: null,
+          detailDescription:
+              mainDesc != null && mainDesc.isNotEmpty ? mainDesc : null,
           isMainStage: true,
           parentDots: parentDots,
           parentDotsCompleted: 0,
@@ -230,20 +556,23 @@ class ClientEventProgressTab extends StatelessWidget {
       }
     }
 
-    final firstIncompletePrep =
-        a.preparatoryStages.indexWhere((p) => !p.isCompleted);
+    final currentExpandedPrepIndex = _pickCurrentExpandedPrepIndex(expandedPrep);
     var prepSlot = 0;
-    for (var i = 0; i < items.length && prepSlot < prepCount; i++) {
+    for (var i = 0; i < items.length && prepSlot < prepRowCount; i++) {
       final row = items[i];
       if (row.rowKind != _JourneyRowKind.milestone || row.isMainStage) {
         continue;
       }
-      final prep = a.preparatoryStages[prepSlot];
-      final status = prep.isCompleted
-          ? _MilestoneStatus.completed
-          : (firstIncompletePrep == prepSlot
-                ? _MilestoneStatus.current
-                : _MilestoneStatus.upcoming);
+      final exp = expandedPrep[prepSlot];
+      final _MilestoneStatus status;
+      if (exp.prep.isCompleted) {
+        status = _MilestoneStatus.completed;
+      } else if (currentExpandedPrepIndex != null &&
+          prepSlot == currentExpandedPrepIndex) {
+        status = _MilestoneStatus.current;
+      } else {
+        status = _MilestoneStatus.upcoming;
+      }
       items[i] = row.copyWith(status: status);
       prepSlot++;
     }
@@ -274,9 +603,60 @@ class ClientEventProgressTab extends StatelessWidget {
     return items;
   }
 
+  static List<_JourneyMilestone> _buildParentMilestones(
+    BuildContext context,
+    ActiveAssignment a, {
+    required int participantSlot,
+  }) {
+    final t = a.parentTimelines.firstWhere(
+      (it) => it.participantSlot == participantSlot,
+      orElse: () => ParentTimelineInfo(
+        participantSlot: participantSlot,
+        totalStages: 0,
+        completedStages: 0,
+        mainStages: const [],
+      ),
+    );
+    final items = <_JourneyMilestone>[];
+    var mainIndex = 0;
+    for (final stage in t.mainStages) {
+      final title = stage.name.trim().isEmpty
+          ? (stage.id > 0 ? 'Stage #${stage.id}' : 'Stage')
+          : stage.name.trim();
+      final mainDesc = stage.description?.trim();
+      items.add(
+        _JourneyMilestone(
+          title: title,
+          subtitle: '',
+          rawDate: null,
+          address: null,
+          detailDescription:
+              mainDesc != null && mainDesc.isNotEmpty ? mainDesc : null,
+          isMainStage: true,
+          parentDots: 0,
+          parentDotsCompleted: 0,
+          mainSequenceIndex: mainIndex++,
+        ),
+      );
+    }
+    final total = t.totalStages > 0 ? t.totalStages : t.mainStages.length;
+    var done = t.completedStages.clamp(0, total);
+    for (var i = 0; i < items.length; i++) {
+      final status = i < done
+          ? _MilestoneStatus.completed
+          : (i == done ? _MilestoneStatus.current : _MilestoneStatus.upcoming);
+      items[i] = items[i].copyWith(status: status);
+    }
+    return items;
+  }
+
   static int _parentDotsCount(ActiveAssignment a) {
     if (!a.familyLook || a.parentProgress == null) {
       return 0;
+    }
+    final explicitParticipants = a.parentParticipantsCount;
+    if (explicitParticipants != null && explicitParticipants > 0) {
+      return explicitParticipants.clamp(1, 2);
     }
     final parentTotal = a.parentProgress!.totalStages;
     if (parentTotal <= 0) {
@@ -289,25 +669,67 @@ class ClientEventProgressTab extends StatelessWidget {
     return raw.clamp(1, 2);
   }
 
+  static const List<String> _timelineMonthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  static String _formatWallClockParts(
+    int year,
+    int month,
+    int day,
+    int hour,
+    int minute,
+  ) {
+    final mon = _timelineMonthNames[month - 1];
+    final hh = hour.toString().padLeft(2, '0');
+    final mm = minute.toString().padLeft(2, '0');
+    return '$mon $day, $year • $hh:$mm';
+  }
+
+  /// `slot_date` (Y-m-d) + `slot_time` (H:i) from API — same values as in YFS admin.
+  static String? _rehearsalSlotWallClockLabel(RehearsalBookingInfo b) {
+    final d = b.slotDate.trim();
+    var t = b.slotTime.trim();
+    if (d.isEmpty || t.isEmpty) return null;
+    if (t.length > 5) t = t.substring(0, 5);
+    try {
+      final dp = d.split('-');
+      if (dp.length != 3) return null;
+      final year = int.parse(dp[0]);
+      final month = int.parse(dp[1]);
+      final day = int.parse(dp[2]);
+      final tp = t.split(':');
+      final hour = int.parse(tp[0]);
+      final minute = tp.length > 1 ? int.parse(tp[1]) : 0;
+      if (month < 1 || month > 12) return null;
+      return _formatWallClockParts(year, month, day, hour, minute);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Formats for display in the device timezone. API times are ISO 8601 (often UTC `Z`);
+  /// using [DateTime.hour] on a UTC value would show the wrong wall clock (e.g. 22:45 UTC vs 00:45 local).
   static String _formatDateTime(DateTime dt) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    final month = months[dt.month - 1];
-    final hh = dt.hour.toString().padLeft(2, '0');
-    final mm = dt.minute.toString().padLeft(2, '0');
-    return '$month ${dt.day}, ${dt.year} • $hh:$mm';
+    final local = dt.toLocal();
+    return _formatWallClockParts(
+      local.year,
+      local.month,
+      local.day,
+      local.hour,
+      local.minute,
+    );
   }
 
   static List<Widget> _milestoneDetailBodyWidgets(_JourneyMilestone m) {
@@ -340,6 +762,7 @@ class ClientEventProgressTab extends StatelessWidget {
         Text(
           lines[i],
           style: const TextStyle(color: Colors.white70, fontSize: 14),
+          softWrap: true,
         ),
       ],
     ];
@@ -365,11 +788,11 @@ class ClientEventProgressTab extends StatelessWidget {
         };
         return SafeArea(
           top: false,
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Center(
                   child: Container(
@@ -389,6 +812,9 @@ class ClientEventProgressTab extends StatelessWidget {
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
                   ),
+                  maxLines: 6,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -467,6 +893,9 @@ class _TopActionButton extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   letterSpacing: 2.0,
                 ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
               ),
             ],
           ),
@@ -488,14 +917,20 @@ class _PreparationPhaseBand extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: _kProgressGold.withValues(alpha: 0.72),
-              fontSize: 9,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 3.6,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: _kProgressGold.withValues(alpha: 0.72),
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 2.8,
+              ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
             ),
           ),
           const SizedBox(height: 8),
@@ -520,12 +955,66 @@ class _PreparationPhaseBand extends StatelessWidget {
   }
 }
 
+class _ActorSwitch extends StatelessWidget {
+  const _ActorSwitch({
+    required this.selected,
+    required this.actors,
+    required this.labelFor,
+    required this.onChanged,
+  });
+
+  final _TimelineActor selected;
+  final List<_TimelineActor> actors;
+  final String Function(_TimelineActor actor) labelFor;
+  final ValueChanged<_TimelineActor> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: _kLuxuryGray,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Row(
+        children: [
+          for (final actor in actors)
+            Expanded(
+              child: GestureDetector(
+                onTap: () => onChanged(actor),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeOut,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: selected == actor ? _kProgressGold : Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    labelFor(actor),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: selected == actor ? _kLuxuryBlack : Colors.white70,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Full-width gradient rule + main event title (reference: stitch code.html).
 class _MainEventSectionBand extends StatelessWidget {
-  const _MainEventSectionBand({
-    required this.title,
-    required this.subtitle,
-  });
+  const _MainEventSectionBand({required this.title, required this.subtitle});
 
   final String title;
   final String subtitle;
@@ -561,6 +1050,9 @@ class _MainEventSectionBand extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 letterSpacing: 4.2,
               ),
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
             ),
             if (subtitle.isNotEmpty) ...[
               const SizedBox(height: 6),
@@ -573,6 +1065,9 @@ class _MainEventSectionBand extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   letterSpacing: 2.4,
                 ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
               ),
             ],
           ],
@@ -595,8 +1090,8 @@ class _JourneyTimeline extends StatelessWidget {
       case _JourneyRowKind.mainEventDivider:
         return 104;
       case _JourneyRowKind.milestone:
-        // Текущий этап: крупный заголовок + бейдж + подзаголовок — без запаса наезжают на следующую строку.
-        return m.status == _MilestoneStatus.current ? 292 : 228;
+        // Текущий этап: до 4 строк заголовка + бейдж + подзаголовок — запас по вертикали.
+        return m.status == _MilestoneStatus.current ? 340 : 228;
     }
   }
 
@@ -622,6 +1117,7 @@ class _JourneyTimeline extends StatelessWidget {
           );
           final pathPoints = rowLayouts.map((e) => e.center).toList();
 
+          final stackW = constraints.maxWidth;
           return Stack(
             clipBehavior: Clip.none,
             children: [
@@ -636,6 +1132,7 @@ class _JourneyTimeline extends StatelessWidget {
                   top: rowLayouts[i].top,
                   height: rowLayouts[i].height,
                   center: rowLayouts[i].center,
+                  stackWidth: stackW,
                 ),
             ],
           );
@@ -660,10 +1157,7 @@ class _JourneyTimeline extends StatelessWidget {
 
       late Offset c;
       if (m.rowKind != _JourneyRowKind.milestone) {
-        c = Offset(
-          constraints.maxWidth * 0.5 - timelineShiftLeft,
-          centerY,
-        );
+        c = Offset(constraints.maxWidth * 0.5 - timelineShiftLeft, centerY);
       } else {
         final isLeft = pathMilestoneIndex.isEven;
         pathMilestoneIndex++;
@@ -692,6 +1186,7 @@ class _JourneyTimeline extends StatelessWidget {
     required double top,
     required double height,
     required Offset center,
+    required double stackWidth,
   }) {
     switch (milestone.rowKind) {
       case _JourneyRowKind.preparationPhaseLabel:
@@ -717,6 +1212,7 @@ class _JourneyTimeline extends StatelessWidget {
         return _MilestoneButton(
           milestone: milestone,
           center: center,
+          stackWidth: stackWidth,
           onTap: () => onTap(milestone),
         );
     }
@@ -727,12 +1223,32 @@ class _MilestoneButton extends StatelessWidget {
   const _MilestoneButton({
     required this.milestone,
     required this.center,
+    required this.stackWidth,
     required this.onTap,
   });
 
   final _JourneyMilestone milestone;
   final Offset center;
+  final double stackWidth;
   final VoidCallback onTap;
+
+  /// Ширина колонки подписи под узлом: не шире желаемой и не вылезает за края экрана.
+  static double _labelColumnWidth({
+    required double stackWidth,
+    required double centerDx,
+    required bool isCurrent,
+  }) {
+    final desired = isCurrent ? 220.0 : 140.0;
+    const edge = 10.0;
+    if (stackWidth <= 2 * edge) {
+      return 72.0;
+    }
+    final cx = centerDx.clamp(edge, stackWidth - edge).toDouble();
+    final leftSpace = cx - edge;
+    final rightSpace = stackWidth - cx - edge;
+    final maxByPosition = 2.0 * math.min(leftSpace, rightSpace);
+    return math.min(desired, math.max(72.0, maxByPosition));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -832,6 +1348,8 @@ class _MilestoneButton extends StatelessWidget {
                                 ),
                                 child: const Text(
                                   'IN PROGRESS',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 6,
@@ -892,34 +1410,35 @@ class _MilestoneButton extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             SizedBox(
-              width: isCurrent ? 220 : 140,
+              width: _labelColumnWidth(
+                stackWidth: stackWidth,
+                centerDx: center.dx,
+                isCurrent: isCurrent,
+              ),
               child: Column(
                 children: [
                   if (isCurrent)
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.center,
-                      child: Text(
-                        milestone.title.toUpperCase(),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        softWrap: false,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.italic,
-                          letterSpacing: -0.3,
-                          height: 1.05,
-                        ),
+                    Text(
+                      milestone.title.toUpperCase(),
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: -0.3,
+                        height: 1.05,
                       ),
                     )
                   else
                     Text(
                       milestone.title.toUpperCase(),
                       textAlign: TextAlign.center,
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
+                      softWrap: true,
                       style: TextStyle(
                         color: isUpcoming
                             ? Colors.white.withOpacity(0.32)
@@ -935,8 +1454,9 @@ class _MilestoneButton extends StatelessWidget {
                       child: Text(
                         milestone.subtitle,
                         textAlign: TextAlign.center,
-                        maxLines: isCurrent ? 3 : 2,
+                        maxLines: isCurrent ? 4 : 3,
                         overflow: TextOverflow.ellipsis,
+                        softWrap: true,
                         style: TextStyle(
                           color: isCurrent
                               ? _kProgressGold
@@ -1019,11 +1539,7 @@ class _TimelinePathPainter extends CustomPainter {
 
 enum _MilestoneStatus { completed, current, upcoming }
 
-enum _JourneyRowKind {
-  milestone,
-  preparationPhaseLabel,
-  mainEventDivider,
-}
+enum _JourneyRowKind { milestone, preparationPhaseLabel, mainEventDivider }
 
 class _JourneyMilestone {
   const _JourneyMilestone({

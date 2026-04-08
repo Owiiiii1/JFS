@@ -151,12 +151,23 @@
   "eventSettingsPackingCta": "ВІДКРИТИ СПИСОК",
   "eventPackingLoadFailed": "Не вдалося завантажити інформацію. Спробуйте ще раз.",
   "eventPackingEmpty": "Для цього івенту інформацію ще не додано.",
+  "eventDescriptionTitle": "Опис івенту",
+  "eventProgressShowGallery": "Галерея",
+  "eventDescriptionLoadFailed": "Не вдалося завантажити опис. Спробуйте ще раз.",
+  "eventDescriptionEmpty": "Для цього івенту ще не додано текстового опису.",
   "eventSettingsBrandTitle": "Вимоги бренду",
   "eventSettingsBrandSubtitle": "Ознайомтеся з рекомендаціями бренду для участі в івенті",
   "eventSettingsBrandCta": "КЕРІВНИЦТВО",
   "brandRequirementsLoadFailed": "Не вдалося завантажити вимоги бренду. Спробуйте ще раз.",
   "brandRequirementsEmpty": "Для цього івенту вимоги брендів ще не додані.",
   "brandRequirementsEmptyItem": "Для цього бренду вимоги ще не заповнені.",
+  "brandRequirementsPickBrandTitle": "Оберіть бренд",
+  "brandRequirementsBrandNumber": "Бренд {brandId}",
+  "@brandRequirementsBrandNumber": {
+    "placeholders": {
+      "brandId": { "type": "int" }
+    }
+  },
   "eventSettingsChatTitle": "Спільний чат",
   "eventSettingsChatSubtitle": "Спільний чат з учасниками групи та менеджерами",
   "eventSettingsChatCta": "ВІДКРИТИ ЧАТ",
@@ -251,8 +262,72 @@
   "ticketsNoneForEvent": "Немає квитків на цей захід",
   "ticketsLoadError": "Не вдалося завантажити квитки",
   "ticketsEventsLoadError": "Не вдалося завантажити заходи",
+  "faqBrandCatalogTitle": "Бренди одягу",
   "pdfViewerTitle": "Квиток",
-  "contactFormLinkMissing": "Посилання на форму не налаштовано. Додайте «Посилання на форму» у загальних налаштуваннях застосунку в адмінці."
+  "contactFormLinkMissing": "Посилання на форму не налаштовано. Додайте «Посилання на форму» у загальних налаштуваннях застосунку в адмінці.",
+  "infoHubTitle": "Інформаційний центр",
+  "infoMenuAboutYfs": "Про YFS",
+  "infoMenuGeneralFaq": "Загальні FAQ",
+  "infoMenuContactManager": "Зв'язок із менеджером",
+  "infoFooterBrand": "YFS",
+  "infoFooterCopyright": "© 2024 Young Fashion Series. Усі права захищено.",
+  "parentProgressLabel": "Прогрес батька/матері: {completed}/{total}",
+  "@parentProgressLabel": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "appUpdateRequiredMessage": "Оновіть застосунок, щоб продовжити.",
+  "appUpdateButton": "Оновити застосунок",
+  "showAll": "Показати все",
+  "staffNoneSelected": "— Немає —",
+  "staffScanFailed": "Помилка сканування: {error}",
+  "@staffScanFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "staffScanSelectEventStageFirst": "Оберіть активну подію та етап у налаштуваннях персоналу перед скануванням.",
+  "staffScanProcessed": "Сканування виконано",
+  "chatCouldNotPickPhoto": "Не вдалося вибрати фото",
+  "staffChildProfileTitle": "Профіль дитини",
+  "staffCurrentStage": "ПОТОЧНИЙ ЕТАП",
+  "staffProgressPercentComplete": "{percent}% завершено",
+  "@staffProgressPercentComplete": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "staffChildDetailEmpty": "Немає даних про дитину в БД",
+  "staffLoadFailed": "Не вдалося завантажити",
+  "staffGuardianLiaison": "КУРАТОР",
+  "staffAssignedBrand": "ПРИЗНАЧЕНИЙ БРЕНД",
+  "staffSupervisor": "СУПЕРВАЙЗЕР",
+  "staffSectionCoreDetails": "Основні дані",
+  "staffSectionParentContact": "Контакт батька/матері",
+  "staffPhaseWithName": "Фаза: {stageName}",
+  "@staffPhaseWithName": {
+    "placeholders": {
+      "stageName": { "type": "String" }
+    }
+  },
+  "staffNoCurrentStage": "Немає поточного етапу",
+  "staffAgeYearsOld": "{age} років",
+  "@staffAgeYearsOld": {
+    "placeholders": {
+      "age": { "type": "int" }
+    }
+  },
+  "staffNotesLabel": "Нотатки",
+  "staffParentRoleDefault": "Батько/мати",
+  "contactManagerIntro": "Ви можете залишити повідомлення з будь-якого питання — з вами зв’яжуться найближчим часом.",
+  "contactManagerMessageLabel": "Ваше повідомлення",
+  "contactManagerMessageRequired": "Введіть текст повідомлення",
+  "contactManagerSend": "Надіслати",
+  "contactManagerSent": "Повідомлення надіслано. Ми зв’яжемося з вами найближчим часом.",
+  "contactManagerSendFailed": "Не вдалося надіслати. Спробуйте пізніше.",
+  "contactManagerServiceUnavailable": "Зв’язок тимчасово недоступний. Спробуйте пізніше."
 }
 
 

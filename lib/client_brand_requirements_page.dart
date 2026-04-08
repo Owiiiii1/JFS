@@ -12,10 +12,14 @@ class ClientBrandRequirementsPage extends StatelessWidget {
     super.key,
     required this.items,
     required this.baseUrl,
+    this.appBarTitle,
   });
 
   final List<BrandRequirementInfo> items;
   final String baseUrl;
+
+  /// Если задан — заголовок AppBar вместо общего «Brand Requirements».
+  final String? appBarTitle;
 
   String? _resolveImageUrl(String? raw) {
     final v = raw?.trim();
@@ -40,7 +44,11 @@ class ClientBrandRequirementsPage extends StatelessWidget {
         backgroundColor: _kBrandReqBg,
         foregroundColor: _kBrandReqPrimary,
         elevation: 0,
-        title: Text(l10n.eventSettingsBrandTitle),
+        title: Text(
+          (appBarTitle != null && appBarTitle!.trim().isNotEmpty)
+              ? appBarTitle!.trim()
+              : l10n.eventSettingsBrandTitle,
+        ),
       ),
       body: items.isEmpty
           ? Center(

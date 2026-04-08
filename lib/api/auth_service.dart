@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:ui' show Locale, PlatformDispatcher;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -9,6 +11,25 @@ import '../gen_l10n/app_localizations.dart';
 class ApiEndpointNotFoundException implements Exception {
   ApiEndpointNotFoundException(this.requestUrl);
   final String requestUrl;
+}
+
+/// POST /api/app/client/contact-manager — почта поддержки не настроена (503).
+class ContactManagerUnavailableException implements Exception {
+  ContactManagerUnavailableException();
+}
+
+/// Код для заголовка `Accept-Language` в API (локализованные этапы): en, uk, ru, es.
+String apiContentLanguageForLocale(Locale locale) {
+  switch (locale.languageCode.toLowerCase()) {
+    case 'ru':
+      return 'ru';
+    case 'uk':
+      return 'uk';
+    case 'es':
+      return 'es';
+    default:
+      return 'en';
+  }
 }
 
 class AuthService {
@@ -30,6 +51,7 @@ class AuthService {
     }
     return s;
   }
+
   static const _storage = FlutterSecureStorage();
   static const _tokenKey = 'auth_token';
 
@@ -418,8 +440,7 @@ class AuthService {
     );
     if (res.statusCode != 200) {
       throw Exception(
-        _tryMessage(res.body) ??
-            'Failed to delete account (${res.statusCode})',
+        _tryMessage(res.body) ?? 'Failed to delete account (${res.statusCode})',
       );
     }
   }
@@ -444,6 +465,44 @@ class AuthService {
     return ClientProfile.fromJson(json);
   }
 
+  /// POST /api/app/client/contact-manager — сообщение менеджеру (Bearer).
+  Future<void> submitContactManager({
+    required String name,
+    required String email,
+    required String phone,
+    required String message,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse('$baseUrl/api/app/client/contact-manager');
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'message': message,
+      }),
+    );
+    if (res.statusCode == 200) {
+      return;
+    }
+    if (res.statusCode == 503) {
+      throw ContactManagerUnavailableException();
+    }
+    throw Exception(
+      _tryMessage(res.body) ??
+          'Failed to send message (${res.statusCode})',
+    );
+  }
+
   /// POST /api/app/client/children — создать ребёнка для текущего клиента
   Future<ProfileChild> createChild({
     required String firstName,
@@ -455,9 +514,7 @@ class AuthService {
       throw Exception('Not authenticated');
     }
     final uri = Uri.parse('$baseUrl/api/app/client/children');
-    final body = <String, dynamic>{
-      'first_name': firstName,
-    };
+    final body = <String, dynamic>{'first_name': firstName};
     if (gender != null && gender.isNotEmpty) {
       body['gender'] = gender;
     }
@@ -634,9 +691,7 @@ class AuthService {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode({
-        'event_meal_id': eventMealId,
-      }),
+      body: jsonEncode({'event_meal_id': eventMealId}),
     );
     if (res.statusCode != 200) {
       throw Exception(
@@ -669,8 +724,7 @@ class AuthService {
     );
     if (res.statusCode != 200) {
       throw Exception(
-        _tryMessage(res.body) ??
-            'Failed to start checkout (${res.statusCode})',
+        _tryMessage(res.body) ?? 'Failed to start checkout (${res.statusCode})',
       );
     }
     final map = jsonDecode(res.body) as Map<String, dynamic>;
@@ -681,15 +735,24 @@ class AuthService {
     return url;
   }
 
-  Future<ClientDashboard> getClientDashboard() async {
+  /// [contentLocale] — локаль UI приложения; влияет на язык названий/описаний этапов (Accept-Language).
+  /// Если null, используется системная локаль устройства.
+  Future<ClientDashboard> getClientDashboard({Locale? contentLocale}) async {
     final token = await getToken();
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
     }
+    final lang = apiContentLanguageForLocale(
+      contentLocale ?? PlatformDispatcher.instance.locale,
+    );
     final uri = Uri.parse('$baseUrl/api/app/client/dashboard');
     final res = await http.get(
       uri,
-      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Language': lang,
+        'Authorization': 'Bearer $token',
+      },
     );
     if (res.statusCode != 200) {
       throw Exception(
@@ -706,7 +769,9 @@ class AuthService {
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
     }
-    final uri = Uri.parse('$baseUrl/api/app/client/events/$eventId/rehearsal-slots');
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/rehearsal-slots',
+    );
     final res = await http.get(
       uri,
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
@@ -724,8 +789,10 @@ class AuthService {
     final list = map['slots'];
     final slots = list is List
         ? list
-            .map((e) => RehearsalSlotOption.fromJson(e as Map<String, dynamic>))
-            .toList()
+              .map(
+                (e) => RehearsalSlotOption.fromJson(e as Map<String, dynamic>),
+              )
+              .toList()
         : <RehearsalSlotOption>[];
     final closed = map['rehearsal_booking_changes_closed'] == true;
     return RehearsalSlotsPayload(
@@ -750,20 +817,51 @@ class AuthService {
     }
     if (res.statusCode != 200) {
       throw Exception(
-        _tryMessage(res.body) ?? 'Failed to load event packing (${res.statusCode})',
+        _tryMessage(res.body) ??
+            'Failed to load event packing (${res.statusCode})',
       );
     }
     final map = jsonDecode(res.body) as Map<String, dynamic>;
     return EventPackingInfo.fromJson(map);
   }
 
-  /// GET /api/app/client/events/{event}/brand-requirements
-  Future<List<BrandRequirementInfo>> getEventBrandRequirements(int eventId) async {
+  /// GET /api/app/client/events/{event}/description — вкладка «Описание» (фото + текст).
+  Future<EventDescriptionInfo> getClientEventDescription(int eventId) async {
     final token = await getToken();
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
     }
-    final uri = Uri.parse('$baseUrl/api/app/client/events/$eventId/brand-requirements');
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/description',
+    );
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode == 403) {
+      throw Exception(_tryMessage(res.body) ?? 'Forbidden');
+    }
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load event description (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return EventDescriptionInfo.fromJson(map);
+  }
+
+  /// GET /api/app/client/events/{event}/brand-requirements
+  Future<List<BrandRequirementInfo>> getEventBrandRequirements(
+    int eventId,
+  ) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/brand-requirements',
+    );
     final res = await http.get(
       uri,
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
@@ -803,7 +901,8 @@ class AuthService {
     }
     if (res.statusCode != 200) {
       throw Exception(
-        _tryMessage(res.body) ?? 'Failed to load chat rooms (${res.statusCode})',
+        _tryMessage(res.body) ??
+            'Failed to load chat rooms (${res.statusCode})',
       );
     }
     final map = jsonDecode(res.body) as Map<String, dynamic>;
@@ -823,8 +922,9 @@ class AuthService {
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
     }
-    final uri = Uri.parse('$baseUrl/api/app/client/chat-rooms/$roomId/messages')
-        .replace(queryParameters: afterId > 0 ? {'after_id': '$afterId'} : null);
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/chat-rooms/$roomId/messages',
+    ).replace(queryParameters: afterId > 0 ? {'after_id': '$afterId'} : null);
     final res = await http.get(
       uri,
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
@@ -858,7 +958,9 @@ class AuthService {
     if (normalizedBody.isEmpty && !hasPhoto) {
       throw Exception('Validation failed');
     }
-    final uri = Uri.parse('$baseUrl/api/app/client/chat-rooms/$roomId/messages');
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/chat-rooms/$roomId/messages',
+    );
     late final http.Response res;
     final replyId = replyToMessageId;
     if (hasPhoto) {
@@ -954,21 +1056,19 @@ class AuthService {
   }
 
   /// DELETE /api/app/client/assignments/{id}/rehearsal-booking
-  Future<void> cancelRehearsalBooking(
-    int assignmentId, {
-    int? slotId,
-  }) async {
+  Future<void> cancelRehearsalBooking(int assignmentId, {int? slotId}) async {
     final token = await getToken();
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
     }
-    final uri = Uri.parse(
-      '$baseUrl/api/app/client/assignments/$assignmentId/rehearsal-booking',
-    ).replace(
-      queryParameters: slotId != null && slotId > 0
-          ? {'slot_id': '$slotId'}
-          : null,
-    );
+    final uri =
+        Uri.parse(
+          '$baseUrl/api/app/client/assignments/$assignmentId/rehearsal-booking',
+        ).replace(
+          queryParameters: slotId != null && slotId > 0
+              ? {'slot_id': '$slotId'}
+              : null,
+        );
     final res = await http.delete(
       uri,
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
@@ -1090,10 +1190,7 @@ class AuthService {
     if (list is! List) return [];
     return list
         .map(
-          (e) => ClientTicketItem.fromJson(
-            e as Map<String, dynamic>,
-            baseUrl,
-          ),
+          (e) => ClientTicketItem.fromJson(e as Map<String, dynamic>, baseUrl),
         )
         .toList();
   }
@@ -1132,7 +1229,8 @@ class AuthService {
     );
     if (res.statusCode != 200) {
       throw Exception(
-        _tryMessage(res.body) ?? 'Failed to load notifications (${res.statusCode})',
+        _tryMessage(res.body) ??
+            'Failed to load notifications (${res.statusCode})',
       );
     }
     final map = jsonDecode(res.body) as Map<String, dynamic>;
@@ -1156,7 +1254,8 @@ class AuthService {
     );
     if (res.statusCode != 200) {
       throw Exception(
-        _tryMessage(res.body) ?? 'Failed to load notification (${res.statusCode})',
+        _tryMessage(res.body) ??
+            'Failed to load notification (${res.statusCode})',
       );
     }
     final map = jsonDecode(res.body) as Map<String, dynamic>;
@@ -1211,19 +1310,6 @@ class AuthService {
     return AppAboutData.fromJson(json);
   }
 
-  /// GET /api/app/info/terms — данные «Terms & Conditions». Без авторизации.
-  Future<AppTermsData> getAppTerms() async {
-    final uri = Uri.parse('$baseUrl/api/app/info/terms');
-    final res = await http.get(uri, headers: {'Accept': 'application/json'});
-    if (res.statusCode != 200) {
-      throw Exception(
-        _tryMessage(res.body) ?? 'Failed to load terms (${res.statusCode})',
-      );
-    }
-    final json = jsonDecode(res.body) as Map<String, dynamic>;
-    return AppTermsData.fromJson(json);
-  }
-
   /// GET /api/app/info/faq-sections — разделы FAQ. Без авторизации.
   Future<List<FaqSectionItem>> getFaqSections() async {
     final uri = Uri.parse('$baseUrl/api/app/info/faq-sections');
@@ -1263,6 +1349,65 @@ class AuthService {
   }
 
   /// POST /api/app/version/check — разрешена ли версия приложения для запуска.
+  /// POST /api/app/push-token — upsert FCM token for current user (requires Bearer).
+  Future<void> registerPushToken({
+    required String fcmToken,
+    required String platform,
+    String? deviceId,
+    String? appVersion,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      return;
+    }
+    final uri = Uri.parse('$baseUrl/api/app/push-token');
+    final body = <String, dynamic>{
+      'token': fcmToken,
+      'platform': platform,
+      if (deviceId != null && deviceId.isNotEmpty) 'device_id': deviceId,
+      if (appVersion != null && appVersion.isNotEmpty) 'app_version': appVersion,
+    };
+    try {
+      final res = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      );
+      if (res.statusCode != 200 && kDebugMode) {
+        // ignore: avoid_print
+        print('registerPushToken failed ${res.statusCode} ${res.body}');
+      }
+    } catch (_) {}
+  }
+
+  /// DELETE /api/app/push-token — deactivate token (call before logout while Bearer is valid).
+  Future<void> deactivatePushToken({required String fcmToken}) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      return;
+    }
+    final uri = Uri.parse('$baseUrl/api/app/push-token');
+    try {
+      final res = await http.delete(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'token': fcmToken}),
+      );
+      if (res.statusCode != 200 && kDebugMode) {
+        // ignore: avoid_print
+        print('deactivatePushToken failed ${res.statusCode} ${res.body}');
+      }
+    } catch (_) {}
+  }
+
   Future<AppVersionCheckResult> checkAppVersion({
     required String platform,
     required String version,
@@ -1274,10 +1419,7 @@ class AuthService {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: jsonEncode({
-        'platform': platform,
-        'version': version,
-      }),
+      body: jsonEncode({'platform': platform, 'version': version}),
     );
 
     if (res.statusCode != 200) {
@@ -1331,34 +1473,46 @@ class InfoSettings {
   InfoSettings({
     this.infoPhotoUrl,
     this.socialInstagram,
-    this.socialTwitter,
+    this.socialFacebook,
     this.socialYoutube,
+    this.socialTiktok,
     this.websiteUrl,
     this.contactFormUrl,
     this.faqPhotoUrl,
     this.faqArticlesPhotoUrl,
+    this.brandCatalogPhotoUrl,
+    this.brandCatalogPdfUrl,
   });
   final String? infoPhotoUrl;
   final String? socialInstagram;
-  final String? socialTwitter;
+  final String? socialFacebook;
   final String? socialYoutube;
+  final String? socialTiktok;
   final String? websiteUrl;
+
   /// Ссылка на форму записи (админка: общие настройки приложения).
   final String? contactFormUrl;
   final String? faqPhotoUrl;
   final String? faqArticlesPhotoUrl;
+
+  /// Каталог брендов на экране FAQ (общие настройки): картинка ячейки, PDF. Заголовок — l10n [AppLocalizations.faqBrandCatalogTitle].
+  final String? brandCatalogPhotoUrl;
+  final String? brandCatalogPdfUrl;
 
   static InfoSettings fromJson(Map<String, dynamic> json) {
     String? url(dynamic v) => v is String && v.isNotEmpty ? v : null;
     return InfoSettings(
       infoPhotoUrl: url(json['info_photo_url']),
       socialInstagram: url(json['social_instagram']),
-      socialTwitter: url(json['social_twitter']),
+      socialFacebook: url(json['social_facebook']),
       socialYoutube: url(json['social_youtube']),
+      socialTiktok: url(json['social_tiktok']),
       websiteUrl: url(json['website_url']),
       contactFormUrl: url(json['contact_form_url']),
       faqPhotoUrl: url(json['faq_photo_url']),
       faqArticlesPhotoUrl: url(json['faq_articles_photo_url']),
+      brandCatalogPhotoUrl: url(json['brand_catalog_photo_url']),
+      brandCatalogPdfUrl: url(json['brand_catalog_pdf_url']),
     );
   }
 }
@@ -1477,20 +1631,6 @@ class AppAboutBlock {
   }
 }
 
-/// Данные «Terms & Conditions» из API /api/app/info/terms.
-class AppTermsData {
-  AppTermsData({this.photoUrl, this.body});
-  final String? photoUrl;
-  final String? body;
-
-  static AppTermsData fromJson(Map<String, dynamic> json) {
-    return AppTermsData(
-      photoUrl: json['photo_url'] as String?,
-      body: json['body'] as String?,
-    );
-  }
-}
-
 class LoginResult {
   LoginResult({required this.token, required this.user});
   final String token;
@@ -1498,10 +1638,7 @@ class LoginResult {
 }
 
 class AppVersionCheckResult {
-  AppVersionCheckResult({
-    required this.allowed,
-    this.storeUrl,
-  });
+  AppVersionCheckResult({required this.allowed, this.storeUrl});
 
   final bool allowed;
   final String? storeUrl;
@@ -1718,6 +1855,7 @@ class RehearsalBookingInfo {
     required this.place,
     required this.description,
     this.bookedAt,
+    this.startsAt,
   });
 
   final int slotId;
@@ -1727,6 +1865,9 @@ class RehearsalBookingInfo {
   final String description;
   final DateTime? bookedAt;
 
+  /// Absolute instant for `starts_at` (ISO 8601, often with `Z`). Timeline UI prefers [slotDate]/[slotTime] to match admin.
+  final DateTime? startsAt;
+
   factory RehearsalBookingInfo.fromJson(Map<String, dynamic> json) {
     return RehearsalBookingInfo(
       slotId: _jsonInt(json['slot_id']),
@@ -1735,6 +1876,7 @@ class RehearsalBookingInfo {
       place: (json['place'] as String? ?? '').toString(),
       description: (json['description'] as String? ?? '').toString(),
       bookedAt: _jsonDateTimeNullable(json['booked_at']),
+      startsAt: _jsonDateTimeNullable(json['starts_at']),
     );
   }
 }
@@ -1765,6 +1907,33 @@ class EventPackingInfo {
       imageUrl: json['image_url'] as String?,
       bodyHtml: json['body_html'] as String?,
       updatedAt: _jsonDateTimeNullable(json['updated_at']),
+    );
+  }
+}
+
+class EventDescriptionInfo {
+  EventDescriptionInfo({
+    required this.eventId,
+    required this.eventName,
+    this.imageUrl,
+    this.description = '',
+  });
+
+  final int eventId;
+  final String eventName;
+  final String? imageUrl;
+  final String description;
+
+  bool get hasContent =>
+      (imageUrl != null && imageUrl!.trim().isNotEmpty) ||
+      description.trim().isNotEmpty;
+
+  factory EventDescriptionInfo.fromJson(Map<String, dynamic> json) {
+    return EventDescriptionInfo(
+      eventId: _jsonInt(json['event_id']),
+      eventName: (json['event_name'] as String? ?? '').trim(),
+      imageUrl: json['image_url'] as String?,
+      description: (json['description'] as String? ?? '').trim(),
     );
   }
 }
@@ -1930,8 +2099,10 @@ class ClientChatRoomPayload {
       brandName: (room['brand_name'] as String? ?? '').trim(),
       messages: list is List
           ? list
-              .map((e) => ClientChatMessage.fromJson(e as Map<String, dynamic>))
-              .toList()
+                .map(
+                  (e) => ClientChatMessage.fromJson(e as Map<String, dynamic>),
+                )
+                .toList()
           : const [],
     );
   }
@@ -2015,7 +2186,9 @@ class ActiveAssignment {
     this.requiredCompletedStages,
     this.familyLook = false,
     this.familyLookBrandId,
+    this.parentParticipantsCount,
     this.parentProgress,
+    this.parentTimelines = const [],
     required this.mainStages,
     required this.preparatoryStages,
     this.eventMeals = const [],
@@ -2038,11 +2211,14 @@ class ActiveAssignment {
   final int? requiredCompletedStages;
   final bool familyLook;
   final int? familyLookBrandId;
+  final int? parentParticipantsCount;
   final ParentProgressInfo? parentProgress;
+  final List<ParentTimelineInfo> parentTimelines;
   final List<MainStageInfo> mainStages;
   final List<PreparatoryStageInfo> preparatoryStages;
   final List<EventMealOption> eventMeals;
   final int? selectedEventMealId;
+
   /// When false, the client cannot change the selected lunch in the app.
   final bool mealOrdersAccepting;
 
@@ -2095,6 +2271,7 @@ class ActiveAssignment {
     final main = json['main_stages'];
     final prep = json['preparatory_stages'];
     final parentProgressJson = json['parent_progress'];
+    final parentTimelinesJson = json['parent_timelines'];
     final meals = json['event_meals'];
     final rb = json['rehearsal_booking'];
     final rbs = json['rehearsal_bookings'];
@@ -2108,12 +2285,23 @@ class ActiveAssignment {
       totalPreparatoryStages: _jsonInt(json['total_preparatory_stages']),
       completedStages: _jsonInt(json['completed_stages']),
       requiredTotalStages: _jsonIntNullable(json['required_total_stages']),
-      requiredCompletedStages: _jsonIntNullable(json['required_completed_stages']),
+      requiredCompletedStages: _jsonIntNullable(
+        json['required_completed_stages'],
+      ),
       familyLook: json['family_look'] == true,
       familyLookBrandId: _jsonIntNullable(json['family_look_brand_id']),
+      parentParticipantsCount: _jsonIntNullable(
+        json['parent_participants_count'],
+      ),
       parentProgress: parentProgressJson is Map<String, dynamic>
           ? ParentProgressInfo.fromJson(parentProgressJson)
           : null,
+      parentTimelines: parentTimelinesJson is List
+          ? parentTimelinesJson
+                .whereType<Map<String, dynamic>>()
+                .map(ParentTimelineInfo.fromJson)
+                .toList()
+          : const [],
       mainStages: main is List
           ? main
                 .map((e) => MainStageInfo.fromJson(e as Map<String, dynamic>))
@@ -2141,8 +2329,39 @@ class ActiveAssignment {
                 .whereType<Map<String, dynamic>>()
                 .map(RehearsalBookingInfo.fromJson)
                 .toList()
-          : (rb is Map<String, dynamic> ? [RehearsalBookingInfo.fromJson(rb)] : const []),
+          : (rb is Map<String, dynamic>
+                ? [RehearsalBookingInfo.fromJson(rb)]
+                : const []),
       maxMainRehearsals: _jsonInt(json['max_main_rehearsals'], 1),
+    );
+  }
+}
+
+class ParentTimelineInfo {
+  ParentTimelineInfo({
+    required this.participantSlot,
+    required this.totalStages,
+    required this.completedStages,
+    required this.mainStages,
+  });
+
+  final int participantSlot;
+  final int totalStages;
+  final int completedStages;
+  final List<MainStageInfo> mainStages;
+
+  factory ParentTimelineInfo.fromJson(Map<String, dynamic> json) {
+    final main = json['main_stages'];
+    return ParentTimelineInfo(
+      participantSlot: _jsonInt(json['participant_slot'], 1),
+      totalStages: _jsonInt(json['total_stages']),
+      completedStages: _jsonInt(json['completed_stages']),
+      mainStages: main is List
+          ? main
+                .whereType<Map<String, dynamic>>()
+                .map(MainStageInfo.fromJson)
+                .toList()
+          : const [],
     );
   }
 }
@@ -2204,15 +2423,22 @@ class EventMealOption {
 }
 
 class MainStageInfo {
-  MainStageInfo({required this.id, required this.name});
+  MainStageInfo({required this.id, required this.name, this.description});
 
   final int id;
   final String name;
 
+  /// Локализованное описание этапа (из API), для деталей в таймлайне.
+  final String? description;
+
   factory MainStageInfo.fromJson(Map<String, dynamic> json) {
+    final rawDesc = json['description'];
     return MainStageInfo(
       id: _jsonInt(json['id']),
       name: (json['name'] as String? ?? '').toString(),
+      description: rawDesc is String && rawDesc.trim().isNotEmpty
+          ? rawDesc.trim()
+          : null,
     );
   }
 }
@@ -2627,12 +2853,12 @@ class SupervisorChildDetail {
       totalStages: json['total_stages'] as int? ?? 0,
       mainProgressStages: mps is List
           ? mps
-              .map(
-                (e) => StaffMainProgressStage.fromJson(
-                  e as Map<String, dynamic>,
-                ),
-              )
-              .toList()
+                .map(
+                  (e) => StaffMainProgressStage.fromJson(
+                    e as Map<String, dynamic>,
+                  ),
+                )
+                .toList()
           : const [],
     );
   }

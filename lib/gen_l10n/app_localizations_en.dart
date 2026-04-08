@@ -465,6 +465,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Packing information has not been added for this event yet.';
 
   @override
+  String get eventDescriptionTitle => 'Event info';
+
+  @override
+  String get eventProgressShowGallery => 'Show gallery';
+
+  @override
+  String get eventDescriptionLoadFailed =>
+      'Could not load event description. Try again.';
+
+  @override
+  String get eventDescriptionEmpty =>
+      'No description has been added for this event yet.';
+
+  @override
   String get eventSettingsBrandTitle => 'Brand Requirements';
 
   @override
@@ -485,6 +499,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get brandRequirementsEmptyItem =>
       'No requirements text has been added for this brand yet.';
+
+  @override
+  String get brandRequirementsPickBrandTitle => 'Choose a brand';
+
+  @override
+  String brandRequirementsBrandNumber(int brandId) {
+    return 'Brand $brandId';
+  }
 
   @override
   String get eventSettingsChatTitle => 'Group Chat';
@@ -740,9 +762,138 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketsEventsLoadError => 'Could not load events';
 
   @override
+  String get faqBrandCatalogTitle => 'Clothing brands';
+
+  @override
   String get pdfViewerTitle => 'Ticket';
 
   @override
   String get contactFormLinkMissing =>
       'No form link is set. Add «Contact / signup form URL» in Application settings in the admin.';
+
+  @override
+  String get infoHubTitle => 'Information Hub';
+
+  @override
+  String get infoMenuAboutYfs => 'About YFS';
+
+  @override
+  String get infoMenuGeneralFaq => 'General FAQ';
+
+  @override
+  String get infoMenuContactManager => 'Contact Manager';
+
+  @override
+  String get infoFooterBrand => 'YFS';
+
+  @override
+  String get infoFooterCopyright =>
+      '© 2024 Young Fashion Series. All rights reserved.';
+
+  @override
+  String parentProgressLabel(int completed, int total) {
+    return 'Parent progress: $completed/$total';
+  }
+
+  @override
+  String get appUpdateRequiredMessage => 'Please update the app to continue.';
+
+  @override
+  String get appUpdateButton => 'Update app';
+
+  @override
+  String get showAll => 'Show all';
+
+  @override
+  String get staffNoneSelected => '— None —';
+
+  @override
+  String staffScanFailed(String error) {
+    return 'Scan failed: $error';
+  }
+
+  @override
+  String get staffScanSelectEventStageFirst =>
+      'Select active event and stage in Staff Settings before scanning.';
+
+  @override
+  String get staffScanProcessed => 'Scan processed';
+
+  @override
+  String get chatCouldNotPickPhoto => 'Could not pick photo';
+
+  @override
+  String get staffChildProfileTitle => 'Child Profile';
+
+  @override
+  String get staffCurrentStage => 'CURRENT STAGE';
+
+  @override
+  String staffProgressPercentComplete(int percent) {
+    return '$percent% Complete';
+  }
+
+  @override
+  String get staffChildDetailEmpty => 'No child details in DB';
+
+  @override
+  String get staffLoadFailed => 'Failed to load';
+
+  @override
+  String get staffGuardianLiaison => 'GUARDIAN LIAISON';
+
+  @override
+  String get staffAssignedBrand => 'ASSIGNED BRAND';
+
+  @override
+  String get staffSupervisor => 'SUPERVISOR';
+
+  @override
+  String get staffSectionCoreDetails => 'Core Details';
+
+  @override
+  String get staffSectionParentContact => 'Parent Contact';
+
+  @override
+  String staffPhaseWithName(String stageName) {
+    return 'Phase: $stageName';
+  }
+
+  @override
+  String get staffNoCurrentStage => 'No current stage';
+
+  @override
+  String staffAgeYearsOld(int age) {
+    return '$age years old';
+  }
+
+  @override
+  String get staffNotesLabel => 'Notes';
+
+  @override
+  String get staffParentRoleDefault => 'Parent';
+
+  @override
+  String get contactManagerIntro =>
+      'You can leave a message about any question. We will get back to you as soon as possible.';
+
+  @override
+  String get contactManagerMessageLabel => 'Your message';
+
+  @override
+  String get contactManagerMessageRequired => 'Please enter your message';
+
+  @override
+  String get contactManagerSend => 'Send';
+
+  @override
+  String get contactManagerSent =>
+      'Your message has been sent. We will contact you soon.';
+
+  @override
+  String get contactManagerSendFailed => 'Could not send. Try again later.';
+
+  @override
+  String get contactManagerServiceUnavailable =>
+      'Contact is temporarily unavailable. Please try again later.';
 }

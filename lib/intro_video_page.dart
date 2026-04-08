@@ -10,6 +10,7 @@ import 'api/auth_service.dart';
 import 'client_home_page.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
+import 'push/push_token_service.dart';
 import 'staff_home_page.dart';
 
 /// Экран при запуске: проигрывает видеоролик, по окончании переходит на вход.
@@ -144,6 +145,9 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => next),
         );
+        unawaited(
+          PushTokenServiceHolder.instance?.syncWithBackendIfLoggedIn(),
+        );
       } else {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => LoginPage(auth: widget.auth)),
@@ -217,15 +221,15 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
               children: [
                 const Icon(Icons.system_update, color: Colors.white70, size: 56),
                 const SizedBox(height: 16),
-                const Text(
-                  'Please update the app to continue.',
+                Text(
+                  AppLocalizations.of(context)!.appUpdateRequiredMessage,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 const SizedBox(height: 24),
                 FilledButton(
                   onPressed: _storeUrl != null ? _openStore : null,
-                  child: const Text('Update app'),
+                  child: Text(AppLocalizations.of(context)!.appUpdateButton),
                 ),
               ],
             ),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "398138058975",
+    "project_id": "yfs-app-76da1",
+    "storage_bucket": "yfs-app-76da1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:398138058975:android:faa567aeaa18c9cd22a16a",
+        "android_client_info": {
+          "package_name": "com.youngfashionshow.yfs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOBCWgFboDwSxoY80H5GydaXFHiHJXfdM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

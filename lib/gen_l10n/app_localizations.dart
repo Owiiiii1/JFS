@@ -967,6 +967,30 @@ abstract class AppLocalizations {
   /// **'Packing information has not been added for this event yet.'**
   String get eventPackingEmpty;
 
+  /// No description provided for @eventDescriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event info'**
+  String get eventDescriptionTitle;
+
+  /// No description provided for @eventProgressShowGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Show gallery'**
+  String get eventProgressShowGallery;
+
+  /// No description provided for @eventDescriptionLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load event description. Try again.'**
+  String get eventDescriptionLoadFailed;
+
+  /// No description provided for @eventDescriptionEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No description has been added for this event yet.'**
+  String get eventDescriptionEmpty;
+
   /// No description provided for @eventSettingsBrandTitle.
   ///
   /// In en, this message translates to:
@@ -1002,6 +1026,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No requirements text has been added for this brand yet.'**
   String get brandRequirementsEmptyItem;
+
+  /// No description provided for @brandRequirementsPickBrandTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a brand'**
+  String get brandRequirementsPickBrandTitle;
+
+  /// No description provided for @brandRequirementsBrandNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand {brandId}'**
+  String brandRequirementsBrandNumber(int brandId);
 
   /// No description provided for @eventSettingsChatTitle.
   ///
@@ -1471,6 +1507,12 @@ abstract class AppLocalizations {
   /// **'Could not load events'**
   String get ticketsEventsLoadError;
 
+  /// No description provided for @faqBrandCatalogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clothing brands'**
+  String get faqBrandCatalogTitle;
+
   /// No description provided for @pdfViewerTitle.
   ///
   /// In en, this message translates to:
@@ -1482,6 +1524,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No form link is set. Add «Contact / signup form URL» in Application settings in the admin.'**
   String get contactFormLinkMissing;
+
+  /// No description provided for @infoHubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Information Hub'**
+  String get infoHubTitle;
+
+  /// No description provided for @infoMenuAboutYfs.
+  ///
+  /// In en, this message translates to:
+  /// **'About YFS'**
+  String get infoMenuAboutYfs;
+
+  /// No description provided for @infoMenuGeneralFaq.
+  ///
+  /// In en, this message translates to:
+  /// **'General FAQ'**
+  String get infoMenuGeneralFaq;
+
+  /// No description provided for @infoMenuContactManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Manager'**
+  String get infoMenuContactManager;
+
+  /// No description provided for @infoFooterBrand.
+  ///
+  /// In en, this message translates to:
+  /// **'YFS'**
+  String get infoFooterBrand;
+
+  /// No description provided for @infoFooterCopyright.
+  ///
+  /// In en, this message translates to:
+  /// **'© 2024 Young Fashion Series. All rights reserved.'**
+  String get infoFooterCopyright;
+
+  /// No description provided for @parentProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent progress: {completed}/{total}'**
+  String parentProgressLabel(int completed, int total);
+
+  /// No description provided for @appUpdateRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please update the app to continue.'**
+  String get appUpdateRequiredMessage;
+
+  /// No description provided for @appUpdateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Update app'**
+  String get appUpdateButton;
+
+  /// No description provided for @showAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all'**
+  String get showAll;
+
+  /// No description provided for @staffNoneSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'— None —'**
+  String get staffNoneSelected;
+
+  /// No description provided for @staffScanFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan failed: {error}'**
+  String staffScanFailed(String error);
+
+  /// No description provided for @staffScanSelectEventStageFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select active event and stage in Staff Settings before scanning.'**
+  String get staffScanSelectEventStageFirst;
+
+  /// No description provided for @staffScanProcessed.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan processed'**
+  String get staffScanProcessed;
+
+  /// No description provided for @chatCouldNotPickPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not pick photo'**
+  String get chatCouldNotPickPhoto;
+
+  /// No description provided for @staffChildProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Child Profile'**
+  String get staffChildProfileTitle;
+
+  /// No description provided for @staffCurrentStage.
+  ///
+  /// In en, this message translates to:
+  /// **'CURRENT STAGE'**
+  String get staffCurrentStage;
+
+  /// No description provided for @staffProgressPercentComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% Complete'**
+  String staffProgressPercentComplete(int percent);
+
+  /// No description provided for @staffChildDetailEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No child details in DB'**
+  String get staffChildDetailEmpty;
+
+  /// No description provided for @staffLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load'**
+  String get staffLoadFailed;
+
+  /// No description provided for @staffGuardianLiaison.
+  ///
+  /// In en, this message translates to:
+  /// **'GUARDIAN LIAISON'**
+  String get staffGuardianLiaison;
+
+  /// No description provided for @staffAssignedBrand.
+  ///
+  /// In en, this message translates to:
+  /// **'ASSIGNED BRAND'**
+  String get staffAssignedBrand;
+
+  /// No description provided for @staffSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'SUPERVISOR'**
+  String get staffSupervisor;
+
+  /// No description provided for @staffSectionCoreDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Details'**
+  String get staffSectionCoreDetails;
+
+  /// No description provided for @staffSectionParentContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent Contact'**
+  String get staffSectionParentContact;
+
+  /// No description provided for @staffPhaseWithName.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase: {stageName}'**
+  String staffPhaseWithName(String stageName);
+
+  /// No description provided for @staffNoCurrentStage.
+  ///
+  /// In en, this message translates to:
+  /// **'No current stage'**
+  String get staffNoCurrentStage;
+
+  /// No description provided for @staffAgeYearsOld.
+  ///
+  /// In en, this message translates to:
+  /// **'{age} years old'**
+  String staffAgeYearsOld(int age);
+
+  /// No description provided for @staffNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get staffNotesLabel;
+
+  /// No description provided for @staffParentRoleDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent'**
+  String get staffParentRoleDefault;
+
+  /// No description provided for @contactManagerIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'You can leave a message about any question. We will get back to you as soon as possible.'**
+  String get contactManagerIntro;
+
+  /// No description provided for @contactManagerMessageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your message'**
+  String get contactManagerMessageLabel;
+
+  /// No description provided for @contactManagerMessageRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your message'**
+  String get contactManagerMessageRequired;
+
+  /// No description provided for @contactManagerSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get contactManagerSend;
+
+  /// No description provided for @contactManagerSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Your message has been sent. We will contact you soon.'**
+  String get contactManagerSent;
+
+  /// No description provided for @contactManagerSendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send. Try again later.'**
+  String get contactManagerSendFailed;
+
+  /// No description provided for @contactManagerServiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact is temporarily unavailable. Please try again later.'**
+  String get contactManagerServiceUnavailable;
 }
 
 class _AppLocalizationsDelegate

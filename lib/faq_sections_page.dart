@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
+import 'client_ticket_pdf_page.dart';
 import 'faq_articles_page.dart';
+import 'gen_l10n/app_localizations.dart';
 
 // Как в разделе Info: чёрный фон, золотой акцент
 const _kGold = Color(0xFFD4AF37);
@@ -8,6 +10,7 @@ const _kCardBg = Color(0xFF121212);
 
 /// Экран разделов FAQ: карточки-картинки с названием (референс Concierge).
 /// Фото разделов из админки (photo_url по разделу).
+/// В конце списка — опциональная кнопка «каталог брендов» из общих настроек (PDF).
 class FaqSectionsPage extends StatefulWidget {
   const FaqSectionsPage({super.key, required this.auth});
 
@@ -19,6 +22,7 @@ class FaqSectionsPage extends StatefulWidget {
 
 class _FaqSectionsPageState extends State<FaqSectionsPage> {
   List<FaqSectionItem>? _sections;
+  InfoSettings? _infoSettings;
   bool _loading = true;
   String? _error;
 
@@ -34,10 +38,14 @@ class _FaqSectionsPageState extends State<FaqSectionsPage> {
       _error = null;
     });
     try {
-      final sections = await widget.auth.getFaqSections();
+      final results = await Future.wait([
+        widget.auth.getFaqSections(),
+        widget.auth.getInfoSettings(),
+      ]);
       if (!mounted) return;
       setState(() {
-        _sections = sections;
+        _sections = results[0] as List<FaqSectionItem>;
+        _infoSettings = results[1] as InfoSettings;
         _loading = false;
       });
     } catch (e) {
@@ -49,16 +57,29 @@ class _FaqSectionsPageState extends State<FaqSectionsPage> {
     }
   }
 
-  String? _sectionPhotoUrl(FaqSectionItem section) {
-    final u = section.photoUrl;
+  bool get _showBrandCatalog {
+    final s = _infoSettings;
+    if (s == null) return false;
+    final p = s.brandCatalogPdfUrl;
+    return p != null && p.isNotEmpty;
+  }
+
+  String? _absoluteMediaUrl(String? u) {
     if (u == null || u.isEmpty) return null;
     if (u.startsWith('http')) return u;
     final base = widget.auth.baseUrl;
-    return base.endsWith('/') ? '$base${u.replaceFirst(RegExp(r'^/'), '')}' : '$base$u';
+    return base.endsWith('/')
+        ? '$base${u.replaceFirst(RegExp(r'^/'), '')}'
+        : '$base$u';
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final sections = _sections ?? const <FaqSectionItem>[];
+    final hasRows = sections.isNotEmpty || _showBrandCatalog;
+    final brandCatalogTitle = l10n.faqBrandCatalogTitle;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -116,7 +137,7 @@ class _FaqSectionsPageState extends State<FaqSectionsPage> {
                         const SizedBox(height: 16),
                         TextButton(
                           onPressed: _load,
-                          child: const Text('Retry'),
+                          child: Text(AppLocalizations.of(context)!.retry),
                         ),
                       ],
                     ),
@@ -154,7 +175,7 @@ class _FaqSectionsPageState extends State<FaqSectionsPage> {
                           color: Colors.white.withOpacity(0.6),
                         ),
                       ),
-                      if (_sections != null && _sections!.isEmpty)
+                      if (_sections != null && !hasRows)
                         Padding(
                           padding: const EdgeInsets.only(top: 32),
                           child: Text(
@@ -165,23 +186,48 @@ class _FaqSectionsPageState extends State<FaqSectionsPage> {
                             ),
                           ),
                         )
-                      else if (_sections != null) ...[
+                      else if (_sections != null && hasRows) ...[
                         const SizedBox(height: 24),
-                        for (final section in _sections!) _SectionCard(
-                          section: section,
-                          photoUrl: _sectionPhotoUrl(section),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => FaqArticlesPage(
-                                  auth: widget.auth,
-                                  sectionId: section.id,
-                                  sectionName: section.name,
+                        for (final section in sections)
+                          _SectionCard(
+                            title: section.name,
+                            photoUrl: _absoluteMediaUrl(section.photoUrl),
+                            subtitle: 'Tap to view articles',
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => FaqArticlesPage(
+                                    auth: widget.auth,
+                                    sectionId: section.id,
+                                    sectionName: section.name,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
+                              );
+                            },
+                          ),
+                        if (_showBrandCatalog)
+                          _SectionCard(
+                            title: brandCatalogTitle,
+                            photoUrl: _absoluteMediaUrl(
+                              _infoSettings!.brandCatalogPhotoUrl,
+                            ),
+                            subtitle: 'Tap to open catalog',
+                            onTap: () {
+                              final pdfUrl = _absoluteMediaUrl(
+                                _infoSettings!.brandCatalogPdfUrl,
+                              );
+                              if (pdfUrl == null) return;
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => ClientTicketPdfPage(
+                                    auth: widget.auth,
+                                    pdfUrl: pdfUrl,
+                                    appBarTitle: brandCatalogTitle,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                       ],
                     ],
                   ),
@@ -192,14 +238,16 @@ class _FaqSectionsPageState extends State<FaqSectionsPage> {
 
 class _SectionCard extends StatefulWidget {
   const _SectionCard({
-    required this.section,
+    required this.title,
     required this.photoUrl,
     required this.onTap,
+    this.subtitle = 'Tap to view articles',
   });
 
-  final FaqSectionItem section;
+  final String title;
   final String? photoUrl;
   final VoidCallback onTap;
+  final String subtitle;
 
   @override
   State<_SectionCard> createState() => _SectionCardState();
@@ -255,7 +303,7 @@ class _SectionCardState extends State<_SectionCard> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          widget.section.name,
+                          widget.title,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -263,7 +311,7 @@ class _SectionCardState extends State<_SectionCard> {
                           ),
                         ),
                         Text(
-                          'Tap to view articles',
+                          widget.subtitle,
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.white.withOpacity(0.7),
