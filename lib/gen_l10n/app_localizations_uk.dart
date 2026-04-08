@@ -299,6 +299,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get hips => 'Стегна';
 
   @override
+  String get measurementLengthUnitCm => 'см';
+
+  @override
+  String get measurementLengthUnitIn => 'дюйм';
+
+  @override
   String get currentParticipation => 'Поточна участь';
 
   @override
@@ -339,6 +345,12 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get eventSettings => 'НАЛАШТУВАННЯ ІВЕНТУ';
+
+  @override
+  String get homeEventCardMyEvent => 'МІЙ ІВЕНТ';
+
+  @override
+  String get homeEventCardRunwayJourney => 'ШЛЯХ НА ПОДІУМ';
 
   @override
   String get eventSettingsPlaceholder =>
@@ -434,7 +446,7 @@ class AppLocalizationsUk extends AppLocalizations {
       'Організатор закрив зміну запису. Зверніться в підтримку, якщо потрібна допомога.';
 
   @override
-  String get rehearsalMilestoneTitle => 'Репетиція';
+  String get rehearsalMilestoneTitle => 'Загальна репетиція';
 
   @override
   String rehearsalBrandMilestoneTitle(String brandName) {
@@ -449,7 +461,7 @@ class AppLocalizationsUk extends AppLocalizations {
       'Запишіться на репетицію в налаштуваннях івенту.';
 
   @override
-  String get eventSettingsPackingTitle => 'Що взяти з собою?';
+  String get eventSettingsPackingTitle => 'Список «Не забудьте»';
 
   @override
   String get eventSettingsPackingSubtitle => '';

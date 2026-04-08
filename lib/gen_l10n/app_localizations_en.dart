@@ -299,6 +299,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hips => 'Hips';
 
   @override
+  String get measurementLengthUnitCm => 'cm';
+
+  @override
+  String get measurementLengthUnitIn => 'in';
+
+  @override
   String get currentParticipation => 'Current Participation';
 
   @override
@@ -339,6 +345,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventSettings => 'EVENT SETTINGS';
+
+  @override
+  String get homeEventCardMyEvent => 'MY EVENT';
+
+  @override
+  String get homeEventCardRunwayJourney => 'RUNWAY JOURNEY';
 
   @override
   String get eventSettingsPlaceholder =>
@@ -433,7 +445,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'The organizer has closed booking changes. Contact support if you need help.';
 
   @override
-  String get rehearsalMilestoneTitle => 'Rehearsal';
+  String get rehearsalMilestoneTitle => 'General rehearsal';
 
   @override
   String rehearsalBrandMilestoneTitle(String brandName) {
@@ -448,7 +460,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Book your rehearsal slot in Event settings.';
 
   @override
-  String get eventSettingsPackingTitle => 'What to bring?';
+  String get eventSettingsPackingTitle => 'Don\'t Forget List';
 
   @override
   String get eventSettingsPackingSubtitle => '';

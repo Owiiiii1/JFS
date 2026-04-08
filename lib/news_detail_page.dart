@@ -32,16 +32,22 @@ class NewsDetailPage extends StatelessWidget {
           children: [
             if (_photoUrl.isNotEmpty)
               AspectRatio(
-                aspectRatio: 16 / 10,
-                child: Image.network(
-                  _photoUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    color: _kCardBg,
-                    child: const Icon(
-                      Icons.image_not_supported_outlined,
-                      size: 48,
-                      color: Colors.white24,
+                // Taller than 16:10 so preview photos (often portraits) have more room;
+                // BoxFit.contain shows the full image without cropping faces.
+                aspectRatio: 4 / 3,
+                child: ColoredBox(
+                  color: Colors.black,
+                  child: Image.network(
+                    _photoUrl,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.topCenter,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: _kCardBg,
+                      child: const Icon(
+                        Icons.image_not_supported_outlined,
+                        size: 48,
+                        color: Colors.white24,
+                      ),
                     ),
                   ),
                 ),

@@ -102,13 +102,11 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
               onTap: _openSettings,
               child: Text(
                 AppLocalizations.of(context)!.editInfo,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   color: Colors.white,
                   letterSpacing: 2,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.white54,
                 ),
               ),
             ),

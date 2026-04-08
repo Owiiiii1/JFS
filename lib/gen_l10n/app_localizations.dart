@@ -667,6 +667,18 @@ abstract class AppLocalizations {
   /// **'Hips'**
   String get hips;
 
+  /// No description provided for @measurementLengthUnitCm.
+  ///
+  /// In en, this message translates to:
+  /// **'cm'**
+  String get measurementLengthUnitCm;
+
+  /// No description provided for @measurementLengthUnitIn.
+  ///
+  /// In en, this message translates to:
+  /// **'in'**
+  String get measurementLengthUnitIn;
+
   /// No description provided for @currentParticipation.
   ///
   /// In en, this message translates to:
@@ -738,6 +750,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'EVENT SETTINGS'**
   String get eventSettings;
+
+  /// No description provided for @homeEventCardMyEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'MY EVENT'**
+  String get homeEventCardMyEvent;
+
+  /// No description provided for @homeEventCardRunwayJourney.
+  ///
+  /// In en, this message translates to:
+  /// **'RUNWAY JOURNEY'**
+  String get homeEventCardRunwayJourney;
 
   /// No description provided for @eventSettingsPlaceholder.
   ///
@@ -916,7 +940,7 @@ abstract class AppLocalizations {
   /// No description provided for @rehearsalMilestoneTitle.
   ///
   /// In en, this message translates to:
-  /// **'Rehearsal'**
+  /// **'General rehearsal'**
   String get rehearsalMilestoneTitle;
 
   /// No description provided for @rehearsalBrandMilestoneTitle.
@@ -940,7 +964,7 @@ abstract class AppLocalizations {
   /// No description provided for @eventSettingsPackingTitle.
   ///
   /// In en, this message translates to:
-  /// **'What to bring?'**
+  /// **'Don\'t Forget List'**
   String get eventSettingsPackingTitle;
 
   /// No description provided for @eventSettingsPackingSubtitle.

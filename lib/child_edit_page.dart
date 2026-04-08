@@ -128,6 +128,12 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
     return v == v.roundToDouble() ? '${v.toInt()}' : v.toStringAsFixed(1);
   }
 
+  String _lengthUnitSuffix(BuildContext context) {
+    return AppSettings.measurementUnit == MeasurementUnit.imperial
+        ? AppLocalizations.of(context)!.measurementLengthUnitIn
+        : AppLocalizations.of(context)!.measurementLengthUnitCm;
+  }
+
   /// Значения в state хранятся в метрике (см, кг). Для отображения переводим в выбранные единицы.
   double? get _displayHeight =>
       _heightValue != null ? AppSettings.lengthFromMetric(_heightValue!) : null;
@@ -205,11 +211,13 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                   ),
                   const SizedBox(height: 16),
                   _EditableRow(
-                    label: '${AppLocalizations.of(context)!.height} (${AppSettings.lengthUnitLabel})',
+                    label:
+                        '${AppLocalizations.of(context)!.height} (${_lengthUnitSuffix(context)})',
                     value: _num(_displayHeight),
                     onTap: () => _showEditNumber(
                       context: context,
-                      label: '${AppLocalizations.of(context)!.height} (${AppSettings.lengthUnitLabel})',
+                      label:
+                          '${AppLocalizations.of(context)!.height} (${_lengthUnitSuffix(context)})',
                       value: _displayHeight,
                       onSave: (v) async {
                         final metric = v != null ? AppSettings.lengthToMetric(v) : null;
@@ -220,11 +228,13 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                   ),
                   const SizedBox(height: 16),
                   _EditableRow(
-                    label: '${AppLocalizations.of(context)!.chest} (${AppSettings.lengthUnitLabel})',
+                    label:
+                        '${AppLocalizations.of(context)!.chest} (${_lengthUnitSuffix(context)})',
                     value: _num(_displayChest),
                     onTap: () => _showEditNumber(
                       context: context,
-                      label: '${AppLocalizations.of(context)!.chest} (${AppSettings.lengthUnitLabel})',
+                      label:
+                          '${AppLocalizations.of(context)!.chest} (${_lengthUnitSuffix(context)})',
                       value: _displayChest,
                       onSave: (v) async {
                         final metric = v != null ? AppSettings.lengthToMetric(v) : null;
@@ -235,11 +245,13 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                   ),
                   const SizedBox(height: 16),
                   _EditableRow(
-                    label: 'Талия (${AppSettings.lengthUnitLabel})',
+                    label:
+                        '${AppLocalizations.of(context)!.waist} (${_lengthUnitSuffix(context)})',
                     value: _num(_displayWaist),
                     onTap: () => _showEditNumber(
                       context: context,
-                      label: 'Талия (${AppSettings.lengthUnitLabel})',
+                      label:
+                          '${AppLocalizations.of(context)!.waist} (${_lengthUnitSuffix(context)})',
                       value: _displayWaist,
                       onSave: (v) async {
                         final metric = v != null ? AppSettings.lengthToMetric(v) : null;
@@ -250,11 +262,13 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                   ),
                   const SizedBox(height: 16),
                   _EditableRow(
-                    label: '${AppLocalizations.of(context)!.hips} (${AppSettings.lengthUnitLabel})',
+                    label:
+                        '${AppLocalizations.of(context)!.hips} (${_lengthUnitSuffix(context)})',
                     value: _num(_displayHips),
                     onTap: () => _showEditNumber(
                       context: context,
-                      label: '${AppLocalizations.of(context)!.hips} (${AppSettings.lengthUnitLabel})',
+                      label:
+                          '${AppLocalizations.of(context)!.hips} (${_lengthUnitSuffix(context)})',
                       value: _displayHips,
                       onSave: (v) async {
                         final metric = v != null ? AppSettings.lengthToMetric(v) : null;
@@ -333,9 +347,9 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                     TextButton.icon(
                       onPressed: _saving ? null : _deleteMainPhoto,
                       icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
-                      label: const Text(
-                        'Удалить',
-                        style: TextStyle(color: Colors.redAccent),
+                      label: Text(
+                        AppLocalizations.of(context)!.deletePhoto,
+                        style: const TextStyle(color: Colors.redAccent),
                       ),
                     ),
                   ] else
@@ -425,9 +439,9 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Дополнительные фото',
-          style: TextStyle(
+        Text(
+          AppLocalizations.of(context)!.extraPhotos,
+          style: const TextStyle(
             color: Colors.white54,
             fontSize: 12,
           ),

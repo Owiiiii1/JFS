@@ -1280,7 +1280,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                 children: [
                   Flexible(
                     child: Text(
-                      AppLocalizations.of(context)!.viewProgress,
+                      AppLocalizations.of(context)!.homeEventCardRunwayJourney,
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 12,
@@ -1315,7 +1315,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                 children: [
                   Flexible(
                     child: Text(
-                      AppLocalizations.of(context)!.eventSettings,
+                      AppLocalizations.of(context)!.homeEventCardMyEvent,
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 12,
