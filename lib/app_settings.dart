@@ -1,3 +1,5 @@
+import 'dart:ui' show Locale, PlatformDispatcher;
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Единицы измерения: метрические (см, кг) или американские (imperial: дюймы, фунты).
@@ -48,6 +50,22 @@ class AppSettings {
 
   static MeasurementUnit get measurementUnit => _unit;
   static AppLanguage get language => _language;
+
+  /// Локаль для запросов контента к API (`Accept-Language`), совпадает с выбором языка в настройках.
+  static Locale contentLocaleForApi() {
+    switch (_language) {
+      case AppLanguage.en:
+        return const Locale('en');
+      case AppLanguage.ru:
+        return const Locale('ru');
+      case AppLanguage.uk:
+        return const Locale('uk');
+      case AppLanguage.esUs:
+        return const Locale('es', 'US');
+      case AppLanguage.system:
+        return PlatformDispatcher.instance.locale;
+    }
+  }
 
   /// ID выбранного активного ивента для сотрудника (null — не выбран).
   static int? get staffActiveEventId => _staffActiveEventId;

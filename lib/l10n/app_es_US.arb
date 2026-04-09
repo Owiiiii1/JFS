@@ -10,15 +10,17 @@
   "hidePassword": "Ocultar contraseña",
   "showPassword": "Mostrar contraseña",
   "signInFailed": "Error al iniciar sesión: {error}",
-  "apiEndpointNotFoundHint": "The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).",
-  "notificationsTitle": "Notifications",
-  "notificationsLoadFailed": "Could not load notifications. Try again.",
-  "notificationsEmpty": "No notifications yet.",
-  "notificationsNewMark": "New",
-  "notificationDetailsTitle": "Notification",
+  "apiEndpointNotFoundHint": "El servidor no encontró la API (404). Usa la raíz del sitio sin «/api» al final; la app llama a /api/app/login sola. Si Laravel está en una subcarpeta, incluye la ruta hasta public (p. ej. https://example.com/myapp/public).",
+  "notificationsTitle": "Notificaciones",
+  "notificationsLoadFailed": "No se pudieron cargar las notificaciones. Inténtalo de nuevo.",
+  "notificationsEmpty": "Aún no hay notificaciones.",
+  "notificationsNewMark": "Nuevo",
+  "notificationDetailsTitle": "Notificación",
   "@signInFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "createAccount": "Crear cuenta",
@@ -36,7 +38,9 @@
   "registrationFailed": "Error al registrarse: {error}",
   "@registrationFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "account": "Cuenta",
@@ -80,6 +84,9 @@
   "languageSpanishUS": "Español (EE. UU.)",
   "addChildTitle": "Agregar hijo",
   "firstName": "Nombre",
+  "gender": "Género",
+  "genderBoy": "Niño",
+  "genderGirl": "Niña",
   "lastName": "Apellido",
   "birthdate": "Fecha de nacimiento",
   "chooseDate": "Elige la fecha",
@@ -108,7 +115,9 @@
   "model": "Modelo: {name}",
   "@model": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "active": "ACTIVO",
@@ -119,14 +128,20 @@
   "stepOf": "Paso {completed} de {total}",
   "@stepOf": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "next": "Siguiente: {text}",
   "@next": {
     "placeholders": {
-      "text": { "type": "String" }
+      "text": {
+        "type": "String"
+      }
     }
   },
   "viewProgress": "VER PROGRESO",
@@ -142,28 +157,28 @@
   "eventSettingsRehearsalTitle": "Reserva de ensayo",
   "eventSettingsRehearsalSubtitle": "Reserva tu plaza para el ensayo",
   "eventSettingsRehearsalCta": "RESERVAR",
-  "rehearsalModalTitle": "Rehearsal booking",
-  "rehearsalSelectDate": "Select date",
-  "rehearsalAvailableSlots": "Available slots",
-  "rehearsalFreeLabel": "Available:",
-  "rehearsalNoSlotsConfigured": "No rehearsal slots for this event yet.",
-  "rehearsalLoadError": "Could not load slots. Try again.",
-  "rehearsalBrandNotAssigned": "Brand is not assigned for this child. Rehearsal booking is unavailable.",
-  "rehearsalFull": "Full",
-  "rehearsalConfirmBooking": "Confirm booking",
-  "rehearsalBookingFooterNote": "Changes must be made 24 hours before the session when possible.",
-  "rehearsalBookedTitle": "Your rehearsal is booked",
-  "rehearsalChangeBooking": "Change booking",
-  "rehearsalProgramLabel": "Details",
-  "rehearsalArriveEarly": "Please arrive 15 minutes early.",
-  "rehearsalBookingSaved": "Booking saved",
-  "rehearsalBookingError": "Could not complete booking.",
-  "rehearsalSelectChild": "Child",
-  "rehearsalUpdateBooking": "Update booking",
-  "rehearsalCancelChange": "Cancel",
-  "rehearsalChangeBookingLockedHint": "The organizer has closed booking changes. Contact support if you need help.",
-  "rehearsalMilestoneTitle": "General rehearsal",
-  "rehearsalBrandMilestoneTitle": "Brand rehearsal: {brandName}",
+  "rehearsalModalTitle": "Reserva de ensayo",
+  "rehearsalSelectDate": "Elige fecha",
+  "rehearsalAvailableSlots": "Horarios disponibles",
+  "rehearsalFreeLabel": "Libres:",
+  "rehearsalNoSlotsConfigured": "Aún no hay franjas de ensayo para este evento.",
+  "rehearsalLoadError": "No se pudieron cargar las franjas. Inténtalo de nuevo.",
+  "rehearsalBrandNotAssigned": "No hay marca asignada para este niño. La reserva de ensayos no está disponible.",
+  "rehearsalFull": "Completo",
+  "rehearsalConfirmBooking": "Confirmar reserva",
+  "rehearsalBookingFooterNote": "Si es posible, cambia con 24 h de antelación.",
+  "rehearsalBookedTitle": "Ensayo reservado",
+  "rehearsalChangeBooking": "Cambiar reserva",
+  "rehearsalProgramLabel": "Descripción",
+  "rehearsalArriveEarly": "Llega 15 minutos antes.",
+  "rehearsalBookingSaved": "Reserva guardada",
+  "rehearsalBookingError": "No se pudo completar la reserva.",
+  "rehearsalSelectChild": "Niño/a",
+  "rehearsalUpdateBooking": "Actualizar reserva",
+  "rehearsalCancelChange": "Cancelar",
+  "rehearsalChangeBookingLockedHint": "El organizador cerró los cambios de reserva. Contacta soporte si necesitas ayuda.",
+  "rehearsalMilestoneTitle": "Ensayo general",
+  "rehearsalBrandMilestoneTitle": "Ensayo de marca: {brandName}",
   "@rehearsalBrandMilestoneTitle": {
     "placeholders": {
       "brandName": {
@@ -171,42 +186,44 @@
       }
     }
   },
-  "rehearsalBrandMilestoneShort": "Brand rehearsal",
-  "rehearsalNextBookHint": "Book your rehearsal slot in Event settings.",
-  "eventSettingsPackingTitle": "Don't Forget List",
+  "rehearsalBrandMilestoneShort": "Ensayo de marca",
+  "rehearsalNextBookHint": "Reserva tu ensayo en Ajustes del evento.",
+  "eventSettingsPackingTitle": "Lista «No olvides»",
   "eventSettingsPackingSubtitle": "",
-  "eventSettingsPackingCta": "VIEW LIST",
-  "eventPackingLoadFailed": "Could not load packing info. Try again.",
-  "eventPackingEmpty": "Packing information has not been added for this event yet.",
-  "eventDescriptionTitle": "Event info",
-  "eventProgressShowGallery": "Show gallery",
-  "eventDescriptionLoadFailed": "Could not load event description. Try again.",
-  "eventDescriptionEmpty": "No description has been added for this event yet.",
+  "eventSettingsPackingCta": "VER LISTA",
+  "eventPackingLoadFailed": "No se pudo cargar la información. Inténtalo de nuevo.",
+  "eventPackingEmpty": "Aún no se añadió información para este evento.",
+  "eventDescriptionTitle": "Información del evento",
+  "eventProgressShowGallery": "Galería",
+  "eventDescriptionLoadFailed": "No se pudo cargar la descripción. Inténtalo de nuevo.",
+  "eventDescriptionEmpty": "Aún no hay descripción de texto para este evento.",
   "eventSettingsBrandTitle": "Requisitos de marca",
   "eventSettingsBrandSubtitle": "Consulta las recomendaciones de la marca para participar en el evento",
   "eventSettingsBrandCta": "VER GUÍAS",
-  "brandRequirementsLoadFailed": "Could not load brand requirements. Try again.",
-  "brandRequirementsEmpty": "No brand requirements have been added for this event yet.",
-  "brandRequirementsEmptyItem": "No requirements text has been added for this brand yet.",
-  "brandRequirementsPickBrandTitle": "Choose a brand",
-  "brandRequirementsBrandNumber": "Brand {brandId}",
+  "brandRequirementsLoadFailed": "No se pudieron cargar los requisitos de marca. Inténtalo de nuevo.",
+  "brandRequirementsEmpty": "Aún no se añadieron requisitos de marca para este evento.",
+  "brandRequirementsEmptyItem": "Aún no se añadió texto de requisitos para esta marca.",
+  "brandRequirementsPickBrandTitle": "Elige una marca",
+  "brandRequirementsBrandNumber": "Marca {brandId}",
   "@brandRequirementsBrandNumber": {
     "placeholders": {
-      "brandId": { "type": "int" }
+      "brandId": {
+        "type": "int"
+      }
     }
   },
   "eventSettingsChatTitle": "Chat grupal",
   "eventSettingsChatSubtitle": "Chat grupal con participantes del grupo y managers",
   "eventSettingsChatCta": "ABRIR CHAT",
-  "chatRoomsLoadFailed": "Could not load chat rooms. Try again.",
-  "chatNoRooms": "No chat rooms are available for your brands in this event yet.",
-  "chatNoMessagesYet": "No messages yet",
-  "chatLoadFailed": "Could not load chat messages. Try again.",
-  "chatSendFailed": "Could not send message. Try again.",
-  "chatMessagePlaceholder": "Message group...",
-  "chatReply": "Reply",
-  "chatReplyCancel": "Cancel",
-  "chatReplyingTo": "Replying to {name}",
+  "chatRoomsLoadFailed": "No se pudieron cargar las salas de chat. Inténtalo de nuevo.",
+  "chatNoRooms": "Aún no hay salas de chat para tus marcas en este evento.",
+  "chatNoMessagesYet": "Sin mensajes todavía",
+  "chatLoadFailed": "No se pudieron cargar los mensajes. Inténtalo de nuevo.",
+  "chatSendFailed": "No se pudo enviar el mensaje. Inténtalo de nuevo.",
+  "chatMessagePlaceholder": "Mensaje al grupo...",
+  "chatReply": "Responder",
+  "chatReplyCancel": "Cancelar",
+  "chatReplyingTo": "Respondiendo a {name}",
   "@chatReplyingTo": {
     "placeholders": {
       "name": {
@@ -214,7 +231,7 @@
       }
     }
   },
-  "chatReplyPreviewPhoto": "Photo",
+  "chatReplyPreviewPhoto": "Foto",
   "eventSettingsChatMoreParticipants": "+{count}",
   "@eventSettingsChatMoreParticipants": {
     "placeholders": {
@@ -226,17 +243,17 @@
   "mealChoiceTitle": "Elegir comida",
   "mealSelectChildLabel": "Niño/a",
   "mealSelectDishLabel": "Plato",
-  "mealSave": "ORDER",
+  "mealSave": "PEDIR",
   "mealNoMealsConfigured": "Aún no hay platos para este evento.",
   "mealSaved": "Guardado",
   "mealSaveError": "No se pudo guardar. Inténtalo de nuevo.",
   "mealOrdersClosed": "El plazo para elegir el menú está cerrado",
-  "mealPaid": "Paid",
-  "mealPaidDetail": "Lunch for this event is paid.",
-  "mealPayInBrowser": "Complete payment in the browser, then return to the app.",
-  "mealCheckoutError": "Could not start payment. Try again.",
-  "mealAwaitingPayment": "Order placed — awaiting payment",
-  "mealAwaitingPaymentDetail": "Your dish is saved. Finish payment in the browser; status will update after Stripe confirms it.",
+  "mealPaid": "Pagado",
+  "mealPaidDetail": "El menú de este evento está pagado.",
+  "mealPayInBrowser": "Completa el pago en el navegador y vuelve a la app.",
+  "mealCheckoutError": "No se pudo iniciar el pago. Inténtalo de nuevo.",
+  "mealAwaitingPayment": "Pedido registrado — pendiente de pago",
+  "mealAwaitingPaymentDetail": "Tu plato está guardado. Termina el pago en el navegador; el estado se actualizará cuando Stripe lo confirme.",
   "noActiveEvents": "No hay eventos activos",
   "becomeModelTitle": "Comienza la carrera de modelo de tu hijo hoy",
   "becomeAModel": "SER MODELO",
@@ -249,7 +266,7 @@
   "navHome": "Inicio",
   "navEvents": "Eventos",
   "navProfile": "Perfil",
-  "navInfo": "Info",
+  "navInfo": "Información",
   "continueButton": "Continuar",
   "loading": "Cargando...",
   "signOut": "Cerrar sesión",
@@ -258,13 +275,17 @@
   "youAreSignedIn": "Has iniciado sesión{name}.",
   "@youAreSignedIn": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "yourRole": "Tu rol: {role}",
   "@yourRole": {
     "placeholders": {
-      "role": { "type": "String" }
+      "role": {
+        "type": "String"
+      }
     }
   },
   "phoneHint": "+1234567890",
@@ -275,14 +296,18 @@
   "helloName": "Hola, {name}",
   "@helloName": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "noRolesAssigned": "Aún no tienes roles asignados. Contacta a la administración.",
   "signedInAs": "Sesión iniciada como {name}",
   "@signedInAs": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "staff": "Personal",
@@ -319,8 +344,12 @@
   "parentProgressLabel": "Progreso del padre/madre: {completed}/{total}",
   "@parentProgressLabel": {
     "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "appUpdateRequiredMessage": "Actualiza la aplicación para continuar.",
@@ -333,7 +362,9 @@
   "staffScanFailed": "Error al escanear: {error}",
   "@staffScanFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "staffScanSelectEventStageFirst": "Selecciona el evento y la etapa activos en Ajustes del personal antes de escanear.",
@@ -344,7 +375,9 @@
   "staffProgressPercentComplete": "{percent}% completado",
   "@staffProgressPercentComplete": {
     "placeholders": {
-      "percent": { "type": "int" }
+      "percent": {
+        "type": "int"
+      }
     }
   },
   "staffChildDetailEmpty": "No hay datos del niño en la base de datos",
@@ -357,14 +390,18 @@
   "staffPhaseWithName": "Fase: {stageName}",
   "@staffPhaseWithName": {
     "placeholders": {
-      "stageName": { "type": "String" }
+      "stageName": {
+        "type": "String"
+      }
     }
   },
   "staffNoCurrentStage": "Sin etapa actual",
   "staffAgeYearsOld": "{age} años",
   "@staffAgeYearsOld": {
     "placeholders": {
-      "age": { "type": "int" }
+      "age": {
+        "type": "int"
+      }
     }
   },
   "staffNotesLabel": "Notas",
@@ -377,5 +414,3 @@
   "contactManagerSendFailed": "No se pudo enviar. Inténtalo más tarde.",
   "contactManagerServiceUnavailable": "El contacto no está disponible temporalmente. Inténtalo más tarde."
 }
-
-

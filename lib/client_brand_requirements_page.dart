@@ -69,6 +69,7 @@ class ClientBrandRequirementsPage extends StatelessWidget {
                 final item = items[index];
                 final imageUrl = _resolveImageUrl(item.imageUrl);
                 final html = (item.bodyHtml ?? '').trim();
+                final desc = (item.description ?? '').trim();
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -83,6 +84,18 @@ class ClientBrandRequirementsPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (desc.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                        child: Text(
+                          desc,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
                     if (imageUrl != null)
                       AspectRatio(
                         aspectRatio: 16 / 9,

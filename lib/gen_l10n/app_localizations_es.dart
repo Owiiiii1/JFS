@@ -228,13 +228,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get firstName => 'Nombre';
 
   @override
-  String get gender => 'Gender';
+  String get gender => 'Género';
 
   @override
-  String get genderBoy => 'Boy';
+  String get genderBoy => 'Niño';
 
   @override
-  String get genderGirl => 'Girl';
+  String get genderGirl => 'Niña';
 
   @override
   String get lastName => 'Apellido';
@@ -657,7 +657,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navProfile => 'Perfil';
 
   @override
-  String get navInfo => 'Info';
+  String get navInfo => 'Información';
 
   @override
   String get continueButton => 'Continuar';
@@ -969,23 +969,23 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get apiEndpointNotFoundHint =>
-      'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).';
+      'El servidor no encontró la API (404). Usa la raíz del sitio sin «/api» al final; la app llama a /api/app/login sola. Si Laravel está en una subcarpeta, incluye la ruta hasta public (p. ej. https://example.com/myapp/public).';
 
   @override
-  String get notificationsTitle => 'Notifications';
+  String get notificationsTitle => 'Notificaciones';
 
   @override
   String get notificationsLoadFailed =>
-      'Could not load notifications. Try again.';
+      'No se pudieron cargar las notificaciones. Inténtalo de nuevo.';
 
   @override
-  String get notificationsEmpty => 'No notifications yet.';
+  String get notificationsEmpty => 'Aún no hay notificaciones.';
 
   @override
-  String get notificationsNewMark => 'New';
+  String get notificationsNewMark => 'Nuevo';
 
   @override
-  String get notificationDetailsTitle => 'Notification';
+  String get notificationDetailsTitle => 'Notificación';
 
   @override
   String get createAccount => 'Crear cuenta';
@@ -1155,6 +1155,15 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get firstName => 'Nombre';
 
   @override
+  String get gender => 'Género';
+
+  @override
+  String get genderBoy => 'Niño';
+
+  @override
+  String get genderGirl => 'Niña';
+
+  @override
   String get lastName => 'Apellido';
 
   @override
@@ -1302,114 +1311,115 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get eventSettingsRehearsalCta => 'RESERVAR';
 
   @override
-  String get rehearsalModalTitle => 'Rehearsal booking';
+  String get rehearsalModalTitle => 'Reserva de ensayo';
 
   @override
-  String get rehearsalSelectDate => 'Select date';
+  String get rehearsalSelectDate => 'Elige fecha';
 
   @override
-  String get rehearsalAvailableSlots => 'Available slots';
+  String get rehearsalAvailableSlots => 'Horarios disponibles';
 
   @override
-  String get rehearsalFreeLabel => 'Available:';
+  String get rehearsalFreeLabel => 'Libres:';
 
   @override
   String get rehearsalNoSlotsConfigured =>
-      'No rehearsal slots for this event yet.';
+      'Aún no hay franjas de ensayo para este evento.';
 
   @override
-  String get rehearsalLoadError => 'Could not load slots. Try again.';
+  String get rehearsalLoadError =>
+      'No se pudieron cargar las franjas. Inténtalo de nuevo.';
 
   @override
   String get rehearsalBrandNotAssigned =>
-      'Brand is not assigned for this child. Rehearsal booking is unavailable.';
+      'No hay marca asignada para este niño. La reserva de ensayos no está disponible.';
 
   @override
-  String get rehearsalFull => 'Full';
+  String get rehearsalFull => 'Completo';
 
   @override
-  String get rehearsalConfirmBooking => 'Confirm booking';
+  String get rehearsalConfirmBooking => 'Confirmar reserva';
 
   @override
   String get rehearsalBookingFooterNote =>
-      'Changes must be made 24 hours before the session when possible.';
+      'Si es posible, cambia con 24 h de antelación.';
 
   @override
-  String get rehearsalBookedTitle => 'Your rehearsal is booked';
+  String get rehearsalBookedTitle => 'Ensayo reservado';
 
   @override
-  String get rehearsalChangeBooking => 'Change booking';
+  String get rehearsalChangeBooking => 'Cambiar reserva';
 
   @override
-  String get rehearsalProgramLabel => 'Details';
+  String get rehearsalProgramLabel => 'Descripción';
 
   @override
-  String get rehearsalArriveEarly => 'Please arrive 15 minutes early.';
+  String get rehearsalArriveEarly => 'Llega 15 minutos antes.';
 
   @override
-  String get rehearsalBookingSaved => 'Booking saved';
+  String get rehearsalBookingSaved => 'Reserva guardada';
 
   @override
-  String get rehearsalBookingError => 'Could not complete booking.';
+  String get rehearsalBookingError => 'No se pudo completar la reserva.';
 
   @override
-  String get rehearsalSelectChild => 'Child';
+  String get rehearsalSelectChild => 'Niño/a';
 
   @override
-  String get rehearsalUpdateBooking => 'Update booking';
+  String get rehearsalUpdateBooking => 'Actualizar reserva';
 
   @override
-  String get rehearsalCancelChange => 'Cancel';
+  String get rehearsalCancelChange => 'Cancelar';
 
   @override
   String get rehearsalChangeBookingLockedHint =>
-      'The organizer has closed booking changes. Contact support if you need help.';
+      'El organizador cerró los cambios de reserva. Contacta soporte si necesitas ayuda.';
 
   @override
-  String get rehearsalMilestoneTitle => 'General rehearsal';
+  String get rehearsalMilestoneTitle => 'Ensayo general';
 
   @override
   String rehearsalBrandMilestoneTitle(String brandName) {
-    return 'Brand rehearsal: $brandName';
+    return 'Ensayo de marca: $brandName';
   }
 
   @override
-  String get rehearsalBrandMilestoneShort => 'Brand rehearsal';
+  String get rehearsalBrandMilestoneShort => 'Ensayo de marca';
 
   @override
   String get rehearsalNextBookHint =>
-      'Book your rehearsal slot in Event settings.';
+      'Reserva tu ensayo en Ajustes del evento.';
 
   @override
-  String get eventSettingsPackingTitle => 'Don\'t Forget List';
+  String get eventSettingsPackingTitle => 'Lista «No olvides»';
 
   @override
   String get eventSettingsPackingSubtitle => '';
 
   @override
-  String get eventSettingsPackingCta => 'VIEW LIST';
+  String get eventSettingsPackingCta => 'VER LISTA';
 
   @override
   String get eventPackingLoadFailed =>
-      'Could not load packing info. Try again.';
+      'No se pudo cargar la información. Inténtalo de nuevo.';
 
   @override
   String get eventPackingEmpty =>
-      'Packing information has not been added for this event yet.';
+      'Aún no se añadió información para este evento.';
 
   @override
-  String get eventDescriptionTitle => 'Event info';
+  String get eventDescriptionTitle => 'Información del evento';
 
   @override
-  String get eventProgressShowGallery => 'Show gallery';
+  String get eventProgressShowGallery => 'Galería';
 
   @override
   String get eventDescriptionLoadFailed =>
-      'Could not load event description. Try again.';
+      'No se pudo cargar la descripción. Inténtalo de nuevo.';
 
   @override
   String get eventDescriptionEmpty =>
-      'No description has been added for this event yet.';
+      'Aún no hay descripción de texto para este evento.';
 
   @override
   String get eventSettingsBrandTitle => 'Requisitos de marca';
@@ -1423,22 +1433,22 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get brandRequirementsLoadFailed =>
-      'Could not load brand requirements. Try again.';
+      'No se pudieron cargar los requisitos de marca. Inténtalo de nuevo.';
 
   @override
   String get brandRequirementsEmpty =>
-      'No brand requirements have been added for this event yet.';
+      'Aún no se añadieron requisitos de marca para este evento.';
 
   @override
   String get brandRequirementsEmptyItem =>
-      'No requirements text has been added for this brand yet.';
+      'Aún no se añadió texto de requisitos para esta marca.';
 
   @override
-  String get brandRequirementsPickBrandTitle => 'Choose a brand';
+  String get brandRequirementsPickBrandTitle => 'Elige una marca';
 
   @override
   String brandRequirementsBrandNumber(int brandId) {
-    return 'Brand $brandId';
+    return 'Marca $brandId';
   }
 
   @override
@@ -1452,37 +1462,40 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get eventSettingsChatCta => 'ABRIR CHAT';
 
   @override
-  String get chatRoomsLoadFailed => 'Could not load chat rooms. Try again.';
+  String get chatRoomsLoadFailed =>
+      'No se pudieron cargar las salas de chat. Inténtalo de nuevo.';
 
   @override
   String get chatNoRooms =>
-      'No chat rooms are available for your brands in this event yet.';
+      'Aún no hay salas de chat para tus marcas en este evento.';
 
   @override
-  String get chatNoMessagesYet => 'No messages yet';
+  String get chatNoMessagesYet => 'Sin mensajes todavía';
 
   @override
-  String get chatLoadFailed => 'Could not load chat messages. Try again.';
+  String get chatLoadFailed =>
+      'No se pudieron cargar los mensajes. Inténtalo de nuevo.';
 
   @override
-  String get chatSendFailed => 'Could not send message. Try again.';
+  String get chatSendFailed =>
+      'No se pudo enviar el mensaje. Inténtalo de nuevo.';
 
   @override
-  String get chatMessagePlaceholder => 'Message group...';
+  String get chatMessagePlaceholder => 'Mensaje al grupo...';
 
   @override
-  String get chatReply => 'Reply';
+  String get chatReply => 'Responder';
 
   @override
-  String get chatReplyCancel => 'Cancel';
+  String get chatReplyCancel => 'Cancelar';
 
   @override
   String chatReplyingTo(String name) {
-    return 'Replying to $name';
+    return 'Respondiendo a $name';
   }
 
   @override
-  String get chatReplyPreviewPhoto => 'Photo';
+  String get chatReplyPreviewPhoto => 'Foto';
 
   @override
   String eventSettingsChatMoreParticipants(int count) {
@@ -1499,7 +1512,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get mealSelectDishLabel => 'Plato';
 
   @override
-  String get mealSave => 'ORDER';
+  String get mealSave => 'PEDIR';
 
   @override
   String get mealNoMealsConfigured => 'Aún no hay platos para este evento.';
@@ -1514,24 +1527,25 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get mealOrdersClosed => 'El plazo para elegir el menú está cerrado';
 
   @override
-  String get mealPaid => 'Paid';
+  String get mealPaid => 'Pagado';
 
   @override
-  String get mealPaidDetail => 'Lunch for this event is paid.';
+  String get mealPaidDetail => 'El menú de este evento está pagado.';
 
   @override
   String get mealPayInBrowser =>
-      'Complete payment in the browser, then return to the app.';
+      'Completa el pago en el navegador y vuelve a la app.';
 
   @override
-  String get mealCheckoutError => 'Could not start payment. Try again.';
+  String get mealCheckoutError =>
+      'No se pudo iniciar el pago. Inténtalo de nuevo.';
 
   @override
-  String get mealAwaitingPayment => 'Order placed — awaiting payment';
+  String get mealAwaitingPayment => 'Pedido registrado — pendiente de pago';
 
   @override
   String get mealAwaitingPaymentDetail =>
-      'Your dish is saved. Finish payment in the browser; status will update after Stripe confirms it.';
+      'Tu plato está guardado. Termina el pago en el navegador; el estado se actualizará cuando Stripe lo confirme.';
 
   @override
   String get noActiveEvents => 'No hay eventos activos';
@@ -1570,7 +1584,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get navProfile => 'Perfil';
 
   @override
-  String get navInfo => 'Info';
+  String get navInfo => 'Información';
 
   @override
   String get continueButton => 'Continuar';

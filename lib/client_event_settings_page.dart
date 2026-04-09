@@ -56,6 +56,7 @@ BrandRequirementInfo _brandRequirementRowForId(
     brandName: '',
     imageUrl: null,
     bodyHtml: null,
+    description: null,
   );
 }
 

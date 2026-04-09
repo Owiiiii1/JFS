@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'api/auth_service.dart';
+import 'app_settings.dart';
 import 'client_profile_tab.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
@@ -61,6 +62,12 @@ class _ClientHomePageState extends State<ClientHomePage>
   bool _newsLoading = false;
   int _unreadNotifications = 0;
 
+  /// Тег локали для `Accept-Language` (новости, фото Info). Обновляется в [didChangeDependencies].
+  String? _homeInfoContentLocaleTag;
+
+  int _newsLoadSeq = 0;
+  int _infoSettingsLoadSeq = 0;
+
   bool get _canPurchaseTickets =>
       !_loading &&
       _error == null &&
@@ -95,8 +102,6 @@ class _ClientHomePageState extends State<ClientHomePage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadDashboard();
-    _loadNews();
-    _loadInfoSettings();
     _refreshUnreadSilently();
     _dashboardRefreshTimer = Timer.periodic(const Duration(seconds: 20), (_) {
       if (!mounted) return;
@@ -110,6 +115,24 @@ class _ClientHomePageState extends State<ClientHomePage>
     _dashboardRefreshTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  /// Ключ текущей локали контента API (совпадает с [AppSettings.contentLocaleForApi]).
+  static String _tagForContentLocale(Locale loc) {
+    final c = loc.countryCode;
+    return (c != null && c.isNotEmpty)
+        ? '${loc.languageCode}-$c'
+        : loc.languageCode;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final tag = _tagForContentLocale(AppSettings.contentLocaleForApi());
+    if (_homeInfoContentLocaleTag == tag) return;
+    _homeInfoContentLocaleTag = tag;
+    _loadNews(force: true);
+    _loadInfoSettings(force: true);
   }
 
   @override
@@ -184,37 +207,45 @@ class _ClientHomePageState extends State<ClientHomePage>
     }
   }
 
-  Future<void> _loadNews() async {
-    if (_newsLoading) return;
+  Future<void> _loadNews({bool force = false}) async {
+    if (!force && _newsLoading) return;
+    final seq = ++_newsLoadSeq;
+    if (!mounted) return;
     setState(() => _newsLoading = true);
     try {
-      final list = await widget.auth.getAppNews();
-      if (!mounted) return;
+      final list = await widget.auth.getAppNews(
+        contentLocale: AppSettings.contentLocaleForApi(),
+      );
+      if (!mounted || seq != _newsLoadSeq) return;
       setState(() {
         _news = list;
         _newsLoading = false;
       });
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || seq != _newsLoadSeq) return;
       setState(() => _newsLoading = false);
     }
   }
 
-  Future<void> _loadInfoSettings() async {
-    if (_infoSettingsLoading) return;
+  Future<void> _loadInfoSettings({bool force = false}) async {
+    if (!force && _infoSettingsLoading) return;
+    final seq = ++_infoSettingsLoadSeq;
+    if (!mounted) return;
     setState(() {
       _infoSettingsLoading = true;
       _infoSettingsError = null;
     });
     try {
-      final s = await widget.auth.getInfoSettings();
-      if (!mounted) return;
+      final s = await widget.auth.getInfoSettings(
+        contentLocale: AppSettings.contentLocaleForApi(),
+      );
+      if (!mounted || seq != _infoSettingsLoadSeq) return;
       setState(() {
         _infoSettings = s;
         _infoSettingsLoading = false;
       });
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted || seq != _infoSettingsLoadSeq) return;
       setState(() {
         _infoSettingsError = e.toString();
         _infoSettingsLoading = false;

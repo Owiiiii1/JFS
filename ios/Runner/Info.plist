@@ -59,6 +59,7 @@
 	<array>
 		<string>https</string>
 		<string>http</string>
+		<string>tel</string>
 	</array>
 	<!-- Android использует usesCleartextTraffic; на iOS без этого ATS блокирует http:// (например dev API по IP). Для продакшена лучше только HTTPS и убрать этот блок. -->
 	<key>NSAppTransportSecurity</key>

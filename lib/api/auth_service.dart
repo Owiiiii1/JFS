@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../app_settings.dart';
 import '../gen_l10n/app_localizations.dart';
 
 /// POST /api/app/login|register вернул 404 — обычно неверный [AuthService.baseUrl] (лишний `/api`, не тот vhost).
@@ -37,6 +38,24 @@ class AuthService {
   AuthService(String rawBaseUrl) : baseUrl = normalizeAppApiBase(rawBaseUrl);
 
   final String baseUrl;
+
+  Map<String, String> _publicContentHeaders({Locale? contentLocale}) {
+    final loc = contentLocale ?? AppSettings.contentLocaleForApi();
+    return {
+      'Accept': 'application/json',
+      'Accept-Language': apiContentLanguageForLocale(loc),
+    };
+  }
+
+  Map<String, String> _authedContentHeaders(
+    String token, {
+    Locale? contentLocale,
+  }) {
+    return {
+      ..._publicContentHeaders(contentLocale: contentLocale),
+      'Authorization': 'Bearer $token',
+    };
+  }
 
   /// Корень сайта без завершающего `/` и без суффикса `/api` (его добавляют запросы).
   static String normalizeAppApiBase(String raw) {
@@ -803,7 +822,10 @@ class AuthService {
   }
 
   /// GET /api/app/client/events/{event}/packing
-  Future<EventPackingInfo> getEventPackingInfo(int eventId) async {
+  Future<EventPackingInfo> getEventPackingInfo(
+    int eventId, {
+    Locale? contentLocale,
+  }) async {
     final token = await getToken();
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
@@ -811,7 +833,7 @@ class AuthService {
     final uri = Uri.parse('$baseUrl/api/app/client/events/$eventId/packing');
     final res = await http.get(
       uri,
-      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+      headers: _authedContentHeaders(token, contentLocale: contentLocale),
     );
     if (res.statusCode == 403) {
       throw Exception(_tryMessage(res.body) ?? 'Forbidden');
@@ -827,7 +849,10 @@ class AuthService {
   }
 
   /// GET /api/app/client/events/{event}/description — вкладка «Описание» (фото + текст).
-  Future<EventDescriptionInfo> getClientEventDescription(int eventId) async {
+  Future<EventDescriptionInfo> getClientEventDescription(
+    int eventId, {
+    Locale? contentLocale,
+  }) async {
     final token = await getToken();
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
@@ -837,7 +862,7 @@ class AuthService {
     );
     final res = await http.get(
       uri,
-      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+      headers: _authedContentHeaders(token, contentLocale: contentLocale),
     );
     if (res.statusCode == 403) {
       throw Exception(_tryMessage(res.body) ?? 'Forbidden');
@@ -854,8 +879,9 @@ class AuthService {
 
   /// GET /api/app/client/events/{event}/brand-requirements
   Future<List<BrandRequirementInfo>> getEventBrandRequirements(
-    int eventId,
-  ) async {
+    int eventId, {
+    Locale? contentLocale,
+  }) async {
     final token = await getToken();
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
@@ -865,7 +891,7 @@ class AuthService {
     );
     final res = await http.get(
       uri,
-      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+      headers: _authedContentHeaders(token, contentLocale: contentLocale),
     );
     if (res.statusCode == 403) {
       throw Exception(_tryMessage(res.body) ?? 'Forbidden');
@@ -1268,9 +1294,12 @@ class AuthService {
   }
 
   /// GET /api/app/info/settings — публичные настройки раздела Info (фото, соцсети, сайт). Без авторизации.
-  Future<InfoSettings> getInfoSettings() async {
+  Future<InfoSettings> getInfoSettings({Locale? contentLocale}) async {
     final uri = Uri.parse('$baseUrl/api/app/info/settings');
-    final res = await http.get(uri, headers: {'Accept': 'application/json'});
+    final res = await http.get(
+      uri,
+      headers: _publicContentHeaders(contentLocale: contentLocale),
+    );
     if (res.statusCode != 200) {
       throw Exception(
         _tryMessage(res.body) ??
@@ -1282,9 +1311,12 @@ class AuthService {
   }
 
   /// GET /api/app/info/news — список новостей для блока «Последние события». Без авторизации.
-  Future<List<AppNewsItem>> getAppNews() async {
+  Future<List<AppNewsItem>> getAppNews({Locale? contentLocale}) async {
     final uri = Uri.parse('$baseUrl/api/app/info/news');
-    final res = await http.get(uri, headers: {'Accept': 'application/json'});
+    final res = await http.get(
+      uri,
+      headers: _publicContentHeaders(contentLocale: contentLocale),
+    );
     if (res.statusCode != 200) {
       throw Exception(
         _tryMessage(res.body) ?? 'Failed to load news (${res.statusCode})',
@@ -1299,9 +1331,12 @@ class AuthService {
   }
 
   /// GET /api/app/info/about — данные «О нас» (фото, текст, блоки). Без авторизации.
-  Future<AppAboutData> getAppAbout() async {
+  Future<AppAboutData> getAppAbout({Locale? contentLocale}) async {
     final uri = Uri.parse('$baseUrl/api/app/info/about');
-    final res = await http.get(uri, headers: {'Accept': 'application/json'});
+    final res = await http.get(
+      uri,
+      headers: _publicContentHeaders(contentLocale: contentLocale),
+    );
     if (res.statusCode != 200) {
       throw Exception(
         _tryMessage(res.body) ?? 'Failed to load about (${res.statusCode})',
@@ -1312,9 +1347,12 @@ class AuthService {
   }
 
   /// GET /api/app/info/faq-sections — разделы FAQ. Без авторизации.
-  Future<List<FaqSectionItem>> getFaqSections() async {
+  Future<List<FaqSectionItem>> getFaqSections({Locale? contentLocale}) async {
     final uri = Uri.parse('$baseUrl/api/app/info/faq-sections');
-    final res = await http.get(uri, headers: {'Accept': 'application/json'});
+    final res = await http.get(
+      uri,
+      headers: _publicContentHeaders(contentLocale: contentLocale),
+    );
     if (res.statusCode != 200) {
       throw Exception(
         _tryMessage(res.body) ??
@@ -1330,11 +1368,17 @@ class AuthService {
   }
 
   /// GET /api/app/info/faq-sections/{sectionId}/articles — статьи раздела FAQ. Без авторизации.
-  Future<List<FaqArticleItem>> getFaqSectionArticles(int sectionId) async {
+  Future<List<FaqArticleItem>> getFaqSectionArticles(
+    int sectionId, {
+    Locale? contentLocale,
+  }) async {
     final uri = Uri.parse(
       '$baseUrl/api/app/info/faq-sections/$sectionId/articles',
     );
-    final res = await http.get(uri, headers: {'Accept': 'application/json'});
+    final res = await http.get(
+      uri,
+      headers: _publicContentHeaders(contentLocale: contentLocale),
+    );
     if (res.statusCode != 200) {
       throw Exception(
         _tryMessage(res.body) ??
@@ -1991,6 +2035,7 @@ class BrandRequirementInfo {
     required this.brandName,
     this.imageUrl,
     this.bodyHtml,
+    this.description,
   });
 
   final int brandId;
@@ -1998,9 +2043,13 @@ class BrandRequirementInfo {
   final String? imageUrl;
   final String? bodyHtml;
 
+  /// Текстовое описание бренда (локализовано по Accept-Language).
+  final String? description;
+
   bool get hasContent =>
       (imageUrl != null && imageUrl!.trim().isNotEmpty) ||
-      (bodyHtml != null && bodyHtml!.trim().isNotEmpty);
+      (bodyHtml != null && bodyHtml!.trim().isNotEmpty) ||
+      (description != null && description!.trim().isNotEmpty);
 
   factory BrandRequirementInfo.fromJson(Map<String, dynamic> json) {
     return BrandRequirementInfo(
@@ -2008,6 +2057,7 @@ class BrandRequirementInfo {
       brandName: (json['brand_name'] as String? ?? '').trim(),
       imageUrl: json['image_url'] as String?,
       bodyHtml: json['body_html'] as String?,
+      description: json['description'] as String?,
     );
   }
 }

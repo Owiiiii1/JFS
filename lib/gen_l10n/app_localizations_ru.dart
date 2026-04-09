@@ -15,7 +15,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get signUp => 'Регистрация';
 
   @override
-  String get email => 'Email';
+  String get email => 'Электронная почта';
 
   @override
   String get password => 'Пароль';
@@ -212,7 +212,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get languageRussian => 'Русский';
 
   @override
-  String get languageEnglish => 'English';
+  String get languageEnglish => 'Английский';
 
   @override
   String get languageUkrainian => 'Українська';
