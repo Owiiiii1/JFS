@@ -47,6 +47,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Приложению нужен доступ к фото для загрузки фотографий ребёнка.</string>
 	<key>NSCameraUsageDescription</key>
@@ -56,5 +60,11 @@
 		<string>https</string>
 		<string>http</string>
 	</array>
+	<!-- Android использует usesCleartextTraffic; на iOS без этого ATS блокирует http:// (например dev API по IP). Для продакшена лучше только HTTPS и убрать этот блок. -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

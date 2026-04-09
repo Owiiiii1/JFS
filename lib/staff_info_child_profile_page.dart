@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'gen_l10n/app_localizations.dart';
 import 'api/auth_service.dart'
-    show StaffMainProgressStage, SupervisorChildDetail;
+    show StaffMainProgressStage, StaffProgressTabData, SupervisorChildDetail;
 
 /// Карточка профиля ребёнка после «Scan for Info»: компоновка по референсу, палитра — как у персонала.
 const _surfaceLow = Color(0xFF1B1B1B);
@@ -11,7 +12,7 @@ const _tertiary = Color(0xFFCECECE);
 const _onSurface = Color(0xFFE2E2E2);
 const _outlineVariant = Color(0xFF4D4635);
 
-class StaffInfoChildProfilePage extends StatelessWidget {
+class StaffInfoChildProfilePage extends StatefulWidget {
   const StaffInfoChildProfilePage({
     super.key,
     required this.detail,
@@ -26,10 +27,19 @@ class StaffInfoChildProfilePage extends StatelessWidget {
   final Color accent;
   final Color backgroundColor;
 
+  @override
+  State<StaffInfoChildProfilePage> createState() =>
+      _StaffInfoChildProfilePageState();
+}
+
+class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
   String? _resolveUrl(String? path) {
     if (path == null || path.isEmpty) return null;
     if (path.startsWith('http')) return path;
-    final base = baseUrl;
+    final base = widget.baseUrl;
     if (base.endsWith('/') && path.startsWith('/')) {
       return '$base${path.substring(1)}';
     }
@@ -39,16 +49,68 @@ class StaffInfoChildProfilePage extends StatelessWidget {
     return '$base$path';
   }
 
+  List<StaffProgressTabData> _progressTabs(SupervisorChildDetail d) {
+    if (d.progressTabs.isNotEmpty) {
+      return d.progressTabs;
+    }
+    return [
+      StaffProgressTabData(
+        key: 'all',
+        title: 'Show Progress',
+        mainProgressStages: d.mainProgressStages,
+        progressPercent: d.progressPercent,
+        currentStageName: d.currentStageName,
+        completedStages: d.completedStages,
+        totalStages: d.totalStages,
+      ),
+    ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final n = _progressTabs(widget.detail).length;
+    _tabController = TabController(length: n > 0 ? n : 1, vsync: this);
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        return;
+      }
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _dial(String? raw) async {
+    if (raw == null) {
+      return;
+    }
+    final t = raw.trim();
+    if (t.isEmpty || t == '—') {
+      return;
+    }
+    final digits = t.replaceAll(RegExp(r'\D'), '');
+    if (digits.isEmpty) {
+      return;
+    }
+    final uri = Uri.parse('tel:$digits');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final accent = this.accent;
-    final bg = backgroundColor;
+    final accent = widget.accent;
+    final bg = widget.backgroundColor;
 
     return Scaffold(
       backgroundColor: bg,
-      body: SafeArea(
-        child: _buildBody(context, detail, accent),
-      ),
+      body: SafeArea(child: _buildBody(context, widget.detail, accent)),
     );
   }
 
@@ -59,6 +121,9 @@ class StaffInfoChildProfilePage extends StatelessWidget {
   ) {
     final photo = _resolveUrl(d.photoUrl);
     final supPhoto = _resolveUrl(d.supervisorPhotoUrl);
+    final tabs = _progressTabs(d);
+    final tabIndex = _tabController.index.clamp(0, tabs.length - 1);
+    final activeTab = tabs[tabIndex];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -170,9 +235,34 @@ class StaffInfoChildProfilePage extends StatelessWidget {
                 const SizedBox(height: 24),
                 _brandCard(context, d, accent, supPhoto),
                 const SizedBox(height: 28),
-                _showProgressHeader(accent),
-                const SizedBox(height: 16),
-                _showProgressTimeline(d, accent),
+                _showProgressHeader(accent, activeTab),
+                const SizedBox(height: 12),
+                if (tabs.length > 1)
+                  Material(
+                    color: _surfaceLow,
+                    borderRadius: BorderRadius.circular(16),
+                    child: TabBar(
+                      controller: _tabController,
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      indicatorColor: accent,
+                      labelColor: accent,
+                      unselectedLabelColor: _tertiary.withValues(alpha: 0.65),
+                      labelStyle: const TextStyle(
+                        fontFamily: 'HelveticaNeueCyr',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      unselectedLabelStyle: const TextStyle(
+                        fontFamily: 'HelveticaNeueCyr',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      tabs: tabs.map((t) => Tab(text: t.title)).toList(),
+                    ),
+                  ),
+                if (tabs.length > 1) const SizedBox(height: 16),
+                _showProgressTimeline(activeTab.mainProgressStages, accent),
               ],
             ),
           ),
@@ -181,7 +271,9 @@ class StaffInfoChildProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _showProgressHeader(Color accent) {
+  Widget _showProgressHeader(Color accent, StaffProgressTabData tab) {
+    final pct = tab.progressPercent.clamp(0, 100);
+    final completionLabel = tab.totalStages > 0 ? '$pct%' : '—';
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -200,9 +292,9 @@ class StaffInfoChildProfilePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'Show Progress',
-                style: TextStyle(
+                style: const TextStyle(
                   color: _onSurface,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -221,7 +313,7 @@ class StaffInfoChildProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '—',
+              completionLabel,
               style: TextStyle(
                 color: accent.withValues(alpha: 0.85),
                 fontSize: 15,
@@ -236,8 +328,10 @@ class StaffInfoChildProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _showProgressTimeline(SupervisorChildDetail d, Color accent) {
-    final stages = d.mainProgressStages;
+  Widget _showProgressTimeline(
+    List<StaffMainProgressStage> stages,
+    Color accent,
+  ) {
     if (stages.isEmpty) {
       return Container(
         decoration: BoxDecoration(
@@ -283,9 +377,7 @@ class StaffInfoChildProfilePage extends StatelessWidget {
     final st = s.status.toLowerCase();
     final isPending = st == 'pending';
     final lineToNext = !isLast
-        ? (st == 'done'
-            ? accent
-            : _outlineVariant.withValues(alpha: 0.4))
+        ? (st == 'done' ? accent : _outlineVariant.withValues(alpha: 0.4))
         : null;
 
     final row = Row(
@@ -388,10 +480,7 @@ class StaffInfoChildProfilePage extends StatelessWidget {
             color: accent,
             shape: BoxShape.circle,
             boxShadow: [
-              BoxShadow(
-                color: accent.withValues(alpha: 0.4),
-                blurRadius: 8,
-              ),
+              BoxShadow(color: accent.withValues(alpha: 0.4), blurRadius: 8),
             ],
           ),
         ),
@@ -495,7 +584,11 @@ class StaffInfoChildProfilePage extends StatelessWidget {
     fontFamily: 'HelveticaNeueCyr',
   );
 
-  Widget _guardianCard(BuildContext context, SupervisorChildDetail d, Color accent) {
+  Widget _guardianCard(
+    BuildContext context,
+    SupervisorChildDetail d,
+    Color accent,
+  ) {
     final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
@@ -542,6 +635,10 @@ class StaffInfoChildProfilePage extends StatelessWidget {
                 Icons.call_rounded,
                 'PHONE',
                 d.parentPhone ?? '—',
+                onValueTap:
+                    (d.parentPhone != null && d.parentPhone!.trim().isNotEmpty)
+                    ? () => _dial(d.parentPhone)
+                    : null,
               ),
               const SizedBox(height: 16),
               _contactRow(
@@ -557,7 +654,32 @@ class StaffInfoChildProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _contactRow(Color accent, IconData icon, String label, String value) {
+  Widget _contactRow(
+    Color accent,
+    IconData icon,
+    String label,
+    String value, {
+    VoidCallback? onValueTap,
+  }) {
+    final canTap =
+        onValueTap != null && value.trim().isNotEmpty && value != '—';
+    final valueWidget = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: _labelGrey),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: const TextStyle(
+            color: _onSurface,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'HelveticaNeueCyr',
+          ),
+        ),
+      ],
+    );
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -572,28 +694,40 @@ class StaffInfoChildProfilePage extends StatelessWidget {
         ),
         const SizedBox(width: 14),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: _labelGrey),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style: const TextStyle(
-                  color: _onSurface,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'HelveticaNeueCyr',
-                ),
-              ),
-            ],
-          ),
+          child: canTap
+              ? Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onValueTap,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: valueWidget),
+                          Icon(
+                            Icons.phone_in_talk_rounded,
+                            color: accent,
+                            size: 22,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              : valueWidget,
         ),
       ],
     );
   }
 
-  Widget _brandCard(BuildContext context, SupervisorChildDetail d, Color accent, String? supPhoto) {
+  Widget _brandCard(
+    BuildContext context,
+    SupervisorChildDetail d,
+    Color accent,
+    String? supPhoto,
+  ) {
     final l10n = AppLocalizations.of(context)!;
     final name = d.supervisorName ?? '—';
     return Container(
@@ -659,6 +793,17 @@ class StaffInfoChildProfilePage extends StatelessWidget {
               _supervisorThumb(supPhoto, name, accent),
             ],
           ),
+          if (d.supervisorPhone != null &&
+              d.supervisorPhone!.trim().isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _contactRow(
+              accent,
+              Icons.call_rounded,
+              'PHONE',
+              d.supervisorPhone!,
+              onValueTap: () => _dial(d.supervisorPhone),
+            ),
+          ],
         ],
       ),
     );
@@ -678,8 +823,7 @@ class StaffInfoChildProfilePage extends StatelessWidget {
         child: Image.network(
           url,
           fit: BoxFit.cover,
-          errorBuilder: (_, _, _) =>
-              _supervisorPlaceholder(name, accent, size),
+          errorBuilder: (_, _, _) => _supervisorPlaceholder(name, accent, size),
         ),
       );
     }

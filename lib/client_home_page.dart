@@ -295,11 +295,17 @@ class _ClientHomePageState extends State<ClientHomePage>
   }
 
   Future<void> _signOut() async {
-    await PushTokenServiceHolder.instance?.deactivateCurrentOnBackend();
+    try {
+      await PushTokenServiceHolder.instance?.deactivateCurrentOnBackend();
+    } catch (_) {
+      // Logout must complete even if FCM/backend deactivation fails (e.g. offline).
+    }
+    await widget.auth.clearToken();
     if (!mounted) return;
-    widget.auth.clearToken();
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => LoginPage(auth: widget.auth)),
+    // rootNavigator: true avoids iOS overlay/menu picking a nested navigator;
+    // await clearToken avoids race where Keychain still holds token before next launch.
+    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+      MaterialPageRoute<void>(builder: (_) => LoginPage(auth: widget.auth)),
       (route) => false,
     );
   }

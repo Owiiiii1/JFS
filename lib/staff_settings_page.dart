@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
 import 'app_settings.dart';
 import 'gen_l10n/app_localizations.dart';
+import 'staff_workspace.dart';
 
 // Стиль как в разделе персонала: коричневый акцент
 const _kPrimary = Color(0xFFec5b13);
@@ -32,6 +33,9 @@ class StaffSettingsPage extends StatefulWidget {
 class _StaffSettingsPageState extends State<StaffSettingsPage> {
   StaffRole? _selectedRole;
   List<UpcomingEvent> _upcomingEvents = [];
+  /// Все этапы ивента с API (до фильтра по роли).
+  List<WorkerEventStage> _allStagesForEvent = [];
+  /// Этапы, доступные для [_selectedRole] (пересечение с назначением роли в админке).
   List<WorkerEventStage> _eventStages = [];
   bool _eventsLoading = true;
   bool _stagesLoading = false;
@@ -66,6 +70,7 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
     if (eventId == null || eventId <= 0) {
       if (!mounted) return;
       setState(() {
+        _allStagesForEvent = [];
         _eventStages = [];
         _stagesLoading = false;
       });
@@ -76,29 +81,42 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
     try {
       final list = await widget.auth.getWorkerEventStages(eventId);
       if (!mounted) return;
-      final currentStageId = AppSettings.staffActiveStageId;
-      final currentStageType = AppSettings.staffActiveStageType;
-      final validStageId =
-          currentStageId != null &&
-              list.any(
-                (s) => s.id == currentStageId && s.type == currentStageType,
-              )
-          ? currentStageId
-          : null;
-      if (validStageId == null && currentStageId != null) {
-        await AppSettings.setStaffActiveStageId(null);
-        await AppSettings.setStaffActiveStageType(null);
-      }
-      setState(() {
-        _eventStages = list;
-        _stagesLoading = false;
-      });
+      _allStagesForEvent = list;
+      await _rebuildVisibleStagesAndPersist();
+      if (!mounted) return;
+      setState(() => _stagesLoading = false);
     } catch (_) {
       if (!mounted) return;
       setState(() {
+        _allStagesForEvent = [];
         _eventStages = [];
         _stagesLoading = false;
       });
+    }
+  }
+
+  /// Обновляет [_eventStages] по выбранной роли и при необходимости сбрасывает этап в prefs.
+  Future<void> _rebuildVisibleStagesAndPersist() async {
+    final role = _selectedRole;
+    if (role == null) {
+      _eventStages = [];
+      return;
+    }
+    _eventStages = stagesAllowedForRole(_allStagesForEvent, role);
+    final sid = AppSettings.staffActiveStageId;
+    final stype = AppSettings.staffActiveStageType;
+    final ok = sid != null &&
+        _eventStages.any(
+          (s) => s.id == sid && (stype == null || s.type == stype),
+        );
+    if (!ok) {
+      if (_eventStages.isNotEmpty) {
+        await AppSettings.setStaffActiveStageId(_eventStages.first.id);
+        await AppSettings.setStaffActiveStageType(_eventStages.first.type);
+      } else {
+        await AppSettings.setStaffActiveStageId(null);
+        await AppSettings.setStaffActiveStageType(null);
+      }
     }
   }
 
@@ -299,9 +317,13 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
                     await AppSettings.setStaffActiveStageId(null);
                     await AppSettings.setStaffActiveStageType(null);
                   } else {
-                    final stage = _eventStages
-                        .cast<WorkerEventStage?>()
-                        .firstWhere((s) => s?.id == value, orElse: () => null);
+                    WorkerEventStage? stage;
+                    for (final s in _eventStages) {
+                      if (s.id == value) {
+                        stage = s;
+                        break;
+                      }
+                    }
                     await AppSettings.setStaffActiveStageId(value);
                     await AppSettings.setStaffActiveStageType(
                       stage?.type ?? 'main',
@@ -429,6 +451,8 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
                 if (!mounted) return;
                 setState(() => _selectedRole = role);
                 widget.onRoleChanged(role);
+                await _rebuildVisibleStagesAndPersist();
+                if (mounted) setState(() {});
               },
             ),
           ),
@@ -527,6 +551,25 @@ class _RoleCard extends StatelessWidget {
     }
   }
 
+  static IconData _iconForRole(StaffRole role) {
+    switch (role.homeScreenType.trim().toLowerCase()) {
+      case 'scan':
+        return Icons.qr_code_scanner;
+      case 'supervisor':
+        return Icons.manage_accounts;
+      case 'hostess':
+        return Icons.badge_outlined;
+      case 'interview':
+        return Icons.mic_outlined;
+      case 'lunches':
+        return Icons.restaurant_outlined;
+      case 'superadmin':
+        return Icons.admin_panel_settings_outlined;
+      default:
+        return _iconForCode(role.code);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -556,7 +599,7 @@ class _RoleCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
-                  _iconForCode(role.code),
+                  _iconForRole(role),
                   color: _kPrimary,
                   size: 24,
                 ),
@@ -575,7 +618,7 @@ class _RoleCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      _subtitleForCode(role.code),
+                      _subtitleForRole(role),
                       style: TextStyle(color: Colors.white54, fontSize: 12),
                     ),
                   ],
@@ -601,6 +644,25 @@ class _RoleCard extends StatelessWidget {
         return 'Guest & zone support';
       default:
         return role.name;
+    }
+  }
+
+  String _subtitleForRole(StaffRole role) {
+    switch (role.homeScreenType.trim().toLowerCase()) {
+      case 'scan':
+        return 'QR scan & stage flow';
+      case 'supervisor':
+        return 'Full access & management';
+      case 'hostess':
+        return 'Guest & zone support';
+      case 'interview':
+        return 'Interview flow';
+      case 'lunches':
+        return 'Meals & lunches';
+      case 'superadmin':
+        return 'Super admin tools';
+      default:
+        return _subtitleForCode(role.code);
     }
   }
 }

@@ -820,6 +820,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffNoneSelected => '— None —';
 
   @override
+  String get staffRoleInactive => 'INACTIVE';
+
+  @override
+  String get staffWorkerStatusRefreshFailed =>
+      'Could not update role status. Check your connection.';
+
+  @override
+  String get staffScanRoleInactive =>
+      'This role has been deactivated in the admin panel. Scanning is not available.';
+
+  @override
   String staffScanFailed(String error) {
     return 'Scan failed: $error';
   }

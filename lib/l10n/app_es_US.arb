@@ -327,6 +327,9 @@
   "appUpdateButton": "Actualizar aplicación",
   "showAll": "Ver todo",
   "staffNoneSelected": "— Ninguno —",
+  "staffRoleInactive": "INACTIVA",
+  "staffWorkerStatusRefreshFailed": "No se pudo actualizar el estado del rol. Comprueba la conexión.",
+  "staffScanRoleInactive": "Este rol fue desactivado en el panel. El escaneo no está disponible.",
   "staffScanFailed": "Error al escanear: {error}",
   "@staffScanFailed": {
     "placeholders": {

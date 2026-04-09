@@ -828,6 +828,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffNoneSelected => '— Ninguno —';
 
   @override
+  String get staffRoleInactive => 'INACTIVA';
+
+  @override
+  String get staffWorkerStatusRefreshFailed =>
+      'No se pudo actualizar el estado del rol. Comprueba la conexión.';
+
+  @override
+  String get staffScanRoleInactive =>
+      'Este rol fue desactivado en el panel. El escaneo no está disponible.';
+
+  @override
   String staffScanFailed(String error) {
     return 'Error al escanear: $error';
   }
@@ -1728,6 +1739,17 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffNoneSelected => '— Ninguno —';
+
+  @override
+  String get staffRoleInactive => 'INACTIVA';
+
+  @override
+  String get staffWorkerStatusRefreshFailed =>
+      'No se pudo actualizar el estado del rol. Comprueba la conexión.';
+
+  @override
+  String get staffScanRoleInactive =>
+      'Este rol fue desactivado en el panel. El escaneo no está disponible.';
 
   @override
   String staffScanFailed(String error) {

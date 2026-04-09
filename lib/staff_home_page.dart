@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
+import 'app_settings.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'staff_portal_page.dart';
+import 'staff_workspace.dart';
 
 const _kStaffBgDark = Color(0xFF000000);
 
@@ -29,7 +31,9 @@ class _StaffHomePageState extends State<StaffHomePage> {
 
   Future<void> _loadStatus() async {
     try {
+      await AppSettings.load();
       final status = await widget.auth.getWorkerStatus();
+      await bootstrapStaffWorkspace(widget.auth, status);
       if (!mounted) return;
       setState(() {
         _status = status;

@@ -174,7 +174,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       await widget.auth.clearToken();
       if (!mounted) return;
       Navigator.of(context).pop();
-      Navigator.of(context).pushAndRemoveUntil(
+      Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
         MaterialPageRoute<void>(
           builder: (_) => LoginPage(auth: widget.auth),
         ),

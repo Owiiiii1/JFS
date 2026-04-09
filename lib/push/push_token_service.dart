@@ -90,11 +90,32 @@ class PushTokenService {
     if (kIsWeb) {
       return;
     }
-    final token = await _messaging.getToken();
-    if (token == null || token.isEmpty) {
+    var token = await _messaging.getToken();
+    if (token != null && token.isNotEmpty) {
+      await registerTokenWithBackend(token);
       return;
     }
-    await registerTokenWithBackend(token);
+    // iOS: FCM token часто приходит только после регистрации APNs — первый getToken()
+    // сразу после логина даёт null, из‑за чего строка в app_push_tokens не создаётся.
+    if (Platform.isIOS) {
+      await _syncFcmTokenWithRetries();
+    }
+  }
+
+  /// Пытаемся получить FCM token и отправить на бэкенд, пока пользователь залогинен.
+  Future<void> _syncFcmTokenWithRetries() async {
+    for (var attempt = 0; attempt < 20; attempt++) {
+      await Future<void>.delayed(Duration(milliseconds: 250 + attempt * 150));
+      final bearer = await _auth.getToken();
+      if (bearer == null || bearer.isEmpty) {
+        return;
+      }
+      final fcm = await _messaging.getToken();
+      if (fcm != null && fcm.isNotEmpty) {
+        await registerTokenWithBackend(fcm);
+        return;
+      }
+    }
   }
 
   Future<void> registerTokenWithBackend(String fcmToken) async {

@@ -826,6 +826,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get staffNoneSelected => '— Нет —';
 
   @override
+  String get staffRoleInactive => 'НЕАКТИВНА';
+
+  @override
+  String get staffWorkerStatusRefreshFailed =>
+      'Не удалось обновить статус роли. Проверьте соединение.';
+
+  @override
+  String get staffScanRoleInactive =>
+      'Эта роль отключена в админке. Сканирование недоступно.';
+
+  @override
   String staffScanFailed(String error) {
     return 'Ошибка сканирования: $error';
   }

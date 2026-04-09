@@ -346,6 +346,9 @@
   "appUpdateButton": "Update app",
   "showAll": "Show all",
   "staffNoneSelected": "— None —",
+  "staffRoleInactive": "INACTIVE",
+  "staffWorkerStatusRefreshFailed": "Could not update role status. Check your connection.",
+  "staffScanRoleInactive": "This role has been deactivated in the admin panel. Scanning is not available.",
   "staffScanFailed": "Scan failed: {error}",
   "@staffScanFailed": {
     "placeholders": {

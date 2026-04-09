@@ -9,6 +9,7 @@ import 'login_page.dart';
 import 'staff_child_detail_page.dart';
 import 'staff_scan_page.dart';
 import 'staff_settings_page.dart';
+import 'staff_workspace.dart';
 import 'notifications_page.dart';
 import 'about_app_page.dart';
 
@@ -35,6 +36,8 @@ class StaffPortalPage extends StatefulWidget {
 
 class _StaffPortalPageState extends State<StaffPortalPage> {
   int _currentTab = 0; // 0 Home, 1 Event, 2 More
+  /// Актуальный worker/status с сервера (обновляется при табах и перед сканом).
+  late WorkerStatus _liveStatus;
   StaffRole? _selectedRole;
   List<SupervisorStageItem> _supervisorStages = [];
   int? _selectedSupervisorStageId;
@@ -44,12 +47,18 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   String? _supervisorChildrenError;
   int? _supervisorChildrenEventId;
   int _unreadNotifications = 0;
+  List<WorkerEventStage> _homeVisibleStages = [];
+  bool _homeStagesLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _liveStatus = widget.status;
     _initSelectedRole();
     _refreshUnreadSilently();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_loadHomeTabStages());
+    });
   }
 
   Future<void> _refreshUnreadSilently() async {
@@ -72,11 +81,11 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     }
   }
 
-  void _initSelectedRole() {
-    final roles = widget.status.staffRoles;
-    if (roles.isEmpty) return;
+  StaffRole? _pickSelectedRoleForStatus(WorkerStatus status) {
+    final roles = status.staffRoles;
+    if (roles.isEmpty) return null;
     final savedRoleCode = AppSettings.staffSelectedRoleCode?.toLowerCase();
-    final roleFromApi = widget.status.role;
+    final roleFromApi = status.role;
     final match = roles.cast<StaffRole?>().firstWhere((r) {
       final role = r!;
       if (savedRoleCode != null && savedRoleCode.isNotEmpty) {
@@ -84,14 +93,104 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
       }
       return _matchesRoleToken(role, roleFromApi);
     }, orElse: () => null);
-    setState(() {
-      _selectedRole = match ?? roles.first;
-    });
+    return match ?? roles.first;
+  }
+
+  void _initSelectedRole() {
+    _selectedRole = _pickSelectedRoleForStatus(_liveStatus);
+  }
+
+  /// Подтягивает [getWorkerStatus] и пересобирает выбранную роль (в т.ч. [StaffRole.isActive]).
+  Future<bool> _refreshLiveWorkerStatus({bool showError = false}) async {
+    try {
+      final fresh = await widget.auth.getWorkerStatus();
+      if (!mounted) return false;
+      setState(() {
+        _liveStatus = fresh;
+        _selectedRole = _pickSelectedRoleForStatus(fresh);
+      });
+      unawaited(_loadHomeTabStages());
+      return true;
+    } catch (_) {
+      if (showError && mounted && context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.staffWorkerStatusRefreshFailed),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+      return false;
+    }
   }
 
   void _onRoleChanged(StaffRole role) {
-    AppSettings.setStaffSelectedRoleCode(role.code);
+    unawaited(AppSettings.setStaffSelectedRoleCode(role.code));
     setState(() => _selectedRole = role);
+    unawaited(_loadHomeTabStages());
+  }
+
+  /// Те же этапы и prefs, что на экране настроек (фильтр по текущей роли).
+  Future<void> _loadHomeTabStages() async {
+    final eventId = AppSettings.staffActiveEventId;
+    final role = _selectedRole;
+    if (eventId == null || eventId <= 0 || role == null) {
+      if (mounted) {
+        setState(() {
+          _homeVisibleStages = [];
+          _homeStagesLoading = false;
+        });
+      }
+      return;
+    }
+    if (mounted) setState(() => _homeStagesLoading = true);
+    try {
+      final list = await widget.auth.getWorkerEventStages(eventId);
+      if (!mounted) return;
+      final visible = stagesAllowedForRole(list, role);
+      setState(() {
+        _homeVisibleStages = visible;
+        _homeStagesLoading = false;
+      });
+      await _ensureHomeStagePrefsValid(visible);
+      if (mounted) setState(() {});
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _homeVisibleStages = [];
+        _homeStagesLoading = false;
+      });
+    }
+  }
+
+  Future<void> _ensureHomeStagePrefsValid(List<WorkerEventStage> visible) async {
+    final sid = AppSettings.staffActiveStageId;
+    final stype = AppSettings.staffActiveStageType;
+    final ok = sid != null &&
+        visible.any(
+          (s) => s.id == sid && (stype == null || s.type == stype),
+        );
+    if (ok) {
+      return;
+    }
+    if (visible.isNotEmpty) {
+      await AppSettings.setStaffActiveStageId(visible.first.id);
+      await AppSettings.setStaffActiveStageType(visible.first.type);
+    } else {
+      await AppSettings.setStaffActiveStageId(null);
+      await AppSettings.setStaffActiveStageType(null);
+    }
+  }
+
+  int? _homeEffectiveStageDropdownValue() {
+    final current = AppSettings.staffActiveStageId;
+    final currentType = AppSettings.staffActiveStageType;
+    if (current == null) return null;
+    final exists = _homeVisibleStages.any(
+      (e) => e.id == current && e.type == (currentType ?? 'main'),
+    );
+    return exists ? current : null;
   }
 
   Future<void> _loadSupervisorChildren() async {
@@ -142,16 +241,35 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
       ? (widget.user['name']).toString().trim()
       : 'Staff';
 
-  bool get _isHostess {
-    final role = _selectedRole;
-    if (role == null) return false;
-    return _matchesAnyToken(role, const ['hostess', 'hs', 'хостесс']);
+  /// Тип главной вкладки: из админки (`home_screen_type`) или legacy по code/name.
+  String _resolvedHomeScreenType(StaffRole? role) {
+    if (role == null) return 'scan';
+    final fromApi = role.homeScreenType.trim().toLowerCase();
+    if (fromApi.isNotEmpty) return fromApi;
+    if (_matchesAnyToken(role, const ['hostess', 'hs', 'хостесс'])) {
+      return 'hostess';
+    }
+    if (_matchesAnyToken(role, const ['supervisor', 'sv', 'супервайзер'])) {
+      return 'supervisor';
+    }
+    return 'scan';
   }
 
-  bool get _isSupervisor {
-    final role = _selectedRole;
-    if (role == null) return false;
-    return _matchesAnyToken(role, const ['supervisor', 'sv', 'супервайзер']);
+  Widget _buildHomeTabForSelectedRole(Color accent) {
+    switch (_resolvedHomeScreenType(_selectedRole)) {
+      case 'supervisor':
+        return _buildSupervisorHomeTab(accent);
+      case 'hostess':
+        return _buildHostessStub();
+      case 'interview':
+        return _buildInterviewStub();
+      case 'lunches':
+        return _buildLunchesStub();
+      case 'superadmin':
+        return _buildSuperadminStub();
+      default:
+        return _buildHomeTab(accent);
+    }
   }
 
   bool _matchesRoleToken(StaffRole role, String token) {
@@ -185,11 +303,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               child: IndexedStack(
                 index: _currentTab,
                 children: [
-                  _isHostess
-                      ? _buildHostessStub()
-                      : _isSupervisor
-                      ? _buildSupervisorHomeTab(accent)
-                      : _buildHomeTab(accent),
+                  _buildHomeTabForSelectedRole(accent),
                   _buildEventTab(accent),
                   _buildMoreTab(accent),
                 ],
@@ -296,11 +410,14 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               ),
               onTap: () async {
                 Navigator.pop(ctx);
-                await PushTokenServiceHolder.instance?.deactivateCurrentOnBackend();
-                widget.auth.clearToken();
+                try {
+                  await PushTokenServiceHolder.instance
+                      ?.deactivateCurrentOnBackend();
+                } catch (_) {}
+                await widget.auth.clearToken();
                 if (!context.mounted) return;
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
+                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                  MaterialPageRoute<void>(
                     builder: (_) => LoginPage(auth: widget.auth),
                   ),
                   (route) => false,
@@ -313,70 +430,155 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     );
   }
 
-  /// Домашняя вкладка (общее окно): зона, скан, live updates, карточка команды.
+  /// Универсальное сканирование: этап синхронизирован с настройками, описание роли из админки.
   Widget _buildHomeTab(Color accent) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Select Working Zone
-          Text(
-            'SELECT WORKING ZONE',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.5),
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Zone 1 - Main Stage Backstage',
-                    style: const TextStyle(color: Colors.white, fontSize: 15),
+    final l10n = AppLocalizations.of(context)!;
+    final roleDesc = (_selectedRole?.description ?? '').trim();
+    final eventId = AppSettings.staffActiveEventId;
+    final roleActive = _selectedRole?.isActive ?? false;
+    final scanEnabled = !_homeStagesLoading &&
+        roleActive &&
+        eventId != null &&
+        eventId > 0 &&
+        AppSettings.staffActiveStageId != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Active stage',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.5),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (_homeStagesLoading)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: _kPrimary,
+                      ),
+                    ),
+                  ),
+                )
+              else if (eventId == null || eventId <= 0)
+                Text(
+                  'Select an event in Staff Settings',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.6),
+                    fontSize: 14,
+                  ),
+                )
+              else
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int?>(
+                      value: _homeEffectiveStageDropdownValue(),
+                      isExpanded: true,
+                      dropdownColor: const Color(0xFF2a1a14),
+                      icon: Icon(Icons.keyboard_arrow_down, color: accent, size: 24),
+                      style: const TextStyle(color: Colors.white, fontSize: 15),
+                      hint: Text(
+                        'Select stage',
+                        style: TextStyle(color: Colors.white54),
+                      ),
+                      items: [
+                        DropdownMenuItem<int?>(
+                          value: null,
+                          child: Text(l10n.staffNoneSelected),
+                        ),
+                        ..._homeVisibleStages.map(
+                          (s) => DropdownMenuItem<int?>(
+                            value: s.id,
+                            child: Text(
+                              s.type == 'preparatory' ? 'Prep: ${s.name}' : s.name,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                      onChanged: (int? value) async {
+                        if (value == null) {
+                          await AppSettings.setStaffActiveStageId(null);
+                          await AppSettings.setStaffActiveStageType(null);
+                        } else {
+                          WorkerEventStage? stage;
+                          for (final s in _homeVisibleStages) {
+                            if (s.id == value) {
+                              stage = s;
+                              break;
+                            }
+                          }
+                          await AppSettings.setStaffActiveStageId(value);
+                          await AppSettings.setStaffActiveStageType(
+                            stage?.type ?? 'main',
+                          );
+                        }
+                        if (mounted) setState(() {});
+                      },
+                    ),
                   ),
                 ),
-                Icon(Icons.keyboard_arrow_down, color: accent, size: 24),
-              ],
-            ),
+            ],
           ),
-          const SizedBox(height: 32),
-          // Scan button
-          Center(
+        ),
+        Expanded(
+          child: Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: () => _openScanner(context),
+                    onTap: scanEnabled
+                        ? () => unawaited(_openScanner(context))
+                        : null,
                     borderRadius: BorderRadius.circular(96),
                     child: Container(
                       width: 192,
                       height: 192,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [accent, accent.withOpacity(0.8)],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: accent.withOpacity(0.3),
-                            blurRadius: 40,
-                            spreadRadius: 0,
-                          ),
-                        ],
+                        gradient: scanEnabled
+                            ? LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  accent,
+                                  accent.withOpacity(0.8),
+                                ],
+                              )
+                            : null,
+                        color: scanEnabled ? null : const Color(0xFF3D3D3D),
+                        boxShadow: scanEnabled
+                            ? [
+                                BoxShadow(
+                                  color: accent.withOpacity(0.3),
+                                  blurRadius: 40,
+                                  spreadRadius: 0,
+                                ),
+                              ]
+                            : const [],
                       ),
                       child: Center(
                         child: Column(
@@ -384,14 +586,18 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                           children: [
                             Icon(
                               Icons.qr_code_scanner,
-                              color: Colors.white,
+                              color: scanEnabled
+                                  ? Colors.white
+                                  : Colors.white38,
                               size: 56,
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'SCAN',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: scanEnabled
+                                    ? Colors.white
+                                    : Colors.white38,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
                                 letterSpacing: 2,
@@ -406,8 +612,11 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 const SizedBox(height: 24),
                 Text(
                   'TAP TO SCAN MODEL LANYARD',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.4),
+                    color: scanEnabled
+                        ? Colors.white.withOpacity(0.4)
+                        : Colors.white.withOpacity(0.22),
                     fontSize: 11,
                     letterSpacing: 1.5,
                   ),
@@ -415,24 +624,20 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               ],
             ),
           ),
-          const SizedBox(height: 32),
-          // Live Updates
-          Text(
-            'LIVE UPDATES',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.5),
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+          child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border(left: BorderSide(color: accent, width: 4)),
+              border: Border(
+                left: BorderSide(
+                  color: roleActive ? accent : Colors.white24,
+                  width: 4,
+                ),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -454,13 +659,15 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: accent.withOpacity(0.2),
+                        color: roleActive
+                            ? accent.withOpacity(0.2)
+                            : Colors.white.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        'ACTIVE',
+                        roleActive ? l10n.active : l10n.staffRoleInactive,
                         style: TextStyle(
-                          color: accent,
+                          color: roleActive ? accent : Colors.white54,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),
@@ -470,91 +677,18 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Hair & Makeup for Group A - Spring Collection.',
+                  roleDesc.isEmpty ? '—' : roleDesc,
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.8),
                     fontSize: 14,
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.only(top: 12),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: Colors.white.withOpacity(0.05)),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.schedule, color: accent, size: 20),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Next rotation in 14:00 mins',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          // Team card
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.groups_outlined,
-                    color: Colors.white54,
-                    size: 26,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Team Alpha',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        '4 Stylists • 12 Models Assigned',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(Icons.chevron_right, color: accent, size: 24),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -617,7 +751,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             subtitle: 'General purpose assets & ID scanner',
             accent: accent,
             large: true,
-            onTap: () => _openScanner(context, scanForInfo: true),
+            onTap: () => unawaited(_openScanner(context, scanForInfo: true)),
           ),
           const SizedBox(height: 16),
           Row(
@@ -716,7 +850,23 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     );
   }
 
-  void _openScanner(BuildContext context, {bool scanForInfo = false}) {
+  Future<void> _openScanner(BuildContext context, {bool scanForInfo = false}) async {
+    final ok = await _refreshLiveWorkerStatus(showError: true);
+    if (!ok || !mounted || !context.mounted) return;
+
+    final role = _selectedRole;
+    if (role != null && !role.isActive) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.staffScanRoleInactive),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    if (!mounted || !context.mounted) return;
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => StaffScanPage(
@@ -736,14 +886,15 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             builder: (_) => StaffSettingsPage(
               auth: widget.auth,
               user: widget.user,
-              staffRoles: widget.status.staffRoles,
+              staffRoles: _liveStatus.staffRoles,
               currentRole: _selectedRole,
               onRoleChanged: _onRoleChanged,
             ),
           ),
         )
         .then((_) {
-          if (mounted) setState(() {});
+          if (!mounted) return;
+          unawaited(_refreshLiveWorkerStatus());
         });
   }
 
@@ -1108,17 +1259,21 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     }
   }
 
-  Widget _buildHostessStub() {
+  Widget _buildPlaceholderHomeTab({
+    required IconData icon,
+    required String title,
+    required String message,
+  }) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.badge_outlined, size: 64, color: Colors.white38),
+            Icon(icon, size: 64, color: Colors.white38),
             const SizedBox(height: 24),
             Text(
-              'Выбрана роль хостесс',
+              title,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white.withOpacity(0.9),
@@ -1128,14 +1283,52 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Экран для роли хостесс будет добавлен позже.',
+              message,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white54, fontSize: 14),
+              style: const TextStyle(color: Colors.white54, fontSize: 14),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildHostessStub() {
+    return _buildPlaceholderHomeTab(
+      icon: Icons.badge_outlined,
+      title: 'Роль: хостесс',
+      message: 'Экран для роли хостесс будет добавлен позже.',
+    );
+  }
+
+  Widget _buildInterviewStub() {
+    return _buildPlaceholderHomeTab(
+      icon: Icons.mic_outlined,
+      title: 'Роль: интервью',
+      message: 'Экран интервью будет добавлен позже.',
+    );
+  }
+
+  Widget _buildLunchesStub() {
+    return _buildPlaceholderHomeTab(
+      icon: Icons.restaurant_outlined,
+      title: 'Роль: обеды',
+      message: 'Экран обедов будет добавлен позже.',
+    );
+  }
+
+  Widget _buildSuperadminStub() {
+    return _buildPlaceholderHomeTab(
+      icon: Icons.admin_panel_settings_outlined,
+      title: 'Роль: суперадмин',
+      message: 'Экран суперадмина будет добавлен позже.',
+    );
+  }
+
+  Future<void> _onBottomNavTap(int index) async {
+    await _refreshLiveWorkerStatus();
+    if (!mounted) return;
+    setState(() => _currentTab = index);
   }
 
   Widget _buildBottomNav(Color accent) {
@@ -1158,21 +1351,21 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             label: 'Home',
             active: _currentTab == 0,
             accent: accent,
-            onTap: () => setState(() => _currentTab = 0),
+            onTap: () => unawaited(_onBottomNavTap(0)),
           ),
           _NavItem(
             icon: Icons.calendar_month,
             label: 'Event',
             active: _currentTab == 1,
             accent: accent,
-            onTap: () => setState(() => _currentTab = 1),
+            onTap: () => unawaited(_onBottomNavTap(1)),
           ),
           _NavItem(
             icon: Icons.more_horiz,
             label: 'More',
             active: _currentTab == 2,
             accent: accent,
-            onTap: () => setState(() => _currentTab = 2),
+            onTap: () => unawaited(_onBottomNavTap(2)),
           ),
         ],
       ),

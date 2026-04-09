@@ -286,6 +286,9 @@
   "appUpdateButton": "Обновить приложение",
   "showAll": "Показать все",
   "staffNoneSelected": "— Нет —",
+  "staffRoleInactive": "НЕАКТИВНА",
+  "staffWorkerStatusRefreshFailed": "Не удалось обновить статус роли. Проверьте соединение.",
+  "staffScanRoleInactive": "Эта роль отключена в админке. Сканирование недоступно.",
   "staffScanFailed": "Ошибка сканирования: {error}",
   "@staffScanFailed": {
     "placeholders": {

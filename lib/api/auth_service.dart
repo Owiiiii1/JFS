@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:ui' show Locale, PlatformDispatcher;
 
 import 'package:flutter/foundation.dart';
@@ -1377,11 +1378,20 @@ class AuthService {
         },
         body: jsonEncode(body),
       );
-      if (res.statusCode != 200 && kDebugMode) {
-        // ignore: avoid_print
-        print('registerPushToken failed ${res.statusCode} ${res.body}');
+      if (res.statusCode != 200) {
+        developer.log(
+          'registerPushToken HTTP ${res.statusCode}: ${res.body}',
+          name: 'jfs.push',
+        );
       }
-    } catch (_) {}
+    } catch (e, st) {
+      developer.log(
+        'registerPushToken error',
+        name: 'jfs.push',
+        error: e,
+        stackTrace: st,
+      );
+    }
   }
 
   /// DELETE /api/app/push-token — deactivate token (call before logout while Bearer is valid).
@@ -1669,16 +1679,53 @@ class WorkerStatus {
 }
 
 class StaffRole {
-  StaffRole({required this.id, required this.code, required this.name});
+  StaffRole({
+    required this.id,
+    required this.code,
+    required this.name,
+    this.description = '',
+    this.isActive = true,
+    this.homeScreenType = '',
+    this.stageIds = const [],
+  });
   final int id;
   final String code;
   final String name;
+  /// Текст из админки (роль персонала).
+  final String description;
+  /// Соответствует `is_active` роли в админке.
+  final bool isActive;
+  /// Код из API (`home_screen_type`): scan, supervisor, hostess, interview, lunches, superadmin.
+  /// Пусто — до обновления бэкенда; клиент может определить экран по legacy-токенам code/name.
+  final String homeScreenType;
+  /// Пустой список = в админке не заданы этапы для роли → разрешены все этапы ивента.
+  final List<int> stageIds;
 
   factory StaffRole.fromJson(Map<String, dynamic> json) {
+    final rawIds = json['stage_ids'];
+    final List<int> ids = [];
+    if (rawIds is List) {
+      for (final e in rawIds) {
+        if (e is int) {
+          if (e > 0) ids.add(e);
+        } else {
+          final v = int.tryParse(e.toString());
+          if (v != null && v > 0) ids.add(v);
+        }
+      }
+    }
+    final homeRaw = json['home_screen_type'];
+    final homeStr = homeRaw == null ? '' : homeRaw.toString().trim();
+    final descRaw = json['description'];
+    final descStr = descRaw == null ? '' : descRaw.toString().trim();
     return StaffRole(
       id: (json['id'] is int) ? json['id'] as int : 0,
       code: (json['code'] as String? ?? '').toString(),
       name: (json['name'] as String? ?? '').toString(),
+      description: descStr,
+      isActive: _jsonBool(json['is_active'], true),
+      homeScreenType: homeStr,
+      stageIds: ids,
     );
   }
 }
@@ -2771,6 +2818,48 @@ class StaffMainProgressStage {
   }
 }
 
+/// Одна вкладка таймлайна (как в Filament Event Flow): prep / бренд / мама / тато.
+class StaffProgressTabData {
+  StaffProgressTabData({
+    required this.key,
+    required this.title,
+    required this.mainProgressStages,
+    required this.progressPercent,
+    this.currentStageName,
+    required this.completedStages,
+    required this.totalStages,
+  });
+
+  final String key;
+  final String title;
+  final List<StaffMainProgressStage> mainProgressStages;
+  final int progressPercent;
+  final String? currentStageName;
+  final int completedStages;
+  final int totalStages;
+
+  factory StaffProgressTabData.fromJson(Map<String, dynamic> json) {
+    final mps = json['main_progress_stages'];
+    return StaffProgressTabData(
+      key: (json['key'] as String? ?? '').toString(),
+      title: (json['title'] as String? ?? '').toString(),
+      mainProgressStages: mps is List
+          ? mps
+              .map(
+                (e) => StaffMainProgressStage.fromJson(
+                  e as Map<String, dynamic>,
+                ),
+              )
+              .toList()
+          : const [],
+      progressPercent: json['progress_percent'] as int? ?? 0,
+      currentStageName: json['current_stage_name'] as String?,
+      completedStages: json['completed_stages'] as int? ?? 0,
+      totalStages: json['total_stages'] as int? ?? 0,
+    );
+  }
+}
+
 class SupervisorChildDetail {
   SupervisorChildDetail({
     required this.assignmentId,
@@ -2790,12 +2879,14 @@ class SupervisorChildDetail {
     this.parentEmail,
     this.brandName,
     this.supervisorName,
+    this.supervisorPhone,
     this.supervisorPhotoUrl,
     required this.progressPercent,
     this.currentStageName,
     required this.completedStages,
     required this.totalStages,
     this.mainProgressStages = const [],
+    this.progressTabs = const [],
   });
 
   final int assignmentId;
@@ -2815,12 +2906,14 @@ class SupervisorChildDetail {
   final String? parentEmail;
   final String? brandName;
   final String? supervisorName;
+  final String? supervisorPhone;
   final String? supervisorPhotoUrl;
   final int progressPercent;
   final String? currentStageName;
   final int completedStages;
   final int totalStages;
   final List<StaffMainProgressStage> mainProgressStages;
+  final List<StaffProgressTabData> progressTabs;
 
   String get fullName => firstName;
 
@@ -2846,6 +2939,7 @@ class SupervisorChildDetail {
       parentEmail: json['parent_email'] as String?,
       brandName: json['brand_name'] as String?,
       supervisorName: json['supervisor_name'] as String?,
+      supervisorPhone: json['supervisor_phone'] as String?,
       supervisorPhotoUrl: json['supervisor_photo_url'] as String?,
       progressPercent: json['progress_percent'] as int? ?? 0,
       currentStageName: json['current_stage_name'] as String?,
@@ -2860,6 +2954,15 @@ class SupervisorChildDetail {
                 )
                 .toList()
           : const [],
+      progressTabs: () {
+        final pt = json['progress_tabs'];
+        if (pt is! List) {
+          return const <StaffProgressTabData>[];
+        }
+        return pt
+            .map((e) => StaffProgressTabData.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }(),
     );
   }
 }

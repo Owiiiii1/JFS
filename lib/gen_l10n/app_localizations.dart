@@ -1615,6 +1615,24 @@ abstract class AppLocalizations {
   /// **'— None —'**
   String get staffNoneSelected;
 
+  /// No description provided for @staffRoleInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'INACTIVE'**
+  String get staffRoleInactive;
+
+  /// No description provided for @staffWorkerStatusRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update role status. Check your connection.'**
+  String get staffWorkerStatusRefreshFailed;
+
+  /// No description provided for @staffScanRoleInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'This role has been deactivated in the admin panel. Scanning is not available.'**
+  String get staffScanRoleInactive;
+
   /// No description provided for @staffScanFailed.
   ///
   /// In en, this message translates to:
