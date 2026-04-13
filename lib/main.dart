@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -119,14 +120,14 @@ class _AppState extends State<App> {
       localeResolutionCallback: (locale, supportedLocales) {
         final override = _resolveLocale();
         if (override != null) return override;
-        if (locale != null) {
-          final languageCode = locale.languageCode.toLowerCase();
-          if (languageCode == 'es') {
-            return const Locale('es', 'US');
-          }
-          if (_supportedLocaleLanguages.contains(languageCode)) {
-            return Locale(languageCode);
-          }
+        // Редко locale в колбэке null — тогда берём платформу (как и [AppSettings.contentLocaleForApi]).
+        final device = locale ?? PlatformDispatcher.instance.locale;
+        final languageCode = device.languageCode.toLowerCase();
+        if (languageCode == 'es') {
+          return const Locale('es', 'US');
+        }
+        if (_supportedLocaleLanguages.contains(languageCode)) {
+          return Locale(languageCode);
         }
         return const Locale('en');
       },

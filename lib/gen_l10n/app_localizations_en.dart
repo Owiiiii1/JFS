@@ -483,6 +483,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventProgressShowGallery => 'Show gallery';
 
   @override
+  String get eventProgressCheckin => 'Check-in';
+
+  @override
+  String get eventProgressCheckinPrompt => 'Scan to start the event';
+
+  @override
+  String get eventProgressCheckinUnavailable =>
+      'Check-in code is not available yet.';
+
+  @override
   String get eventDescriptionLoadFailed =>
       'Could not load event description. Try again.';
 

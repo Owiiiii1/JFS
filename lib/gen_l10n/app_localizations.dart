@@ -1003,6 +1003,24 @@ abstract class AppLocalizations {
   /// **'Show gallery'**
   String get eventProgressShowGallery;
 
+  /// No description provided for @eventProgressCheckin.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in'**
+  String get eventProgressCheckin;
+
+  /// No description provided for @eventProgressCheckinPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan to start the event'**
+  String get eventProgressCheckinPrompt;
+
+  /// No description provided for @eventProgressCheckinUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in code is not available yet.'**
+  String get eventProgressCheckinUnavailable;
+
   /// No description provided for @eventDescriptionLoadFailed.
   ///
   /// In en, this message translates to:

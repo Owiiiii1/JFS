@@ -483,6 +483,15 @@ class AppLocalizationsUk extends AppLocalizations {
   String get eventProgressShowGallery => 'Галерея';
 
   @override
+  String get eventProgressCheckin => 'Чекін';
+
+  @override
+  String get eventProgressCheckinPrompt => 'Відскануйте для старту івенту';
+
+  @override
+  String get eventProgressCheckinUnavailable => 'Чекін-код поки недоступний.';
+
+  @override
   String get eventDescriptionLoadFailed =>
       'Не вдалося завантажити опис. Спробуйте ще раз.';
 

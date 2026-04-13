@@ -485,6 +485,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get eventProgressShowGallery => 'Галерея';
 
   @override
+  String get eventProgressCheckin => 'Чекин';
+
+  @override
+  String get eventProgressCheckinPrompt => 'Отсканируйте для старта ивента';
+
+  @override
+  String get eventProgressCheckinUnavailable => 'Чекин-код пока недоступен.';
+
+  @override
   String get eventDescriptionLoadFailed =>
       'Не удалось загрузить описание. Попробуйте снова.';
 

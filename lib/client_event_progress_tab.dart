@@ -36,12 +36,14 @@ class ClientEventProgressTab extends StatefulWidget {
     super.key,
     required this.assignment,
     required this.childFullName,
+    required this.onOpenCheckin,
     required this.onOpenInfo,
     required this.onOpenGallery,
   });
 
   final ActiveAssignment? assignment;
   final String childFullName;
+  final void Function(String checkinCode) onOpenCheckin;
   final VoidCallback onOpenInfo;
   final VoidCallback onOpenGallery;
 
@@ -88,11 +90,18 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
     };
 
     final headerLine = switch (_selectedActor) {
-      _TimelineActor.child => widget.childFullName.isEmpty
-          ? AppLocalizations.of(context)!.journeyProgress
-          : widget.childFullName.toUpperCase(),
-      _TimelineActor.mom => _actorLabel(context, _TimelineActor.mom).toUpperCase(),
-      _TimelineActor.dad => _actorLabel(context, _TimelineActor.dad).toUpperCase(),
+      _TimelineActor.child =>
+        widget.childFullName.isEmpty
+            ? AppLocalizations.of(context)!.journeyProgress
+            : widget.childFullName.toUpperCase(),
+      _TimelineActor.mom => _actorLabel(
+        context,
+        _TimelineActor.mom,
+      ).toUpperCase(),
+      _TimelineActor.dad => _actorLabel(
+        context,
+        _TimelineActor.dad,
+      ).toUpperCase(),
     };
 
     return SingleChildScrollView(
@@ -138,7 +147,31 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
               },
             ),
           ],
-          const SizedBox(height: 20),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            child: _TopActionButton(
+              icon: Icons.qr_code_scanner_rounded,
+              label: AppLocalizations.of(context)!.eventProgressCheckin,
+              onTap: () {
+                final code = (a.checkinCode ?? '').trim();
+                if (code.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.eventProgressCheckinUnavailable,
+                      ),
+                    ),
+                  );
+                  return;
+                }
+                widget.onOpenCheckin(code);
+              },
+            ),
+          ),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
@@ -267,7 +300,10 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
     return row.prep.scheduledAt;
   }
 
-  static int _compareRehearsalPrepRowsByDate(_ExpandedPrepRow a, _ExpandedPrepRow b) {
+  static int _compareRehearsalPrepRowsByDate(
+    _ExpandedPrepRow a,
+    _ExpandedPrepRow b,
+  ) {
     final da = _effectiveSortDateForPrepRow(a);
     final db = _effectiveSortDateForPrepRow(b);
     if (da == null && db == null) {
@@ -307,7 +343,9 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
   /// Один активный этап в предварительной фазе: среди незавершённых — ближайший по времени к «сейчас».
   /// Сначала ближайший с датой ≥ now; если таких нет — самый поздний из уже прошедших (все ещё incomplete).
   /// Без дат — порядок как в таймлайне: [prepIndex], [bookingIndex].
-  static int? _pickCurrentExpandedPrepIndex(List<_ExpandedPrepRow> expandedPrep) {
+  static int? _pickCurrentExpandedPrepIndex(
+    List<_ExpandedPrepRow> expandedPrep,
+  ) {
     final now = DateTime.now();
     final incomplete = <int>[];
     for (var ei = 0; ei < expandedPrep.length; ei++) {
@@ -430,8 +468,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           prep.isRehearsalMilestone) {
         final r =
             mainRehearsalChronoRankBySlotId[b.slotId] ?? row.bookingIndex ?? 1;
-        title =
-            '${l10n.rehearsalMilestoneTitle} ($r/${row.bookingTotal})';
+        title = '${l10n.rehearsalMilestoneTitle} ($r/${row.bookingTotal})';
       } else {
         title = prep.displayTitle(l10n);
       }
@@ -515,8 +552,9 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           subtitle: '',
           rawDate: null,
           address: null,
-          detailDescription:
-              mainDesc != null && mainDesc.isNotEmpty ? mainDesc : null,
+          detailDescription: mainDesc != null && mainDesc.isNotEmpty
+              ? mainDesc
+              : null,
           isMainStage: true,
           parentDots: parentDots,
           parentDotsCompleted: 0,
@@ -556,7 +594,9 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
       }
     }
 
-    final currentExpandedPrepIndex = _pickCurrentExpandedPrepIndex(expandedPrep);
+    final currentExpandedPrepIndex = _pickCurrentExpandedPrepIndex(
+      expandedPrep,
+    );
     var prepSlot = 0;
     for (var i = 0; i < items.length && prepSlot < prepRowCount; i++) {
       final row = items[i];
@@ -630,8 +670,9 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           subtitle: '',
           rawDate: null,
           address: null,
-          detailDescription:
-              mainDesc != null && mainDesc.isNotEmpty ? mainDesc : null,
+          detailDescription: mainDesc != null && mainDesc.isNotEmpty
+              ? mainDesc
+              : null,
           isMainStage: true,
           parentDots: 0,
           parentDotsCompleted: 0,
@@ -991,7 +1032,9 @@ class _ActorSwitch extends StatelessWidget {
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: selected == actor ? _kProgressGold : Colors.transparent,
+                    color: selected == actor
+                        ? _kProgressGold
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(

@@ -518,8 +518,7 @@ class AuthService {
       throw ContactManagerUnavailableException();
     }
     throw Exception(
-      _tryMessage(res.body) ??
-          'Failed to send message (${res.statusCode})',
+      _tryMessage(res.body) ?? 'Failed to send message (${res.statusCode})',
     );
   }
 
@@ -1410,7 +1409,8 @@ class AuthService {
       'token': fcmToken,
       'platform': platform,
       if (deviceId != null && deviceId.isNotEmpty) 'device_id': deviceId,
-      if (appVersion != null && appVersion.isNotEmpty) 'app_version': appVersion,
+      if (appVersion != null && appVersion.isNotEmpty)
+        'app_version': appVersion,
     };
     try {
       final res = await http.post(
@@ -1735,13 +1735,17 @@ class StaffRole {
   final int id;
   final String code;
   final String name;
+
   /// Текст из админки (роль персонала).
   final String description;
+
   /// Соответствует `is_active` роли в админке.
   final bool isActive;
+
   /// Код из API (`home_screen_type`): scan, supervisor, hostess, interview, lunches, superadmin.
   /// Пусто — до обновления бэкенда; клиент может определить экран по legacy-токенам code/name.
   final String homeScreenType;
+
   /// Пустой список = в админке не заданы этапы для роли → разрешены все этапы ивента.
   final List<int> stageIds;
 
@@ -2292,6 +2296,7 @@ class ActiveAssignment {
     this.selectedEventMealId,
     this.mealOrdersAccepting = true,
     this.eventMealPaidAt,
+    this.checkinCode,
     this.mealFulfillmentStatus,
     this.rehearsalBookings = const [],
     this.maxMainRehearsals = 1,
@@ -2322,6 +2327,9 @@ class ActiveAssignment {
   /// Set when Stripe meal checkout completed (webhook).
   final DateTime? eventMealPaidAt;
 
+  /// QR code used to check in and start event flow.
+  final String? checkinCode;
+
   /// Server: `none` | `awaiting_payment` | `fulfilled` (see ChildEventAssignment::getMealFulfillmentStatus).
   final String? mealFulfillmentStatus;
 
@@ -2331,7 +2339,10 @@ class ActiveAssignment {
   RehearsalBookingInfo? get rehearsalBooking =>
       rehearsalBookings.isNotEmpty ? rehearsalBookings.first : null;
 
-  bool get mealPaid => eventMealPaidAt != null;
+  /// Не опираться только на [eventMealPaidAt]: после удаления блюда FK обнуляет
+  /// `event_meal_id`, а метка оплаты в БД могла остаться — тогда без выбранного блюда
+  /// нельзя считать заказ оплаченным.
+  bool get mealPaid => eventMealPaidAt != null && selectedEventMealId != null;
 
   bool get isMealOrderLocked {
     switch (mealFulfillmentStatus) {
@@ -2370,6 +2381,17 @@ class ActiveAssignment {
     final parentProgressJson = json['parent_progress'];
     final parentTimelinesJson = json['parent_timelines'];
     final meals = json['event_meals'];
+    final mealsList = meals is List
+        ? meals
+              .map((e) => EventMealOption.fromJson(e as Map<String, dynamic>))
+              .toList()
+        : <EventMealOption>[];
+    final rawSelectedMealId = _jsonIntNullable(json['selected_event_meal_id']);
+    final selectedMealId =
+        rawSelectedMealId != null &&
+            mealsList.any((m) => m.id == rawSelectedMealId)
+        ? rawSelectedMealId
+        : null;
     final rb = json['rehearsal_booking'];
     final rbs = json['rehearsal_bookings'];
     return ActiveAssignment(
@@ -2412,14 +2434,11 @@ class ActiveAssignment {
                 )
                 .toList()
           : [],
-      eventMeals: meals is List
-          ? meals
-                .map((e) => EventMealOption.fromJson(e as Map<String, dynamic>))
-                .toList()
-          : [],
-      selectedEventMealId: _jsonIntNullable(json['selected_event_meal_id']),
+      eventMeals: mealsList,
+      selectedEventMealId: selectedMealId,
       mealOrdersAccepting: _jsonBool(json['meal_orders_accepting'], true),
       eventMealPaidAt: _jsonDateTimeNullable(json['event_meal_paid_at']),
+      checkinCode: (json['checkin_code'] as String?)?.trim(),
       mealFulfillmentStatus: json['meal_fulfillment_status'] as String?,
       rehearsalBookings: rbs is List
           ? rbs
@@ -2895,12 +2914,12 @@ class StaffProgressTabData {
       title: (json['title'] as String? ?? '').toString(),
       mainProgressStages: mps is List
           ? mps
-              .map(
-                (e) => StaffMainProgressStage.fromJson(
-                  e as Map<String, dynamic>,
-                ),
-              )
-              .toList()
+                .map(
+                  (e) => StaffMainProgressStage.fromJson(
+                    e as Map<String, dynamic>,
+                  ),
+                )
+                .toList()
           : const [],
       progressPercent: json['progress_percent'] as int? ?? 0,
       currentStageName: json['current_stage_name'] as String?,
@@ -3010,7 +3029,9 @@ class SupervisorChildDetail {
           return const <StaffProgressTabData>[];
         }
         return pt
-            .map((e) => StaffProgressTabData.fromJson(e as Map<String, dynamic>))
+            .map(
+              (e) => StaffProgressTabData.fromJson(e as Map<String, dynamic>),
+            )
             .toList();
       }(),
     );

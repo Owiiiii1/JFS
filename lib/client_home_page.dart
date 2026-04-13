@@ -10,6 +10,7 @@ import 'client_profile_tab.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
 import 'about_page.dart';
+import 'client_event_checkin_page.dart';
 import 'client_event_description_page.dart';
 import 'client_event_progress_tab.dart';
 import 'contact_manager_page.dart';
@@ -516,8 +517,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
-                        builder: (_) =>
-                            ContactManagerPage(auth: widget.auth),
+                        builder: (_) => ContactManagerPage(auth: widget.auth),
                       ),
                     );
                   },
@@ -1286,10 +1286,7 @@ class _ClientHomePageState extends State<ClientHomePage>
             const SizedBox(height: 8),
             Text(
               nextStageText,
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 11, color: Colors.grey[500]),
               maxLines: 5,
               overflow: TextOverflow.ellipsis,
               softWrap: true,
@@ -1582,10 +1579,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                       const SizedBox(height: 10),
                       Text(
                         prepHint,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey[500],
-                        ),
+                        style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                         maxLines: 5,
                         overflow: TextOverflow.ellipsis,
                         softWrap: true,
@@ -1762,21 +1756,6 @@ class _ClientHomePageState extends State<ClientHomePage>
                 AppLocalizations.of(context)!.latestHighlights,
               ),
             ),
-            const SizedBox(width: 8),
-            GestureDetector(
-              onTap: () {},
-              child: Text(
-                AppLocalizations.of(context)!.viewAll,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: _kGold,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -1837,7 +1816,7 @@ class _ClientHomePageState extends State<ClientHomePage>
   }
 
   // ---------------------------------------------------------------------------
-  // Quote
+  // Home tagline
   // ---------------------------------------------------------------------------
 
   Widget _buildQuote() {
@@ -1845,7 +1824,7 @@ class _ClientHomePageState extends State<ClientHomePage>
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8),
         child: Text(
-          '"Fashion is the armor to survive the reality of everyday life."',
+          '"The biggest kids and teens fashion tour in the USA"',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16,
@@ -2102,6 +2081,16 @@ class _ClientEventProgressPageState extends State<_ClientEventProgressPage> {
                   : ClientEventProgressTab(
                       assignment: _child?.activeAssignment,
                       childFullName: _child == null ? '' : _child!.firstName,
+                      onOpenCheckin: (checkinCode) {
+                        if (!context.mounted) return;
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => ClientEventCheckinPage(
+                              checkinCode: checkinCode,
+                            ),
+                          ),
+                        );
+                      },
                       onOpenInfo: () {
                         final a = _child?.activeAssignment;
                         if (a == null || !context.mounted) return;

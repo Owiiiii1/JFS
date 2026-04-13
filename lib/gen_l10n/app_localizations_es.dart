@@ -487,6 +487,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get eventProgressShowGallery => 'Galería';
 
   @override
+  String get eventProgressCheckin => 'Check-in';
+
+  @override
+  String get eventProgressCheckinPrompt => 'Escanea para iniciar el evento';
+
+  @override
+  String get eventProgressCheckinUnavailable =>
+      'El código de check-in aún no está disponible.';
+
+  @override
   String get eventDescriptionLoadFailed =>
       'No se pudo cargar la descripción. Inténtalo de nuevo.';
 
@@ -1412,6 +1422,16 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get eventProgressShowGallery => 'Galería';
+
+  @override
+  String get eventProgressCheckin => 'Check-in';
+
+  @override
+  String get eventProgressCheckinPrompt => 'Escanea para iniciar el evento';
+
+  @override
+  String get eventProgressCheckinUnavailable =>
+      'El código de check-in aún no está disponible.';
 
   @override
   String get eventDescriptionLoadFailed =>
