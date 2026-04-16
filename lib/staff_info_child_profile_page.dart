@@ -50,13 +50,14 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
   }
 
   List<StaffProgressTabData> _progressTabs(SupervisorChildDetail d) {
+    final l10n = AppLocalizations.of(context)!;
     if (d.progressTabs.isNotEmpty) {
       return d.progressTabs;
     }
     return [
       StaffProgressTabData(
         key: 'all',
-        title: 'Show Progress',
+        title: l10n.staffShowProgressTitle,
         mainProgressStages: d.mainProgressStages,
         progressPercent: d.progressPercent,
         currentStageName: d.currentStageName,
@@ -99,22 +100,23 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
     }
     final uri = Uri.parse('tel:$digits');
     try {
-      final ok = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!ok && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not open the phone dialer'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.staffCouldNotOpenDialer,
+            ),
           ),
         );
       }
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not open the phone dialer'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.staffCouldNotOpenDialer,
+            ),
           ),
         );
       }
@@ -137,6 +139,7 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
     SupervisorChildDetail d,
     Color accent,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     final photo = _resolveUrl(d.photoUrl);
     final supPhoto = _resolveUrl(d.supervisorPhotoUrl);
     final tabs = _progressTabs(d);
@@ -163,7 +166,7 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
               ),
               Expanded(
                 child: Text(
-                  'Child Profile',
+                  l10n.staffChildProfileTitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: accent,
@@ -290,6 +293,7 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
   }
 
   Widget _showProgressHeader(Color accent, StaffProgressTabData tab) {
+    final l10n = AppLocalizations.of(context)!;
     final pct = tab.progressPercent.clamp(0, 100);
     final completionLabel = tab.totalStages > 0 ? '$pct%' : '—';
     return Row(
@@ -300,7 +304,7 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'REAL-TIME TRACKING',
+                l10n.staffRealtimeTracking,
                 style: TextStyle(
                   color: accent,
                   fontSize: 10,
@@ -311,7 +315,7 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
               ),
               const SizedBox(height: 4),
               Text(
-                'Show Progress',
+                l10n.staffShowProgressTitle,
                 style: const TextStyle(
                   color: _onSurface,
                   fontSize: 22,
@@ -326,7 +330,7 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              'EST. COMPLETION',
+              l10n.staffEstimatedCompletion,
               style: _labelGrey.copyWith(fontSize: 9, letterSpacing: 1.4),
             ),
             const SizedBox(height: 4),
@@ -358,7 +362,7 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
         child: Text(
-          'No main stages in plan yet.',
+          AppLocalizations.of(context)!.staffNoMainStagesInPlan,
           style: TextStyle(
             color: _tertiary.withValues(alpha: 0.85),
             fontSize: 15,
@@ -531,17 +535,17 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
     late final Color bg;
     late final Color border;
     if (st == 'done') {
-      label = 'DONE';
+      label = AppLocalizations.of(context)!.staffStatusDone;
       fg = Colors.black;
       bg = accent;
       border = accent;
     } else if (st == 'in_progress') {
-      label = 'IN PROGRESS';
+      label = AppLocalizations.of(context)!.staffStatusInProgress;
       fg = accent;
       bg = Colors.transparent;
       border = accent.withValues(alpha: 0.85);
     } else {
-      label = 'PENDING';
+      label = AppLocalizations.of(context)!.staffStatusPending;
       fg = _tertiary.withValues(alpha: 0.65);
       bg = _surfaceLow;
       border = _outlineVariant.withValues(alpha: 0.45);
@@ -631,8 +635,8 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
             children: [
               Text(l10n.staffGuardianLiaison, style: _labelGold(accent)),
               const SizedBox(height: 6),
-              const Text(
-                'Contact Details',
+              Text(
+                l10n.staffContactDetails,
                 style: TextStyle(
                   fontFamily: 'HelveticaNeueCyr',
                   fontSize: 22,
@@ -644,14 +648,14 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
               _contactRow(
                 accent,
                 Icons.person_rounded,
-                'PRIMARY PARENT',
+                l10n.staffPrimaryParent,
                 d.parentName ?? '—',
               ),
               const SizedBox(height: 16),
               _contactRow(
                 accent,
                 Icons.call_rounded,
-                'PHONE',
+                l10n.phone.toUpperCase(),
                 d.parentPhone ?? '—',
                 onValueTap:
                     (d.parentPhone != null && d.parentPhone!.trim().isNotEmpty)
@@ -662,7 +666,7 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
               _contactRow(
                 accent,
                 Icons.mail_rounded,
-                'EMAIL',
+                l10n.email.toUpperCase(),
                 d.parentEmail ?? '—',
               ),
             ],
@@ -817,7 +821,7 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
             _contactRow(
               accent,
               Icons.call_rounded,
-              'PHONE',
+              l10n.phone.toUpperCase(),
               d.supervisorPhone!,
               onValueTap: () => _dial(d.supervisorPhone),
             ),

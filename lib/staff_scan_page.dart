@@ -14,13 +14,18 @@ class StaffScanPage extends StatefulWidget {
     required this.accent,
     required this.backgroundColor,
     this.scanForInfo = false,
+    this.parkingScan = false,
   });
 
   final AuthService auth;
   final Color accent;
   final Color backgroundColor;
+
   /// Режим «Прочее» → Scan for Info (без выбранного этапа).
   final bool scanForInfo;
+
+  /// Режим парковщика: lookup парковочного QR и окно результата.
+  final bool parkingScan;
 
   @override
   State<StaffScanPage> createState() => _StaffScanPageState();
@@ -85,6 +90,25 @@ class _StaffScanPageState extends State<StaffScanPage> {
   Future<void> _onScanned(String code) async {
     if (_processing) return;
 
+    if (widget.parkingScan) {
+      setState(() => _processing = true);
+      await _controller.stop();
+      try {
+        final result = await widget.auth.parkingScanLookup(code: code);
+        if (!mounted) return;
+        await _showParkingResultDialog(result);
+      } catch (e) {
+        if (!mounted) return;
+        await _showScanErrorDialog(e.toString());
+      } finally {
+        if (mounted) {
+          setState(() => _processing = false);
+          await _controller.start();
+        }
+      }
+      return;
+    }
+
     if (widget.scanForInfo) {
       setState(() => _processing = true);
       await _controller.stop();
@@ -148,7 +172,9 @@ class _StaffScanPageState extends State<StaffScanPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            result.message.isNotEmpty ? result.message : l10n.staffScanProcessed,
+            result.message.isNotEmpty
+                ? result.message
+                : l10n.staffScanProcessed,
           ),
           backgroundColor: result.isSuccess ? widget.accent : Colors.redAccent,
         ),
@@ -174,6 +200,7 @@ class _StaffScanPageState extends State<StaffScanPage> {
   }
 
   Widget _buildHeader(Color accent) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -192,7 +219,11 @@ class _StaffScanPageState extends State<StaffScanPage> {
             ),
           ),
           Text(
-            widget.scanForInfo ? 'Scan for Info' : 'Scan QR Code',
+            widget.parkingScan
+                ? l10n.staffScanHeaderParking
+                : (widget.scanForInfo
+                      ? l10n.staffScanHeaderInfo
+                      : l10n.staffScanHeaderQr),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -295,6 +326,7 @@ class _StaffScanPageState extends State<StaffScanPage> {
   }
 
   Widget _buildHint(Color accent) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -303,12 +335,143 @@ class _StaffScanPageState extends State<StaffScanPage> {
         borderRadius: BorderRadius.circular(24),
       ),
       child: Text(
-        widget.scanForInfo
-            ? 'Scan child or parent badge to view profile'
-            : 'Align QR Code within the frame',
+        widget.parkingScan
+            ? l10n.staffScanHintParking
+            : (widget.scanForInfo
+                  ? l10n.staffScanHintInfo
+                  : l10n.staffScanHintQr),
         style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16),
         textAlign: TextAlign.center,
       ),
+    );
+  }
+
+  Future<void> _showScanErrorDialog(String message) async {
+    final l10n = AppLocalizations.of(context)!;
+    final cleaned = message.trim().isEmpty
+        ? l10n.staffScanErrorUnknown
+        : message.trim();
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: const Color(0xFF131313),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        l10n.staffScanErrorTitle,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      icon: const Icon(Icons.close, color: Colors.white70),
+                      tooltip: l10n.close,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  cleaned,
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showParkingResultDialog(ParkingScanLookupResult result) async {
+    final l10n = AppLocalizations.of(context)!;
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        Widget row(String label, String value) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white54,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value.isEmpty ? '—' : value,
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return Dialog(
+          backgroundColor: const Color(0xFF131313),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        l10n.staffParkingTicketTitle,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      icon: const Icon(Icons.close, color: Colors.white70),
+                      tooltip: l10n.close,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                row(l10n.staffParkingFieldEvent, result.eventName),
+                row(l10n.staffParkingFieldClient, result.clientName),
+                row(l10n.staffParkingFieldCar, result.carModel),
+                row(l10n.staffParkingFieldPlateNumber, result.plateNumber),
+                row(
+                  l10n.staffParkingFieldVipClient,
+                  result.isVipClient ? l10n.staffYes : l10n.staffNo,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

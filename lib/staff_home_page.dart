@@ -65,7 +65,10 @@ class _StaffHomePageState extends State<StaffHomePage> {
         appBar: AppBar(
           backgroundColor: _kStaffBgDark,
           foregroundColor: Colors.white,
-          title: Text((widget.user['name'] ?? 'Staff').toString()),
+          title: Text(
+            (widget.user['name'] ?? AppLocalizations.of(context)!.staff)
+                .toString(),
+          ),
         ),
         body: Center(
           child: Padding(
@@ -73,7 +76,11 @@ class _StaffHomePageState extends State<StaffHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, color: Colors.white54, size: 48),
+                const Icon(
+                  Icons.error_outline,
+                  color: Colors.white54,
+                  size: 48,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   _error!,
@@ -99,7 +106,10 @@ class _StaffHomePageState extends State<StaffHomePage> {
         appBar: AppBar(
           backgroundColor: _kStaffBgDark,
           foregroundColor: Colors.white,
-          title: Text((widget.user['name'] ?? 'Staff').toString()),
+          title: Text(
+            (widget.user['name'] ?? AppLocalizations.of(context)!.staff)
+                .toString(),
+          ),
         ),
         body: Center(
           child: Padding(
@@ -107,10 +117,18 @@ class _StaffHomePageState extends State<StaffHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.person_off_outlined, color: Colors.white54, size: 64),
+                const Icon(
+                  Icons.person_off_outlined,
+                  color: Colors.white54,
+                  size: 64,
+                ),
                 const SizedBox(height: 24),
                 Text(
-                  'Hello, ${(widget.user['name'] ?? '').toString().trim().isNotEmpty ? widget.user['name'] : 'Staff'}',
+                  AppLocalizations.of(context)!.helloName(
+                    (widget.user['name'] ?? '').toString().trim().isNotEmpty
+                        ? widget.user['name'].toString()
+                        : AppLocalizations.of(context)!.staff,
+                  ),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white,

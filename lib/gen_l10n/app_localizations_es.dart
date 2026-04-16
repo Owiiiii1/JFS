@@ -9,56 +9,56 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get signIn => 'Iniciar sesión';
+  String get signIn => 'Iniciar sesiГіn';
 
   @override
   String get signUp => 'Registrarse';
 
   @override
-  String get email => 'Correo electrónico';
+  String get email => 'Correo electrГіnico';
 
   @override
-  String get password => 'Contraseña';
+  String get password => 'ContraseГ±a';
 
   @override
-  String get emailRequired => 'Ingresa tu correo electrónico';
+  String get emailRequired => 'Ingresa tu correo electrГіnico';
 
   @override
-  String get enterValidEmail => 'Ingresa un correo electrónico válido';
+  String get enterValidEmail => 'Ingresa un correo electrГіnico vГЎlido';
 
   @override
-  String get passwordRequired => 'Ingresa tu contraseña';
+  String get passwordRequired => 'Ingresa tu contraseГ±a';
 
   @override
-  String get hidePassword => 'Ocultar contraseña';
+  String get hidePassword => 'Ocultar contraseГ±a';
 
   @override
-  String get showPassword => 'Mostrar contraseña';
+  String get showPassword => 'Mostrar contraseГ±a';
 
   @override
   String signInFailed(String error) {
-    return 'Error al iniciar sesión: $error';
+    return 'Error al iniciar sesiГіn: $error';
   }
 
   @override
   String get apiEndpointNotFoundHint =>
-      'El servidor no encontró la API (404). Usa la raíz del sitio sin «/api» al final; la app llama a /api/app/login sola. Si Laravel está en una subcarpeta, incluye la ruta hasta public (p. ej. https://example.com/myapp/public).';
+      'El servidor no encontrГі la API (404). Usa la raГ­z del sitio sin В«/apiВ» al final; la app llama a /api/app/login sola. Si Laravel estГЎ en una subcarpeta, incluye la ruta hasta public (p. ej. https://example.com/myapp/public).';
 
   @override
   String get notificationsTitle => 'Notificaciones';
 
   @override
   String get notificationsLoadFailed =>
-      'No se pudieron cargar las notificaciones. Inténtalo de nuevo.';
+      'No se pudieron cargar las notificaciones. IntГ©ntalo de nuevo.';
 
   @override
-  String get notificationsEmpty => 'Aún no hay notificaciones.';
+  String get notificationsEmpty => 'AГєn no hay notificaciones.';
 
   @override
   String get notificationsNewMark => 'Nuevo';
 
   @override
-  String get notificationDetailsTitle => 'Notificación';
+  String get notificationDetailsTitle => 'NotificaciГіn';
 
   @override
   String get createAccount => 'Crear cuenta';
@@ -70,32 +70,32 @@ class AppLocalizationsEs extends AppLocalizations {
   String get nameRequired => 'Ingresa tu nombre';
 
   @override
-  String get phone => 'Teléfono';
+  String get phone => 'TelГ©fono';
 
   @override
-  String get phoneRequired => 'Ingresa tu teléfono';
+  String get phoneRequired => 'Ingresa tu telГ©fono';
 
   @override
-  String get phoneMustStartWithPlus => 'El teléfono debe comenzar con +';
+  String get phoneMustStartWithPlus => 'El telГ©fono debe comenzar con +';
 
   @override
-  String get enterValidPhone => 'Ingresa un número de teléfono válido';
+  String get enterValidPhone => 'Ingresa un nГєmero de telГ©fono vГЎlido';
 
   @override
-  String get confirmPassword => 'Confirmar contraseña';
+  String get confirmPassword => 'Confirmar contraseГ±a';
 
   @override
-  String get passwordsDoNotMatch => 'Las contraseñas no coinciden';
+  String get passwordsDoNotMatch => 'Las contraseГ±as no coinciden';
 
   @override
   String get passwordMinLength =>
-      'La contraseña debe tener al menos 8 caracteres';
+      'La contraseГ±a debe tener al menos 8 caracteres';
 
   @override
   String get atLeast8Chars => 'Al menos 8 caracteres';
 
   @override
-  String get backToSignIn => 'Volver a iniciar sesión';
+  String get backToSignIn => 'Volver a iniciar sesiГіn';
 
   @override
   String registrationFailed(String error) {
@@ -106,7 +106,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get account => 'Cuenta';
 
   @override
-  String get editInfo => 'EDITAR INFORMACIÓN';
+  String get editInfo => 'EDITAR INFORMACIГ“N';
 
   @override
   String get fullName => 'Nombre';
@@ -115,7 +115,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get retry => 'Reintentar';
 
   @override
-  String get accountSettings => 'Configuración de la cuenta';
+  String get accountSettings => 'ConfiguraciГіn de la cuenta';
 
   @override
   String get editProfile => 'Editar perfil';
@@ -124,18 +124,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deleteAccount => 'Eliminar cuenta';
 
   @override
-  String get deleteAccountConfirmTitle => '¿Eliminar cuenta?';
+  String get deleteAccountConfirmTitle => 'ВїEliminar cuenta?';
 
   @override
   String get deleteAccountConfirmMessage =>
-      '¿Seguro que quieres eliminar tu cuenta de forma permanente? Esta acción no se puede deshacer.';
+      'ВїSeguro que quieres eliminar tu cuenta de forma permanente? Esta acciГіn no se puede deshacer.';
 
   @override
-  String get deleteAccountSecondTitle => 'Qué se eliminará';
+  String get deleteAccountSecondTitle => 'QuГ© se eliminarГЎ';
 
   @override
   String get deleteAccountSecondMessage =>
-      'Se eliminará de forma permanente de nuestros sistemas:\n\n• Tu cuenta y perfil\n• Todos los niños vinculados a tu cuenta\n• Todas las asignaciones a eventos, progreso en etapas, entradas y comidas\n• Fotos y demás datos de los niños\n• Tu acceso a chats de eventos y notificaciones en la app\n\nAlgunos registros de pago o contables pueden conservarse cuando lo exija la ley.';
+      'Se eliminarГЎ de forma permanente de nuestros sistemas:\n\nвЂў Tu cuenta y perfil\nвЂў Todos los niГ±os vinculados a tu cuenta\nвЂў Todas las asignaciones a eventos, progreso en etapas, entradas y comidas\nвЂў Fotos y demГЎs datos de los niГ±os\nвЂў Tu acceso a chats de eventos y notificaciones en la app\n\nAlgunos registros de pago o contables pueden conservarse cuando lo exija la ley.';
 
   @override
   String get deleteAccountContinue => 'Continuar';
@@ -144,7 +144,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deleteAccountConfirmAction => 'Eliminar para siempre';
 
   @override
-  String get deleteAccountWorking => 'Eliminando cuenta…';
+  String get deleteAccountWorking => 'Eliminando cuentaвЂ¦';
 
   @override
   String get save => 'Guardar';
@@ -162,13 +162,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addChild => 'Agregar hijo';
 
   @override
-  String get noChildrenAddedYet => 'Aún no has agregado hijos';
+  String get noChildrenAddedYet => 'AГєn no has agregado hijos';
 
   @override
   String get ageLabel => 'Edad';
 
   @override
-  String get settings => 'Configuración';
+  String get settings => 'ConfiguraciГіn';
 
   @override
   String get aboutTheApp => 'Acerca de la app';
@@ -180,7 +180,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get aboutPublisherLine => 'YOUNGFASHIONSHOW';
 
   @override
-  String get aboutVersionLabel => 'VERSIÓN';
+  String get aboutVersionLabel => 'VERSIГ“N';
 
   @override
   String get aboutReleaseDateLabel => 'FECHA DE LANZAMIENTO';
@@ -201,7 +201,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get unitsOfMeasurement => 'Unidades de medida';
 
   @override
-  String get metricUnits => 'Métrico (cm, kg)';
+  String get timeDisplayFormat => 'Formato de hora';
+
+  @override
+  String get timeFormat24Hour => '24 horas';
+
+  @override
+  String get timeFormat12Hour => '12 horas (AM/PM)';
+
+  @override
+  String get metricUnits => 'MГ©trico (cm, kg)';
 
   @override
   String get imperialUnits => 'Americano (in, lb)';
@@ -213,13 +222,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get languageRussian => 'Ruso';
 
   @override
-  String get languageEnglish => 'Inglés';
+  String get languageEnglish => 'InglГ©s';
 
   @override
   String get languageUkrainian => 'Ucraniano';
 
   @override
-  String get languageSpanishUS => 'Español (EE. UU.)';
+  String get languageSpanishUS => 'EspaГ±ol (EE. UU.)';
 
   @override
   String get addChildTitle => 'Agregar hijo';
@@ -228,13 +237,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get firstName => 'Nombre';
 
   @override
-  String get gender => 'Género';
+  String get gender => 'GГ©nero';
 
   @override
-  String get genderBoy => 'Niño';
+  String get genderBoy => 'NiГ±o';
 
   @override
-  String get genderGirl => 'Niña';
+  String get genderGirl => 'NiГ±a';
 
   @override
   String get lastName => 'Apellido';
@@ -306,7 +315,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get measurementLengthUnitIn => 'in';
 
   @override
-  String get currentParticipation => 'Participación actual';
+  String get currentParticipation => 'ParticipaciГіn actual';
 
   @override
   String get unknownError => 'Error desconocido';
@@ -323,7 +332,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get journeyProgress => 'PROGRESO';
 
   @override
-  String get journeyPreparationPhase => 'FASE DE PREPARACIÓN';
+  String get journeyPreparationPhase => 'FASE DE PREPARACIГ“N';
 
   @override
   String get journeyMainEventTitle => 'EVENTO PRINCIPAL';
@@ -355,23 +364,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get eventSettingsPlaceholder =>
-      'Pronto verás aquí los ajustes del evento.';
+      'Pronto verГЎs aquГ­ los ajustes del evento.';
 
   @override
-  String get eventSettingsConfigurationPortal => 'PORTAL DE CONFIGURACIÓN';
+  String get eventSettingsConfigurationPortal => 'PORTAL DE CONFIGURACIГ“N';
 
   @override
   String get eventSettingsMainHeadline => 'Ajustes del evento';
 
   @override
-  String get eventSettingsMealTitle => 'Selección de comidas';
+  String get eventSettingsMealTitle => 'SelecciГіn de comidas';
 
   @override
   String get eventSettingsMealSubtitle =>
       'Elige un plato para el evento actual';
 
   @override
-  String get eventSettingsMealCta => 'GESTIONAR MENÚ';
+  String get eventSettingsMealCta => 'GESTIONAR MENГљ';
 
   @override
   String get eventSettingsRehearsalTitle => 'Reserva de ensayo';
@@ -397,15 +406,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get rehearsalNoSlotsConfigured =>
-      'Aún no hay franjas de ensayo para este evento.';
+      'AГєn no hay franjas de ensayo para este evento.';
 
   @override
   String get rehearsalLoadError =>
-      'No se pudieron cargar las franjas. Inténtalo de nuevo.';
+      'No se pudieron cargar las franjas. IntГ©ntalo de nuevo.';
 
   @override
   String get rehearsalBrandNotAssigned =>
-      'No hay marca asignada para este niño. La reserva de ensayos no está disponible.';
+      'No hay marca asignada para este niГ±o. La reserva de ensayos no estГЎ disponible.';
 
   @override
   String get rehearsalFull => 'Completo';
@@ -415,7 +424,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get rehearsalBookingFooterNote =>
-      'Si es posible, cambia con 24 h de antelación.';
+      'Si es posible, cambia con 24 h de antelaciГіn.';
 
   @override
   String get rehearsalBookedTitle => 'Ensayo reservado';
@@ -424,7 +433,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get rehearsalChangeBooking => 'Cambiar reserva';
 
   @override
-  String get rehearsalProgramLabel => 'Descripción';
+  String get rehearsalProgramLabel => 'DescripciГіn';
 
   @override
   String get rehearsalArriveEarly => 'Llega 15 minutos antes.';
@@ -436,7 +445,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get rehearsalBookingError => 'No se pudo completar la reserva.';
 
   @override
-  String get rehearsalSelectChild => 'Niño/a';
+  String get rehearsalSelectChild => 'NiГ±o/a';
 
   @override
   String get rehearsalUpdateBooking => 'Actualizar reserva';
@@ -446,7 +455,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get rehearsalChangeBookingLockedHint =>
-      'El organizador cerró los cambios de reserva. Contacta soporte si necesitas ayuda.';
+      'El organizador cerrГі los cambios de reserva. Contacta soporte si necesitas ayuda.';
 
   @override
   String get rehearsalMilestoneTitle => 'Ensayo general';
@@ -464,7 +473,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Reserva tu ensayo en Ajustes del evento.';
 
   @override
-  String get eventSettingsPackingTitle => 'Lista «No olvides»';
+  String get eventSettingsPackingTitle => 'Lista В«No olvidesВ»';
 
   @override
   String get eventSettingsPackingSubtitle => '';
@@ -474,17 +483,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get eventPackingLoadFailed =>
-      'No se pudo cargar la información. Inténtalo de nuevo.';
+      'No se pudo cargar la informaciГіn. IntГ©ntalo de nuevo.';
 
   @override
   String get eventPackingEmpty =>
-      'Aún no se añadió información para este evento.';
+      'AГєn no se aГ±adiГі informaciГіn para este evento.';
 
   @override
-  String get eventDescriptionTitle => 'Información del evento';
+  String get eventDescriptionTitle => 'InformaciГіn del evento';
 
   @override
-  String get eventProgressShowGallery => 'Galería';
+  String get eventProgressShowGallery => 'GalerГ­a';
 
   @override
   String get eventProgressCheckin => 'Check-in';
@@ -494,37 +503,37 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get eventProgressCheckinUnavailable =>
-      'El código de check-in aún no está disponible.';
+      'El cГіdigo de check-in aГєn no estГЎ disponible.';
 
   @override
   String get eventDescriptionLoadFailed =>
-      'No se pudo cargar la descripción. Inténtalo de nuevo.';
+      'No se pudo cargar la descripciГіn. IntГ©ntalo de nuevo.';
 
   @override
   String get eventDescriptionEmpty =>
-      'Aún no hay descripción de texto para este evento.';
+      'AГєn no hay descripciГіn de texto para este evento.';
 
   @override
-  String get eventSettingsBrandTitle => 'Requisitos de marca';
+  String get eventSettingsBrandTitle => 'Zapatos y calcetines';
 
   @override
   String get eventSettingsBrandSubtitle =>
       'Consulta las recomendaciones de la marca para participar en el evento';
 
   @override
-  String get eventSettingsBrandCta => 'VER GUÍAS';
+  String get eventSettingsBrandCta => 'VER GUГЌAS';
 
   @override
   String get brandRequirementsLoadFailed =>
-      'No se pudieron cargar los requisitos de marca. Inténtalo de nuevo.';
+      'No se pudieron cargar los requisitos de marca. IntГ©ntalo de nuevo.';
 
   @override
   String get brandRequirementsEmpty =>
-      'Aún no se añadieron requisitos de marca para este evento.';
+      'AГєn no se aГ±adieron requisitos de marca para este evento.';
 
   @override
   String get brandRequirementsEmptyItem =>
-      'Aún no se añadió texto de requisitos para esta marca.';
+      'AГєn no se aГ±adiГі texto de requisitos para esta marca.';
 
   @override
   String get brandRequirementsPickBrandTitle => 'Elige una marca';
@@ -533,6 +542,124 @@ class AppLocalizationsEs extends AppLocalizations {
   String brandRequirementsBrandNumber(int brandId) {
     return 'Marca $brandId';
   }
+
+  @override
+  String get eventSettingsParkingTitle => 'Parking';
+
+  @override
+  String get eventSettingsParkingSubtitle =>
+      'Abre tu pase de parking y estado de llegada';
+
+  @override
+  String get eventSettingsParkingCta => 'ABRIR PARKING';
+
+  @override
+  String get parkingChooseModeTitle => 'Modo parking';
+
+  @override
+  String get parkingChooseModeHint =>
+      'Elige el estado de pantalla para probar el visual.';
+
+  @override
+  String get parkingModeInactive => 'INACTIVO';
+
+  @override
+  String get parkingModeActive => 'ACTIVO';
+
+  @override
+  String get parkingInactiveHeadline => 'PARKING NO ACTIVO';
+
+  @override
+  String get parkingInactiveBody =>
+      'EL SERVICIO DE PARKING APARECERA AQUI DESPUES DE COMPRAR EL TICKET.';
+
+  @override
+  String get parkingInactiveBuyCta => 'COMPRAR';
+
+  @override
+  String get parkingInactiveVipBody =>
+      'PARA SOLICITAR EL PARKING VIP - RESERVA UNA PLAZA PARA TU AUTOMOVIL.';
+
+  @override
+  String get parkingInactiveVipBookCta => 'RESERVAR PARKING';
+
+  @override
+  String get parkingActiveTicketLabel => 'TICKET';
+
+  @override
+  String get parkingTicketMock1 => 'TICKET A1 · MODELO';
+
+  @override
+  String get parkingTicketMock2 => 'TICKET B7 · INVITADO';
+
+  @override
+  String get parkingActiveValetLabel => 'VALET SERVICE';
+
+  @override
+  String get parkingActiveStatusLine => 'PARKING ACTIVE';
+
+  @override
+  String get parkingActiveShowEntryPointCta => 'MOSTRAR PUNTO DE ENTRADA';
+
+  @override
+  String get parkingActiveCarLabel => 'AUTOMOVIL';
+
+  @override
+  String get parkingActiveRegistrationNumberLabel => 'NUMERO DE PLACA';
+
+  @override
+  String get parkingCreateTicketTitle => 'Crear ticket';
+
+  @override
+  String get parkingCreateEventLabel => 'Evento';
+
+  @override
+  String get parkingCreateAccountNameLabel => 'Nombre';
+
+  @override
+  String get parkingCreateCarModelLabel => 'MARCA Y MODELO';
+
+  @override
+  String get parkingCreateCarModelHint => 'Por ejemplo: Ford Mustang';
+
+  @override
+  String get parkingCreatePlateNumberLabel => 'NUMERO DE PLACA';
+
+  @override
+  String get parkingCreatePlateNumberHint => 'Por ejemplo: CA 7JXK921';
+
+  @override
+  String get parkingCreateRepeatPlateNumberLabel => 'REPITE EL NUMERO DE PLACA';
+
+  @override
+  String get parkingCreateRepeatPlateNumberHint =>
+      'Vuelve a escribir el numero de placa';
+
+  @override
+  String get parkingCreatePlateNumberMismatch =>
+      'Los numeros de placa no coinciden';
+
+  @override
+  String get parkingCreateBuyCta => 'COMPRAR';
+
+  @override
+  String get parkingCreateBookCta => 'RESERVAR PARKING';
+
+  @override
+  String get parkingCheckoutInBrowser => 'Completa el pago en tu navegador.';
+
+  @override
+  String get parkingPurchasedWithoutPayment => 'Ticket comprado con exito.';
+
+  @override
+  String get parkingVipBooked => 'Parking VIP reservado con exito.';
+
+  @override
+  String get parkingCheckoutError =>
+      'No se pudo iniciar el pago de parking. Intentalo de nuevo.';
+
+  @override
+  String get parkingActivePassLabel => 'CODIGO';
 
   @override
   String get eventSettingsChatTitle => 'Chat grupal';
@@ -546,22 +673,22 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chatRoomsLoadFailed =>
-      'No se pudieron cargar las salas de chat. Inténtalo de nuevo.';
+      'No se pudieron cargar las salas de chat. IntГ©ntalo de nuevo.';
 
   @override
   String get chatNoRooms =>
-      'Aún no hay salas de chat para tus marcas en este evento.';
+      'AГєn no hay salas de chat para tus marcas en este evento.';
 
   @override
-  String get chatNoMessagesYet => 'Sin mensajes todavía';
+  String get chatNoMessagesYet => 'Sin mensajes todavГ­a';
 
   @override
   String get chatLoadFailed =>
-      'No se pudieron cargar los mensajes. Inténtalo de nuevo.';
+      'No se pudieron cargar los mensajes. IntГ©ntalo de nuevo.';
 
   @override
   String get chatSendFailed =>
-      'No se pudo enviar el mensaje. Inténtalo de nuevo.';
+      'No se pudo enviar el mensaje. IntГ©ntalo de nuevo.';
 
   @override
   String get chatMessagePlaceholder => 'Mensaje al grupo...';
@@ -589,7 +716,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mealChoiceTitle => 'Elegir comida';
 
   @override
-  String get mealSelectChildLabel => 'Niño/a';
+  String get mealSelectChildLabel => 'NiГ±o/a';
 
   @override
   String get mealSelectDishLabel => 'Plato';
@@ -598,22 +725,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mealSave => 'PEDIR';
 
   @override
-  String get mealNoMealsConfigured => 'Aún no hay platos para este evento.';
+  String get mealNoMealsConfigured => 'AГєn no hay platos para este evento.';
 
   @override
   String get mealSaved => 'Guardado';
 
   @override
-  String get mealSaveError => 'No se pudo guardar. Inténtalo de nuevo.';
+  String get mealSaveError => 'No se pudo guardar. IntГ©ntalo de nuevo.';
 
   @override
-  String get mealOrdersClosed => 'El plazo para elegir el menú está cerrado';
+  String get mealOrdersClosed => 'El plazo para elegir el menГє estГЎ cerrado';
 
   @override
   String get mealPaid => 'Pagado';
 
   @override
-  String get mealPaidDetail => 'El menú de este evento está pagado.';
+  String get mealPaidDetail => 'El menГє de este evento estГЎ pagado.';
 
   @override
   String get mealPayInBrowser =>
@@ -621,14 +748,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get mealCheckoutError =>
-      'No se pudo iniciar el pago. Inténtalo de nuevo.';
+      'No se pudo iniciar el pago. IntГ©ntalo de nuevo.';
 
   @override
-  String get mealAwaitingPayment => 'Pedido registrado — pendiente de pago';
+  String get mealAwaitingPayment => 'Pedido registrado вЂ” pendiente de pago';
 
   @override
   String get mealAwaitingPaymentDetail =>
-      'Tu plato está guardado. Termina el pago en el navegador; el estado se actualizará cuando Stripe lo confirme.';
+      'Tu plato estГЎ guardado. Termina el pago en el navegador; el estado se actualizarГЎ cuando Stripe lo confirme.';
 
   @override
   String get noActiveEvents => 'No hay eventos activos';
@@ -640,19 +767,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get becomeAModel => 'SER MODELO';
 
   @override
-  String get latestHighlights => 'Últimos destacados';
+  String get latestHighlights => 'Гљltimos destacados';
 
   @override
   String get viewAll => 'VER TODO';
 
   @override
-  String get quickActions => 'Acciones rápidas';
+  String get quickActions => 'Acciones rГЎpidas';
 
   @override
   String get fillOutApplication => 'Completar\nsolicitud';
 
   @override
-  String get upcomingShows => 'Próximos\nshows';
+  String get upcomingShows => 'PrГіximos\nshows';
 
   @override
   String get manageKids => 'Mis\nhijos';
@@ -667,7 +794,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navProfile => 'Perfil';
 
   @override
-  String get navInfo => 'Información';
+  String get navInfo => 'InformaciГіn';
 
   @override
   String get continueButton => 'Continuar';
@@ -676,17 +803,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String get loading => 'Cargando...';
 
   @override
-  String get signOut => 'Cerrar sesión';
+  String get signOut => 'Cerrar sesiГіn';
 
   @override
-  String get tokenValidNext => 'Sesión válida. Siguiente: Inicio.';
+  String get tokenValidNext => 'SesiГіn vГЎlida. Siguiente: Inicio.';
 
   @override
   String get homePageTitle => 'Inicio';
 
   @override
   String youAreSignedIn(String name) {
-    return 'Has iniciado sesión$name.';
+    return 'Has iniciado sesiГіn$name.';
   }
 
   @override
@@ -698,13 +825,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get phoneHint => '+1234567890';
 
   @override
-  String get enterValidEmailShort => 'Ingresa un correo válido';
+  String get enterValidEmailShort => 'Ingresa un correo vГЎlido';
 
   @override
-  String get phoneMustStartWithPlusShort => 'El teléfono debe comenzar con +';
+  String get phoneMustStartWithPlusShort => 'El telГ©fono debe comenzar con +';
 
   @override
-  String get comingSoon => 'Próximamente';
+  String get comingSoon => 'PrГіximamente';
 
   @override
   String get hello => 'Hola';
@@ -716,11 +843,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get noRolesAssigned =>
-      'Aún no tienes roles asignados. Contacta a la administración.';
+      'AГєn no tienes roles asignados. Contacta a la administraciГіn.';
 
   @override
   String signedInAs(String name) {
-    return 'Sesión iniciada como $name';
+    return 'SesiГіn iniciada como $name';
   }
 
   @override
@@ -730,7 +857,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get birthdateDialogTitle => 'Fecha de nacimiento';
 
   @override
-  String get nextShowsTitle => 'Próximos shows';
+  String get nextShowsTitle => 'PrГіximos shows';
 
   @override
   String get nextShowsSeason => 'Temporada 2026';
@@ -763,23 +890,23 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ticketsOpenPdf => 'ABRIR';
 
   @override
-  String get ticketsPdfUnavailable => 'PDF aún no disponible';
+  String get ticketsPdfUnavailable => 'PDF aГєn no disponible';
 
   @override
   String get ticketsBuy => 'COMPRAR ENTRADA';
 
   @override
   String get ticketsBuyNoLink =>
-      'No hay enlace de compra. Añade la URL de la tienda de entradas para este evento en el admin o en la web en Info.';
+      'No hay enlace de compra. AГ±ade la URL de la tienda de entradas para este evento en el admin o en la web en Info.';
 
   @override
   String get ticketsBuyCouldNotOpen => 'No se pudo abrir el enlace.';
 
   @override
-  String get ticketsBuySubtitle => 'Asientos VIP y estándar disponibles';
+  String get ticketsBuySubtitle => 'Asientos VIP y estГЎndar disponibles';
 
   @override
-  String get ticketsNoEvents => 'Aún no hay eventos con entradas';
+  String get ticketsNoEvents => 'AГєn no hay eventos con entradas';
 
   @override
   String get ticketsNoneForEvent => 'No hay entradas para este evento';
@@ -798,10 +925,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get contactFormLinkMissing =>
-      'No hay enlace al formulario. Añade la URL en Ajustes generales de la app en el panel.';
+      'No hay enlace al formulario. AГ±ade la URL en Ajustes generales de la app en el panel.';
 
   @override
-  String get infoHubTitle => 'Centro de información';
+  String get infoHubTitle => 'Centro de informaciГіn';
 
   @override
   String get infoMenuAboutYfs => 'Acerca de YFS';
@@ -817,7 +944,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get infoFooterCopyright =>
-      '© 2024 Young Fashion Series. Todos los derechos reservados.';
+      'В© 2024 Young Fashion Series. Todos los derechos reservados.';
 
   @override
   String parentProgressLabel(int completed, int total) {
@@ -826,27 +953,27 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get appUpdateRequiredMessage =>
-      'Actualiza la aplicación para continuar.';
+      'Actualiza la aplicaciГіn para continuar.';
 
   @override
-  String get appUpdateButton => 'Actualizar aplicación';
+  String get appUpdateButton => 'Actualizar aplicaciГіn';
 
   @override
   String get showAll => 'Ver todo';
 
   @override
-  String get staffNoneSelected => '— Ninguno —';
+  String get staffNoneSelected => 'вЂ” Ninguno вЂ”';
 
   @override
   String get staffRoleInactive => 'INACTIVA';
 
   @override
   String get staffWorkerStatusRefreshFailed =>
-      'No se pudo actualizar el estado del rol. Comprueba la conexión.';
+      'No se pudo actualizar el estado del rol. Comprueba la conexiГіn.';
 
   @override
   String get staffScanRoleInactive =>
-      'Este rol fue desactivado en el panel. El escaneo no está disponible.';
+      'Este rol fue desactivado en el panel. El escaneo no estГЎ disponible.';
 
   @override
   String staffScanFailed(String error) {
@@ -864,7 +991,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chatCouldNotPickPhoto => 'No se pudo elegir la foto';
 
   @override
-  String get staffChildProfileTitle => 'Perfil del niño';
+  String get staffChildProfileTitle => 'Perfil del niГ±o';
 
   @override
   String get staffCurrentStage => 'ETAPA ACTUAL';
@@ -876,7 +1003,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get staffChildDetailEmpty =>
-      'No hay datos del niño en la base de datos';
+      'No hay datos del niГ±o en la base de datos';
 
   @override
   String get staffLoadFailed => 'Error al cargar';
@@ -906,7 +1033,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String staffAgeYearsOld(int age) {
-    return '$age años';
+    return '$age aГ±os';
   }
 
   @override
@@ -934,11 +1061,288 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get contactManagerSendFailed =>
-      'No se pudo enviar. Inténtalo más tarde.';
+      'No se pudo enviar. IntГ©ntalo mГЎs tarde.';
 
   @override
   String get contactManagerServiceUnavailable =>
-      'El contacto no está disponible temporalmente. Inténtalo más tarde.';
+      'El contacto no estГЎ disponible temporalmente. IntГ©ntalo mГЎs tarde.';
+
+  @override
+  String get close => 'Cerrar';
+
+  @override
+  String get staffPortalTitle => 'Portal del personal';
+
+  @override
+  String get staffActiveEvent => 'Evento activo';
+
+  @override
+  String get staffActiveStage => 'Etapa activa';
+
+  @override
+  String get staffSelectEvent => 'Selecciona evento';
+
+  @override
+  String get staffSelectEventInSettings =>
+      'Selecciona un evento en Ajustes del personal';
+
+  @override
+  String get staffSelectStage => 'Selecciona etapa';
+
+  @override
+  String staffPreparatoryStageLabel(String stageName) {
+    return 'Prep: $stageName';
+  }
+
+  @override
+  String get staffScanButton => 'ESCANEAR';
+
+  @override
+  String get staffParkingButton => 'PARKING';
+
+  @override
+  String get staffTapToScanModelLanyard =>
+      'TOCA PARA ESCANEAR EL GAFETE DE LA MODELO';
+
+  @override
+  String get staffTapToScanParkingQr => 'TOCA PARA ESCANEAR QR DE PARKING';
+
+  @override
+  String get staffCurrentTask => 'Tarea actual';
+
+  @override
+  String get staffUtilitiesAndTools => 'UTILIDADES Y HERRAMIENTAS';
+
+  @override
+  String get staffScanForInfoTitle => 'Escanear para info';
+
+  @override
+  String get staffScanForInfoSubtitle => 'Escáner general de activos e ID';
+
+  @override
+  String get staffToiletRequest => 'Solicitud de baño';
+
+  @override
+  String get staffRestroomLog => 'REGISTRO DE BAÑO';
+
+  @override
+  String get staffSettingsCardTitle => 'Ajustes del personal';
+
+  @override
+  String get staffPreferences => 'PREFERENCIAS';
+
+  @override
+  String get staffSupervisorRoleTitle => 'Rol de supervisor';
+
+  @override
+  String get staffSupervisorRoleDescription =>
+      'Gestiona el flujo del evento, supervisa a los fotógrafos y asegura que todos los niños sean registrados. Sigue el progreso en tiempo real.';
+
+  @override
+  String get staffCurrentStageLabel => 'Etapa actual';
+
+  @override
+  String get staffNoMainStagesAvailable =>
+      'No hay etapas principales disponibles para este evento.';
+
+  @override
+  String get staffChildRegistry => 'Registro de niños';
+
+  @override
+  String staffChildrenListed(int count) {
+    return '$count niños en lista';
+  }
+
+  @override
+  String get staffSelectActiveEventForRegistry =>
+      'Selecciona un evento activo en Ajustes para ver el registro de niños.';
+
+  @override
+  String get staffNoChildrenAssigned =>
+      'No hay niños asignados para este evento.';
+
+  @override
+  String get staffTableProfile => 'PERFIL';
+
+  @override
+  String get staffTableName => 'NOMBRE';
+
+  @override
+  String get staffTableStatus => 'ESTADO';
+
+  @override
+  String get staffTableAction => 'ACCIÓN';
+
+  @override
+  String get staffYes => 'Sí';
+
+  @override
+  String get staffNo => 'No';
+
+  @override
+  String get staffRoleHostessTitle => 'Rol: hostess';
+
+  @override
+  String get staffRoleHostessPlaceholder =>
+      'La pantalla del rol hostess se añadirá más tarde.';
+
+  @override
+  String get staffRoleInterviewTitle => 'Rol: entrevista';
+
+  @override
+  String get staffRoleInterviewPlaceholder =>
+      'La pantalla del rol entrevista se añadirá más tarde.';
+
+  @override
+  String get staffRoleLunchesTitle => 'Rol: almuerzos';
+
+  @override
+  String get staffRoleLunchesPlaceholder =>
+      'La pantalla del rol almuerzos se añadirá más tarde.';
+
+  @override
+  String get staffRoleSuperadminTitle => 'Rol: superadmin';
+
+  @override
+  String get staffRoleSuperadminPlaceholder =>
+      'La pantalla del rol superadmin se añadirá más tarde.';
+
+  @override
+  String get staffNavHome => 'Inicio';
+
+  @override
+  String get staffNavEvent => 'Evento';
+
+  @override
+  String get staffNavMore => 'Más';
+
+  @override
+  String get staffAccessBadge => 'ACCESO DE PERSONAL';
+
+  @override
+  String get staffVenueAndContact => 'Sede y contacto';
+
+  @override
+  String get staffMainOffice => 'Oficina principal';
+
+  @override
+  String get staffSecurity => 'Seguridad';
+
+  @override
+  String get staffScanHeaderParking => 'Escaneo de parking';
+
+  @override
+  String get staffScanHeaderInfo => 'Escanear para info';
+
+  @override
+  String get staffScanHeaderQr => 'Escanear código QR';
+
+  @override
+  String get staffScanHintParking =>
+      'Escanea QR de parking para mostrar datos del ticket';
+
+  @override
+  String get staffScanHintInfo =>
+      'Escanea gafete de niño o padre para ver el perfil';
+
+  @override
+  String get staffScanHintQr => 'Alinea el código QR dentro del marco';
+
+  @override
+  String get staffScanErrorTitle => 'Error de escaneo';
+
+  @override
+  String get staffScanErrorUnknown => 'Error de escaneo desconocido.';
+
+  @override
+  String get staffParkingTicketTitle => 'Ticket de parking';
+
+  @override
+  String get staffParkingFieldEvent => 'Evento';
+
+  @override
+  String get staffParkingFieldClient => 'Cliente';
+
+  @override
+  String get staffParkingFieldCar => 'Auto';
+
+  @override
+  String get staffParkingFieldPlateNumber => 'Placa';
+
+  @override
+  String get staffParkingFieldVipClient => 'Cliente VIP';
+
+  @override
+  String get staffShowProgressTitle => 'Progreso del show';
+
+  @override
+  String get staffCouldNotOpenDialer =>
+      'No se pudo abrir el marcador telefónico';
+
+  @override
+  String get staffRealtimeTracking => 'SEGUIMIENTO EN TIEMPO REAL';
+
+  @override
+  String get staffEstimatedCompletion => 'COMPLETADO ESTIMADO';
+
+  @override
+  String get staffNoMainStagesInPlan =>
+      'Aún no hay etapas principales en el plan.';
+
+  @override
+  String get staffStatusDone => 'HECHO';
+
+  @override
+  String get staffStatusInProgress => 'EN PROCESO';
+
+  @override
+  String get staffStatusPending => 'PENDIENTE';
+
+  @override
+  String get staffContactDetails => 'Datos de contacto';
+
+  @override
+  String get staffPrimaryParent => 'PADRE/MADRE PRINCIPAL';
+
+  @override
+  String staffIdLabel(String id) {
+    return 'ID de personal: $id';
+  }
+
+  @override
+  String get staffSwitchRole => 'Cambiar rol';
+
+  @override
+  String staffCurrentRoleLabel(String role) {
+    return 'ACTUAL: $role';
+  }
+
+  @override
+  String get staffRoleSubtitleScan => 'Escaneo QR y flujo de etapas';
+
+  @override
+  String get staffRoleSubtitleSupervisor => 'Acceso completo y gestión';
+
+  @override
+  String get staffRoleSubtitleHostess => 'Soporte de invitados y zonas';
+
+  @override
+  String get staffRoleSubtitleParking => 'Flujo y acceso de parking';
+
+  @override
+  String get staffRoleSubtitleInterview => 'Flujo de entrevistas';
+
+  @override
+  String get staffRoleSubtitleLunches => 'Comidas y almuerzos';
+
+  @override
+  String get staffRoleSubtitleSuperadmin => 'Herramientas de superadmin';
+
+  @override
+  String get staffRoleSubtitlePhotographer => 'Captura y carga de medios';
+
+  @override
+  String get staffRoleSubtitleStylist => 'Vestuario y maquillaje';
 }
 
 /// The translations for Spanish Castilian, as used in the United States (`es_US`).
@@ -946,56 +1350,56 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   AppLocalizationsEsUs() : super('es_US');
 
   @override
-  String get signIn => 'Iniciar sesión';
+  String get signIn => 'Iniciar sesiГіn';
 
   @override
   String get signUp => 'Registrarse';
 
   @override
-  String get email => 'Correo electrónico';
+  String get email => 'Correo electrГіnico';
 
   @override
-  String get password => 'Contraseña';
+  String get password => 'ContraseГ±a';
 
   @override
-  String get emailRequired => 'Ingresa tu correo electrónico';
+  String get emailRequired => 'Ingresa tu correo electrГіnico';
 
   @override
-  String get enterValidEmail => 'Ingresa un correo electrónico válido';
+  String get enterValidEmail => 'Ingresa un correo electrГіnico vГЎlido';
 
   @override
-  String get passwordRequired => 'Ingresa tu contraseña';
+  String get passwordRequired => 'Ingresa tu contraseГ±a';
 
   @override
-  String get hidePassword => 'Ocultar contraseña';
+  String get hidePassword => 'Ocultar contraseГ±a';
 
   @override
-  String get showPassword => 'Mostrar contraseña';
+  String get showPassword => 'Mostrar contraseГ±a';
 
   @override
   String signInFailed(String error) {
-    return 'Error al iniciar sesión: $error';
+    return 'Error al iniciar sesiГіn: $error';
   }
 
   @override
   String get apiEndpointNotFoundHint =>
-      'El servidor no encontró la API (404). Usa la raíz del sitio sin «/api» al final; la app llama a /api/app/login sola. Si Laravel está en una subcarpeta, incluye la ruta hasta public (p. ej. https://example.com/myapp/public).';
+      'El servidor no encontrГі la API (404). Usa la raГ­z del sitio sin В«/apiВ» al final; la app llama a /api/app/login sola. Si Laravel estГЎ en una subcarpeta, incluye la ruta hasta public (p. ej. https://example.com/myapp/public).';
 
   @override
   String get notificationsTitle => 'Notificaciones';
 
   @override
   String get notificationsLoadFailed =>
-      'No se pudieron cargar las notificaciones. Inténtalo de nuevo.';
+      'No se pudieron cargar las notificaciones. IntГ©ntalo de nuevo.';
 
   @override
-  String get notificationsEmpty => 'Aún no hay notificaciones.';
+  String get notificationsEmpty => 'AГєn no hay notificaciones.';
 
   @override
   String get notificationsNewMark => 'Nuevo';
 
   @override
-  String get notificationDetailsTitle => 'Notificación';
+  String get notificationDetailsTitle => 'NotificaciГіn';
 
   @override
   String get createAccount => 'Crear cuenta';
@@ -1007,32 +1411,32 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get nameRequired => 'Ingresa tu nombre';
 
   @override
-  String get phone => 'Teléfono';
+  String get phone => 'TelГ©fono';
 
   @override
-  String get phoneRequired => 'Ingresa tu teléfono';
+  String get phoneRequired => 'Ingresa tu telГ©fono';
 
   @override
-  String get phoneMustStartWithPlus => 'El teléfono debe comenzar con +';
+  String get phoneMustStartWithPlus => 'El telГ©fono debe comenzar con +';
 
   @override
-  String get enterValidPhone => 'Ingresa un número de teléfono válido';
+  String get enterValidPhone => 'Ingresa un nГєmero de telГ©fono vГЎlido';
 
   @override
-  String get confirmPassword => 'Confirmar contraseña';
+  String get confirmPassword => 'Confirmar contraseГ±a';
 
   @override
-  String get passwordsDoNotMatch => 'Las contraseñas no coinciden';
+  String get passwordsDoNotMatch => 'Las contraseГ±as no coinciden';
 
   @override
   String get passwordMinLength =>
-      'La contraseña debe tener al menos 8 caracteres';
+      'La contraseГ±a debe tener al menos 8 caracteres';
 
   @override
   String get atLeast8Chars => 'Al menos 8 caracteres';
 
   @override
-  String get backToSignIn => 'Volver a iniciar sesión';
+  String get backToSignIn => 'Volver a iniciar sesiГіn';
 
   @override
   String registrationFailed(String error) {
@@ -1043,7 +1447,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get account => 'Cuenta';
 
   @override
-  String get editInfo => 'EDITAR INFORMACIÓN';
+  String get editInfo => 'EDITAR INFORMACIГ“N';
 
   @override
   String get fullName => 'Nombre';
@@ -1052,7 +1456,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get retry => 'Reintentar';
 
   @override
-  String get accountSettings => 'Configuración de la cuenta';
+  String get accountSettings => 'ConfiguraciГіn de la cuenta';
 
   @override
   String get editProfile => 'Editar perfil';
@@ -1061,18 +1465,18 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get deleteAccount => 'Eliminar cuenta';
 
   @override
-  String get deleteAccountConfirmTitle => '¿Eliminar cuenta?';
+  String get deleteAccountConfirmTitle => 'ВїEliminar cuenta?';
 
   @override
   String get deleteAccountConfirmMessage =>
-      '¿Seguro que quieres eliminar tu cuenta de forma permanente? Esta acción no se puede deshacer.';
+      'ВїSeguro que quieres eliminar tu cuenta de forma permanente? Esta acciГіn no se puede deshacer.';
 
   @override
-  String get deleteAccountSecondTitle => 'Qué se eliminará';
+  String get deleteAccountSecondTitle => 'QuГ© se eliminarГЎ';
 
   @override
   String get deleteAccountSecondMessage =>
-      'Se eliminará de forma permanente de nuestros sistemas:\n\n• Tu cuenta y perfil\n• Todos los niños vinculados a tu cuenta\n• Todas las asignaciones a eventos, progreso en etapas, entradas y comidas\n• Fotos y demás datos de los niños\n• Tu acceso a chats de eventos y notificaciones en la app\n\nAlgunos registros de pago o contables pueden conservarse cuando lo exija la ley.';
+      'Se eliminarГЎ de forma permanente de nuestros sistemas:\n\nвЂў Tu cuenta y perfil\nвЂў Todos los niГ±os vinculados a tu cuenta\nвЂў Todas las asignaciones a eventos, progreso en etapas, entradas y comidas\nвЂў Fotos y demГЎs datos de los niГ±os\nвЂў Tu acceso a chats de eventos y notificaciones en la app\n\nAlgunos registros de pago o contables pueden conservarse cuando lo exija la ley.';
 
   @override
   String get deleteAccountContinue => 'Continuar';
@@ -1081,7 +1485,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get deleteAccountConfirmAction => 'Eliminar para siempre';
 
   @override
-  String get deleteAccountWorking => 'Eliminando cuenta…';
+  String get deleteAccountWorking => 'Eliminando cuentaвЂ¦';
 
   @override
   String get save => 'Guardar';
@@ -1099,13 +1503,13 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get addChild => 'Agregar hijo';
 
   @override
-  String get noChildrenAddedYet => 'Aún no has agregado hijos';
+  String get noChildrenAddedYet => 'AГєn no has agregado hijos';
 
   @override
   String get ageLabel => 'Edad';
 
   @override
-  String get settings => 'Configuración';
+  String get settings => 'ConfiguraciГіn';
 
   @override
   String get aboutTheApp => 'Acerca de la app';
@@ -1117,7 +1521,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get aboutPublisherLine => 'YOUNGFASHIONSHOW';
 
   @override
-  String get aboutVersionLabel => 'VERSIÓN';
+  String get aboutVersionLabel => 'VERSIГ“N';
 
   @override
   String get aboutReleaseDateLabel => 'FECHA DE LANZAMIENTO';
@@ -1138,7 +1542,16 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get unitsOfMeasurement => 'Unidades de medida';
 
   @override
-  String get metricUnits => 'Métrico (cm, kg)';
+  String get timeDisplayFormat => 'Formato de hora';
+
+  @override
+  String get timeFormat24Hour => '24 horas';
+
+  @override
+  String get timeFormat12Hour => '12 horas (AM/PM)';
+
+  @override
+  String get metricUnits => 'MГ©trico (cm, kg)';
 
   @override
   String get imperialUnits => 'Americano (in, lb)';
@@ -1150,13 +1563,13 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get languageRussian => 'Ruso';
 
   @override
-  String get languageEnglish => 'Inglés';
+  String get languageEnglish => 'InglГ©s';
 
   @override
   String get languageUkrainian => 'Ucraniano';
 
   @override
-  String get languageSpanishUS => 'Español (EE. UU.)';
+  String get languageSpanishUS => 'EspaГ±ol (EE. UU.)';
 
   @override
   String get addChildTitle => 'Agregar hijo';
@@ -1165,13 +1578,13 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get firstName => 'Nombre';
 
   @override
-  String get gender => 'Género';
+  String get gender => 'GГ©nero';
 
   @override
-  String get genderBoy => 'Niño';
+  String get genderBoy => 'NiГ±o';
 
   @override
-  String get genderGirl => 'Niña';
+  String get genderGirl => 'NiГ±a';
 
   @override
   String get lastName => 'Apellido';
@@ -1243,7 +1656,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get measurementLengthUnitIn => 'in';
 
   @override
-  String get currentParticipation => 'Participación actual';
+  String get currentParticipation => 'ParticipaciГіn actual';
 
   @override
   String get unknownError => 'Error desconocido';
@@ -1260,7 +1673,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get journeyProgress => 'PROGRESO';
 
   @override
-  String get journeyPreparationPhase => 'FASE DE PREPARACIÓN';
+  String get journeyPreparationPhase => 'FASE DE PREPARACIГ“N';
 
   @override
   String get journeyMainEventTitle => 'EVENTO PRINCIPAL';
@@ -1292,23 +1705,23 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get eventSettingsPlaceholder =>
-      'Pronto verás aquí los ajustes del evento.';
+      'Pronto verГЎs aquГ­ los ajustes del evento.';
 
   @override
-  String get eventSettingsConfigurationPortal => 'PORTAL DE CONFIGURACIÓN';
+  String get eventSettingsConfigurationPortal => 'PORTAL DE CONFIGURACIГ“N';
 
   @override
   String get eventSettingsMainHeadline => 'Ajustes del evento';
 
   @override
-  String get eventSettingsMealTitle => 'Selección de comidas';
+  String get eventSettingsMealTitle => 'SelecciГіn de comidas';
 
   @override
   String get eventSettingsMealSubtitle =>
       'Elige un plato para el evento actual';
 
   @override
-  String get eventSettingsMealCta => 'GESTIONAR MENÚ';
+  String get eventSettingsMealCta => 'GESTIONAR MENГљ';
 
   @override
   String get eventSettingsRehearsalTitle => 'Reserva de ensayo';
@@ -1334,15 +1747,15 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get rehearsalNoSlotsConfigured =>
-      'Aún no hay franjas de ensayo para este evento.';
+      'AГєn no hay franjas de ensayo para este evento.';
 
   @override
   String get rehearsalLoadError =>
-      'No se pudieron cargar las franjas. Inténtalo de nuevo.';
+      'No se pudieron cargar las franjas. IntГ©ntalo de nuevo.';
 
   @override
   String get rehearsalBrandNotAssigned =>
-      'No hay marca asignada para este niño. La reserva de ensayos no está disponible.';
+      'No hay marca asignada para este niГ±o. La reserva de ensayos no estГЎ disponible.';
 
   @override
   String get rehearsalFull => 'Completo';
@@ -1352,7 +1765,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get rehearsalBookingFooterNote =>
-      'Si es posible, cambia con 24 h de antelación.';
+      'Si es posible, cambia con 24 h de antelaciГіn.';
 
   @override
   String get rehearsalBookedTitle => 'Ensayo reservado';
@@ -1361,7 +1774,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get rehearsalChangeBooking => 'Cambiar reserva';
 
   @override
-  String get rehearsalProgramLabel => 'Descripción';
+  String get rehearsalProgramLabel => 'DescripciГіn';
 
   @override
   String get rehearsalArriveEarly => 'Llega 15 minutos antes.';
@@ -1373,7 +1786,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get rehearsalBookingError => 'No se pudo completar la reserva.';
 
   @override
-  String get rehearsalSelectChild => 'Niño/a';
+  String get rehearsalSelectChild => 'NiГ±o/a';
 
   @override
   String get rehearsalUpdateBooking => 'Actualizar reserva';
@@ -1383,7 +1796,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get rehearsalChangeBookingLockedHint =>
-      'El organizador cerró los cambios de reserva. Contacta soporte si necesitas ayuda.';
+      'El organizador cerrГі los cambios de reserva. Contacta soporte si necesitas ayuda.';
 
   @override
   String get rehearsalMilestoneTitle => 'Ensayo general';
@@ -1401,7 +1814,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
       'Reserva tu ensayo en Ajustes del evento.';
 
   @override
-  String get eventSettingsPackingTitle => 'Lista «No olvides»';
+  String get eventSettingsPackingTitle => 'Lista В«No olvidesВ»';
 
   @override
   String get eventSettingsPackingSubtitle => '';
@@ -1411,17 +1824,17 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get eventPackingLoadFailed =>
-      'No se pudo cargar la información. Inténtalo de nuevo.';
+      'No se pudo cargar la informaciГіn. IntГ©ntalo de nuevo.';
 
   @override
   String get eventPackingEmpty =>
-      'Aún no se añadió información para este evento.';
+      'AГєn no se aГ±adiГі informaciГіn para este evento.';
 
   @override
-  String get eventDescriptionTitle => 'Información del evento';
+  String get eventDescriptionTitle => 'InformaciГіn del evento';
 
   @override
-  String get eventProgressShowGallery => 'Galería';
+  String get eventProgressShowGallery => 'GalerГ­a';
 
   @override
   String get eventProgressCheckin => 'Check-in';
@@ -1431,37 +1844,37 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get eventProgressCheckinUnavailable =>
-      'El código de check-in aún no está disponible.';
+      'El cГіdigo de check-in aГєn no estГЎ disponible.';
 
   @override
   String get eventDescriptionLoadFailed =>
-      'No se pudo cargar la descripción. Inténtalo de nuevo.';
+      'No se pudo cargar la descripciГіn. IntГ©ntalo de nuevo.';
 
   @override
   String get eventDescriptionEmpty =>
-      'Aún no hay descripción de texto para este evento.';
+      'AГєn no hay descripciГіn de texto para este evento.';
 
   @override
-  String get eventSettingsBrandTitle => 'Requisitos de marca';
+  String get eventSettingsBrandTitle => 'Zapatos y calcetines';
 
   @override
   String get eventSettingsBrandSubtitle =>
       'Consulta las recomendaciones de la marca para participar en el evento';
 
   @override
-  String get eventSettingsBrandCta => 'VER GUÍAS';
+  String get eventSettingsBrandCta => 'VER GUГЌAS';
 
   @override
   String get brandRequirementsLoadFailed =>
-      'No se pudieron cargar los requisitos de marca. Inténtalo de nuevo.';
+      'No se pudieron cargar los requisitos de marca. IntГ©ntalo de nuevo.';
 
   @override
   String get brandRequirementsEmpty =>
-      'Aún no se añadieron requisitos de marca para este evento.';
+      'AГєn no se aГ±adieron requisitos de marca para este evento.';
 
   @override
   String get brandRequirementsEmptyItem =>
-      'Aún no se añadió texto de requisitos para esta marca.';
+      'AГєn no se aГ±adiГі texto de requisitos para esta marca.';
 
   @override
   String get brandRequirementsPickBrandTitle => 'Elige una marca';
@@ -1470,6 +1883,124 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String brandRequirementsBrandNumber(int brandId) {
     return 'Marca $brandId';
   }
+
+  @override
+  String get eventSettingsParkingTitle => 'Parking';
+
+  @override
+  String get eventSettingsParkingSubtitle =>
+      'Abre tu pase de parking y estado de llegada';
+
+  @override
+  String get eventSettingsParkingCta => 'ABRIR PARKING';
+
+  @override
+  String get parkingChooseModeTitle => 'Modo parking';
+
+  @override
+  String get parkingChooseModeHint =>
+      'Elige el estado de pantalla para probar el visual.';
+
+  @override
+  String get parkingModeInactive => 'INACTIVO';
+
+  @override
+  String get parkingModeActive => 'ACTIVO';
+
+  @override
+  String get parkingInactiveHeadline => 'PARKING NO ACTIVO';
+
+  @override
+  String get parkingInactiveBody =>
+      'EL SERVICIO DE PARKING APARECERA AQUI DESPUES DE COMPRAR EL TICKET.';
+
+  @override
+  String get parkingInactiveBuyCta => 'COMPRAR';
+
+  @override
+  String get parkingInactiveVipBody =>
+      'PARA SOLICITAR EL PARKING VIP - RESERVA UNA PLAZA PARA TU AUTOMOVIL.';
+
+  @override
+  String get parkingInactiveVipBookCta => 'RESERVAR PARKING';
+
+  @override
+  String get parkingActiveTicketLabel => 'TICKET';
+
+  @override
+  String get parkingTicketMock1 => 'TICKET A1 · MODELO';
+
+  @override
+  String get parkingTicketMock2 => 'TICKET B7 · INVITADO';
+
+  @override
+  String get parkingActiveValetLabel => 'VALET SERVICE';
+
+  @override
+  String get parkingActiveStatusLine => 'PARKING ACTIVE';
+
+  @override
+  String get parkingActiveShowEntryPointCta => 'MOSTRAR PUNTO DE ENTRADA';
+
+  @override
+  String get parkingActiveCarLabel => 'AUTOMOVIL';
+
+  @override
+  String get parkingActiveRegistrationNumberLabel => 'NUMERO DE PLACA';
+
+  @override
+  String get parkingCreateTicketTitle => 'Crear ticket';
+
+  @override
+  String get parkingCreateEventLabel => 'Evento';
+
+  @override
+  String get parkingCreateAccountNameLabel => 'Nombre';
+
+  @override
+  String get parkingCreateCarModelLabel => 'MARCA Y MODELO';
+
+  @override
+  String get parkingCreateCarModelHint => 'Por ejemplo: Ford Mustang';
+
+  @override
+  String get parkingCreatePlateNumberLabel => 'NUMERO DE PLACA';
+
+  @override
+  String get parkingCreatePlateNumberHint => 'Por ejemplo: CA 7JXK921';
+
+  @override
+  String get parkingCreateRepeatPlateNumberLabel => 'REPITE EL NUMERO DE PLACA';
+
+  @override
+  String get parkingCreateRepeatPlateNumberHint =>
+      'Vuelve a escribir el numero de placa';
+
+  @override
+  String get parkingCreatePlateNumberMismatch =>
+      'Los numeros de placa no coinciden';
+
+  @override
+  String get parkingCreateBuyCta => 'COMPRAR';
+
+  @override
+  String get parkingCreateBookCta => 'RESERVAR PARKING';
+
+  @override
+  String get parkingCheckoutInBrowser => 'Completa el pago en tu navegador.';
+
+  @override
+  String get parkingPurchasedWithoutPayment => 'Ticket comprado con exito.';
+
+  @override
+  String get parkingVipBooked => 'Parking VIP reservado con exito.';
+
+  @override
+  String get parkingCheckoutError =>
+      'No se pudo iniciar el pago de parking. Intentalo de nuevo.';
+
+  @override
+  String get parkingActivePassLabel => 'CODIGO';
 
   @override
   String get eventSettingsChatTitle => 'Chat grupal';
@@ -1483,22 +2014,22 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get chatRoomsLoadFailed =>
-      'No se pudieron cargar las salas de chat. Inténtalo de nuevo.';
+      'No se pudieron cargar las salas de chat. IntГ©ntalo de nuevo.';
 
   @override
   String get chatNoRooms =>
-      'Aún no hay salas de chat para tus marcas en este evento.';
+      'AГєn no hay salas de chat para tus marcas en este evento.';
 
   @override
-  String get chatNoMessagesYet => 'Sin mensajes todavía';
+  String get chatNoMessagesYet => 'Sin mensajes todavГ­a';
 
   @override
   String get chatLoadFailed =>
-      'No se pudieron cargar los mensajes. Inténtalo de nuevo.';
+      'No se pudieron cargar los mensajes. IntГ©ntalo de nuevo.';
 
   @override
   String get chatSendFailed =>
-      'No se pudo enviar el mensaje. Inténtalo de nuevo.';
+      'No se pudo enviar el mensaje. IntГ©ntalo de nuevo.';
 
   @override
   String get chatMessagePlaceholder => 'Mensaje al grupo...';
@@ -1526,7 +2057,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get mealChoiceTitle => 'Elegir comida';
 
   @override
-  String get mealSelectChildLabel => 'Niño/a';
+  String get mealSelectChildLabel => 'NiГ±o/a';
 
   @override
   String get mealSelectDishLabel => 'Plato';
@@ -1535,22 +2066,22 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get mealSave => 'PEDIR';
 
   @override
-  String get mealNoMealsConfigured => 'Aún no hay platos para este evento.';
+  String get mealNoMealsConfigured => 'AГєn no hay platos para este evento.';
 
   @override
   String get mealSaved => 'Guardado';
 
   @override
-  String get mealSaveError => 'No se pudo guardar. Inténtalo de nuevo.';
+  String get mealSaveError => 'No se pudo guardar. IntГ©ntalo de nuevo.';
 
   @override
-  String get mealOrdersClosed => 'El plazo para elegir el menú está cerrado';
+  String get mealOrdersClosed => 'El plazo para elegir el menГє estГЎ cerrado';
 
   @override
   String get mealPaid => 'Pagado';
 
   @override
-  String get mealPaidDetail => 'El menú de este evento está pagado.';
+  String get mealPaidDetail => 'El menГє de este evento estГЎ pagado.';
 
   @override
   String get mealPayInBrowser =>
@@ -1558,14 +2089,14 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get mealCheckoutError =>
-      'No se pudo iniciar el pago. Inténtalo de nuevo.';
+      'No se pudo iniciar el pago. IntГ©ntalo de nuevo.';
 
   @override
-  String get mealAwaitingPayment => 'Pedido registrado — pendiente de pago';
+  String get mealAwaitingPayment => 'Pedido registrado вЂ” pendiente de pago';
 
   @override
   String get mealAwaitingPaymentDetail =>
-      'Tu plato está guardado. Termina el pago en el navegador; el estado se actualizará cuando Stripe lo confirme.';
+      'Tu plato estГЎ guardado. Termina el pago en el navegador; el estado se actualizarГЎ cuando Stripe lo confirme.';
 
   @override
   String get noActiveEvents => 'No hay eventos activos';
@@ -1577,19 +2108,19 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get becomeAModel => 'SER MODELO';
 
   @override
-  String get latestHighlights => 'Últimos destacados';
+  String get latestHighlights => 'Гљltimos destacados';
 
   @override
   String get viewAll => 'VER TODO';
 
   @override
-  String get quickActions => 'Acciones rápidas';
+  String get quickActions => 'Acciones rГЎpidas';
 
   @override
   String get fillOutApplication => 'Completar\nsolicitud';
 
   @override
-  String get upcomingShows => 'Próximos\nshows';
+  String get upcomingShows => 'PrГіximos\nshows';
 
   @override
   String get manageKids => 'Mis\nhijos';
@@ -1604,7 +2135,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get navProfile => 'Perfil';
 
   @override
-  String get navInfo => 'Información';
+  String get navInfo => 'InformaciГіn';
 
   @override
   String get continueButton => 'Continuar';
@@ -1613,17 +2144,17 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get loading => 'Cargando...';
 
   @override
-  String get signOut => 'Cerrar sesión';
+  String get signOut => 'Cerrar sesiГіn';
 
   @override
-  String get tokenValidNext => 'Sesión válida. Siguiente: Inicio.';
+  String get tokenValidNext => 'SesiГіn vГЎlida. Siguiente: Inicio.';
 
   @override
   String get homePageTitle => 'Inicio';
 
   @override
   String youAreSignedIn(String name) {
-    return 'Has iniciado sesión$name.';
+    return 'Has iniciado sesiГіn$name.';
   }
 
   @override
@@ -1635,13 +2166,13 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get phoneHint => '+1234567890';
 
   @override
-  String get enterValidEmailShort => 'Ingresa un correo válido';
+  String get enterValidEmailShort => 'Ingresa un correo vГЎlido';
 
   @override
-  String get phoneMustStartWithPlusShort => 'El teléfono debe comenzar con +';
+  String get phoneMustStartWithPlusShort => 'El telГ©fono debe comenzar con +';
 
   @override
-  String get comingSoon => 'Próximamente';
+  String get comingSoon => 'PrГіximamente';
 
   @override
   String get hello => 'Hola';
@@ -1653,11 +2184,11 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get noRolesAssigned =>
-      'Aún no tienes roles asignados. Contacta a la administración.';
+      'AГєn no tienes roles asignados. Contacta a la administraciГіn.';
 
   @override
   String signedInAs(String name) {
-    return 'Sesión iniciada como $name';
+    return 'SesiГіn iniciada como $name';
   }
 
   @override
@@ -1667,7 +2198,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get birthdateDialogTitle => 'Fecha de nacimiento';
 
   @override
-  String get nextShowsTitle => 'Próximos shows';
+  String get nextShowsTitle => 'PrГіximos shows';
 
   @override
   String get nextShowsSeason => 'Temporada 2026';
@@ -1700,23 +2231,23 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get ticketsOpenPdf => 'ABRIR';
 
   @override
-  String get ticketsPdfUnavailable => 'PDF aún no disponible';
+  String get ticketsPdfUnavailable => 'PDF aГєn no disponible';
 
   @override
   String get ticketsBuy => 'COMPRAR ENTRADA';
 
   @override
   String get ticketsBuyNoLink =>
-      'No hay enlace de compra. Añade la URL de la tienda de entradas para este evento en el admin o en la web en Info.';
+      'No hay enlace de compra. AГ±ade la URL de la tienda de entradas para este evento en el admin o en la web en Info.';
 
   @override
   String get ticketsBuyCouldNotOpen => 'No se pudo abrir el enlace.';
 
   @override
-  String get ticketsBuySubtitle => 'Asientos VIP y estándar disponibles';
+  String get ticketsBuySubtitle => 'Asientos VIP y estГЎndar disponibles';
 
   @override
-  String get ticketsNoEvents => 'Aún no hay eventos con entradas';
+  String get ticketsNoEvents => 'AГєn no hay eventos con entradas';
 
   @override
   String get ticketsNoneForEvent => 'No hay entradas para este evento';
@@ -1735,10 +2266,10 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get contactFormLinkMissing =>
-      'No hay enlace al formulario. Añade la URL en Ajustes generales de la app en el panel.';
+      'No hay enlace al formulario. AГ±ade la URL en Ajustes generales de la app en el panel.';
 
   @override
-  String get infoHubTitle => 'Centro de información';
+  String get infoHubTitle => 'Centro de informaciГіn';
 
   @override
   String get infoMenuAboutYfs => 'Acerca de YFS';
@@ -1754,7 +2285,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get infoFooterCopyright =>
-      '© 2024 Young Fashion Series. Todos los derechos reservados.';
+      'В© 2024 Young Fashion Series. Todos los derechos reservados.';
 
   @override
   String parentProgressLabel(int completed, int total) {
@@ -1763,27 +2294,27 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get appUpdateRequiredMessage =>
-      'Actualiza la aplicación para continuar.';
+      'Actualiza la aplicaciГіn para continuar.';
 
   @override
-  String get appUpdateButton => 'Actualizar aplicación';
+  String get appUpdateButton => 'Actualizar aplicaciГіn';
 
   @override
   String get showAll => 'Ver todo';
 
   @override
-  String get staffNoneSelected => '— Ninguno —';
+  String get staffNoneSelected => 'вЂ” Ninguno вЂ”';
 
   @override
   String get staffRoleInactive => 'INACTIVA';
 
   @override
   String get staffWorkerStatusRefreshFailed =>
-      'No se pudo actualizar el estado del rol. Comprueba la conexión.';
+      'No se pudo actualizar el estado del rol. Comprueba la conexiГіn.';
 
   @override
   String get staffScanRoleInactive =>
-      'Este rol fue desactivado en el panel. El escaneo no está disponible.';
+      'Este rol fue desactivado en el panel. El escaneo no estГЎ disponible.';
 
   @override
   String staffScanFailed(String error) {
@@ -1801,7 +2332,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get chatCouldNotPickPhoto => 'No se pudo elegir la foto';
 
   @override
-  String get staffChildProfileTitle => 'Perfil del niño';
+  String get staffChildProfileTitle => 'Perfil del niГ±o';
 
   @override
   String get staffCurrentStage => 'ETAPA ACTUAL';
@@ -1813,7 +2344,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffChildDetailEmpty =>
-      'No hay datos del niño en la base de datos';
+      'No hay datos del niГ±o en la base de datos';
 
   @override
   String get staffLoadFailed => 'Error al cargar';
@@ -1843,7 +2374,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String staffAgeYearsOld(int age) {
-    return '$age años';
+    return '$age aГ±os';
   }
 
   @override
@@ -1871,9 +2402,286 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get contactManagerSendFailed =>
-      'No se pudo enviar. Inténtalo más tarde.';
+      'No se pudo enviar. IntГ©ntalo mГЎs tarde.';
 
   @override
   String get contactManagerServiceUnavailable =>
-      'El contacto no está disponible temporalmente. Inténtalo más tarde.';
+      'El contacto no estГЎ disponible temporalmente. IntГ©ntalo mГЎs tarde.';
+
+  @override
+  String get close => 'Cerrar';
+
+  @override
+  String get staffPortalTitle => 'Portal del personal';
+
+  @override
+  String get staffActiveEvent => 'Evento activo';
+
+  @override
+  String get staffActiveStage => 'Etapa activa';
+
+  @override
+  String get staffSelectEvent => 'Selecciona evento';
+
+  @override
+  String get staffSelectEventInSettings =>
+      'Selecciona un evento en Ajustes del personal';
+
+  @override
+  String get staffSelectStage => 'Selecciona etapa';
+
+  @override
+  String staffPreparatoryStageLabel(String stageName) {
+    return 'Prep: $stageName';
+  }
+
+  @override
+  String get staffScanButton => 'ESCANEAR';
+
+  @override
+  String get staffParkingButton => 'PARKING';
+
+  @override
+  String get staffTapToScanModelLanyard =>
+      'TOCA PARA ESCANEAR EL GAFETE DE LA MODELO';
+
+  @override
+  String get staffTapToScanParkingQr => 'TOCA PARA ESCANEAR QR DE PARKING';
+
+  @override
+  String get staffCurrentTask => 'Tarea actual';
+
+  @override
+  String get staffUtilitiesAndTools => 'UTILIDADES Y HERRAMIENTAS';
+
+  @override
+  String get staffScanForInfoTitle => 'Escanear para info';
+
+  @override
+  String get staffScanForInfoSubtitle => 'Escáner general de activos e ID';
+
+  @override
+  String get staffToiletRequest => 'Solicitud de baño';
+
+  @override
+  String get staffRestroomLog => 'REGISTRO DE BAÑO';
+
+  @override
+  String get staffSettingsCardTitle => 'Ajustes del personal';
+
+  @override
+  String get staffPreferences => 'PREFERENCIAS';
+
+  @override
+  String get staffSupervisorRoleTitle => 'Rol de supervisor';
+
+  @override
+  String get staffSupervisorRoleDescription =>
+      'Gestiona el flujo del evento, supervisa a los fotógrafos y asegura que todos los niños sean registrados. Sigue el progreso en tiempo real.';
+
+  @override
+  String get staffCurrentStageLabel => 'Etapa actual';
+
+  @override
+  String get staffNoMainStagesAvailable =>
+      'No hay etapas principales disponibles para este evento.';
+
+  @override
+  String get staffChildRegistry => 'Registro de niños';
+
+  @override
+  String staffChildrenListed(int count) {
+    return '$count niños en lista';
+  }
+
+  @override
+  String get staffSelectActiveEventForRegistry =>
+      'Selecciona un evento activo en Ajustes para ver el registro de niños.';
+
+  @override
+  String get staffNoChildrenAssigned =>
+      'No hay niños asignados para este evento.';
+
+  @override
+  String get staffTableProfile => 'PERFIL';
+
+  @override
+  String get staffTableName => 'NOMBRE';
+
+  @override
+  String get staffTableStatus => 'ESTADO';
+
+  @override
+  String get staffTableAction => 'ACCIÓN';
+
+  @override
+  String get staffYes => 'Sí';
+
+  @override
+  String get staffNo => 'No';
+
+  @override
+  String get staffRoleHostessTitle => 'Rol: hostess';
+
+  @override
+  String get staffRoleHostessPlaceholder =>
+      'La pantalla del rol hostess se añadirá más tarde.';
+
+  @override
+  String get staffRoleInterviewTitle => 'Rol: entrevista';
+
+  @override
+  String get staffRoleInterviewPlaceholder =>
+      'La pantalla del rol entrevista se añadirá más tarde.';
+
+  @override
+  String get staffRoleLunchesTitle => 'Rol: almuerzos';
+
+  @override
+  String get staffRoleLunchesPlaceholder =>
+      'La pantalla del rol almuerzos se añadirá más tarde.';
+
+  @override
+  String get staffRoleSuperadminTitle => 'Rol: superadmin';
+
+  @override
+  String get staffRoleSuperadminPlaceholder =>
+      'La pantalla del rol superadmin se añadirá más tarde.';
+
+  @override
+  String get staffNavHome => 'Inicio';
+
+  @override
+  String get staffNavEvent => 'Evento';
+
+  @override
+  String get staffNavMore => 'Más';
+
+  @override
+  String get staffAccessBadge => 'ACCESO DE PERSONAL';
+
+  @override
+  String get staffVenueAndContact => 'Sede y contacto';
+
+  @override
+  String get staffMainOffice => 'Oficina principal';
+
+  @override
+  String get staffSecurity => 'Seguridad';
+
+  @override
+  String get staffScanHeaderParking => 'Escaneo de parking';
+
+  @override
+  String get staffScanHeaderInfo => 'Escanear para info';
+
+  @override
+  String get staffScanHeaderQr => 'Escanear código QR';
+
+  @override
+  String get staffScanHintParking =>
+      'Escanea QR de parking para mostrar datos del ticket';
+
+  @override
+  String get staffScanHintInfo =>
+      'Escanea gafete de niño o padre para ver el perfil';
+
+  @override
+  String get staffScanHintQr => 'Alinea el código QR dentro del marco';
+
+  @override
+  String get staffScanErrorTitle => 'Error de escaneo';
+
+  @override
+  String get staffScanErrorUnknown => 'Error de escaneo desconocido.';
+
+  @override
+  String get staffParkingTicketTitle => 'Ticket de parking';
+
+  @override
+  String get staffParkingFieldEvent => 'Evento';
+
+  @override
+  String get staffParkingFieldClient => 'Cliente';
+
+  @override
+  String get staffParkingFieldCar => 'Auto';
+
+  @override
+  String get staffParkingFieldPlateNumber => 'Placa';
+
+  @override
+  String get staffParkingFieldVipClient => 'Cliente VIP';
+
+  @override
+  String get staffShowProgressTitle => 'Progreso del show';
+
+  @override
+  String get staffCouldNotOpenDialer =>
+      'No se pudo abrir el marcador telefónico';
+
+  @override
+  String get staffRealtimeTracking => 'SEGUIMIENTO EN TIEMPO REAL';
+
+  @override
+  String get staffEstimatedCompletion => 'COMPLETADO ESTIMADO';
+
+  @override
+  String get staffNoMainStagesInPlan =>
+      'Aún no hay etapas principales en el plan.';
+
+  @override
+  String get staffStatusDone => 'HECHO';
+
+  @override
+  String get staffStatusInProgress => 'EN PROCESO';
+
+  @override
+  String get staffStatusPending => 'PENDIENTE';
+
+  @override
+  String get staffContactDetails => 'Datos de contacto';
+
+  @override
+  String get staffPrimaryParent => 'PADRE/MADRE PRINCIPAL';
+
+  @override
+  String staffIdLabel(String id) {
+    return 'ID de personal: $id';
+  }
+
+  @override
+  String get staffSwitchRole => 'Cambiar rol';
+
+  @override
+  String staffCurrentRoleLabel(String role) {
+    return 'ACTUAL: $role';
+  }
+
+  @override
+  String get staffRoleSubtitleScan => 'Escaneo QR y flujo de etapas';
+
+  @override
+  String get staffRoleSubtitleSupervisor => 'Acceso completo y gestión';
+
+  @override
+  String get staffRoleSubtitleHostess => 'Soporte de invitados y zonas';
+
+  @override
+  String get staffRoleSubtitleParking => 'Flujo y acceso de parking';
+
+  @override
+  String get staffRoleSubtitleInterview => 'Flujo de entrevistas';
+
+  @override
+  String get staffRoleSubtitleLunches => 'Comidas y almuerzos';
+
+  @override
+  String get staffRoleSubtitleSuperadmin => 'Herramientas de superadmin';
+
+  @override
+  String get staffRoleSubtitlePhotographer => 'Captura y carga de medios';
+
+  @override
+  String get staffRoleSubtitleStylist => 'Vestuario y maquillaje';
 }

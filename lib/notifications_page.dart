@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'app_settings.dart';
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'notification_detail_page.dart';
@@ -78,7 +79,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
   String _formatDate(DateTime? dt) {
     if (dt == null) return '';
     final d = dt.toLocal();
-    return '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+    final dd = d.day.toString().padLeft(2, '0');
+    final mm = d.month.toString().padLeft(2, '0');
+    return '$dd.$mm ${AppSettings.formatTime(d.hour, d.minute)}';
   }
 
   @override

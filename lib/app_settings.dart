@@ -8,12 +8,16 @@ enum MeasurementUnit { metric, imperial }
 /// Код языка приложения. System = следовать системной локали; иначе фиксированный язык.
 enum AppLanguage { system, en, ru, uk, esUs }
 
+/// Формат отображения времени в приложении.
+enum TimeDisplayFormat { h12, h24 }
+
 /// Настройки приложения (язык, единицы измерения). Хранятся в SharedPreferences.
 class AppSettings {
   AppSettings._();
 
   static const _keyUnit = 'measurement_unit';
   static const _keyLanguage = 'app_language';
+  static const _keyTimeDisplayFormat = 'time_display_format';
   static const _keyStaffActiveEventId = 'staff_active_event_id';
   static const _keyStaffActiveStageId = 'staff_active_stage_id';
   static const _keyStaffActiveStageType = 'staff_active_stage_type';
@@ -24,6 +28,7 @@ class AppSettings {
 
   static MeasurementUnit _unit = MeasurementUnit.metric;
   static AppLanguage _language = AppLanguage.system;
+  static TimeDisplayFormat _timeDisplayFormat = TimeDisplayFormat.h12;
   static int? _staffActiveEventId;
   static int? _staffActiveStageId;
   static String? _staffActiveStageType;
@@ -41,6 +46,10 @@ class AppSettings {
       (e) => e.name == prefs.getString(_keyLanguage),
       orElse: () => AppLanguage.system,
     );
+    _timeDisplayFormat = TimeDisplayFormat.values.firstWhere(
+      (e) => e.name == prefs.getString(_keyTimeDisplayFormat),
+      orElse: () => TimeDisplayFormat.h12,
+    );
     _staffActiveEventId = prefs.getInt(_keyStaffActiveEventId);
     _staffActiveStageId = prefs.getInt(_keyStaffActiveStageId);
     _staffActiveStageType = prefs.getString(_keyStaffActiveStageType)?.trim();
@@ -50,6 +59,7 @@ class AppSettings {
 
   static MeasurementUnit get measurementUnit => _unit;
   static AppLanguage get language => _language;
+  static TimeDisplayFormat get timeDisplayFormat => _timeDisplayFormat;
 
   /// Локаль для запросов контента к API (`Accept-Language`), совпадает с выбором языка в настройках.
   static Locale contentLocaleForApi() {
@@ -131,6 +141,39 @@ class AppSettings {
     _language = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyLanguage, value.name);
+  }
+
+  static Future<void> setTimeDisplayFormat(TimeDisplayFormat value) async {
+    if (_timeDisplayFormat == value) return;
+    _timeDisplayFormat = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyTimeDisplayFormat, value.name);
+  }
+
+  /// Формат времени в зависимости от пользовательской настройки (12/24).
+  static String formatTime(int hour, int minute) {
+    if (_timeDisplayFormat == TimeDisplayFormat.h24) {
+      final hh = hour.toString().padLeft(2, '0');
+      final mm = minute.toString().padLeft(2, '0');
+      return '$hh:$mm';
+    }
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+    final mm = minute.toString().padLeft(2, '0');
+    return '$hour12:$mm $period';
+  }
+
+  /// Парсит строку времени (`H:i`, `HH:mm`, `HH:mm:ss`) и форматирует в выбранный формат.
+  static String formatTimeLabel(String raw) {
+    var value = raw.trim();
+    if (value.isEmpty) return raw;
+    if (value.length > 8) value = value.substring(0, 8);
+    final parts = value.split(':');
+    if (parts.isEmpty) return raw;
+    final hour = int.tryParse(parts[0]);
+    final minute = parts.length > 1 ? int.tryParse(parts[1]) : 0;
+    if (hour == null || minute == null || hour < 0 || hour > 23) return raw;
+    return formatTime(hour, minute);
   }
 
   // --- Конвертация (бэкенд хранит в метрике: см, кг) ---

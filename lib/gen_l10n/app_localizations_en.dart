@@ -42,7 +42,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apiEndpointNotFoundHint =>
-      'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).';
+      'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api вЂ” the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).';
 
   @override
   String get notificationsTitle => 'Notifications';
@@ -134,7 +134,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountSecondMessage =>
-      'The following will be permanently removed from our systems:\n\n• Your account and profile\n• All children linked to your account\n• All event assignments, stage progress, tickets, and meal selections\n• Photos and other data stored for your children\n• Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.';
+      'The following will be permanently removed from our systems:\n\nвЂў Your account and profile\nвЂў All children linked to your account\nвЂў All event assignments, stage progress, tickets, and meal selections\nвЂў Photos and other data stored for your children\nвЂў Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.';
 
   @override
   String get deleteAccountContinue => 'Continue';
@@ -143,7 +143,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccountConfirmAction => 'Delete permanently';
 
   @override
-  String get deleteAccountWorking => 'Deleting account…';
+  String get deleteAccountWorking => 'Deleting accountвЂ¦';
 
   @override
   String get save => 'Save';
@@ -198,6 +198,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unitsOfMeasurement => 'Units of measurement';
+
+  @override
+  String get timeDisplayFormat => 'Time display format';
+
+  @override
+  String get timeFormat24Hour => '24-hour';
+
+  @override
+  String get timeFormat12Hour => '12-hour (AM/PM)';
 
   @override
   String get metricUnits => 'Metric (cm, kg)';
@@ -501,7 +510,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'No description has been added for this event yet.';
 
   @override
-  String get eventSettingsBrandTitle => 'Brand Requirements';
+  String get eventSettingsBrandTitle => 'Shoes & socks';
 
   @override
   String get eventSettingsBrandSubtitle =>
@@ -529,6 +538,121 @@ class AppLocalizationsEn extends AppLocalizations {
   String brandRequirementsBrandNumber(int brandId) {
     return 'Brand $brandId';
   }
+
+  @override
+  String get eventSettingsParkingTitle => 'Parking';
+
+  @override
+  String get eventSettingsParkingSubtitle =>
+      'Open your parking pass and arrival status';
+
+  @override
+  String get eventSettingsParkingCta => 'OPEN PARKING';
+
+  @override
+  String get parkingChooseModeTitle => 'Parking mode';
+
+  @override
+  String get parkingChooseModeHint => 'Choose screen state for visual testing.';
+
+  @override
+  String get parkingModeInactive => 'INACTIVE';
+
+  @override
+  String get parkingModeActive => 'ACTIVE';
+
+  @override
+  String get parkingInactiveHeadline => 'NO ACTIVE PARKING';
+
+  @override
+  String get parkingInactiveBody =>
+      'PARKING SERVICE WILL APPEAR HERE AFTER TICKET PURCHASE.';
+
+  @override
+  String get parkingInactiveBuyCta => 'BUY';
+
+  @override
+  String get parkingInactiveVipBody =>
+      'FOR VIP PARKING REQUEST - RESERVE A SPOT FOR YOUR CAR.';
+
+  @override
+  String get parkingInactiveVipBookCta => 'BOOK PARKING';
+
+  @override
+  String get parkingActiveTicketLabel => 'TICKET';
+
+  @override
+  String get parkingTicketMock1 => 'TICKET A1 · MODEL';
+
+  @override
+  String get parkingTicketMock2 => 'TICKET B7 · GUEST';
+
+  @override
+  String get parkingActiveValetLabel => 'VALET SERVICE';
+
+  @override
+  String get parkingActiveStatusLine => 'PARKING ACTIVE';
+
+  @override
+  String get parkingActiveShowEntryPointCta => 'SHOW ENTRY POINT';
+
+  @override
+  String get parkingActiveCarLabel => 'CAR';
+
+  @override
+  String get parkingActiveRegistrationNumberLabel => 'PLATE NUMBER';
+
+  @override
+  String get parkingCreateTicketTitle => 'Create Ticket';
+
+  @override
+  String get parkingCreateEventLabel => 'Event';
+
+  @override
+  String get parkingCreateAccountNameLabel => 'Name';
+
+  @override
+  String get parkingCreateCarModelLabel => 'MAKE AND MODEL';
+
+  @override
+  String get parkingCreateCarModelHint => 'For example: Ford Mustang';
+
+  @override
+  String get parkingCreatePlateNumberLabel => 'PLATE NUMBER';
+
+  @override
+  String get parkingCreatePlateNumberHint => 'For example: CA 7JXK921';
+
+  @override
+  String get parkingCreateRepeatPlateNumberLabel => 'REPEAT PLATE NUMBER';
+
+  @override
+  String get parkingCreateRepeatPlateNumberHint => 'Re-enter plate number';
+
+  @override
+  String get parkingCreatePlateNumberMismatch => 'Plate numbers do not match';
+
+  @override
+  String get parkingCreateBuyCta => 'BUY';
+
+  @override
+  String get parkingCreateBookCta => 'BOOK PARKING';
+
+  @override
+  String get parkingCheckoutInBrowser => 'Complete payment in your browser.';
+
+  @override
+  String get parkingPurchasedWithoutPayment => 'Ticket purchased successfully.';
+
+  @override
+  String get parkingVipBooked => 'VIP parking booked successfully.';
+
+  @override
+  String get parkingCheckoutError =>
+      'Could not start parking payment. Try again.';
+
+  @override
+  String get parkingActivePassLabel => 'PASS CODE';
 
   @override
   String get eventSettingsChatTitle => 'Group Chat';
@@ -617,7 +741,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mealCheckoutError => 'Could not start payment. Try again.';
 
   @override
-  String get mealAwaitingPayment => 'Order placed — awaiting payment';
+  String get mealAwaitingPayment => 'Order placed вЂ” awaiting payment';
 
   @override
   String get mealAwaitingPaymentDetail =>
@@ -791,7 +915,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contactFormLinkMissing =>
-      'No form link is set. Add «Contact / signup form URL» in Application settings in the admin.';
+      'No form link is set. Add В«Contact / signup form URLВ» in Application settings in the admin.';
 
   @override
   String get infoHubTitle => 'Information Hub';
@@ -810,7 +934,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get infoFooterCopyright =>
-      '© 2024 Young Fashion Series. All rights reserved.';
+      'В© 2024 Young Fashion Series. All rights reserved.';
 
   @override
   String parentProgressLabel(int completed, int total) {
@@ -827,7 +951,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showAll => 'Show all';
 
   @override
-  String get staffNoneSelected => '— None —';
+  String get staffNoneSelected => 'вЂ” None вЂ”';
 
   @override
   String get staffRoleInactive => 'INACTIVE';
@@ -929,4 +1053,275 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get contactManagerServiceUnavailable =>
       'Contact is temporarily unavailable. Please try again later.';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get staffPortalTitle => 'Staff Portal';
+
+  @override
+  String get staffActiveEvent => 'Active event';
+
+  @override
+  String get staffActiveStage => 'Active stage';
+
+  @override
+  String get staffSelectEvent => 'Select event';
+
+  @override
+  String get staffSelectEventInSettings => 'Select an event in Staff Settings';
+
+  @override
+  String get staffSelectStage => 'Select stage';
+
+  @override
+  String staffPreparatoryStageLabel(String stageName) {
+    return 'Prep: $stageName';
+  }
+
+  @override
+  String get staffScanButton => 'SCAN';
+
+  @override
+  String get staffParkingButton => 'PARKING';
+
+  @override
+  String get staffTapToScanModelLanyard => 'TAP TO SCAN MODEL LANYARD';
+
+  @override
+  String get staffTapToScanParkingQr => 'TAP TO SCAN PARKING QR';
+
+  @override
+  String get staffCurrentTask => 'Current Task';
+
+  @override
+  String get staffUtilitiesAndTools => 'UTILITIES & TOOLS';
+
+  @override
+  String get staffScanForInfoTitle => 'Scan for Info';
+
+  @override
+  String get staffScanForInfoSubtitle => 'General purpose assets & ID scanner';
+
+  @override
+  String get staffToiletRequest => 'Toilet Request';
+
+  @override
+  String get staffRestroomLog => 'RESTROOM LOG';
+
+  @override
+  String get staffSettingsCardTitle => 'Staff Settings';
+
+  @override
+  String get staffPreferences => 'PREFERENCES';
+
+  @override
+  String get staffSupervisorRoleTitle => 'Supervisor Role';
+
+  @override
+  String get staffSupervisorRoleDescription =>
+      'Manage event flow, oversee photographers, and ensure all children are captured effectively. Track progress in real-time.';
+
+  @override
+  String get staffCurrentStageLabel => 'Current stage';
+
+  @override
+  String get staffNoMainStagesAvailable =>
+      'No main stages available for this event.';
+
+  @override
+  String get staffChildRegistry => 'Child Registry';
+
+  @override
+  String staffChildrenListed(int count) {
+    return '$count Children Listed';
+  }
+
+  @override
+  String get staffSelectActiveEventForRegistry =>
+      'Select an active event in Settings to see the child registry.';
+
+  @override
+  String get staffNoChildrenAssigned => 'No children assigned for this event.';
+
+  @override
+  String get staffTableProfile => 'PROFILE';
+
+  @override
+  String get staffTableName => 'NAME';
+
+  @override
+  String get staffTableStatus => 'STATUS';
+
+  @override
+  String get staffTableAction => 'ACTION';
+
+  @override
+  String get staffYes => 'Yes';
+
+  @override
+  String get staffNo => 'No';
+
+  @override
+  String get staffRoleHostessTitle => 'Role: hostess';
+
+  @override
+  String get staffRoleHostessPlaceholder =>
+      'The hostess role screen will be added later.';
+
+  @override
+  String get staffRoleInterviewTitle => 'Role: interview';
+
+  @override
+  String get staffRoleInterviewPlaceholder =>
+      'The interview role screen will be added later.';
+
+  @override
+  String get staffRoleLunchesTitle => 'Role: lunches';
+
+  @override
+  String get staffRoleLunchesPlaceholder =>
+      'The lunches role screen will be added later.';
+
+  @override
+  String get staffRoleSuperadminTitle => 'Role: superadmin';
+
+  @override
+  String get staffRoleSuperadminPlaceholder =>
+      'The superadmin role screen will be added later.';
+
+  @override
+  String get staffNavHome => 'Home';
+
+  @override
+  String get staffNavEvent => 'Event';
+
+  @override
+  String get staffNavMore => 'More';
+
+  @override
+  String get staffAccessBadge => 'STAFF ACCESS';
+
+  @override
+  String get staffVenueAndContact => 'Venue & Contact';
+
+  @override
+  String get staffMainOffice => 'Main Office';
+
+  @override
+  String get staffSecurity => 'Security';
+
+  @override
+  String get staffScanHeaderParking => 'Parking Scan';
+
+  @override
+  String get staffScanHeaderInfo => 'Scan for Info';
+
+  @override
+  String get staffScanHeaderQr => 'Scan QR Code';
+
+  @override
+  String get staffScanHintParking =>
+      'Scan parking QR code to show ticket details';
+
+  @override
+  String get staffScanHintInfo => 'Scan child or parent badge to view profile';
+
+  @override
+  String get staffScanHintQr => 'Align QR code within the frame';
+
+  @override
+  String get staffScanErrorTitle => 'Scan Error';
+
+  @override
+  String get staffScanErrorUnknown => 'Unknown scan error.';
+
+  @override
+  String get staffParkingTicketTitle => 'Parking Ticket';
+
+  @override
+  String get staffParkingFieldEvent => 'Event';
+
+  @override
+  String get staffParkingFieldClient => 'Client';
+
+  @override
+  String get staffParkingFieldCar => 'Car';
+
+  @override
+  String get staffParkingFieldPlateNumber => 'Plate number';
+
+  @override
+  String get staffParkingFieldVipClient => 'VIP client';
+
+  @override
+  String get staffShowProgressTitle => 'Show Progress';
+
+  @override
+  String get staffCouldNotOpenDialer => 'Could not open the phone dialer';
+
+  @override
+  String get staffRealtimeTracking => 'REAL-TIME TRACKING';
+
+  @override
+  String get staffEstimatedCompletion => 'EST. COMPLETION';
+
+  @override
+  String get staffNoMainStagesInPlan => 'No main stages in plan yet.';
+
+  @override
+  String get staffStatusDone => 'DONE';
+
+  @override
+  String get staffStatusInProgress => 'IN PROGRESS';
+
+  @override
+  String get staffStatusPending => 'PENDING';
+
+  @override
+  String get staffContactDetails => 'Contact Details';
+
+  @override
+  String get staffPrimaryParent => 'PRIMARY PARENT';
+
+  @override
+  String staffIdLabel(String id) {
+    return 'Staff ID: $id';
+  }
+
+  @override
+  String get staffSwitchRole => 'Switch Role';
+
+  @override
+  String staffCurrentRoleLabel(String role) {
+    return 'CURRENT: $role';
+  }
+
+  @override
+  String get staffRoleSubtitleScan => 'QR scan & stage flow';
+
+  @override
+  String get staffRoleSubtitleSupervisor => 'Full access & management';
+
+  @override
+  String get staffRoleSubtitleHostess => 'Guest & zone support';
+
+  @override
+  String get staffRoleSubtitleParking => 'Parking flow & access';
+
+  @override
+  String get staffRoleSubtitleInterview => 'Interview flow';
+
+  @override
+  String get staffRoleSubtitleLunches => 'Meals & lunches';
+
+  @override
+  String get staffRoleSubtitleSuperadmin => 'Super admin tools';
+
+  @override
+  String get staffRoleSubtitlePhotographer => 'Media capture & uploads';
+
+  @override
+  String get staffRoleSubtitleStylist => 'Wardrobe & makeup logs';
 }

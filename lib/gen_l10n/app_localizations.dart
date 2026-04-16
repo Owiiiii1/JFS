@@ -166,7 +166,7 @@ abstract class AppLocalizations {
   /// No description provided for @apiEndpointNotFoundHint.
   ///
   /// In en, this message translates to:
-  /// **'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).'**
+  /// **'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api вЂ” the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).'**
   String get apiEndpointNotFoundHint;
 
   /// No description provided for @notificationsTitle.
@@ -340,7 +340,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountSecondMessage.
   ///
   /// In en, this message translates to:
-  /// **'The following will be permanently removed from our systems:\n\n• Your account and profile\n• All children linked to your account\n• All event assignments, stage progress, tickets, and meal selections\n• Photos and other data stored for your children\n• Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.'**
+  /// **'The following will be permanently removed from our systems:\n\nвЂў Your account and profile\nвЂў All children linked to your account\nвЂў All event assignments, stage progress, tickets, and meal selections\nвЂў Photos and other data stored for your children\nвЂў Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.'**
   String get deleteAccountSecondMessage;
 
   /// No description provided for @deleteAccountContinue.
@@ -358,7 +358,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountWorking.
   ///
   /// In en, this message translates to:
-  /// **'Deleting account…'**
+  /// **'Deleting accountвЂ¦'**
   String get deleteAccountWorking;
 
   /// No description provided for @save.
@@ -468,6 +468,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Units of measurement'**
   String get unitsOfMeasurement;
+
+  /// No description provided for @timeDisplayFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Time display format'**
+  String get timeDisplayFormat;
+
+  /// No description provided for @timeFormat24Hour.
+  ///
+  /// In en, this message translates to:
+  /// **'24-hour'**
+  String get timeFormat24Hour;
+
+  /// No description provided for @timeFormat12Hour.
+  ///
+  /// In en, this message translates to:
+  /// **'12-hour (AM/PM)'**
+  String get timeFormat12Hour;
 
   /// No description provided for @metricUnits.
   ///
@@ -1036,7 +1054,7 @@ abstract class AppLocalizations {
   /// No description provided for @eventSettingsBrandTitle.
   ///
   /// In en, this message translates to:
-  /// **'Brand Requirements'**
+  /// **'Shoes & socks'**
   String get eventSettingsBrandTitle;
 
   /// No description provided for @eventSettingsBrandSubtitle.
@@ -1080,6 +1098,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Brand {brandId}'**
   String brandRequirementsBrandNumber(int brandId);
+
+  /// No description provided for @eventSettingsParkingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking'**
+  String get eventSettingsParkingTitle;
+
+  /// No description provided for @eventSettingsParkingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open your parking pass and arrival status'**
+  String get eventSettingsParkingSubtitle;
+
+  /// No description provided for @eventSettingsParkingCta.
+  ///
+  /// In en, this message translates to:
+  /// **'OPEN PARKING'**
+  String get eventSettingsParkingCta;
+
+  /// No description provided for @parkingChooseModeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking mode'**
+  String get parkingChooseModeTitle;
+
+  /// No description provided for @parkingChooseModeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose screen state for visual testing.'**
+  String get parkingChooseModeHint;
+
+  /// No description provided for @parkingModeInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'INACTIVE'**
+  String get parkingModeInactive;
+
+  /// No description provided for @parkingModeActive.
+  ///
+  /// In en, this message translates to:
+  /// **'ACTIVE'**
+  String get parkingModeActive;
+
+  /// No description provided for @parkingInactiveHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'NO ACTIVE PARKING'**
+  String get parkingInactiveHeadline;
+
+  /// No description provided for @parkingInactiveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'PARKING SERVICE WILL APPEAR HERE AFTER TICKET PURCHASE.'**
+  String get parkingInactiveBody;
+
+  /// No description provided for @parkingInactiveBuyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'BUY'**
+  String get parkingInactiveBuyCta;
+
+  /// No description provided for @parkingInactiveVipBody.
+  ///
+  /// In en, this message translates to:
+  /// **'FOR VIP PARKING REQUEST - RESERVE A SPOT FOR YOUR CAR.'**
+  String get parkingInactiveVipBody;
+
+  /// No description provided for @parkingInactiveVipBookCta.
+  ///
+  /// In en, this message translates to:
+  /// **'BOOK PARKING'**
+  String get parkingInactiveVipBookCta;
+
+  /// No description provided for @parkingActiveTicketLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TICKET'**
+  String get parkingActiveTicketLabel;
+
+  /// No description provided for @parkingTicketMock1.
+  ///
+  /// In en, this message translates to:
+  /// **'TICKET A1 · MODEL'**
+  String get parkingTicketMock1;
+
+  /// No description provided for @parkingTicketMock2.
+  ///
+  /// In en, this message translates to:
+  /// **'TICKET B7 · GUEST'**
+  String get parkingTicketMock2;
+
+  /// No description provided for @parkingActiveValetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'VALET SERVICE'**
+  String get parkingActiveValetLabel;
+
+  /// No description provided for @parkingActiveStatusLine.
+  ///
+  /// In en, this message translates to:
+  /// **'PARKING ACTIVE'**
+  String get parkingActiveStatusLine;
+
+  /// No description provided for @parkingActiveShowEntryPointCta.
+  ///
+  /// In en, this message translates to:
+  /// **'SHOW ENTRY POINT'**
+  String get parkingActiveShowEntryPointCta;
+
+  /// No description provided for @parkingActiveCarLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CAR'**
+  String get parkingActiveCarLabel;
+
+  /// No description provided for @parkingActiveRegistrationNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PLATE NUMBER'**
+  String get parkingActiveRegistrationNumberLabel;
+
+  /// No description provided for @parkingCreateTicketTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Ticket'**
+  String get parkingCreateTicketTitle;
+
+  /// No description provided for @parkingCreateEventLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get parkingCreateEventLabel;
+
+  /// No description provided for @parkingCreateAccountNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get parkingCreateAccountNameLabel;
+
+  /// No description provided for @parkingCreateCarModelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MAKE AND MODEL'**
+  String get parkingCreateCarModelLabel;
+
+  /// No description provided for @parkingCreateCarModelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: Ford Mustang'**
+  String get parkingCreateCarModelHint;
+
+  /// No description provided for @parkingCreatePlateNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PLATE NUMBER'**
+  String get parkingCreatePlateNumberLabel;
+
+  /// No description provided for @parkingCreatePlateNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: CA 7JXK921'**
+  String get parkingCreatePlateNumberHint;
+
+  /// No description provided for @parkingCreateRepeatPlateNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'REPEAT PLATE NUMBER'**
+  String get parkingCreateRepeatPlateNumberLabel;
+
+  /// No description provided for @parkingCreateRepeatPlateNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter plate number'**
+  String get parkingCreateRepeatPlateNumberHint;
+
+  /// No description provided for @parkingCreatePlateNumberMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Plate numbers do not match'**
+  String get parkingCreatePlateNumberMismatch;
+
+  /// No description provided for @parkingCreateBuyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'BUY'**
+  String get parkingCreateBuyCta;
+
+  /// No description provided for @parkingCreateBookCta.
+  ///
+  /// In en, this message translates to:
+  /// **'BOOK PARKING'**
+  String get parkingCreateBookCta;
+
+  /// No description provided for @parkingCheckoutInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete payment in your browser.'**
+  String get parkingCheckoutInBrowser;
+
+  /// No description provided for @parkingPurchasedWithoutPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket purchased successfully.'**
+  String get parkingPurchasedWithoutPayment;
+
+  /// No description provided for @parkingVipBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'VIP parking booked successfully.'**
+  String get parkingVipBooked;
+
+  /// No description provided for @parkingCheckoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start parking payment. Try again.'**
+  String get parkingCheckoutError;
+
+  /// No description provided for @parkingActivePassLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PASS CODE'**
+  String get parkingActivePassLabel;
 
   /// No description provided for @eventSettingsChatTitle.
   ///
@@ -1240,7 +1480,7 @@ abstract class AppLocalizations {
   /// No description provided for @mealAwaitingPayment.
   ///
   /// In en, this message translates to:
-  /// **'Order placed — awaiting payment'**
+  /// **'Order placed вЂ” awaiting payment'**
   String get mealAwaitingPayment;
 
   /// No description provided for @mealAwaitingPaymentDetail.
@@ -1564,7 +1804,7 @@ abstract class AppLocalizations {
   /// No description provided for @contactFormLinkMissing.
   ///
   /// In en, this message translates to:
-  /// **'No form link is set. Add «Contact / signup form URL» in Application settings in the admin.'**
+  /// **'No form link is set. Add В«Contact / signup form URLВ» in Application settings in the admin.'**
   String get contactFormLinkMissing;
 
   /// No description provided for @infoHubTitle.
@@ -1600,7 +1840,7 @@ abstract class AppLocalizations {
   /// No description provided for @infoFooterCopyright.
   ///
   /// In en, this message translates to:
-  /// **'© 2024 Young Fashion Series. All rights reserved.'**
+  /// **'В© 2024 Young Fashion Series. All rights reserved.'**
   String get infoFooterCopyright;
 
   /// No description provided for @parentProgressLabel.
@@ -1630,7 +1870,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffNoneSelected.
   ///
   /// In en, this message translates to:
-  /// **'— None —'**
+  /// **'вЂ” None вЂ”'**
   String get staffNoneSelected;
 
   /// No description provided for @staffRoleInactive.
@@ -1806,6 +2046,516 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Contact is temporarily unavailable. Please try again later.'**
   String get contactManagerServiceUnavailable;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @staffPortalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff Portal'**
+  String get staffPortalTitle;
+
+  /// No description provided for @staffActiveEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Active event'**
+  String get staffActiveEvent;
+
+  /// No description provided for @staffActiveStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Active stage'**
+  String get staffActiveStage;
+
+  /// No description provided for @staffSelectEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Select event'**
+  String get staffSelectEvent;
+
+  /// No description provided for @staffSelectEventInSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an event in Staff Settings'**
+  String get staffSelectEventInSettings;
+
+  /// No description provided for @staffSelectStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select stage'**
+  String get staffSelectStage;
+
+  /// No description provided for @staffPreparatoryStageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prep: {stageName}'**
+  String staffPreparatoryStageLabel(String stageName);
+
+  /// No description provided for @staffScanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'SCAN'**
+  String get staffScanButton;
+
+  /// No description provided for @staffParkingButton.
+  ///
+  /// In en, this message translates to:
+  /// **'PARKING'**
+  String get staffParkingButton;
+
+  /// No description provided for @staffTapToScanModelLanyard.
+  ///
+  /// In en, this message translates to:
+  /// **'TAP TO SCAN MODEL LANYARD'**
+  String get staffTapToScanModelLanyard;
+
+  /// No description provided for @staffTapToScanParkingQr.
+  ///
+  /// In en, this message translates to:
+  /// **'TAP TO SCAN PARKING QR'**
+  String get staffTapToScanParkingQr;
+
+  /// No description provided for @staffCurrentTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Task'**
+  String get staffCurrentTask;
+
+  /// No description provided for @staffUtilitiesAndTools.
+  ///
+  /// In en, this message translates to:
+  /// **'UTILITIES & TOOLS'**
+  String get staffUtilitiesAndTools;
+
+  /// No description provided for @staffScanForInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan for Info'**
+  String get staffScanForInfoTitle;
+
+  /// No description provided for @staffScanForInfoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'General purpose assets & ID scanner'**
+  String get staffScanForInfoSubtitle;
+
+  /// No description provided for @staffToiletRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Toilet Request'**
+  String get staffToiletRequest;
+
+  /// No description provided for @staffRestroomLog.
+  ///
+  /// In en, this message translates to:
+  /// **'RESTROOM LOG'**
+  String get staffRestroomLog;
+
+  /// No description provided for @staffSettingsCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff Settings'**
+  String get staffSettingsCardTitle;
+
+  /// No description provided for @staffPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'PREFERENCES'**
+  String get staffPreferences;
+
+  /// No description provided for @staffSupervisorRoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supervisor Role'**
+  String get staffSupervisorRoleTitle;
+
+  /// No description provided for @staffSupervisorRoleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage event flow, oversee photographers, and ensure all children are captured effectively. Track progress in real-time.'**
+  String get staffSupervisorRoleDescription;
+
+  /// No description provided for @staffCurrentStageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current stage'**
+  String get staffCurrentStageLabel;
+
+  /// No description provided for @staffNoMainStagesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No main stages available for this event.'**
+  String get staffNoMainStagesAvailable;
+
+  /// No description provided for @staffChildRegistry.
+  ///
+  /// In en, this message translates to:
+  /// **'Child Registry'**
+  String get staffChildRegistry;
+
+  /// No description provided for @staffChildrenListed.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Children Listed'**
+  String staffChildrenListed(int count);
+
+  /// No description provided for @staffSelectActiveEventForRegistry.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an active event in Settings to see the child registry.'**
+  String get staffSelectActiveEventForRegistry;
+
+  /// No description provided for @staffNoChildrenAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'No children assigned for this event.'**
+  String get staffNoChildrenAssigned;
+
+  /// No description provided for @staffTableProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'PROFILE'**
+  String get staffTableProfile;
+
+  /// No description provided for @staffTableName.
+  ///
+  /// In en, this message translates to:
+  /// **'NAME'**
+  String get staffTableName;
+
+  /// No description provided for @staffTableStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'STATUS'**
+  String get staffTableStatus;
+
+  /// No description provided for @staffTableAction.
+  ///
+  /// In en, this message translates to:
+  /// **'ACTION'**
+  String get staffTableAction;
+
+  /// No description provided for @staffYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get staffYes;
+
+  /// No description provided for @staffNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get staffNo;
+
+  /// No description provided for @staffRoleHostessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Role: hostess'**
+  String get staffRoleHostessTitle;
+
+  /// No description provided for @staffRoleHostessPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'The hostess role screen will be added later.'**
+  String get staffRoleHostessPlaceholder;
+
+  /// No description provided for @staffRoleInterviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Role: interview'**
+  String get staffRoleInterviewTitle;
+
+  /// No description provided for @staffRoleInterviewPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'The interview role screen will be added later.'**
+  String get staffRoleInterviewPlaceholder;
+
+  /// No description provided for @staffRoleLunchesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Role: lunches'**
+  String get staffRoleLunchesTitle;
+
+  /// No description provided for @staffRoleLunchesPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'The lunches role screen will be added later.'**
+  String get staffRoleLunchesPlaceholder;
+
+  /// No description provided for @staffRoleSuperadminTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Role: superadmin'**
+  String get staffRoleSuperadminTitle;
+
+  /// No description provided for @staffRoleSuperadminPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'The superadmin role screen will be added later.'**
+  String get staffRoleSuperadminPlaceholder;
+
+  /// No description provided for @staffNavHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get staffNavHome;
+
+  /// No description provided for @staffNavEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get staffNavEvent;
+
+  /// No description provided for @staffNavMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get staffNavMore;
+
+  /// No description provided for @staffAccessBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'STAFF ACCESS'**
+  String get staffAccessBadge;
+
+  /// No description provided for @staffVenueAndContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue & Contact'**
+  String get staffVenueAndContact;
+
+  /// No description provided for @staffMainOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Office'**
+  String get staffMainOffice;
+
+  /// No description provided for @staffSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get staffSecurity;
+
+  /// No description provided for @staffScanHeaderParking.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking Scan'**
+  String get staffScanHeaderParking;
+
+  /// No description provided for @staffScanHeaderInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan for Info'**
+  String get staffScanHeaderInfo;
+
+  /// No description provided for @staffScanHeaderQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get staffScanHeaderQr;
+
+  /// No description provided for @staffScanHintParking.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan parking QR code to show ticket details'**
+  String get staffScanHintParking;
+
+  /// No description provided for @staffScanHintInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan child or parent badge to view profile'**
+  String get staffScanHintInfo;
+
+  /// No description provided for @staffScanHintQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Align QR code within the frame'**
+  String get staffScanHintQr;
+
+  /// No description provided for @staffScanErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Error'**
+  String get staffScanErrorTitle;
+
+  /// No description provided for @staffScanErrorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown scan error.'**
+  String get staffScanErrorUnknown;
+
+  /// No description provided for @staffParkingTicketTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking Ticket'**
+  String get staffParkingTicketTitle;
+
+  /// No description provided for @staffParkingFieldEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get staffParkingFieldEvent;
+
+  /// No description provided for @staffParkingFieldClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Client'**
+  String get staffParkingFieldClient;
+
+  /// No description provided for @staffParkingFieldCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Car'**
+  String get staffParkingFieldCar;
+
+  /// No description provided for @staffParkingFieldPlateNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Plate number'**
+  String get staffParkingFieldPlateNumber;
+
+  /// No description provided for @staffParkingFieldVipClient.
+  ///
+  /// In en, this message translates to:
+  /// **'VIP client'**
+  String get staffParkingFieldVipClient;
+
+  /// No description provided for @staffShowProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Progress'**
+  String get staffShowProgressTitle;
+
+  /// No description provided for @staffCouldNotOpenDialer.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the phone dialer'**
+  String get staffCouldNotOpenDialer;
+
+  /// No description provided for @staffRealtimeTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'REAL-TIME TRACKING'**
+  String get staffRealtimeTracking;
+
+  /// No description provided for @staffEstimatedCompletion.
+  ///
+  /// In en, this message translates to:
+  /// **'EST. COMPLETION'**
+  String get staffEstimatedCompletion;
+
+  /// No description provided for @staffNoMainStagesInPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'No main stages in plan yet.'**
+  String get staffNoMainStagesInPlan;
+
+  /// No description provided for @staffStatusDone.
+  ///
+  /// In en, this message translates to:
+  /// **'DONE'**
+  String get staffStatusDone;
+
+  /// No description provided for @staffStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'IN PROGRESS'**
+  String get staffStatusInProgress;
+
+  /// No description provided for @staffStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'PENDING'**
+  String get staffStatusPending;
+
+  /// No description provided for @staffContactDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Details'**
+  String get staffContactDetails;
+
+  /// No description provided for @staffPrimaryParent.
+  ///
+  /// In en, this message translates to:
+  /// **'PRIMARY PARENT'**
+  String get staffPrimaryParent;
+
+  /// No description provided for @staffIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff ID: {id}'**
+  String staffIdLabel(String id);
+
+  /// No description provided for @staffSwitchRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch Role'**
+  String get staffSwitchRole;
+
+  /// No description provided for @staffCurrentRoleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CURRENT: {role}'**
+  String staffCurrentRoleLabel(String role);
+
+  /// No description provided for @staffRoleSubtitleScan.
+  ///
+  /// In en, this message translates to:
+  /// **'QR scan & stage flow'**
+  String get staffRoleSubtitleScan;
+
+  /// No description provided for @staffRoleSubtitleSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Full access & management'**
+  String get staffRoleSubtitleSupervisor;
+
+  /// No description provided for @staffRoleSubtitleHostess.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest & zone support'**
+  String get staffRoleSubtitleHostess;
+
+  /// No description provided for @staffRoleSubtitleParking.
+  ///
+  /// In en, this message translates to:
+  /// **'Parking flow & access'**
+  String get staffRoleSubtitleParking;
+
+  /// No description provided for @staffRoleSubtitleInterview.
+  ///
+  /// In en, this message translates to:
+  /// **'Interview flow'**
+  String get staffRoleSubtitleInterview;
+
+  /// No description provided for @staffRoleSubtitleLunches.
+  ///
+  /// In en, this message translates to:
+  /// **'Meals & lunches'**
+  String get staffRoleSubtitleLunches;
+
+  /// No description provided for @staffRoleSubtitleSuperadmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Super admin tools'**
+  String get staffRoleSubtitleSuperadmin;
+
+  /// No description provided for @staffRoleSubtitlePhotographer.
+  ///
+  /// In en, this message translates to:
+  /// **'Media capture & uploads'**
+  String get staffRoleSubtitlePhotographer;
+
+  /// No description provided for @staffRoleSubtitleStylist.
+  ///
+  /// In en, this message translates to:
+  /// **'Wardrobe & makeup logs'**
+  String get staffRoleSubtitleStylist;
 }
 
 class _AppLocalizationsDelegate

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'app_settings.dart';
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
 
@@ -733,9 +734,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
     int minute,
   ) {
     final mon = _timelineMonthNames[month - 1];
-    final hh = hour.toString().padLeft(2, '0');
-    final mm = minute.toString().padLeft(2, '0');
-    return '$mon $day, $year • $hh:$mm';
+    return '$mon $day, $year • ${AppSettings.formatTime(hour, minute)}';
   }
 
   /// `slot_date` (Y-m-d) + `slot_time` (H:i) from API — same values as in YFS admin.

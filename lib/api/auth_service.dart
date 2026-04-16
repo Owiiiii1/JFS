@@ -396,6 +396,32 @@ class AuthService {
     );
   }
 
+  /// POST /api/app/worker/parking-scan-lookup — данные парковочного тикета по QR.
+  Future<ParkingScanLookupResult> parkingScanLookup({
+    required String code,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final uri = Uri.parse('$baseUrl/api/app/worker/parking-scan-lookup');
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'code': code}),
+    );
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode == 200 && map['ok'] == true) {
+      return ParkingScanLookupResult.fromJson(map);
+    }
+    throw Exception(
+      _tryMessage(res.body) ??
+          (map['message'] as String? ?? 'Could not resolve parking QR code'),
+    );
+  }
+
   /// GET /api/app/worker/supervisor-children/{assignment}/detail
   /// Детали ребёнка для экрана supervisor -> details.
   Future<SupervisorChildDetail> getSupervisorChildDetail(
@@ -754,6 +780,79 @@ class AuthService {
     return url;
   }
 
+  /// GET /api/app/client/events/{event}/parking-tickets
+  Future<ParkingTicketsPayload> getEventParkingTickets(int eventId) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/parking-tickets',
+    );
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode == 403) {
+      throw Exception(_tryMessage(res.body) ?? 'Forbidden');
+    }
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load parking tickets (${res.statusCode})',
+      );
+    }
+
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return ParkingTicketsPayload.fromJson(map);
+  }
+
+  /// POST /api/app/client/events/{event}/parking-checkout
+  Future<ParkingCheckoutResult> createParkingCheckoutSession({
+    required int eventId,
+    required String carModel,
+    required String plateNumber,
+    required String plateNumberRepeat,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/parking-checkout',
+    );
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'car_model': carModel.trim(),
+        'plate_number': plateNumber.trim(),
+        'plate_number_repeat': plateNumberRepeat.trim(),
+      }),
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ?? 'Failed to start checkout (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final purchased = map['purchased'] == true;
+    if (purchased) {
+      return const ParkingCheckoutResult(purchased: true, checkoutUrl: null);
+    }
+    final url = map['checkout_url'] as String?;
+    if (url == null || url.isEmpty) {
+      throw Exception('No checkout URL in response');
+    }
+    return ParkingCheckoutResult(purchased: false, checkoutUrl: url);
+  }
+
   /// [contentLocale] — локаль UI приложения; влияет на язык названий/описаний этапов (Accept-Language).
   /// Если null, используется системная локаль устройства.
   Future<ClientDashboard> getClientDashboard({Locale? contentLocale}) async {
@@ -783,14 +882,23 @@ class AuthService {
   }
 
   /// GET /api/app/client/events/{event}/rehearsal-slots
-  Future<RehearsalSlotsPayload> getEventRehearsalSlots(int eventId) async {
+  Future<RehearsalSlotsPayload> getEventRehearsalSlots(
+    int eventId, {
+    int? assignmentId,
+  }) async {
     final token = await getToken();
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
     }
-    final uri = Uri.parse(
-      '$baseUrl/api/app/client/events/$eventId/rehearsal-slots',
-    );
+    var uri = Uri.parse('$baseUrl/api/app/client/events/$eventId/rehearsal-slots');
+    if (assignmentId != null && assignmentId > 0) {
+      uri = uri.replace(
+        queryParameters: {
+          ...uri.queryParameters,
+          'assignment_id': assignmentId.toString(),
+        },
+      );
+    }
     final res = await http.get(
       uri,
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
@@ -1742,7 +1850,7 @@ class StaffRole {
   /// Соответствует `is_active` роли в админке.
   final bool isActive;
 
-  /// Код из API (`home_screen_type`): scan, supervisor, hostess, interview, lunches, superadmin.
+  /// Код из API (`home_screen_type`): scan, supervisor, hostess, parking, interview, lunches, superadmin.
   /// Пусто — до обновления бэкенда; клиент может определить экран по legacy-токенам code/name.
   final String homeScreenType;
 
@@ -1917,6 +2025,9 @@ class RehearsalSlotOption {
     required this.capacity,
     required this.bookedCount,
     required this.freeSpots,
+    this.minAge,
+    this.maxAge,
+    required this.familyLookOnly,
   });
 
   final int id;
@@ -1927,6 +2038,9 @@ class RehearsalSlotOption {
   final int capacity;
   final int bookedCount;
   final int freeSpots;
+  final int? minAge;
+  final int? maxAge;
+  final bool familyLookOnly;
 
   factory RehearsalSlotOption.fromJson(Map<String, dynamic> json) {
     return RehearsalSlotOption(
@@ -1938,6 +2052,9 @@ class RehearsalSlotOption {
       capacity: _jsonInt(json['capacity']),
       bookedCount: _jsonInt(json['booked_count']),
       freeSpots: _jsonInt(json['free_spots']),
+      minAge: _jsonIntNullable(json['min_age']),
+      maxAge: _jsonIntNullable(json['max_age']),
+      familyLookOnly: _jsonBool(json['family_look_only'], false),
     );
   }
 }
@@ -2273,6 +2390,98 @@ class AppNotificationDetails {
   }
 }
 
+class ParkingTicketInfo {
+  ParkingTicketInfo({
+    required this.id,
+    required this.label,
+    required this.qrData,
+    required this.carModel,
+    required this.plateNumber,
+    this.paidAt,
+  });
+
+  final int id;
+  final String label;
+  final String qrData;
+  final String carModel;
+  final String plateNumber;
+  final DateTime? paidAt;
+
+  factory ParkingTicketInfo.fromJson(Map<String, dynamic> json) {
+    return ParkingTicketInfo(
+      id: _jsonInt(json['id']),
+      label: (json['label'] as String? ?? '').trim(),
+      qrData: (json['qr_data'] as String? ?? '').trim(),
+      carModel: (json['car_model'] as String? ?? '').trim(),
+      plateNumber: (json['plate_number'] as String? ?? '').trim(),
+      paidAt: _jsonDateTimeNullable(json['paid_at']),
+    );
+  }
+}
+
+class ParkingCheckoutResult {
+  const ParkingCheckoutResult({
+    required this.purchased,
+    required this.checkoutUrl,
+  });
+
+  final bool purchased;
+  final String? checkoutUrl;
+}
+
+class ParkingTicketsPayload {
+  ParkingTicketsPayload({
+    required this.eventId,
+    required this.capacity,
+    required this.soldCount,
+    required this.canBuy,
+    required this.vipMode,
+    required this.paymentRequired,
+    required this.entryMapUrl,
+    required this.entryAppleMapUrl,
+    required this.tickets,
+  });
+
+  final int eventId;
+  final int capacity;
+  final int soldCount;
+  final bool canBuy;
+  final bool vipMode;
+  final bool paymentRequired;
+  final String? entryMapUrl;
+  final String? entryAppleMapUrl;
+  final List<ParkingTicketInfo> tickets;
+
+  bool get hasActiveTickets => tickets.isNotEmpty;
+
+  factory ParkingTicketsPayload.fromJson(Map<String, dynamic> json) {
+    final rawTickets = json['tickets'];
+    final tickets = rawTickets is List
+        ? rawTickets
+              .whereType<Map<String, dynamic>>()
+              .map(ParkingTicketInfo.fromJson)
+              .toList()
+        : const <ParkingTicketInfo>[];
+
+    return ParkingTicketsPayload(
+      eventId: _jsonInt(json['event_id']),
+      capacity: _jsonInt(json['capacity']),
+      soldCount: _jsonInt(json['sold_count']),
+      canBuy: json['can_buy'] == true,
+      vipMode: json['vip_mode'] == true,
+      paymentRequired: json['payment_required'] == true,
+      entryMapUrl: (json['entry_map_url'] as String?)?.trim().isNotEmpty == true
+          ? (json['entry_map_url'] as String).trim()
+          : null,
+      entryAppleMapUrl:
+          (json['entry_apple_map_url'] as String?)?.trim().isNotEmpty == true
+          ? (json['entry_apple_map_url'] as String).trim()
+          : null,
+      tickets: tickets,
+    );
+  }
+}
+
 class ActiveAssignment {
   ActiveAssignment({
     required this.id,
@@ -2300,6 +2509,8 @@ class ActiveAssignment {
     this.mealFulfillmentStatus,
     this.rehearsalBookings = const [],
     this.maxMainRehearsals = 1,
+    this.extraMainRehearsals = 0,
+    this.effectiveMaxMainRehearsals = 1,
   });
   final int id;
   final int? brandId;
@@ -2335,6 +2546,8 @@ class ActiveAssignment {
 
   final List<RehearsalBookingInfo> rehearsalBookings;
   final int maxMainRehearsals;
+  final int extraMainRehearsals;
+  final int effectiveMaxMainRehearsals;
 
   RehearsalBookingInfo? get rehearsalBooking =>
       rehearsalBookings.isNotEmpty ? rehearsalBookings.first : null;
@@ -2449,6 +2662,11 @@ class ActiveAssignment {
                 ? [RehearsalBookingInfo.fromJson(rb)]
                 : const []),
       maxMainRehearsals: _jsonInt(json['max_main_rehearsals'], 1),
+      extraMainRehearsals: _jsonInt(json['extra_main_rehearsals'], 0),
+      effectiveMaxMainRehearsals: _jsonInt(
+        json['effective_max_main_rehearsals'],
+        _jsonInt(json['max_main_rehearsals'], 1),
+      ),
     );
   }
 }
@@ -3161,6 +3379,32 @@ class ScanStageResult {
       resultCode: (json['result_code'] as String? ?? '').toString(),
       message: (json['message'] as String? ?? '').toString(),
       attemptId: json['attempt_id'] as int?,
+    );
+  }
+}
+
+class ParkingScanLookupResult {
+  ParkingScanLookupResult({
+    required this.eventName,
+    required this.clientName,
+    required this.carModel,
+    required this.plateNumber,
+    required this.isVipClient,
+  });
+
+  final String eventName;
+  final String clientName;
+  final String carModel;
+  final String plateNumber;
+  final bool isVipClient;
+
+  factory ParkingScanLookupResult.fromJson(Map<String, dynamic> json) {
+    return ParkingScanLookupResult(
+      eventName: (json['event_name'] as String? ?? '').trim(),
+      clientName: (json['client_name'] as String? ?? '').trim(),
+      carModel: (json['car_model'] as String? ?? '').trim(),
+      plateNumber: (json['plate_number'] as String? ?? '').trim(),
+      isVipClient: _jsonBool(json['is_vip_client'], false),
     );
   }
 }

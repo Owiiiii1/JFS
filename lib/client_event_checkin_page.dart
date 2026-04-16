@@ -6,9 +6,16 @@ import 'gen_l10n/app_localizations.dart';
 const _kGold = Color(0xFFD4AF37);
 
 class ClientEventCheckinPage extends StatelessWidget {
-  const ClientEventCheckinPage({super.key, required this.checkinCode});
+  const ClientEventCheckinPage({
+    super.key,
+    required this.checkinCode,
+    required this.eventName,
+    required this.childName,
+  });
 
   final String checkinCode;
+  final String eventName;
+  final String childName;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +35,26 @@ class ClientEventCheckinPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Text(
+                eventName.trim().isEmpty ? '—' : eventName,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                childName.trim().isEmpty ? '—' : childName,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: _kGold,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 16),
               Text(
                 l10n.eventProgressCheckinPrompt,
                 textAlign: TextAlign.center,

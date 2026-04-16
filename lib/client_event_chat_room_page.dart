@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'app_settings.dart';
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
 
@@ -273,9 +274,7 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
   String _formatTime(DateTime? dt) {
     if (dt == null) return '';
     final d = dt.toLocal();
-    final hh = d.hour.toString().padLeft(2, '0');
-    final mm = d.minute.toString().padLeft(2, '0');
-    return '$hh:$mm';
+    return AppSettings.formatTime(d.hour, d.minute);
   }
 
   @override

@@ -200,6 +200,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get unitsOfMeasurement => 'Единицы измерения';
 
   @override
+  String get timeDisplayFormat => 'Формат времени';
+
+  @override
+  String get timeFormat24Hour => '24-часовой';
+
+  @override
+  String get timeFormat12Hour => '12-часовой (AM/PM)';
+
+  @override
   String get metricUnits => 'Метрические (см, кг)';
 
   @override
@@ -502,7 +511,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Для этого ивента пока не добавлено текстовое описание.';
 
   @override
-  String get eventSettingsBrandTitle => 'Требования бренда';
+  String get eventSettingsBrandTitle => 'Обувь и носки';
 
   @override
   String get eventSettingsBrandSubtitle =>
@@ -530,6 +539,123 @@ class AppLocalizationsRu extends AppLocalizations {
   String brandRequirementsBrandNumber(int brandId) {
     return 'Бренд $brandId';
   }
+
+  @override
+  String get eventSettingsParkingTitle => 'Парковка';
+
+  @override
+  String get eventSettingsParkingSubtitle =>
+      'Откройте парковочный пропуск и статус прибытия';
+
+  @override
+  String get eventSettingsParkingCta => 'ОТКРЫТЬ ПАРКОВКУ';
+
+  @override
+  String get parkingChooseModeTitle => 'Режим парковки';
+
+  @override
+  String get parkingChooseModeHint =>
+      'Выберите состояние экрана для теста визуала.';
+
+  @override
+  String get parkingModeInactive => 'НЕ АКТИВНО';
+
+  @override
+  String get parkingModeActive => 'АКТИВНО';
+
+  @override
+  String get parkingInactiveHeadline => 'ПАРКОВКА НЕ АКТИВНА';
+
+  @override
+  String get parkingInactiveBody =>
+      'СЕРВИС ПАРКОВКИ ПОЯВИТСЯ ПОСЛЕ ПОКУПКИ БИЛЕТА.';
+
+  @override
+  String get parkingInactiveBuyCta => 'КУПИТЬ';
+
+  @override
+  String get parkingInactiveVipBody =>
+      'ДЛЯ ЗАКАЗА VIP-ПАРКИНГА - ЗАБРОНИРУЙТЕ МЕСТО ВАШЕМУ АВТОМОБИЛЮ.';
+
+  @override
+  String get parkingInactiveVipBookCta => 'ЗАКАЗ ПАРКОВКИ';
+
+  @override
+  String get parkingActiveTicketLabel => 'БИЛЕТ';
+
+  @override
+  String get parkingTicketMock1 => 'БИЛЕТ A1 · МОДЕЛЬ';
+
+  @override
+  String get parkingTicketMock2 => 'БИЛЕТ B7 · ГОСТЬ';
+
+  @override
+  String get parkingActiveValetLabel => 'VALET SERVICE';
+
+  @override
+  String get parkingActiveStatusLine => 'PARKING ACTIVE';
+
+  @override
+  String get parkingActiveShowEntryPointCta => 'ПОКАЗАТЬ ТОЧКУ ВЪЕЗДА';
+
+  @override
+  String get parkingActiveCarLabel => 'АВТОМОБИЛЬ';
+
+  @override
+  String get parkingActiveRegistrationNumberLabel => 'НОМЕРНОЙ ЗНАК';
+
+  @override
+  String get parkingCreateTicketTitle => 'Создать билет';
+
+  @override
+  String get parkingCreateEventLabel => 'Ивент';
+
+  @override
+  String get parkingCreateAccountNameLabel => 'Имя';
+
+  @override
+  String get parkingCreateCarModelLabel => 'МАРКА И МОДЕЛЬ';
+
+  @override
+  String get parkingCreateCarModelHint => 'Например: Ford Mustang';
+
+  @override
+  String get parkingCreatePlateNumberLabel => 'НОМЕРНОЙ ЗНАК';
+
+  @override
+  String get parkingCreatePlateNumberHint => 'Например: CA 7JXK921';
+
+  @override
+  String get parkingCreateRepeatPlateNumberLabel => 'ПОВТОРИТЕ НОМЕРНОЙ ЗНАК';
+
+  @override
+  String get parkingCreateRepeatPlateNumberHint =>
+      'Повторно введите номерной знак';
+
+  @override
+  String get parkingCreatePlateNumberMismatch => 'Номерные знаки не совпадают';
+
+  @override
+  String get parkingCreateBuyCta => 'КУПИТЬ';
+
+  @override
+  String get parkingCreateBookCta => 'ЗАКАЗ ПАРКОВКИ';
+
+  @override
+  String get parkingCheckoutInBrowser => 'Завершите оплату в браузере.';
+
+  @override
+  String get parkingPurchasedWithoutPayment => 'Билет успешно куплен.';
+
+  @override
+  String get parkingVipBooked => 'VIP-парковка успешно забронирована.';
+
+  @override
+  String get parkingCheckoutError =>
+      'Не удалось запустить оплату парковки. Попробуйте снова.';
+
+  @override
+  String get parkingActivePassLabel => 'КОД ПРОПУСКА';
 
   @override
   String get eventSettingsChatTitle => 'Общий чат';
@@ -935,4 +1061,280 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get contactManagerServiceUnavailable =>
       'Связь временно недоступна. Попробуйте позже.';
+
+  @override
+  String get close => 'Закрыть';
+
+  @override
+  String get staffPortalTitle => 'Портал сотрудников';
+
+  @override
+  String get staffActiveEvent => 'Активное событие';
+
+  @override
+  String get staffActiveStage => 'Активный этап';
+
+  @override
+  String get staffSelectEvent => 'Выберите событие';
+
+  @override
+  String get staffSelectEventInSettings =>
+      'Выберите событие в настройках сотрудника';
+
+  @override
+  String get staffSelectStage => 'Выберите этап';
+
+  @override
+  String staffPreparatoryStageLabel(String stageName) {
+    return 'Подготовка: $stageName';
+  }
+
+  @override
+  String get staffScanButton => 'СКАН';
+
+  @override
+  String get staffParkingButton => 'ПАРКОВКА';
+
+  @override
+  String get staffTapToScanModelLanyard =>
+      'НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ БЕЙДЖ МОДЕЛИ';
+
+  @override
+  String get staffTapToScanParkingQr =>
+      'НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR ПАРКОВКИ';
+
+  @override
+  String get staffCurrentTask => 'Текущая задача';
+
+  @override
+  String get staffUtilitiesAndTools => 'ИНСТРУМЕНТЫ';
+
+  @override
+  String get staffScanForInfoTitle => 'Скан для информации';
+
+  @override
+  String get staffScanForInfoSubtitle => 'Сканер бейджей и служебных QR';
+
+  @override
+  String get staffToiletRequest => 'Запрос в туалет';
+
+  @override
+  String get staffRestroomLog => 'ЖУРНАЛ ТУАЛЕТА';
+
+  @override
+  String get staffSettingsCardTitle => 'Настройки сотрудника';
+
+  @override
+  String get staffPreferences => 'ПРЕДПОЧТЕНИЯ';
+
+  @override
+  String get staffSupervisorRoleTitle => 'Роль супервайзера';
+
+  @override
+  String get staffSupervisorRoleDescription =>
+      'Управляйте потоком события, контролируйте фотографов и следите, чтобы все дети были охвачены. Отслеживайте прогресс в реальном времени.';
+
+  @override
+  String get staffCurrentStageLabel => 'Текущий этап';
+
+  @override
+  String get staffNoMainStagesAvailable =>
+      'Для этого события нет основных этапов.';
+
+  @override
+  String get staffChildRegistry => 'Реестр детей';
+
+  @override
+  String staffChildrenListed(int count) {
+    return 'Детей в списке: $count';
+  }
+
+  @override
+  String get staffSelectActiveEventForRegistry =>
+      'Выберите активное событие в настройках, чтобы увидеть реестр детей.';
+
+  @override
+  String get staffNoChildrenAssigned =>
+      'Для этого события нет назначенных детей.';
+
+  @override
+  String get staffTableProfile => 'ПРОФИЛЬ';
+
+  @override
+  String get staffTableName => 'ИМЯ';
+
+  @override
+  String get staffTableStatus => 'СТАТУС';
+
+  @override
+  String get staffTableAction => 'ДЕЙСТВИЕ';
+
+  @override
+  String get staffYes => 'Да';
+
+  @override
+  String get staffNo => 'Нет';
+
+  @override
+  String get staffRoleHostessTitle => 'Роль: хостесс';
+
+  @override
+  String get staffRoleHostessPlaceholder =>
+      'Экран роли хостесс будет добавлен позже.';
+
+  @override
+  String get staffRoleInterviewTitle => 'Роль: интервью';
+
+  @override
+  String get staffRoleInterviewPlaceholder =>
+      'Экран роли интервью будет добавлен позже.';
+
+  @override
+  String get staffRoleLunchesTitle => 'Роль: обеды';
+
+  @override
+  String get staffRoleLunchesPlaceholder =>
+      'Экран роли обедов будет добавлен позже.';
+
+  @override
+  String get staffRoleSuperadminTitle => 'Роль: суперадмин';
+
+  @override
+  String get staffRoleSuperadminPlaceholder =>
+      'Экран роли суперадмина будет добавлен позже.';
+
+  @override
+  String get staffNavHome => 'Главная';
+
+  @override
+  String get staffNavEvent => 'Событие';
+
+  @override
+  String get staffNavMore => 'Еще';
+
+  @override
+  String get staffAccessBadge => 'ДОСТУП СОТРУДНИКА';
+
+  @override
+  String get staffVenueAndContact => 'Локация и контакты';
+
+  @override
+  String get staffMainOffice => 'Главный офис';
+
+  @override
+  String get staffSecurity => 'Охрана';
+
+  @override
+  String get staffScanHeaderParking => 'Скан парковки';
+
+  @override
+  String get staffScanHeaderInfo => 'Скан для информации';
+
+  @override
+  String get staffScanHeaderQr => 'Скан QR кода';
+
+  @override
+  String get staffScanHintParking =>
+      'Сканируйте QR парковки, чтобы показать данные талона';
+
+  @override
+  String get staffScanHintInfo =>
+      'Сканируйте бейдж ребенка или родителя, чтобы открыть профиль';
+
+  @override
+  String get staffScanHintQr => 'Поместите QR-код в рамку';
+
+  @override
+  String get staffScanErrorTitle => 'Ошибка сканирования';
+
+  @override
+  String get staffScanErrorUnknown => 'Неизвестная ошибка сканирования.';
+
+  @override
+  String get staffParkingTicketTitle => 'Парковочный талон';
+
+  @override
+  String get staffParkingFieldEvent => 'Событие';
+
+  @override
+  String get staffParkingFieldClient => 'Клиент';
+
+  @override
+  String get staffParkingFieldCar => 'Автомобиль';
+
+  @override
+  String get staffParkingFieldPlateNumber => 'Госномер';
+
+  @override
+  String get staffParkingFieldVipClient => 'VIP клиент';
+
+  @override
+  String get staffShowProgressTitle => 'Прогресс шоу';
+
+  @override
+  String get staffCouldNotOpenDialer => 'Не удалось открыть набор номера';
+
+  @override
+  String get staffRealtimeTracking => 'ОТСЛЕЖИВАНИЕ В РЕАЛЬНОМ ВРЕМЕНИ';
+
+  @override
+  String get staffEstimatedCompletion => 'ПРИМЕРНОЕ ЗАВЕРШЕНИЕ';
+
+  @override
+  String get staffNoMainStagesInPlan => 'В плане пока нет основных этапов.';
+
+  @override
+  String get staffStatusDone => 'ГОТОВО';
+
+  @override
+  String get staffStatusInProgress => 'В ПРОЦЕССЕ';
+
+  @override
+  String get staffStatusPending => 'ОЖИДАНИЕ';
+
+  @override
+  String get staffContactDetails => 'Контактные данные';
+
+  @override
+  String get staffPrimaryParent => 'ОСНОВНОЙ РОДИТЕЛЬ';
+
+  @override
+  String staffIdLabel(String id) {
+    return 'ID сотрудника: $id';
+  }
+
+  @override
+  String get staffSwitchRole => 'Сменить роль';
+
+  @override
+  String staffCurrentRoleLabel(String role) {
+    return 'ТЕКУЩАЯ: $role';
+  }
+
+  @override
+  String get staffRoleSubtitleScan => 'Скан QR и этапы';
+
+  @override
+  String get staffRoleSubtitleSupervisor => 'Полный доступ и управление';
+
+  @override
+  String get staffRoleSubtitleHostess => 'Поддержка гостей и зон';
+
+  @override
+  String get staffRoleSubtitleParking => 'Парковка и доступ';
+
+  @override
+  String get staffRoleSubtitleInterview => 'Поток интервью';
+
+  @override
+  String get staffRoleSubtitleLunches => 'Питание и обеды';
+
+  @override
+  String get staffRoleSubtitleSuperadmin => 'Инструменты суперадмина';
+
+  @override
+  String get staffRoleSubtitlePhotographer => 'Съемка и загрузка медиа';
+
+  @override
+  String get staffRoleSubtitleStylist => 'Гардероб и макияж';
 }

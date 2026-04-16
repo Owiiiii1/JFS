@@ -313,6 +313,7 @@ class _ClientHomePageState extends State<ClientHomePage>
         builder: (_) => ClientEventSettingsPage(
           auth: widget.auth,
           eventName: name,
+          accountName: (widget.user['name'] as String? ?? '').trim(),
           eventId: eventId,
           childrenInEvent: childrenInEvent,
           contextChildId: _selectedDashboardChild?.id ?? child.id,
@@ -2083,10 +2084,15 @@ class _ClientEventProgressPageState extends State<_ClientEventProgressPage> {
                       childFullName: _child == null ? '' : _child!.firstName,
                       onOpenCheckin: (checkinCode) {
                         if (!context.mounted) return;
+                        final eventName =
+                            _child?.activeAssignment?.event.name ?? '';
+                        final childName = _child?.firstName ?? '';
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => ClientEventCheckinPage(
                               checkinCode: checkinCode,
+                              eventName: eventName,
+                              childName: childName,
                             ),
                           ),
                         );

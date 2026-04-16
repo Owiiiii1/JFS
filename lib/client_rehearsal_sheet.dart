@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'app_settings.dart';
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
 
@@ -121,7 +122,8 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
       _assignment?.rehearsalBookings ?? const [];
 
   int get _maxMainRehearsals {
-    final value = _assignment?.maxMainRehearsals ?? 1;
+    final a = _assignment;
+    final value = a?.effectiveMaxMainRehearsals ?? a?.maxMainRehearsals ?? 1;
     return value < 0 ? 0 : value;
   }
 
@@ -179,8 +181,10 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
       }
     });
     try {
-      final payload =
-          await widget.auth.getEventRehearsalSlots(widget.eventId);
+      final payload = await widget.auth.getEventRehearsalSlots(
+        widget.eventId,
+        assignmentId: _assignment?.id,
+      );
       if (!mounted) return;
       setState(() {
         _slots = payload.slots;
@@ -470,6 +474,7 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                                 _defaultSelectedDateKeyForSlots(_slots);
                             _selectedSlotIds.clear();
                           });
+                          _loadSlots();
                         },
                       ),
                     ),
@@ -897,7 +902,7 @@ class _TimeSlotGrid extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      s.slotTime,
+                      AppSettings.formatTimeLabel(s.slotTime),
                       style: TextStyle(
                         color: full
                             ? _kTertiary.withValues(alpha: 0.4)
@@ -1074,7 +1079,7 @@ class _BookedPanel extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '#${idx + 1} · $dateStr, ${booking.slotTime}',
+                    '#${idx + 1} · $dateStr, ${AppSettings.formatTimeLabel(booking.slotTime)}',
                     style: const TextStyle(
                       color: _kPrimary,
                       fontSize: 15,

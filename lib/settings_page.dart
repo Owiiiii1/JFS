@@ -56,6 +56,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 : l10n.imperialUnits,
             onTap: () => _showUnitsPicker(context),
           ),
+          const SizedBox(height: 12),
+          _SettingsTile(
+            title: l10n.timeDisplayFormat,
+            subtitle: AppSettings.timeDisplayFormat == TimeDisplayFormat.h24
+                ? l10n.timeFormat24Hour
+                : l10n.timeFormat12Hour,
+            onTap: () => _showTimeFormatPicker(context),
+          ),
         ],
       ),
     );
@@ -160,6 +168,39 @@ class _SettingsPageState extends State<SettingsPage> {
     );
     if (chosen != null) {
       await AppSettings.setMeasurementUnit(chosen);
+      _reloadAndRebuild();
+    }
+  }
+
+  Future<void> _showTimeFormatPicker(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final chosen = await showModalBottomSheet<TimeDisplayFormat>(
+      context: context,
+      backgroundColor: const Color(0xFF121212),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(
+                l10n.timeFormat24Hour,
+                style: const TextStyle(color: Colors.white),
+              ),
+              onTap: () => Navigator.of(ctx).pop(TimeDisplayFormat.h24),
+            ),
+            ListTile(
+              title: Text(
+                l10n.timeFormat12Hour,
+                style: const TextStyle(color: Colors.white),
+              ),
+              onTap: () => Navigator.of(ctx).pop(TimeDisplayFormat.h12),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (chosen != null) {
+      await AppSettings.setTimeDisplayFormat(chosen);
       _reloadAndRebuild();
     }
   }

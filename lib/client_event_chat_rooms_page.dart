@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'app_settings.dart';
 import 'api/auth_service.dart';
 import 'client_event_chat_room_page.dart';
 import 'gen_l10n/app_localizations.dart';
@@ -21,9 +22,7 @@ class ClientEventChatRoomsPage extends StatelessWidget {
   String _timeLabel(DateTime? dt) {
     if (dt == null) return '';
     final d = dt.toLocal();
-    final hh = d.hour.toString().padLeft(2, '0');
-    final mm = d.minute.toString().padLeft(2, '0');
-    return '$hh:$mm';
+    return AppSettings.formatTime(d.hour, d.minute);
   }
 
   @override

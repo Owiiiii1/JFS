@@ -4,6 +4,7 @@ import 'api/auth_service.dart';
 import 'client_brand_requirements_page.dart';
 import 'client_event_chat_rooms_page.dart';
 import 'client_event_packing_page.dart';
+import 'client_event_parking_flow.dart';
 import 'client_event_meal_sheet.dart';
 import 'client_rehearsal_sheet.dart';
 import 'gen_l10n/app_localizations.dart';
@@ -38,6 +39,7 @@ List<int> _orderedBrandIdsForAssignment(ActiveAssignment? a) {
     final v = id ?? 0;
     if (v > 0 && !ids.contains(v)) ids.add(v);
   }
+
   add(a.brandId);
   add(a.secondBrandId);
   add(a.familyLookBrandId);
@@ -93,8 +95,10 @@ class ClientEventSettingsPage extends StatefulWidget {
     super.key,
     required this.auth,
     required this.eventName,
+    required this.accountName,
     required this.eventId,
     required this.childrenInEvent,
+
     /// Ребёнок, выбранный на главной (над карточкой ивента); для требований брендов.
     this.contextChildId,
     this.onMealChoiceSaved,
@@ -102,6 +106,7 @@ class ClientEventSettingsPage extends StatefulWidget {
 
   final AuthService auth;
   final String eventName;
+  final String accountName;
   final int eventId;
   final List<ChildWithAssignment> childrenInEvent;
   final int? contextChildId;
@@ -201,8 +206,10 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
       if (!mounted) return;
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) =>
-              ClientEventPackingPage(packing: info, baseUrl: widget.auth.baseUrl),
+          builder: (_) => ClientEventPackingPage(
+            packing: info,
+            baseUrl: widget.auth.baseUrl,
+          ),
         ),
       );
     } catch (_) {
@@ -234,9 +241,9 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
     final brandIds = _orderedBrandIdsForAssignment(child.activeAssignment);
     if (brandIds.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.rehearsalBrandNotAssigned)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.rehearsalBrandNotAssigned)));
       return;
     }
 
@@ -245,9 +252,9 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
       apiItems = await widget.auth.getEventBrandRequirements(widget.eventId);
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.brandRequirementsLoadFailed)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.brandRequirementsLoadFailed)));
       return;
     }
 
@@ -333,10 +340,8 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
       if (!mounted) return;
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => ClientEventChatRoomsPage(
-            auth: widget.auth,
-            rooms: rooms,
-          ),
+          builder: (_) =>
+              ClientEventChatRoomsPage(auth: widget.auth, rooms: rooms),
         ),
       );
     } catch (_) {
@@ -344,6 +349,49 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.chatRoomsLoadFailed)));
+    }
+  }
+
+  Future<void> _openParkingFlow() async {
+    if (widget.eventId <= 0) return;
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final payload = await widget.auth.getEventParkingTickets(widget.eventId);
+      if (!mounted) return;
+
+      final page = payload.hasActiveTickets
+          ? ClientParkingActiveScreen(
+              eventName: widget.eventName,
+              accountName: widget.accountName,
+              l10n: l10n,
+              auth: widget.auth,
+              eventId: widget.eventId,
+              canBuy: payload.canBuy,
+              vipMode: payload.vipMode,
+              entryMapUrl: payload.entryMapUrl,
+              entryAppleMapUrl: payload.entryAppleMapUrl,
+              tickets: payload.tickets,
+            )
+          : ClientParkingInactiveScreen(
+              l10n: l10n,
+              eventName: widget.eventName,
+              accountName: widget.accountName,
+              auth: widget.auth,
+              eventId: widget.eventId,
+              canBuy: payload.canBuy,
+              vipMode: payload.vipMode,
+            );
+
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute<void>(builder: (_) => page));
+
+      _refreshChildrenFromServer();
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.parkingCheckoutError)));
     }
   }
 
@@ -427,7 +475,9 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
                                 flex: 1,
                                 child: _PackingCard(
                                   l10n: l10n,
-                                  onOpen: widget.eventId > 0 ? _openPackingPage : null,
+                                  onOpen: widget.eventId > 0
+                                      ? _openPackingPage
+                                      : null,
                                 ),
                               ),
                               SizedBox(width: _kCardGap),
@@ -460,9 +510,7 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
                       SizedBox(height: _kCardGap),
                       _RehearsalCard(
                         l10n: l10n,
-                        onOpen: widget.eventId > 0
-                            ? _openRehearsalSheet
-                            : null,
+                        onOpen: widget.eventId > 0 ? _openRehearsalSheet : null,
                       ),
                       SizedBox(height: _kCardGap),
                       _PackingCard(
@@ -479,6 +527,11 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
                     ],
                   );
                 },
+              ),
+              SizedBox(height: _kCardGap),
+              _ParkingCard(
+                l10n: l10n,
+                onOpen: widget.eventId > 0 ? _openParkingFlow : null,
               ),
               SizedBox(height: _kCardGap),
               _ChatCard(
@@ -820,6 +873,86 @@ class _BrandCard extends StatelessWidget {
   }
 }
 
+class _ParkingCard extends StatelessWidget {
+  const _ParkingCard({required this.l10n, this.onOpen});
+
+  final AppLocalizations l10n;
+  final VoidCallback? onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final card = Container(
+      decoration: BoxDecoration(
+        color: _kSurfaceLow,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          Positioned(
+            right: -10,
+            top: -10,
+            child: Icon(
+              Icons.local_parking,
+              size: 96,
+              color: _kPrimary.withValues(alpha: 0.1),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(_kCardPad),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.local_parking, size: 36, color: _kPrimary),
+                SizedBox(height: _kIconTitleGap),
+                Text(
+                  l10n.eventSettingsParkingTitle,
+                  style: const TextStyle(
+                    fontFamily: ClientEventSettingsPage._fontFamily,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    height: 1.15,
+                    color: _kOnSurface,
+                  ),
+                ),
+                if (_l10nLineNotEmpty(l10n.eventSettingsParkingSubtitle)) ...[
+                  SizedBox(height: _kTitleSubtitleGap),
+                  Text(
+                    l10n.eventSettingsParkingSubtitle,
+                    style: const TextStyle(
+                      fontFamily: ClientEventSettingsPage._fontFamily,
+                      fontSize: 13,
+                      height: 1.3,
+                      color: _kTertiary,
+                    ),
+                  ),
+                ],
+                SizedBox(height: _kBeforeCtaGap),
+                _CtaRow(label: l10n.eventSettingsParkingCta),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (onOpen == null) {
+      return card;
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onOpen,
+        borderRadius: BorderRadius.circular(16),
+        splashColor: _kPrimary.withValues(alpha: 0.12),
+        child: card,
+      ),
+    );
+  }
+}
+
 class _ChatCard extends StatelessWidget {
   const _ChatCard({required this.l10n, this.onOpen});
 
@@ -841,40 +974,7 @@ class _ChatCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  const Icon(
-                    Icons.chat_bubble_outline,
-                    size: 44,
-                    color: _kPrimary,
-                  ),
-                  Positioned(
-                    top: -3,
-                    right: -3,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF93000A),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: _kSurfaceHigh, width: 2),
-                      ),
-                      child: const Text(
-                        '3',
-                        style: TextStyle(
-                          fontFamily: ClientEventSettingsPage._fontFamily,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          height: 1,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              const Icon(Icons.chat_bubble_outline, size: 44, color: _kPrimary),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'api/auth_service.dart';
 import 'push/push_token_service.dart';
 import 'app_settings.dart';
@@ -46,6 +47,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   bool _supervisorChildrenLoading = false;
   String? _supervisorChildrenError;
   int? _supervisorChildrenEventId;
+  // ignore: unused_field
   int _unreadNotifications = 0;
   List<WorkerEventStage> _homeVisibleStages = [];
   bool _homeStagesLoading = false;
@@ -61,6 +63,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     });
   }
 
+  // ignore: unused_element
   Future<void> _refreshUnreadSilently() async {
     try {
       final count = await widget.auth.getUnreadNotificationsCount();
@@ -71,10 +74,11 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     }
   }
 
+  // ignore: unused_element
   Future<void> _openNotifications() async {
-    final changed = await Navigator.of(
-      context,
-    ).push<bool>(MaterialPageRoute(builder: (_) => NotificationsPage(auth: widget.auth)));
+    final changed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => NotificationsPage(auth: widget.auth)),
+    );
     if (!mounted) return;
     if (changed == true) {
       _refreshUnreadSilently();
@@ -164,13 +168,14 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     }
   }
 
-  Future<void> _ensureHomeStagePrefsValid(List<WorkerEventStage> visible) async {
+  Future<void> _ensureHomeStagePrefsValid(
+    List<WorkerEventStage> visible,
+  ) async {
     final sid = AppSettings.staffActiveStageId;
     final stype = AppSettings.staffActiveStageType;
-    final ok = sid != null &&
-        visible.any(
-          (s) => s.id == sid && (stype == null || s.type == stype),
-        );
+    final ok =
+        sid != null &&
+        visible.any((s) => s.id == sid && (stype == null || s.type == stype));
     if (ok) {
       return;
     }
@@ -236,16 +241,14 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     }
   }
 
-  String get _userName =>
-      (widget.user['name'] ?? '').toString().trim().isNotEmpty
-      ? (widget.user['name']).toString().trim()
-      : 'Staff';
-
   /// Тип главной вкладки: из админки (`home_screen_type`) или legacy по code/name.
   String _resolvedHomeScreenType(StaffRole? role) {
     if (role == null) return 'scan';
     final fromApi = role.homeScreenType.trim().toLowerCase();
     if (fromApi.isNotEmpty) return fromApi;
+    if (_matchesAnyToken(role, const ['parking', 'парковка'])) {
+      return 'parking';
+    }
     if (_matchesAnyToken(role, const ['hostess', 'hs', 'хостесс'])) {
       return 'hostess';
     }
@@ -261,6 +264,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
         return _buildSupervisorHomeTab(accent);
       case 'hostess':
         return _buildHostessStub();
+      case 'parking':
+        return _buildHomeTab(accent, parkingMode: true);
       case 'interview':
         return _buildInterviewStub();
       case 'lunches':
@@ -317,6 +322,10 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   }
 
   Widget _buildHeader(Color accent) {
+    final l10n = AppLocalizations.of(context)!;
+    final userName = (widget.user['name'] ?? '').toString().trim().isNotEmpty
+        ? (widget.user['name']).toString().trim()
+        : l10n.staff;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -332,8 +341,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 icon: const Icon(Icons.menu, color: Colors.white, size: 28),
                 onPressed: () => _showMenu(context),
               ),
-              const Text(
-                'STAFF PORTAL',
+              Text(
+                l10n.staffPortalTitle,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -341,37 +350,12 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                   letterSpacing: 2,
                 ),
               ),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.notifications_outlined,
-                      color: Colors.white,
-                      size: 26,
-                    ),
-                    onPressed: _openNotifications,
-                  ),
-                  if (_unreadNotifications > 0)
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: accent,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+              const SizedBox(width: 48),
             ],
           ),
           const SizedBox(height: 4),
           Text(
-            '$_userName • ${_selectedRole?.name.toUpperCase() ?? 'STAFF'}',
+            '$userName • ${_selectedRole?.name.toUpperCase() ?? l10n.staff.toUpperCase()}',
             style: TextStyle(color: Colors.white70, fontSize: 13),
           ),
         ],
@@ -380,6 +364,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   }
 
   void _showMenu(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: const Color(0xFF121212),
@@ -388,17 +373,26 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
+              leading: const Icon(Icons.language, color: Colors.white70),
+              title: Text(
+                l10n.appLanguage,
+                style: const TextStyle(color: Colors.white),
+              ),
+              onTap: () async {
+                Navigator.pop(ctx);
+                await _showLanguageDialog();
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.info_outline, color: Colors.white70),
               title: Text(
-                AppLocalizations.of(context)!.aboutTheApp,
+                l10n.aboutTheApp,
                 style: const TextStyle(color: Colors.white),
               ),
               onTap: () {
                 Navigator.pop(ctx);
                 Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => const AboutAppPage(),
-                  ),
+                  MaterialPageRoute<void>(builder: (_) => const AboutAppPage()),
                 );
               },
             ),
@@ -430,117 +424,174 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     );
   }
 
+  Future<void> _showLanguageDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    final selected = await showDialog<AppLanguage>(
+      context: context,
+      builder: (ctx) {
+        Widget option(AppLanguage value, String label) {
+          final selected = AppSettings.language == value;
+          return ListTile(
+            leading: Icon(
+              selected ? Icons.radio_button_checked : Icons.radio_button_off,
+              color: selected ? _kPrimary : Colors.white70,
+            ),
+            title: Text(label, style: const TextStyle(color: Colors.white)),
+            onTap: () => Navigator.of(ctx).pop(value),
+          );
+        }
+
+        return AlertDialog(
+          backgroundColor: const Color(0xFF121212),
+          title: Text(
+            l10n.appLanguage,
+            style: const TextStyle(color: Colors.white),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              option(AppLanguage.system, l10n.systemLanguage),
+              option(AppLanguage.en, l10n.languageEnglish),
+              option(AppLanguage.ru, l10n.languageRussian),
+              option(AppLanguage.uk, l10n.languageUkrainian),
+              option(AppLanguage.esUs, l10n.languageSpanishUS),
+            ],
+          ),
+        );
+      },
+    );
+    if (selected == null) return;
+    await AppSettings.setLanguage(selected);
+    AppSettings.onLocaleChanged?.call();
+    if (mounted) setState(() {});
+  }
+
   /// Универсальное сканирование: этап синхронизирован с настройками, описание роли из админки.
-  Widget _buildHomeTab(Color accent) {
+  Widget _buildHomeTab(Color accent, {bool parkingMode = false}) {
     final l10n = AppLocalizations.of(context)!;
     final roleDesc = (_selectedRole?.description ?? '').trim();
     final eventId = AppSettings.staffActiveEventId;
     final roleActive = _selectedRole?.isActive ?? false;
-    final scanEnabled = !_homeStagesLoading &&
-        roleActive &&
-        eventId != null &&
-        eventId > 0 &&
-        AppSettings.staffActiveStageId != null;
+    final scanEnabled = parkingMode
+        ? roleActive
+        : (!_homeStagesLoading &&
+              roleActive &&
+              eventId != null &&
+              eventId > 0 &&
+              AppSettings.staffActiveStageId != null);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Active stage',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.5),
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
+        if (!parkingMode)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  l10n.staffActiveStage,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.5),
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              if (_homeStagesLoading)
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: _kPrimary,
+                const SizedBox(height: 8),
+                if (_homeStagesLoading)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: _kPrimary,
+                        ),
                       ),
                     ),
-                  ),
-                )
-              else if (eventId == null || eventId <= 0)
-                Text(
-                  'Select an event in Staff Settings',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
-                    fontSize: 14,
-                  ),
-                )
-              else
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<int?>(
-                      value: _homeEffectiveStageDropdownValue(),
-                      isExpanded: true,
-                      dropdownColor: const Color(0xFF2a1a14),
-                      icon: Icon(Icons.keyboard_arrow_down, color: accent, size: 24),
-                      style: const TextStyle(color: Colors.white, fontSize: 15),
-                      hint: Text(
-                        'Select stage',
-                        style: TextStyle(color: Colors.white54),
-                      ),
-                      items: [
-                        DropdownMenuItem<int?>(
-                          value: null,
-                          child: Text(l10n.staffNoneSelected),
+                  )
+                else if (eventId == null || eventId <= 0)
+                  Text(
+                    l10n.staffSelectEventInSettings,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.6),
+                      fontSize: 14,
+                    ),
+                  )
+                else
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int?>(
+                        value: _homeEffectiveStageDropdownValue(),
+                        isExpanded: true,
+                        dropdownColor: const Color(0xFF2a1a14),
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: accent,
+                          size: 24,
                         ),
-                        ..._homeVisibleStages.map(
-                          (s) => DropdownMenuItem<int?>(
-                            value: s.id,
-                            child: Text(
-                              s.type == 'preparatory' ? 'Prep: ${s.name}' : s.name,
-                              overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
+                        hint: Text(
+                          l10n.staffSelectStage,
+                          style: TextStyle(color: Colors.white54),
+                        ),
+                        items: [
+                          DropdownMenuItem<int?>(
+                            value: null,
+                            child: Text(l10n.staffNoneSelected),
+                          ),
+                          ..._homeVisibleStages.map(
+                            (s) => DropdownMenuItem<int?>(
+                              value: s.id,
+                              child: Text(
+                                s.type == 'preparatory'
+                                    ? l10n.staffPreparatoryStageLabel(s.name)
+                                    : s.name,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                      onChanged: (int? value) async {
-                        if (value == null) {
-                          await AppSettings.setStaffActiveStageId(null);
-                          await AppSettings.setStaffActiveStageType(null);
-                        } else {
-                          WorkerEventStage? stage;
-                          for (final s in _homeVisibleStages) {
-                            if (s.id == value) {
-                              stage = s;
-                              break;
+                        ],
+                        onChanged: (int? value) async {
+                          if (value == null) {
+                            await AppSettings.setStaffActiveStageId(null);
+                            await AppSettings.setStaffActiveStageType(null);
+                          } else {
+                            WorkerEventStage? stage;
+                            for (final s in _homeVisibleStages) {
+                              if (s.id == value) {
+                                stage = s;
+                                break;
+                              }
                             }
+                            await AppSettings.setStaffActiveStageId(value);
+                            await AppSettings.setStaffActiveStageType(
+                              stage?.type ?? 'main',
+                            );
                           }
-                          await AppSettings.setStaffActiveStageId(value);
-                          await AppSettings.setStaffActiveStageType(
-                            stage?.type ?? 'main',
-                          );
-                        }
-                        if (mounted) setState(() {});
-                      },
+                          if (mounted) setState(() {});
+                        },
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
-        ),
         Expanded(
           child: Center(
             child: Column(
@@ -551,7 +602,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: scanEnabled
-                        ? () => unawaited(_openScanner(context))
+                        ? () => unawaited(
+                            _openScanner(context, parkingScan: parkingMode),
+                          )
                         : null,
                     borderRadius: BorderRadius.circular(96),
                     child: Container(
@@ -563,10 +616,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                             ? LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: [
-                                  accent,
-                                  accent.withOpacity(0.8),
-                                ],
+                                colors: [accent, accent.withOpacity(0.8)],
                               )
                             : null,
                         color: scanEnabled ? null : const Color(0xFF3D3D3D),
@@ -585,7 +635,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.qr_code_scanner,
+                              parkingMode
+                                  ? Icons.local_parking_outlined
+                                  : Icons.qr_code_scanner,
                               color: scanEnabled
                                   ? Colors.white
                                   : Colors.white38,
@@ -593,7 +645,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'SCAN',
+                              parkingMode
+                                  ? l10n.staffParkingButton
+                                  : l10n.staffScanButton,
                               style: TextStyle(
                                 color: scanEnabled
                                     ? Colors.white
@@ -611,7 +665,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'TAP TO SCAN MODEL LANYARD',
+                  parkingMode
+                      ? l10n.staffTapToScanParkingQr
+                      : l10n.staffTapToScanModelLanyard,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: scanEnabled
@@ -645,32 +701,12 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Current Task',
+                    Text(
+                      l10n.staffCurrentTask,
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: roleActive
-                            ? accent.withOpacity(0.2)
-                            : Colors.white.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        roleActive ? l10n.active : l10n.staffRoleInactive,
-                        style: TextStyle(
-                          color: roleActive ? accent : Colors.white54,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
                       ),
                     ),
                   ],
@@ -708,7 +744,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Select an event in Staff Settings',
+                AppLocalizations.of(context)!.staffSelectEventInSettings,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.7),
@@ -735,7 +771,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'UTILITIES & TOOLS',
+            AppLocalizations.of(context)!.staffUtilitiesAndTools,
             style: TextStyle(
               color: accent,
               fontSize: 11,
@@ -747,8 +783,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           // Scan for Info (large card)
           _MoreCard(
             icon: Icons.qr_code_scanner,
-            title: 'Scan for Info',
-            subtitle: 'General purpose assets & ID scanner',
+            title: AppLocalizations.of(context)!.staffScanForInfoTitle,
+            subtitle: AppLocalizations.of(context)!.staffScanForInfoSubtitle,
             accent: accent,
             large: true,
             onTap: () => unawaited(_openScanner(context, scanForInfo: true)),
@@ -759,8 +795,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               Expanded(
                 child: _MoreCard(
                   icon: Icons.child_care,
-                  title: 'Toilet Request',
-                  subtitle: 'RESTROOM LOG',
+                  title: AppLocalizations.of(context)!.staffToiletRequest,
+                  subtitle: AppLocalizations.of(context)!.staffRestroomLog,
                   accent: accent,
                   onTap: () {},
                 ),
@@ -769,88 +805,24 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               Expanded(
                 child: _MoreCard(
                   icon: Icons.settings,
-                  title: 'Staff Settings',
-                  subtitle: 'PREFERENCES',
+                  title: AppLocalizations.of(context)!.staffSettingsCardTitle,
+                  subtitle: AppLocalizations.of(context)!.staffPreferences,
                   accent: accent,
                   onTap: () => _openStaffSettings(context, accent),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 32),
-          // Shift in Progress
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
-            ),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          margin: const EdgeInsets.only(right: 8),
-                          decoration: BoxDecoration(
-                            color: accent,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        Text(
-                          'SHIFT IN PROGRESS',
-                          style: TextStyle(
-                            color: accent,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Shift ends in 2h 15m',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Remember to clock out at the kiosk.',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  right: -20,
-                  bottom: -20,
-                  child: Icon(
-                    Icons.schedule,
-                    size: 120,
-                    color: Colors.white.withOpacity(0.06),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Future<void> _openScanner(BuildContext context, {bool scanForInfo = false}) async {
+  Future<void> _openScanner(
+    BuildContext context, {
+    bool scanForInfo = false,
+    bool parkingScan = false,
+  }) async {
     final ok = await _refreshLiveWorkerStatus(showError: true);
     if (!ok || !mounted || !context.mounted) return;
 
@@ -874,6 +846,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           accent: _kPrimary,
           backgroundColor: _kBgDark,
           scanForInfo: scanForInfo,
+          parkingScan: parkingScan,
         ),
       ),
     );
@@ -900,6 +873,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
 
   /// Домашняя вкладка для роли Supervisor: карточка роли и реестр детей.
   Widget _buildSupervisorHomeTab(Color accent) {
+    final l10n = AppLocalizations.of(context)!;
     final eventId = AppSettings.staffActiveEventId;
     if (eventId != _supervisorChildrenEventId && !_supervisorChildrenLoading) {
       WidgetsBinding.instance.addPostFrameCallback(
@@ -924,7 +898,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Supervisor Role',
+                  l10n.staffSupervisorRoleTitle,
                   style: TextStyle(
                     color: accent,
                     fontSize: 16,
@@ -933,7 +907,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Manage event flow, oversee photographers, and ensure all children are captured effectively. Track progress in real-time.',
+                  l10n.staffSupervisorRoleDescription,
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 14,
@@ -964,9 +938,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                       dropdownColor: const Color(0xFF2a1a14),
                       icon: Icon(Icons.keyboard_arrow_down, color: accent),
                       style: const TextStyle(color: Colors.white, fontSize: 14),
-                      hint: const Text(
-                        'Current stage',
-                        style: TextStyle(color: Colors.white54),
+                      hint: Text(
+                        l10n.staffCurrentStageLabel,
+                        style: const TextStyle(color: Colors.white54),
                       ),
                       items: _supervisorStages
                           .map(
@@ -1015,7 +989,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                'No main stages available for this event.',
+                l10n.staffNoMainStagesAvailable,
                 style: TextStyle(color: Colors.white54, fontSize: 12),
               ),
             ),
@@ -1026,7 +1000,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               Icon(Icons.people_outline, color: accent, size: 22),
               const SizedBox(width: 8),
               Text(
-                'Child Registry',
+                l10n.staffChildRegistry,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -1045,7 +1019,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${_supervisorChildren!.length} Children Listed',
+                    l10n.staffChildrenListed(_supervisorChildren!.length),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -1060,7 +1034,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: Text(
-                'Select an active event in Settings to see the child registry.',
+                l10n.staffSelectActiveEventForRegistry,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white54, fontSize: 14),
               ),
@@ -1083,7 +1057,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: Text(
-                'No children assigned for this event.',
+                l10n.staffNoChildrenAssigned,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white54, fontSize: 14),
               ),
@@ -1108,7 +1082,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             SizedBox(
               width: 48,
               child: Text(
-                'PROFILE',
+                AppLocalizations.of(context)!.staffTableProfile,
                 style: TextStyle(
                   color: accent,
                   fontSize: 11,
@@ -1120,7 +1094,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             Expanded(
               flex: 2,
               child: Text(
-                'NAME',
+                AppLocalizations.of(context)!.staffTableName,
                 style: TextStyle(
                   color: accent,
                   fontSize: 11,
@@ -1130,7 +1104,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             ),
             Expanded(
               child: Text(
-                'STATUS',
+                AppLocalizations.of(context)!.staffTableStatus,
                 style: TextStyle(
                   color: accent,
                   fontSize: 11,
@@ -1141,7 +1115,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             SizedBox(
               width: 80,
               child: Text(
-                'ACTION',
+                AppLocalizations.of(context)!.staffTableAction,
                 style: TextStyle(
                   color: accent,
                   fontSize: 11,
@@ -1239,8 +1213,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text(
-                'Details',
+              child: Text(
+                AppLocalizations.of(context)!.details,
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
@@ -1253,9 +1227,15 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   ({Color color, String label}) _supervisorStatusInfo(String status) {
     switch (status) {
       case 'given':
-        return (color: Colors.green, label: 'Yes');
+        return (
+          color: Colors.green,
+          label: AppLocalizations.of(context)!.staffYes,
+        );
       default:
-        return (color: Colors.red, label: 'No');
+        return (
+          color: Colors.red,
+          label: AppLocalizations.of(context)!.staffNo,
+        );
     }
   }
 
@@ -1296,32 +1276,32 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   Widget _buildHostessStub() {
     return _buildPlaceholderHomeTab(
       icon: Icons.badge_outlined,
-      title: 'Роль: хостесс',
-      message: 'Экран для роли хостесс будет добавлен позже.',
+      title: AppLocalizations.of(context)!.staffRoleHostessTitle,
+      message: AppLocalizations.of(context)!.staffRoleHostessPlaceholder,
     );
   }
 
   Widget _buildInterviewStub() {
     return _buildPlaceholderHomeTab(
       icon: Icons.mic_outlined,
-      title: 'Роль: интервью',
-      message: 'Экран интервью будет добавлен позже.',
+      title: AppLocalizations.of(context)!.staffRoleInterviewTitle,
+      message: AppLocalizations.of(context)!.staffRoleInterviewPlaceholder,
     );
   }
 
   Widget _buildLunchesStub() {
     return _buildPlaceholderHomeTab(
       icon: Icons.restaurant_outlined,
-      title: 'Роль: обеды',
-      message: 'Экран обедов будет добавлен позже.',
+      title: AppLocalizations.of(context)!.staffRoleLunchesTitle,
+      message: AppLocalizations.of(context)!.staffRoleLunchesPlaceholder,
     );
   }
 
   Widget _buildSuperadminStub() {
     return _buildPlaceholderHomeTab(
       icon: Icons.admin_panel_settings_outlined,
-      title: 'Роль: суперадмин',
-      message: 'Экран суперадмина будет добавлен позже.',
+      title: AppLocalizations.of(context)!.staffRoleSuperadminTitle,
+      message: AppLocalizations.of(context)!.staffRoleSuperadminPlaceholder,
     );
   }
 
@@ -1348,21 +1328,21 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
         children: [
           _NavItem(
             icon: Icons.home,
-            label: 'Home',
+            label: AppLocalizations.of(context)!.staffNavHome,
             active: _currentTab == 0,
             accent: accent,
             onTap: () => unawaited(_onBottomNavTap(0)),
           ),
           _NavItem(
             icon: Icons.calendar_month,
-            label: 'Event',
+            label: AppLocalizations.of(context)!.staffNavEvent,
             active: _currentTab == 1,
             accent: accent,
             onTap: () => unawaited(_onBottomNavTap(1)),
           ),
           _NavItem(
             icon: Icons.more_horiz,
-            label: 'More',
+            label: AppLocalizations.of(context)!.staffNavMore,
             active: _currentTab == 2,
             accent: accent,
             onTap: () => unawaited(_onBottomNavTap(2)),
@@ -1392,12 +1372,14 @@ class _MoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final centered = large;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
         child: Container(
+          constraints: large ? const BoxConstraints(minHeight: 200) : null,
           padding: EdgeInsets.all(large ? 24 : 20),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.08),
@@ -1405,7 +1387,12 @@ class _MoreCard extends StatelessWidget {
             border: Border.all(color: Colors.white.withOpacity(0.12)),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: centered
+                ? CrossAxisAlignment.center
+                : CrossAxisAlignment.start,
+            mainAxisAlignment: centered
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
@@ -1420,6 +1407,7 @@ class _MoreCard extends StatelessWidget {
               SizedBox(height: large ? 16 : 12),
               Text(
                 title,
+                textAlign: centered ? TextAlign.center : TextAlign.start,
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -1429,6 +1417,7 @@ class _MoreCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 subtitle,
+                textAlign: centered ? TextAlign.center : TextAlign.start,
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.5),
                   fontSize: 11,
@@ -1562,12 +1551,15 @@ class _StaffEventDetailContentState extends State<_StaffEventDetailContent> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                _error ?? 'Unknown error',
+                _error ?? AppLocalizations.of(context)!.unknownError,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white70, fontSize: 14),
               ),
               const SizedBox(height: 16),
-              TextButton(onPressed: _load, child: Text(AppLocalizations.of(context)!.retry)),
+              TextButton(
+                onPressed: _load,
+                child: Text(AppLocalizations.of(context)!.retry),
+              ),
             ],
           ),
         ),
@@ -1582,8 +1574,6 @@ class _StaffEventDetailContentState extends State<_StaffEventDetailContent> {
           _buildBanner(accent),
           const SizedBox(height: 24),
           _buildVenueSection(accent),
-          const SizedBox(height: 24),
-          _buildShiftSchedule(accent),
         ],
       ),
     );
@@ -1638,7 +1628,7 @@ class _StaffEventDetailContentState extends State<_StaffEventDetailContent> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        'STAFF ACCESS',
+                        AppLocalizations.of(context)!.staffAccessBadge,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 10,
@@ -1688,25 +1678,9 @@ class _StaffEventDetailContentState extends State<_StaffEventDetailContent> {
 
   String _formatDateTime(DateTime? d) {
     if (d == null) return '—';
-    return '${d.day} ${_month(d.month)} ${d.year} • ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
-  }
-
-  String _month(int m) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return months[m - 1];
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final month = DateFormat.MMM(locale).format(d);
+    return '${d.day} $month ${d.year} • ${AppSettings.formatTime(d.hour, d.minute)}';
   }
 
   Widget _buildVenueSection(Color accent) {
@@ -1719,8 +1693,8 @@ class _StaffEventDetailContentState extends State<_StaffEventDetailContent> {
             children: [
               Icon(Icons.location_on, color: accent, size: 22),
               const SizedBox(width: 8),
-              const Text(
-                'Venue & Contact',
+              Text(
+                AppLocalizations.of(context)!.staffVenueAndContact,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -1790,7 +1764,9 @@ class _StaffEventDetailContentState extends State<_StaffEventDetailContent> {
                           Expanded(
                             child: _ContactChip(
                               icon: Icons.call,
-                              title: 'Main Office',
+                              title: AppLocalizations.of(
+                                context,
+                              )!.staffMainOffice,
                               subtitle: '(555) 012-3456',
                               accent: accent,
                             ),
@@ -1799,7 +1775,9 @@ class _StaffEventDetailContentState extends State<_StaffEventDetailContent> {
                           Expanded(
                             child: _ContactChip(
                               icon: Icons.security,
-                              title: 'Security',
+                              title: AppLocalizations.of(
+                                context,
+                              )!.staffSecurity,
                               subtitle: '(555) 098-7654',
                               accent: accent,
                             ),
@@ -1828,121 +1806,6 @@ class _StaffEventDetailContentState extends State<_StaffEventDetailContent> {
         ],
       ),
     );
-  }
-
-  Widget _buildShiftSchedule(Color accent) {
-    final stages = _event!.stages;
-    if (stages.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Text(
-          'No schedule',
-          style: TextStyle(color: Colors.white54, fontSize: 14),
-        ),
-      );
-    }
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.schedule, color: accent, size: 22),
-              const SizedBox(width: 8),
-              const Text(
-                'Shift Schedule',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ...stages.asMap().entries.map((entry) {
-            final i = entry.key;
-            final s = entry.value;
-            final isFirst = i == 0;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    children: [
-                      Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: isFirst ? accent : Colors.white24,
-                          shape: BoxShape.circle,
-                          boxShadow: isFirst
-                              ? [
-                                  BoxShadow(
-                                    color: accent.withOpacity(0.3),
-                                    blurRadius: 6,
-                                  ),
-                                ]
-                              : null,
-                        ),
-                      ),
-                      if (i < stages.length - 1)
-                        Container(
-                          width: 2,
-                          height: 48,
-                          color: accent.withOpacity(0.2),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _formatTime(s.scheduledAt),
-                          style: TextStyle(
-                            color: isFirst ? accent : Colors.white54,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          s.title ?? '—',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        ),
-                        if (s.address != null && s.address!.isNotEmpty)
-                          Text(
-                            s.address!,
-                            style: TextStyle(
-                              color: Colors.white54,
-                              fontSize: 13,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  String _formatTime(DateTime? d) {
-    if (d == null) return '—';
-    final hour = d.hour > 12 ? d.hour - 12 : (d.hour == 0 ? 12 : d.hour);
-    final ampm = d.hour >= 12 ? 'PM' : 'AM';
-    return '${hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')} $ampm';
   }
 }
 
