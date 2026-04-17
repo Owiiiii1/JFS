@@ -562,17 +562,17 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String get eventSettingsParkingTitle => 'Паркування';
+  String get eventSettingsParkingTitle => 'Валет-паркування';
 
   @override
   String get eventSettingsParkingSubtitle =>
-      'Відкрийте паркувальний пропуск і статус прибуття';
+      'Відкрийте пропуск на валет-паркування й статус прибуття';
 
   @override
-  String get eventSettingsParkingCta => 'ВІДКРИТИ ПАРКУВАННЯ';
+  String get eventSettingsParkingCta => 'ВІДКРИТИ ВАЛЕТ-ПАРКУВАННЯ';
 
   @override
-  String get parkingChooseModeTitle => 'Режим паркування';
+  String get parkingChooseModeTitle => 'Режим валет-паркування';
 
   @override
   String get parkingChooseModeHint => 'Оберіть стан екрана для тесту візуалу.';
@@ -584,21 +584,21 @@ class AppLocalizationsUk extends AppLocalizations {
   String get parkingModeActive => 'АКТИВНО';
 
   @override
-  String get parkingInactiveHeadline => 'ПАРКУВАННЯ НЕ АКТИВНЕ';
+  String get parkingInactiveHeadline => 'ВАЛЕТ-ПАРКУВАННЯ НЕ АКТИВНЕ';
 
   @override
   String get parkingInactiveBody =>
-      'СЕРВІС ПАРКУВАННЯ З\'ЯВИТЬСЯ ПІСЛЯ КУПІВЛІ КВИТКА.';
+      'ВАЛЕТ-ПАРКУВАННЯ З\'ЯВИТЬСЯ ТУТ ПІСЛЯ КУПІВЛІ КВИТКА.';
 
   @override
   String get parkingInactiveBuyCta => 'КУПИТИ';
 
   @override
   String get parkingInactiveVipBody =>
-      'ДЛЯ ЗАМОВЛЕННЯ VIP-ПАРКУВАННЯ - ЗАБРОНЮЙТЕ МІСЦЕ ДЛЯ ВАШОГО АВТОМОБІЛЯ.';
+      'ДЛЯ VIP ВАЛЕТ-ПАРКУВАННЯ — ЗАБРОНЮЙТЕ МІСЦЕ ДЛЯ ВАШОГО АВТОМОБІЛЯ.';
 
   @override
-  String get parkingInactiveVipBookCta => 'ЗАМОВИТИ ПАРКУВАННЯ';
+  String get parkingInactiveVipBookCta => 'ЗАМОВИТИ ВАЛЕТ-ПАРКУВАННЯ';
 
   @override
   String get parkingActiveTicketLabel => 'КВИТОК';
@@ -613,7 +613,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get parkingActiveValetLabel => 'VALET SERVICE';
 
   @override
-  String get parkingActiveStatusLine => 'PARKING ACTIVE';
+  String get parkingActiveStatusLine => 'ВАЛЕТ-ПАРКУВАННЯ АКТИВНЕ';
 
   @override
   String get parkingActiveShowEntryPointCta => 'ПОКАЗАТИ ТОЧКУ В\'ЇЗДУ';
@@ -659,7 +659,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get parkingCreateBuyCta => 'КУПИТИ';
 
   @override
-  String get parkingCreateBookCta => 'ЗАМОВИТИ ПАРКУВАННЯ';
+  String get parkingCreateBookCta => 'ЗАМОВИТИ ВАЛЕТ-ПАРКУВАННЯ';
 
   @override
   String get parkingCheckoutInBrowser => 'Завершіть оплату у браузері.';
@@ -668,11 +668,11 @@ class AppLocalizationsUk extends AppLocalizations {
   String get parkingPurchasedWithoutPayment => 'Квиток успішно куплено.';
 
   @override
-  String get parkingVipBooked => 'VIP-паркування успішно заброньовано.';
+  String get parkingVipBooked => 'VIP валет-паркування успішно заброньовано.';
 
   @override
   String get parkingCheckoutError =>
-      'Не вдалося запустити оплату парковки. Спробуйте ще раз.';
+      'Не вдалося почати оплату валет-паркування. Спробуйте ще раз.';
 
   @override
   String get parkingActivePassLabel => 'КОД ПРОПУСКУ';
@@ -1182,7 +1182,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffScanButton => 'СКАН';
 
   @override
-  String get staffParkingButton => 'ПАРКУВАННЯ';
+  String get staffParkingButton => 'ВАЛЕТ-ПАРКУВАННЯ';
 
   @override
   String get staffExtraZoneButton => 'ЕКСТРА ЗОНА';
@@ -1199,7 +1199,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffTapToScanParkingQr =>
-      'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ПАРКУВАННЯ';
+      'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ВАЛЕТ-ПАРКУВАННЯ';
 
   @override
   String get staffTapToScanExtraZoneQr =>
@@ -1388,7 +1388,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffSecurity => 'Охорона';
 
   @override
-  String get staffScanHeaderParking => 'Скан паркування';
+  String get staffScanHeaderParking => 'Скан валет-паркування';
 
   @override
   String get staffScanHeaderExtraZone => 'Вхід до екстра зони';
@@ -1407,7 +1407,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffScanHintParking =>
-      'Скануйте QR паркування, щоб показати дані талона';
+      'Скануйте QR валет-паркування, щоб показати дані талона';
 
   @override
   String get staffScanHintExtraZone => 'Скануйте QR екстра квитка для входу';
@@ -1433,7 +1433,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffScanErrorUnknown => 'Невідома помилка сканування.';
 
   @override
-  String get staffParkingTicketTitle => 'Паркувальний талон';
+  String get staffParkingTicketTitle => 'Талон валет-паркування';
 
   @override
   String get staffExtraZonePassTitle => 'Перепустка до екстра зони';
@@ -1557,7 +1557,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffRoleSubtitleHostess => 'Підтримка гостей та зон';
 
   @override
-  String get staffRoleSubtitleParking => 'Паркування та доступ';
+  String get staffRoleSubtitleParking => 'Валет-паркування та доступ';
 
   @override
   String get staffRoleSubtitleExtraZone => 'Доступ до екстра зони';

@@ -568,17 +568,17 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get eventSettingsParkingTitle => 'Parking';
+  String get eventSettingsParkingTitle => 'Valet parking';
 
   @override
   String get eventSettingsParkingSubtitle =>
-      'Abre tu pase de parking y estado de llegada';
+      'Abre tu pase de valet parking y el estado de llegada';
 
   @override
-  String get eventSettingsParkingCta => 'ABRIR PARKING';
+  String get eventSettingsParkingCta => 'ABRIR VALET PARKING';
 
   @override
-  String get parkingChooseModeTitle => 'Modo parking';
+  String get parkingChooseModeTitle => 'Modo valet parking';
 
   @override
   String get parkingChooseModeHint =>
@@ -591,21 +591,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get parkingModeActive => 'ACTIVO';
 
   @override
-  String get parkingInactiveHeadline => 'PARKING NO ACTIVO';
+  String get parkingInactiveHeadline => 'VALET PARKING NO ACTIVO';
 
   @override
   String get parkingInactiveBody =>
-      'EL SERVICIO DE PARKING APARECERA AQUI DESPUES DE COMPRAR EL TICKET.';
+      'EL VALET PARKING APARECERA AQUI DESPUES DE COMPRAR EL TICKET.';
 
   @override
   String get parkingInactiveBuyCta => 'COMPRAR';
 
   @override
   String get parkingInactiveVipBody =>
-      'PARA SOLICITAR EL PARKING VIP - RESERVA UNA PLAZA PARA TU AUTOMOVIL.';
+      'PARA VIP VALET PARKING — RESERVA UNA PLAZA PARA TU VEHICULO.';
 
   @override
-  String get parkingInactiveVipBookCta => 'RESERVAR PARKING';
+  String get parkingInactiveVipBookCta => 'RESERVAR VALET PARKING';
 
   @override
   String get parkingActiveTicketLabel => 'TICKET';
@@ -620,7 +620,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get parkingActiveValetLabel => 'VALET SERVICE';
 
   @override
-  String get parkingActiveStatusLine => 'PARKING ACTIVE';
+  String get parkingActiveStatusLine => 'VALET PARKING ACTIVO';
 
   @override
   String get parkingActiveShowEntryPointCta => 'MOSTRAR PUNTO DE ENTRADA';
@@ -667,7 +667,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get parkingCreateBuyCta => 'COMPRAR';
 
   @override
-  String get parkingCreateBookCta => 'RESERVAR PARKING';
+  String get parkingCreateBookCta => 'RESERVAR VALET PARKING';
 
   @override
   String get parkingCheckoutInBrowser => 'Completa el pago en tu navegador.';
@@ -676,11 +676,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get parkingPurchasedWithoutPayment => 'Ticket comprado con exito.';
 
   @override
-  String get parkingVipBooked => 'Parking VIP reservado con exito.';
+  String get parkingVipBooked => 'Valet parking VIP reservado con exito.';
 
   @override
   String get parkingCheckoutError =>
-      'No se pudo iniciar el pago de parking. Intentalo de nuevo.';
+      'No se pudo iniciar el pago de valet parking. Intentalo de nuevo.';
 
   @override
   String get parkingActivePassLabel => 'CODIGO';
@@ -1195,7 +1195,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffScanButton => 'ESCANEAR';
 
   @override
-  String get staffParkingButton => 'PARKING';
+  String get staffParkingButton => 'VALET PARKING';
 
   @override
   String get staffExtraZoneButton => 'ZONA EXTRA';
@@ -1211,7 +1211,8 @@ class AppLocalizationsEs extends AppLocalizations {
       'TOCA PARA ESCANEAR EL GAFETE DE LA MODELO';
 
   @override
-  String get staffTapToScanParkingQr => 'TOCA PARA ESCANEAR QR DE PARKING';
+  String get staffTapToScanParkingQr =>
+      'TOCA PARA ESCANEAR QR DE VALET PARKING';
 
   @override
   String get staffTapToScanExtraZoneQr => 'TOCA PARA ESCANEAR QR DE ZONA EXTRA';
@@ -1398,7 +1399,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffSecurity => 'Seguridad';
 
   @override
-  String get staffScanHeaderParking => 'Escaneo de parking';
+  String get staffScanHeaderParking => 'Escaneo de valet parking';
 
   @override
   String get staffScanHeaderExtraZone => 'Entrada a zona extra';
@@ -1417,7 +1418,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get staffScanHintParking =>
-      'Escanea QR de parking para mostrar datos del ticket';
+      'Escanea el QR de valet parking para mostrar datos del ticket';
 
   @override
   String get staffScanHintExtraZone =>
@@ -1445,7 +1446,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffScanErrorUnknown => 'Error de escaneo desconocido.';
 
   @override
-  String get staffParkingTicketTitle => 'Ticket de parking';
+  String get staffParkingTicketTitle => 'Ticket de valet parking';
 
   @override
   String get staffExtraZonePassTitle => 'Pase de zona extra';
@@ -1575,7 +1576,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffRoleSubtitleHostess => 'Soporte de invitados y zonas';
 
   @override
-  String get staffRoleSubtitleParking => 'Flujo y acceso de parking';
+  String get staffRoleSubtitleParking => 'Valet parking: flujo y acceso';
 
   @override
   String get staffRoleSubtitleExtraZone => 'Acceso a zona extra';
@@ -2173,17 +2174,17 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   }
 
   @override
-  String get eventSettingsParkingTitle => 'Parking';
+  String get eventSettingsParkingTitle => 'Valet parking';
 
   @override
   String get eventSettingsParkingSubtitle =>
-      'Abre tu pase de parking y estado de llegada';
+      'Abre tu pase de valet parking y el estado de llegada';
 
   @override
-  String get eventSettingsParkingCta => 'ABRIR PARKING';
+  String get eventSettingsParkingCta => 'ABRIR VALET PARKING';
 
   @override
-  String get parkingChooseModeTitle => 'Modo parking';
+  String get parkingChooseModeTitle => 'Modo valet parking';
 
   @override
   String get parkingChooseModeHint =>
@@ -2196,21 +2197,21 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get parkingModeActive => 'ACTIVO';
 
   @override
-  String get parkingInactiveHeadline => 'PARKING NO ACTIVO';
+  String get parkingInactiveHeadline => 'VALET PARKING NO ACTIVO';
 
   @override
   String get parkingInactiveBody =>
-      'EL SERVICIO DE PARKING APARECERA AQUI DESPUES DE COMPRAR EL TICKET.';
+      'EL VALET PARKING APARECERA AQUI DESPUES DE COMPRAR EL TICKET.';
 
   @override
   String get parkingInactiveBuyCta => 'COMPRAR';
 
   @override
   String get parkingInactiveVipBody =>
-      'PARA SOLICITAR EL PARKING VIP - RESERVA UNA PLAZA PARA TU AUTOMOVIL.';
+      'PARA VIP VALET PARKING — RESERVA UNA PLAZA PARA TU VEHICULO.';
 
   @override
-  String get parkingInactiveVipBookCta => 'RESERVAR PARKING';
+  String get parkingInactiveVipBookCta => 'RESERVAR VALET PARKING';
 
   @override
   String get parkingActiveTicketLabel => 'TICKET';
@@ -2225,7 +2226,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get parkingActiveValetLabel => 'VALET SERVICE';
 
   @override
-  String get parkingActiveStatusLine => 'PARKING ACTIVE';
+  String get parkingActiveStatusLine => 'VALET PARKING ACTIVO';
 
   @override
   String get parkingActiveShowEntryPointCta => 'MOSTRAR PUNTO DE ENTRADA';
@@ -2272,7 +2273,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get parkingCreateBuyCta => 'COMPRAR';
 
   @override
-  String get parkingCreateBookCta => 'RESERVAR PARKING';
+  String get parkingCreateBookCta => 'RESERVAR VALET PARKING';
 
   @override
   String get parkingCheckoutInBrowser => 'Completa el pago en tu navegador.';
@@ -2281,11 +2282,11 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get parkingPurchasedWithoutPayment => 'Ticket comprado con exito.';
 
   @override
-  String get parkingVipBooked => 'Parking VIP reservado con exito.';
+  String get parkingVipBooked => 'Valet parking VIP reservado con exito.';
 
   @override
   String get parkingCheckoutError =>
-      'No se pudo iniciar el pago de parking. Intentalo de nuevo.';
+      'No se pudo iniciar el pago de valet parking. Intentalo de nuevo.';
 
   @override
   String get parkingActivePassLabel => 'CODIGO';
@@ -2800,7 +2801,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffScanButton => 'ESCANEAR';
 
   @override
-  String get staffParkingButton => 'PARKING';
+  String get staffParkingButton => 'VALET PARKING';
 
   @override
   String get staffExtraZoneButton => 'ZONA EXTRA';
@@ -2816,7 +2817,8 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
       'TOCA PARA ESCANEAR EL GAFETE DE LA MODELO';
 
   @override
-  String get staffTapToScanParkingQr => 'TOCA PARA ESCANEAR QR DE PARKING';
+  String get staffTapToScanParkingQr =>
+      'TOCA PARA ESCANEAR QR DE VALET PARKING';
 
   @override
   String get staffTapToScanExtraZoneQr => 'TOCA PARA ESCANEAR QR DE ZONA EXTRA';
@@ -3003,7 +3005,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffSecurity => 'Seguridad';
 
   @override
-  String get staffScanHeaderParking => 'Escaneo de parking';
+  String get staffScanHeaderParking => 'Escaneo de valet parking';
 
   @override
   String get staffScanHeaderExtraZone => 'Entrada a zona extra';
@@ -3022,7 +3024,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffScanHintParking =>
-      'Escanea QR de parking para mostrar datos del ticket';
+      'Escanea el QR de valet parking para mostrar datos del ticket';
 
   @override
   String get staffScanHintExtraZone =>
@@ -3050,7 +3052,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffScanErrorUnknown => 'Error de escaneo desconocido.';
 
   @override
-  String get staffParkingTicketTitle => 'Ticket de parking';
+  String get staffParkingTicketTitle => 'Ticket de valet parking';
 
   @override
   String get staffExtraZonePassTitle => 'Pase de zona extra';
@@ -3180,7 +3182,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffRoleSubtitleHostess => 'Soporte de invitados y zonas';
 
   @override
-  String get staffRoleSubtitleParking => 'Flujo y acceso de parking';
+  String get staffRoleSubtitleParking => 'Valet parking: flujo y acceso';
 
   @override
   String get staffRoleSubtitleExtraZone => 'Acceso a zona extra';

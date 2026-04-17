@@ -567,7 +567,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventSettingsParkingSubtitle =>
-      'Open your parking pass and arrival status';
+      'Open your valet parking pass and arrival status';
 
   @override
   String get eventSettingsParkingCta => 'OPEN VALET PARKING';
@@ -589,14 +589,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get parkingInactiveBody =>
-      'PARKING SERVICE WILL APPEAR HERE AFTER TICKET PURCHASE.';
+      'VALET PARKING WILL APPEAR HERE AFTER TICKET PURCHASE.';
 
   @override
   String get parkingInactiveBuyCta => 'BUY';
 
   @override
   String get parkingInactiveVipBody =>
-      'FOR VIP PARKING REQUEST - RESERVE A SPOT FOR YOUR CAR.';
+      'FOR VIP VALET PARKING — RESERVE A SPOT FOR YOUR CAR.';
 
   @override
   String get parkingInactiveVipBookCta => 'BOOK VALET PARKING';
@@ -668,11 +668,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get parkingPurchasedWithoutPayment => 'Ticket purchased successfully.';
 
   @override
-  String get parkingVipBooked => 'VIP parking booked successfully.';
+  String get parkingVipBooked => 'VIP valet parking booked successfully.';
 
   @override
   String get parkingCheckoutError =>
-      'Could not start parking payment. Try again.';
+      'Could not start valet parking payment. Try again.';
 
   @override
   String get parkingActivePassLabel => 'PASS CODE';

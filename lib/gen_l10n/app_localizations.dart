@@ -1144,7 +1144,7 @@ abstract class AppLocalizations {
   /// No description provided for @eventSettingsParkingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Open your parking pass and arrival status'**
+  /// **'Open your valet parking pass and arrival status'**
   String get eventSettingsParkingSubtitle;
 
   /// No description provided for @eventSettingsParkingCta.
@@ -1186,7 +1186,7 @@ abstract class AppLocalizations {
   /// No description provided for @parkingInactiveBody.
   ///
   /// In en, this message translates to:
-  /// **'PARKING SERVICE WILL APPEAR HERE AFTER TICKET PURCHASE.'**
+  /// **'VALET PARKING WILL APPEAR HERE AFTER TICKET PURCHASE.'**
   String get parkingInactiveBody;
 
   /// No description provided for @parkingInactiveBuyCta.
@@ -1198,7 +1198,7 @@ abstract class AppLocalizations {
   /// No description provided for @parkingInactiveVipBody.
   ///
   /// In en, this message translates to:
-  /// **'FOR VIP PARKING REQUEST - RESERVE A SPOT FOR YOUR CAR.'**
+  /// **'FOR VIP VALET PARKING — RESERVE A SPOT FOR YOUR CAR.'**
   String get parkingInactiveVipBody;
 
   /// No description provided for @parkingInactiveVipBookCta.
@@ -1342,13 +1342,13 @@ abstract class AppLocalizations {
   /// No description provided for @parkingVipBooked.
   ///
   /// In en, this message translates to:
-  /// **'VIP parking booked successfully.'**
+  /// **'VIP valet parking booked successfully.'**
   String get parkingVipBooked;
 
   /// No description provided for @parkingCheckoutError.
   ///
   /// In en, this message translates to:
-  /// **'Could not start parking payment. Try again.'**
+  /// **'Could not start valet parking payment. Try again.'**
   String get parkingCheckoutError;
 
   /// No description provided for @parkingActivePassLabel.
