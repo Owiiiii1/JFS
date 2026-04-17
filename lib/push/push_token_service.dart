@@ -164,11 +164,16 @@ class PushTokenService {
     if (bearer == null || bearer.isEmpty) {
       return;
     }
-    final t = await _messaging.getToken();
+    final t = await _messaging.getToken().timeout(
+      const Duration(seconds: 2),
+      onTimeout: () => null,
+    );
     if (t == null || t.isEmpty) {
       return;
     }
-    await _auth.deactivatePushToken(fcmToken: t);
+    await _auth
+        .deactivatePushToken(fcmToken: t)
+        .timeout(const Duration(seconds: 2), onTimeout: () {});
   }
 
   Future<void> dispose() async {
