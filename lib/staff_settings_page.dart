@@ -181,7 +181,8 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
     final type = _selectedRole?.homeScreenType.trim().toLowerCase() ?? '';
     return type != 'extra_zone' &&
         type != 'backstage' &&
-        type != 'rehearsal_admin';
+        type != 'rehearsal_admin' &&
+        type != 'rehearsal_checkin';
   }
 
   Widget _buildActiveEventSection() {
@@ -586,6 +587,8 @@ class _RoleCard extends StatelessWidget {
         return Icons.redeem_outlined;
       case 'rehearsal_admin':
         return Icons.event_note_outlined;
+      case 'rehearsal_checkin':
+        return Icons.event_available_outlined;
       case 'interview':
         return Icons.mic_outlined;
       case 'lunches':
@@ -688,6 +691,8 @@ class _RoleCard extends StatelessWidget {
         return AppLocalizations.of(context)!.staffRoleSubtitleGiftIssue;
       case 'rehearsal_admin':
         return AppLocalizations.of(context)!.staffRoleSubtitleRehearsalAdmin;
+      case 'rehearsal_checkin':
+        return AppLocalizations.of(context)!.staffRoleSubtitleRehearsalCheckin;
       case 'interview':
         return AppLocalizations.of(context)!.staffRoleSubtitleInterview;
       case 'lunches':

@@ -17,6 +17,8 @@ class StaffScanPage extends StatefulWidget {
     this.parkingScan = false,
     this.extraZoneScan = false,
     this.backstageScan = false,
+    this.rehearsalCheckinScan = false,
+    this.rehearsalSlotId,
   });
 
   final AuthService auth;
@@ -34,6 +36,10 @@ class StaffScanPage extends StatefulWidget {
 
   /// Режим входа в бекстейдж: lookup backstage ticket QR и окно результата.
   final bool backstageScan;
+
+  /// Режим чекина репетиций: скан check-in QR и закрытие preparatory rehearsal этапа.
+  final bool rehearsalCheckinScan;
+  final int? rehearsalSlotId;
 
   @override
   State<StaffScanPage> createState() => _StaffScanPageState();
@@ -186,6 +192,41 @@ class _StaffScanPageState extends State<StaffScanPage> {
       return;
     }
 
+    if (widget.rehearsalCheckinScan) {
+      final slotId = widget.rehearsalSlotId;
+      if (slotId == null || slotId <= 0) {
+        if (!mounted) return;
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.staffRehearsalCheckinSelectSlotFirst),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        return;
+      }
+
+      setState(() => _processing = true);
+      await _controller.stop();
+      try {
+        final result = await widget.auth.rehearsalCheckinScanLookup(
+          code: code,
+          slotId: slotId,
+        );
+        if (!mounted) return;
+        await _showRehearsalCheckinResultDialog(result);
+      } catch (e) {
+        if (!mounted) return;
+        await _showScanErrorDialog(e.toString());
+      } finally {
+        if (mounted) {
+          setState(() => _processing = false);
+          await _controller.start();
+        }
+      }
+      return;
+    }
+
     final eventId = AppSettings.staffActiveEventId;
     final stageId = AppSettings.staffActiveStageId;
     final stageType = AppSettings.staffActiveStageType ?? 'main';
@@ -272,12 +313,14 @@ class _StaffScanPageState extends State<StaffScanPage> {
             widget.extraZoneScan
                 ? l10n.staffScanHeaderExtraZone
                 : (widget.backstageScan
-                ? l10n.staffScanHeaderBackstage
-                : (widget.parkingScan
-                ? l10n.staffScanHeaderParking
-                : (widget.scanForInfo
-                      ? l10n.staffScanHeaderInfo
-                      : l10n.staffScanHeaderQr))),
+                      ? l10n.staffScanHeaderBackstage
+                      : (widget.rehearsalCheckinScan
+                            ? l10n.staffScanHeaderRehearsalCheckin
+                            : (widget.parkingScan
+                                  ? l10n.staffScanHeaderParking
+                                  : (widget.scanForInfo
+                                        ? l10n.staffScanHeaderInfo
+                                        : l10n.staffScanHeaderQr)))),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -392,12 +435,14 @@ class _StaffScanPageState extends State<StaffScanPage> {
         widget.extraZoneScan
             ? l10n.staffScanHintExtraZone
             : (widget.backstageScan
-            ? l10n.staffScanHintBackstage
-            : (widget.parkingScan
-            ? l10n.staffScanHintParking
-            : (widget.scanForInfo
-                  ? l10n.staffScanHintInfo
-                  : l10n.staffScanHintQr))),
+                  ? l10n.staffScanHintBackstage
+                  : (widget.rehearsalCheckinScan
+                        ? l10n.staffScanHintRehearsalCheckin
+                        : (widget.parkingScan
+                              ? l10n.staffScanHintParking
+                              : (widget.scanForInfo
+                                    ? l10n.staffScanHintInfo
+                                    : l10n.staffScanHintQr)))),
         style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16),
         textAlign: TextAlign.center,
       ),
@@ -710,6 +755,108 @@ class _StaffScanPageState extends State<StaffScanPage> {
                 if (!result.isNotFound) ...[
                   row(l10n.staffParkingFieldEvent, result.eventName),
                   row(l10n.staffParkingFieldClient, result.clientName),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showRehearsalCheckinResultDialog(
+    RehearsalCheckinScanLookupResult result,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final statusText = result.isNotFound
+        ? l10n.staffRehearsalCheckinResultNotFound
+        : (result.isWrongSlot
+              ? l10n.staffRehearsalCheckinResultWrongSlot
+              : (result.isAlreadyClosed
+                    ? l10n.staffRehearsalCheckinResultAlreadyClosed
+                    : l10n.staffRehearsalCheckinResultClosedNow));
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        final navigator = Navigator.of(ctx);
+        Future<void>.delayed(const Duration(seconds: 5), () {
+          if (navigator.canPop()) {
+            navigator.pop();
+          }
+        });
+
+        Widget row(String label, String value) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white54,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value.isEmpty ? '—' : value,
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final slotDate = result.slotDate;
+        final slotDateLabel = slotDate == null
+            ? ''
+            : '${slotDate.day.toString().padLeft(2, '0')}.${slotDate.month.toString().padLeft(2, '0')}.${slotDate.year}';
+
+        return Dialog(
+          backgroundColor: const Color(0xFF131313),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.staffRehearsalCheckinScanResultTitle,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  statusText,
+                  style: TextStyle(
+                    color: result.isClosedNow
+                        ? widget.accent
+                        : Colors.redAccent.shade100,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                if (!result.isNotFound) ...[
+                  row(l10n.staffRehearsalCheckinFieldChild, result.childName),
+                  row(l10n.staffParkingFieldEvent, result.eventName),
+                  row(
+                    l10n.staffRehearsalCheckinFieldSlot,
+                    [
+                      slotDateLabel,
+                      result.slotTime,
+                    ].where((v) => v.trim().isNotEmpty).join(' '),
+                  ),
                 ],
               ],
             ),

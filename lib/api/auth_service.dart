@@ -581,6 +581,36 @@ class AuthService {
     );
   }
 
+  /// POST /api/app/worker/rehearsal-checkin-scan-lookup — check-in QR for selected rehearsal slot.
+  Future<RehearsalCheckinScanLookupResult> rehearsalCheckinScanLookup({
+    required String code,
+    required int slotId,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final uri = Uri.parse(
+      '$baseUrl/api/app/worker/rehearsal-checkin-scan-lookup',
+    );
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'code': code, 'slot_id': slotId}),
+    );
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode == 200 || res.statusCode == 422) {
+      return RehearsalCheckinScanLookupResult.fromJson(map);
+    }
+    throw Exception(
+      _tryMessage(res.body) ??
+          (map['message'] as String? ??
+              'Could not resolve rehearsal check-in QR code'),
+    );
+  }
+
   /// GET /api/app/worker/supervisor-children/{assignment}/detail
   /// Детали ребёнка для экрана supervisor -> details.
   Future<SupervisorChildDetail> getSupervisorChildDetail(
@@ -2220,7 +2250,7 @@ class StaffRole {
   /// Соответствует `is_active` роли в админке.
   final bool isActive;
 
-  /// Код из API (`home_screen_type`): scan, supervisor, hostess, parking, extra_zone, backstage, rehearsal_admin, gift_issue, interview, lunches, superadmin.
+  /// Код из API (`home_screen_type`): scan, supervisor, hostess, parking, extra_zone, backstage, rehearsal_admin, rehearsal_checkin, gift_issue, interview, lunches, superadmin.
   /// Пусто — до обновления бэкенда; клиент может определить экран по legacy-токенам code/name.
   final String homeScreenType;
 
@@ -2438,6 +2468,8 @@ class RehearsalBookingInfo {
     required this.description,
     this.bookedAt,
     this.startsAt,
+    this.rehearsalCheckinCompleted = false,
+    this.rehearsalCheckinAt,
   });
 
   final int slotId;
@@ -2450,6 +2482,10 @@ class RehearsalBookingInfo {
   /// Absolute instant for `starts_at` (ISO 8601, often with `Z`). Timeline UI prefers [slotDate]/[slotTime] to match admin.
   final DateTime? startsAt;
 
+  /// Per-slot rehearsal check-in (YFS `rehearsal_checkin_completed` / `rehearsal_checkin_at`).
+  final bool rehearsalCheckinCompleted;
+  final DateTime? rehearsalCheckinAt;
+
   factory RehearsalBookingInfo.fromJson(Map<String, dynamic> json) {
     return RehearsalBookingInfo(
       slotId: _jsonInt(json['slot_id']),
@@ -2459,6 +2495,11 @@ class RehearsalBookingInfo {
       description: (json['description'] as String? ?? '').toString(),
       bookedAt: _jsonDateTimeNullable(json['booked_at']),
       startsAt: _jsonDateTimeNullable(json['starts_at']),
+      rehearsalCheckinCompleted: _jsonBool(
+        json['rehearsal_checkin_completed'],
+        false,
+      ),
+      rehearsalCheckinAt: _jsonDateTimeNullable(json['rehearsal_checkin_at']),
     );
   }
 }
@@ -3642,7 +3683,7 @@ class RehearsalAdminChildItem {
       childId: _jsonInt(json['child_id']),
       firstName: (json['first_name'] as String? ?? '').toString(),
       photoUrl: json['photo_url'] as String?,
-      checkedIn: json['checked_in'] == true,
+      checkedIn: _jsonBool(json['checked_in'], false),
     );
   }
 }
@@ -4149,6 +4190,48 @@ class BackstageTicketScanLookupResult {
       message: (json['message'] as String? ?? '').trim(),
       eventName: (json['event_name'] as String? ?? '').trim(),
       clientName: (json['client_name'] as String? ?? '').trim(),
+    );
+  }
+}
+
+class RehearsalCheckinScanLookupResult {
+  RehearsalCheckinScanLookupResult({
+    required this.ok,
+    required this.resultCode,
+    required this.message,
+    required this.childName,
+    required this.eventName,
+    this.slotDate,
+    required this.slotTime,
+  });
+
+  final bool ok;
+  final String resultCode;
+  final String message;
+  final String childName;
+  final String eventName;
+  final DateTime? slotDate;
+  final String slotTime;
+
+  bool get isNotFound => resultCode == 'not_found';
+  bool get isWrongSlot => resultCode == 'wrong_slot';
+  bool get isAlreadyClosed => resultCode == 'already_closed';
+  bool get isClosedNow => resultCode == 'checkin_closed';
+
+  factory RehearsalCheckinScanLookupResult.fromJson(Map<String, dynamic> json) {
+    final ok = json['ok'] == true;
+    final code =
+        (json['result_code'] as String?)?.trim().toLowerCase() ??
+        (ok ? 'checkin_closed' : 'not_found');
+
+    return RehearsalCheckinScanLookupResult(
+      ok: ok,
+      resultCode: code,
+      message: (json['message'] as String? ?? '').trim(),
+      childName: (json['child_name'] as String? ?? '').trim(),
+      eventName: (json['event_name'] as String? ?? '').trim(),
+      slotDate: _jsonDateTimeNullable(json['slot_date']),
+      slotTime: (json['slot_time'] as String? ?? '').trim(),
     );
   }
 }

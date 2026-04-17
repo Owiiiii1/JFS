@@ -86,12 +86,15 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   }
 
   bool _isSupervisorHomeActive() {
-    return _currentTab == 0 && _resolvedHomeScreenType(_selectedRole) == 'supervisor';
+    return _currentTab == 0 &&
+        _resolvedHomeScreenType(_selectedRole) == 'supervisor';
   }
 
   void _startSupervisorAutoRefresh() {
     _supervisorAutoRefreshTimer?.cancel();
-    _supervisorAutoRefreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+    _supervisorAutoRefreshTimer = Timer.periodic(const Duration(seconds: 5), (
+      _,
+    ) {
       if (!mounted) return;
       if (!_isSupervisorHomeActive()) return;
       if (_supervisorChildrenLoading) return;
@@ -374,16 +377,41 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     if (_matchesAnyToken(role, const ['parking', 'парковка'])) {
       return 'parking';
     }
-    if (_matchesAnyToken(role, const ['extra_zone', 'extra zone', 'экстра зона', 'зона экстра'])) {
+    if (_matchesAnyToken(role, const [
+      'extra_zone',
+      'extra zone',
+      'экстра зона',
+      'зона экстра',
+    ])) {
       return 'extra_zone';
     }
-    if (_matchesAnyToken(role, const ['backstage', 'backstage entry', 'бекстейдж', 'бэкстейдж'])) {
+    if (_matchesAnyToken(role, const [
+      'backstage',
+      'backstage entry',
+      'бекстейдж',
+      'бэкстейдж',
+    ])) {
       return 'backstage';
     }
-    if (_matchesAnyToken(role, const ['rehearsal_admin', 'rehearsal admin', 'админ репетиций'])) {
+    if (_matchesAnyToken(role, const [
+      'rehearsal_admin',
+      'rehearsal admin',
+      'админ репетиций',
+    ])) {
       return 'rehearsal_admin';
     }
-    if (_matchesAnyToken(role, const ['gift_issue', 'gift issue', 'выдача подарков'])) {
+    if (_matchesAnyToken(role, const [
+      'rehearsal_checkin',
+      'rehearsal checkin',
+      'чекин репетиций',
+    ])) {
+      return 'rehearsal_checkin';
+    }
+    if (_matchesAnyToken(role, const [
+      'gift_issue',
+      'gift issue',
+      'выдача подарков',
+    ])) {
       return 'gift_issue';
     }
     if (_matchesAnyToken(role, const ['hostess', 'hs', 'хостесс'])) {
@@ -409,6 +437,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
         return _buildHomeTab(accent, backstageMode: true);
       case 'rehearsal_admin':
         return _buildRehearsalAdminHomeTab(accent);
+      case 'rehearsal_checkin':
+        return _buildRehearsalCheckinHomeTab(accent);
       case 'gift_issue':
         return _buildGiftIssueHomeTab(accent);
       case 'interview':
@@ -793,10 +823,10 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                               parkingMode
                                   ? Icons.local_parking_outlined
                                   : (extraZoneMode
-                                      ? Icons.workspace_premium_outlined
-                                      : (backstageMode
-                                            ? Icons.theater_comedy_outlined
-                                            : Icons.qr_code_scanner)),
+                                        ? Icons.workspace_premium_outlined
+                                        : (backstageMode
+                                              ? Icons.theater_comedy_outlined
+                                              : Icons.qr_code_scanner)),
                               color: scanEnabled
                                   ? Colors.white
                                   : Colors.white38,
@@ -991,6 +1021,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     bool parkingScan = false,
     bool extraZoneScan = false,
     bool backstageScan = false,
+    bool rehearsalCheckinScan = false,
+    int? rehearsalSlotId,
   }) async {
     final ok = await _refreshLiveWorkerStatus(showError: true);
     if (!ok || !mounted || !context.mounted) return;
@@ -1018,8 +1050,256 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           parkingScan: parkingScan,
           extraZoneScan: extraZoneScan,
           backstageScan: backstageScan,
+          rehearsalCheckinScan: rehearsalCheckinScan,
+          rehearsalSlotId: rehearsalSlotId,
         ),
       ),
+    );
+  }
+
+  Widget _buildRehearsalCheckinHomeTab(Color accent) {
+    final l10n = AppLocalizations.of(context)!;
+    final eventId = AppSettings.staffActiveEventId;
+    final roleDesc = (_selectedRole?.description ?? '').trim();
+    final roleActive = _selectedRole?.isActive ?? false;
+    final selectedSlotId = _selectedRehearsalAdminSlotId;
+    final scanEnabled =
+        roleActive &&
+        eventId != null &&
+        eventId > 0 &&
+        selectedSlotId != null &&
+        selectedSlotId > 0;
+
+    if (eventId != _rehearsalAdminEventId && !_rehearsalAdminLoading) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _loadRehearsalAdminRoster(),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.staffRehearsalCheckinActiveSlot,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.5),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (eventId == null || eventId <= 0)
+                Text(
+                  l10n.staffSelectEventInSettings,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.6),
+                    fontSize: 14,
+                  ),
+                )
+              else if (_rehearsalAdminLoading)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: _kPrimary,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.white.withOpacity(0.15)),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int?>(
+                      value: _selectedRehearsalAdminSlotId,
+                      isExpanded: true,
+                      dropdownColor: const Color(0xFF2a1a14),
+                      icon: Icon(Icons.keyboard_arrow_down, color: accent),
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                      hint: Text(
+                        l10n.staffRehearsalAdminSelectSlot,
+                        style: const TextStyle(color: Colors.white54),
+                      ),
+                      items: _rehearsalAdminSlots
+                          .map(
+                            (slot) => DropdownMenuItem<int?>(
+                              value: slot.id,
+                              child: Text(
+                                _formatRehearsalAdminSlotLabel(slot),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: _rehearsalAdminSlots.isEmpty
+                          ? null
+                          : (value) {
+                              if (value == null) return;
+                              setState(
+                                () => _selectedRehearsalAdminSlotId = value,
+                              );
+                              _loadRehearsalAdminRoster();
+                            },
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: scanEnabled
+                        ? () => unawaited(
+                            _openScanner(
+                              context,
+                              rehearsalCheckinScan: true,
+                              rehearsalSlotId: selectedSlotId,
+                            ),
+                          )
+                        : null,
+                    borderRadius: BorderRadius.circular(96),
+                    child: Container(
+                      width: 192,
+                      height: 192,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: scanEnabled
+                            ? LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [accent, accent.withOpacity(0.8)],
+                              )
+                            : null,
+                        color: scanEnabled ? null : const Color(0xFF3D3D3D),
+                        boxShadow: scanEnabled
+                            ? [
+                                BoxShadow(
+                                  color: accent.withOpacity(0.3),
+                                  blurRadius: 40,
+                                  spreadRadius: 0,
+                                ),
+                              ]
+                            : const [],
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.event_available_outlined,
+                              color: scanEnabled
+                                  ? Colors.white
+                                  : Colors.white38,
+                              size: 56,
+                            ),
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              width: 160,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  l10n.staffRehearsalCheckinButton,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: scanEnabled
+                                        ? Colors.white
+                                        : Colors.white38,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  l10n.staffTapToScanRehearsalCheckinQr,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: scanEnabled
+                        ? Colors.white.withOpacity(0.4)
+                        : Colors.white.withOpacity(0.22),
+                    fontSize: 11,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border(
+                left: BorderSide(
+                  color: roleActive ? accent : Colors.white24,
+                  width: 4,
+                ),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.staffCurrentTask,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  roleDesc.isEmpty ? '—' : roleDesc,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -1086,7 +1366,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                         visualDensity: VisualDensity.compact,
                         iconSize: 18,
                         splashRadius: 18,
-                        tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                        tooltip: MaterialLocalizations.of(
+                          context,
+                        ).closeButtonTooltip,
                         onPressed: () {
                           setState(() => _showSupervisorRoleCard = false);
                         },
@@ -1502,7 +1784,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     final l10n = AppLocalizations.of(context)!;
     final eventId = AppSettings.staffActiveEventId;
     if (eventId != _rehearsalAdminEventId && !_rehearsalAdminLoading) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _loadRehearsalAdminRoster());
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _loadRehearsalAdminRoster(),
+      );
     }
 
     return SingleChildScrollView(
@@ -1574,7 +1858,10 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               const Spacer(),
               if (_rehearsalAdminChildren != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: accent,
                     borderRadius: BorderRadius.circular(12),
@@ -1623,7 +1910,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 style: const TextStyle(color: Colors.white54, fontSize: 14),
               ),
             )
-          else if (_rehearsalAdminChildren == null || _rehearsalAdminChildren!.isEmpty)
+          else if (_rehearsalAdminChildren == null ||
+              _rehearsalAdminChildren!.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: Text(
@@ -1633,7 +1921,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               ),
             )
           else
-            ..._rehearsalAdminChildren!.map((c) => _buildRehearsalAdminChildRow(accent, c)),
+            ..._rehearsalAdminChildren!.map(
+              (c) => _buildRehearsalAdminChildRow(accent, c),
+            ),
         ],
       ),
     );
@@ -1641,7 +1931,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
 
   String _formatRehearsalAdminSlotLabel(RehearsalAdminSlotItem slot) {
     final date = slot.slotDate;
-    final dateLabel = date != null ? DateFormat('dd.MM').format(date.toLocal()) : '--.--';
+    final dateLabel = date != null
+        ? DateFormat('dd.MM').format(date.toLocal())
+        : '--.--';
     final timeLabel = AppSettings.formatTimeLabel(slot.slotTime);
     final place = slot.place.trim();
     final capacityPart = '${slot.bookedCount}/${slot.capacity}';
@@ -1651,7 +1943,10 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     return '$dateLabel $timeLabel · $place · $capacityPart';
   }
 
-  Widget _buildRehearsalAdminChildRow(Color accent, RehearsalAdminChildItem child) {
+  Widget _buildRehearsalAdminChildRow(
+    Color accent,
+    RehearsalAdminChildItem child,
+  ) {
     final checked = child.checkedIn;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -1666,12 +1961,14 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           CircleAvatar(
             radius: 18,
             backgroundColor: Colors.white12,
-            backgroundImage: child.photoUrl != null && child.photoUrl!.isNotEmpty
+            backgroundImage:
+                child.photoUrl != null && child.photoUrl!.isNotEmpty
                 ? NetworkImage(child.photoUrl!)
                 : null,
             child: child.photoUrl == null || child.photoUrl!.isEmpty
                 ? Text(
-                    (child.firstName.isNotEmpty ? child.firstName[0] : '?').toUpperCase(),
+                    (child.firstName.isNotEmpty ? child.firstName[0] : '?')
+                        .toUpperCase(),
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                   )
                 : null,
@@ -1698,7 +1995,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     final l10n = AppLocalizations.of(context)!;
     final eventId = AppSettings.staffActiveEventId;
     if (eventId != _giftControlEventId && !_giftControlLoading) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _loadGiftControlReport());
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _loadGiftControlReport(),
+      );
     }
     final roleDesc = (_selectedRole?.description ?? '').trim();
     final roleActive = _selectedRole?.isActive ?? false;
@@ -1751,7 +2050,10 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 )
               else
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(12),
@@ -1823,7 +2125,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: scanEnabled ? () => unawaited(_openScanner(context)) : null,
+                    onTap: scanEnabled
+                        ? () => unawaited(_openScanner(context))
+                        : null,
                     borderRadius: BorderRadius.circular(96),
                     child: Container(
                       width: 192,
@@ -1854,14 +2158,18 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                           children: [
                             Icon(
                               Icons.qr_code_scanner,
-                              color: scanEnabled ? Colors.white : Colors.white38,
+                              color: scanEnabled
+                                  ? Colors.white
+                                  : Colors.white38,
                               size: 56,
                             ),
                             const SizedBox(height: 8),
                             Text(
                               l10n.staffScanButton,
                               style: TextStyle(
-                                color: scanEnabled ? Colors.white : Colors.white38,
+                                color: scanEnabled
+                                    ? Colors.white
+                                    : Colors.white38,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
                                 letterSpacing: 2,
@@ -1881,7 +2189,10 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: accent.withOpacity(0.7)),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
                   ),
                   icon: const Icon(Icons.rule_folder_outlined),
                   label: Text(l10n.staffGiftControlButton),
@@ -1985,19 +2296,30 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                       ),
                       const SizedBox(height: 12),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.06),
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white.withOpacity(0.12)),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.12),
+                          ),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<int?>(
                             value: _selectedGiftControlStageId,
                             isExpanded: true,
                             dropdownColor: const Color(0xFF2a1a14),
-                            icon: Icon(Icons.keyboard_arrow_down, color: accent),
-                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down,
+                              color: accent,
+                            ),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
                             hint: Text(
                               l10n.staffGiftControlSelectStage,
                               style: const TextStyle(color: Colors.white54),
@@ -2008,7 +2330,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                                     value: s.id,
                                     child: Text(
                                       s.type == 'preparatory'
-                                          ? l10n.staffPreparatoryStageLabel(s.name)
+                                          ? l10n.staffPreparatoryStageLabel(
+                                              s.name,
+                                            )
                                           : s.name,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -2059,7 +2383,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                       Expanded(
                         child: _giftControlLoading
                             ? const Center(
-                                child: CircularProgressIndicator(color: _kPrimary),
+                                child: CircularProgressIndicator(
+                                  color: _kPrimary,
+                                ),
                               )
                             : _giftControlError != null
                             ? Center(
@@ -2069,7 +2395,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                                   style: TextStyle(color: Colors.red.shade300),
                                 ),
                               )
-                            : (_giftControlChildren == null || _giftControlChildren!.isEmpty)
+                            : (_giftControlChildren == null ||
+                                  _giftControlChildren!.isEmpty)
                             ? Center(
                                 child: Text(
                                   l10n.staffGiftControlNoChildren,
@@ -2079,7 +2406,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                               )
                             : ListView.separated(
                                 itemCount: _giftControlChildren!.length,
-                                separatorBuilder: (context, index) => const SizedBox(height: 8),
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 8),
                                 itemBuilder: (context, index) {
                                   final c = _giftControlChildren![index];
                                   return _buildGiftControlChildRow(c, accent);
@@ -2110,12 +2438,14 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           CircleAvatar(
             radius: 18,
             backgroundColor: Colors.white12,
-            backgroundImage: child.photoUrl != null && child.photoUrl!.isNotEmpty
+            backgroundImage:
+                child.photoUrl != null && child.photoUrl!.isNotEmpty
                 ? NetworkImage(child.photoUrl!)
                 : null,
             child: child.photoUrl == null || child.photoUrl!.isEmpty
                 ? Text(
-                    (child.firstName.isNotEmpty ? child.firstName[0] : '?').toUpperCase(),
+                    (child.firstName.isNotEmpty ? child.firstName[0] : '?')
+                        .toUpperCase(),
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                   )
                 : null,

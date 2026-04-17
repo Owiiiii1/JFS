@@ -1191,6 +1191,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffBackstageButton => 'БЕКСТЕЙДЖ';
 
   @override
+  String get staffRehearsalCheckinButton => 'ЧЕК-ІН РЕПЕТИЦІЙ';
+
+  @override
   String get staffTapToScanModelLanyard =>
       'НАТИСНІТЬ, ЩОБ СКАНУВАТИ БЕЙДЖ МОДЕЛІ';
 
@@ -1205,6 +1208,10 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get staffTapToScanBackstageQr =>
       'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR БЕКСТЕЙДЖУ';
+
+  @override
+  String get staffTapToScanRehearsalCheckinQr =>
+      'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ЧЕК-ІНУ РЕПЕТИЦІЙ';
 
   @override
   String get staffCurrentTask => 'Поточне завдання';
@@ -1264,7 +1271,14 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffRehearsalAdminSlotsTitle => 'Слоти репетицій';
 
   @override
+  String get staffRehearsalCheckinActiveSlot => 'Активний слот репетиції';
+
+  @override
   String get staffRehearsalAdminSelectSlot => 'Оберіть слот репетиції';
+
+  @override
+  String get staffRehearsalCheckinSelectSlotFirst =>
+      'Спочатку оберіть слот репетиції';
 
   @override
   String get staffRehearsalAdminBookedChildrenTitle => 'Записані діти';
@@ -1383,6 +1397,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffScanHeaderBackstage => 'Вхід до бекстейджу';
 
   @override
+  String get staffScanHeaderRehearsalCheckin => 'Чек-ін репетицій';
+
+  @override
   String get staffScanHeaderInfo => 'Скан для інформації';
 
   @override
@@ -1397,6 +1414,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffScanHintBackstage => 'Скануйте QR бекстейдж квитка для входу';
+
+  @override
+  String get staffScanHintRehearsalCheckin =>
+      'Скануйте check-in QR дитини, щоб закрити проходження репетиції';
 
   @override
   String get staffScanHintInfo =>
@@ -1444,6 +1465,29 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get staffBackstageResultAccessClosed =>
       'КОД ПРИЙНЯТО, АЛЕ ДОСТУП ЗАКРИТО';
+
+  @override
+  String get staffRehearsalCheckinScanResultTitle => 'Результат сканування';
+
+  @override
+  String get staffRehearsalCheckinResultNotFound => 'CHECK-IN КОД НЕ ЗНАЙДЕНО';
+
+  @override
+  String get staffRehearsalCheckinResultWrongSlot =>
+      'ДИТИНА НЕ ЗАПИСАНА НА ЦЕЙ СЛОТ';
+
+  @override
+  String get staffRehearsalCheckinResultAlreadyClosed =>
+      'ЧЕК-ІН РЕПЕТИЦІЇ ВЖЕ ЗАКРИТО';
+
+  @override
+  String get staffRehearsalCheckinResultClosedNow => 'ЧЕК-ІН РЕПЕТИЦІЇ ЗАКРИТО';
+
+  @override
+  String get staffRehearsalCheckinFieldChild => 'Дитина';
+
+  @override
+  String get staffRehearsalCheckinFieldSlot => 'Слот';
 
   @override
   String get staffParkingFieldEvent => 'Подія';
@@ -1523,6 +1567,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleRehearsalAdmin => 'Керування репетиціями';
+
+  @override
+  String get staffRoleSubtitleRehearsalCheckin =>
+      'Скан check-in по слотах репетицій';
 
   @override
   String get staffRoleSubtitleGiftIssue => 'Контроль видачі подарунків';

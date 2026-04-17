@@ -563,17 +563,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get eventSettingsParkingTitle => 'Parking';
+  String get eventSettingsParkingTitle => 'Valet Parking';
 
   @override
   String get eventSettingsParkingSubtitle =>
       'Open your parking pass and arrival status';
 
   @override
-  String get eventSettingsParkingCta => 'OPEN PARKING';
+  String get eventSettingsParkingCta => 'OPEN VALET PARKING';
 
   @override
-  String get parkingChooseModeTitle => 'Parking mode';
+  String get parkingChooseModeTitle => 'Valet parking mode';
 
   @override
   String get parkingChooseModeHint => 'Choose screen state for visual testing.';
@@ -585,7 +585,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get parkingModeActive => 'ACTIVE';
 
   @override
-  String get parkingInactiveHeadline => 'NO ACTIVE PARKING';
+  String get parkingInactiveHeadline => 'NO ACTIVE VALET PARKING';
 
   @override
   String get parkingInactiveBody =>
@@ -599,7 +599,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'FOR VIP PARKING REQUEST - RESERVE A SPOT FOR YOUR CAR.';
 
   @override
-  String get parkingInactiveVipBookCta => 'BOOK PARKING';
+  String get parkingInactiveVipBookCta => 'BOOK VALET PARKING';
 
   @override
   String get parkingActiveTicketLabel => 'TICKET';
@@ -614,7 +614,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get parkingActiveValetLabel => 'VALET SERVICE';
 
   @override
-  String get parkingActiveStatusLine => 'PARKING ACTIVE';
+  String get parkingActiveStatusLine => 'VALET PARKING ACTIVE';
 
   @override
   String get parkingActiveShowEntryPointCta => 'SHOW ENTRY POINT';
@@ -659,7 +659,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get parkingCreateBuyCta => 'BUY';
 
   @override
-  String get parkingCreateBookCta => 'BOOK PARKING';
+  String get parkingCreateBookCta => 'BOOK VALET PARKING';
 
   @override
   String get parkingCheckoutInBrowser => 'Complete payment in your browser.';
@@ -1177,7 +1177,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffScanButton => 'SCAN';
 
   @override
-  String get staffParkingButton => 'PARKING';
+  String get staffParkingButton => 'VALET PARKING';
 
   @override
   String get staffExtraZoneButton => 'EXTRA ZONE';
@@ -1186,16 +1186,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffBackstageButton => 'BACKSTAGE';
 
   @override
+  String get staffRehearsalCheckinButton => 'REHEARSAL CHECK-IN';
+
+  @override
   String get staffTapToScanModelLanyard => 'TAP TO SCAN MODEL LANYARD';
 
   @override
-  String get staffTapToScanParkingQr => 'TAP TO SCAN PARKING QR';
+  String get staffTapToScanParkingQr => 'TAP TO SCAN VALET PARKING QR';
 
   @override
   String get staffTapToScanExtraZoneQr => 'TAP TO SCAN EXTRA ZONE QR';
 
   @override
   String get staffTapToScanBackstageQr => 'TAP TO SCAN BACKSTAGE QR';
+
+  @override
+  String get staffTapToScanRehearsalCheckinQr =>
+      'TAP TO SCAN REHEARSAL CHECK-IN QR';
 
   @override
   String get staffCurrentTask => 'Current Task';
@@ -1254,7 +1261,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffRehearsalAdminSlotsTitle => 'Rehearsal Slots';
 
   @override
+  String get staffRehearsalCheckinActiveSlot => 'Active rehearsal slot';
+
+  @override
   String get staffRehearsalAdminSelectSlot => 'Select rehearsal slot';
+
+  @override
+  String get staffRehearsalCheckinSelectSlotFirst =>
+      'Select rehearsal slot first';
 
   @override
   String get staffRehearsalAdminBookedChildrenTitle => 'Booked Children';
@@ -1363,13 +1377,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffSecurity => 'Security';
 
   @override
-  String get staffScanHeaderParking => 'Parking Scan';
+  String get staffScanHeaderParking => 'Valet Parking Scan';
 
   @override
   String get staffScanHeaderExtraZone => 'Extra Zone Entry';
 
   @override
   String get staffScanHeaderBackstage => 'Backstage Entry';
+
+  @override
+  String get staffScanHeaderRehearsalCheckin => 'Rehearsal Check-in';
 
   @override
   String get staffScanHeaderInfo => 'Scan for Info';
@@ -1379,7 +1396,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffScanHintParking =>
-      'Scan parking QR code to show ticket details';
+      'Scan valet parking QR code to show ticket details';
 
   @override
   String get staffScanHintExtraZone =>
@@ -1388,6 +1405,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get staffScanHintBackstage =>
       'Scan backstage ticket QR code to allow entry';
+
+  @override
+  String get staffScanHintRehearsalCheckin =>
+      'Scan child check-in QR to close rehearsal check-in';
 
   @override
   String get staffScanHintInfo => 'Scan child or parent badge to view profile';
@@ -1402,7 +1423,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffScanErrorUnknown => 'Unknown scan error.';
 
   @override
-  String get staffParkingTicketTitle => 'Parking Ticket';
+  String get staffParkingTicketTitle => 'Valet Parking Ticket';
 
   @override
   String get staffExtraZonePassTitle => 'Extra Zone Pass';
@@ -1434,6 +1455,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get staffBackstageResultAccessClosed =>
       'CODE ACCEPTED, BUT ACCESS CLOSED';
+
+  @override
+  String get staffRehearsalCheckinScanResultTitle => 'Scan Result';
+
+  @override
+  String get staffRehearsalCheckinResultNotFound => 'CHECK-IN CODE NOT FOUND';
+
+  @override
+  String get staffRehearsalCheckinResultWrongSlot =>
+      'CHILD IS NOT IN THE SELECTED SLOT';
+
+  @override
+  String get staffRehearsalCheckinResultAlreadyClosed =>
+      'REHEARSAL CHECK-IN ALREADY CLOSED';
+
+  @override
+  String get staffRehearsalCheckinResultClosedNow =>
+      'REHEARSAL CHECK-IN CLOSED';
+
+  @override
+  String get staffRehearsalCheckinFieldChild => 'Child';
+
+  @override
+  String get staffRehearsalCheckinFieldSlot => 'Slot';
 
   @override
   String get staffParkingFieldEvent => 'Event';
@@ -1503,7 +1548,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffRoleSubtitleHostess => 'Guest & zone support';
 
   @override
-  String get staffRoleSubtitleParking => 'Parking flow & access';
+  String get staffRoleSubtitleParking => 'Valet parking flow & access';
 
   @override
   String get staffRoleSubtitleExtraZone => 'Extra zone access';
@@ -1513,6 +1558,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleRehearsalAdmin => 'Rehearsal administration';
+
+  @override
+  String get staffRoleSubtitleRehearsalCheckin =>
+      'Rehearsal slot check-in scan';
 
   @override
   String get staffRoleSubtitleGiftIssue => 'Gift issue control';

@@ -1204,6 +1204,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffBackstageButton => 'BACKSTAGE';
 
   @override
+  String get staffRehearsalCheckinButton => 'CHECK-IN ENSAYO';
+
+  @override
   String get staffTapToScanModelLanyard =>
       'TOCA PARA ESCANEAR EL GAFETE DE LA MODELO';
 
@@ -1215,6 +1218,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get staffTapToScanBackstageQr => 'TOCA PARA ESCANEAR QR DE BACKSTAGE';
+
+  @override
+  String get staffTapToScanRehearsalCheckinQr =>
+      'TOCA PARA ESCANEAR QR DE CHECK-IN DE ENSAYO';
 
   @override
   String get staffCurrentTask => 'Tarea actual';
@@ -1274,7 +1281,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffRehearsalAdminSlotsTitle => 'Slots de ensayo';
 
   @override
+  String get staffRehearsalCheckinActiveSlot => 'Slot de ensayo activo';
+
+  @override
   String get staffRehearsalAdminSelectSlot => 'Selecciona un slot de ensayo';
+
+  @override
+  String get staffRehearsalCheckinSelectSlotFirst =>
+      'Primero selecciona un slot de ensayo';
 
   @override
   String get staffRehearsalAdminBookedChildrenTitle => 'Niños inscritos';
@@ -1393,6 +1407,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffScanHeaderBackstage => 'Entrada a backstage';
 
   @override
+  String get staffScanHeaderRehearsalCheckin => 'Check-in de ensayo';
+
+  @override
   String get staffScanHeaderInfo => 'Escanear para info';
 
   @override
@@ -1409,6 +1426,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get staffScanHintBackstage =>
       'Escanea QR de ticket backstage para permitir entrada';
+
+  @override
+  String get staffScanHintRehearsalCheckin =>
+      'Escanea QR de check-in del niño para cerrar el paso de ensayo';
 
   @override
   String get staffScanHintInfo =>
@@ -1458,6 +1479,31 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get staffBackstageResultAccessClosed =>
       'CODIGO ACEPTADO, PERO ACCESO CERRADO';
+
+  @override
+  String get staffRehearsalCheckinScanResultTitle => 'Resultado del escaneo';
+
+  @override
+  String get staffRehearsalCheckinResultNotFound =>
+      'CODIGO DE CHECK-IN NO ENCONTRADO';
+
+  @override
+  String get staffRehearsalCheckinResultWrongSlot =>
+      'EL NIÑO NO ESTÁ INSCRITO EN ESTE SLOT';
+
+  @override
+  String get staffRehearsalCheckinResultAlreadyClosed =>
+      'EL CHECK-IN DE ENSAYO YA ESTÁ CERRADO';
+
+  @override
+  String get staffRehearsalCheckinResultClosedNow =>
+      'CHECK-IN DE ENSAYO CERRADO';
+
+  @override
+  String get staffRehearsalCheckinFieldChild => 'Niño';
+
+  @override
+  String get staffRehearsalCheckinFieldSlot => 'Slot';
 
   @override
   String get staffParkingFieldEvent => 'Evento';
@@ -1539,6 +1585,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleRehearsalAdmin => 'Administración de ensayos';
+
+  @override
+  String get staffRoleSubtitleRehearsalCheckin =>
+      'Escaneo check-in por slots de ensayo';
 
   @override
   String get staffRoleSubtitleGiftIssue => 'Control de entrega de regalos';
@@ -2759,6 +2809,9 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffBackstageButton => 'BACKSTAGE';
 
   @override
+  String get staffRehearsalCheckinButton => 'CHECK-IN ENSAYO';
+
+  @override
   String get staffTapToScanModelLanyard =>
       'TOCA PARA ESCANEAR EL GAFETE DE LA MODELO';
 
@@ -2770,6 +2823,10 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffTapToScanBackstageQr => 'TOCA PARA ESCANEAR QR DE BACKSTAGE';
+
+  @override
+  String get staffTapToScanRehearsalCheckinQr =>
+      'TOCA PARA ESCANEAR QR DE CHECK-IN DE ENSAYO';
 
   @override
   String get staffCurrentTask => 'Tarea actual';
@@ -2829,7 +2886,14 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffRehearsalAdminSlotsTitle => 'Slots de ensayo';
 
   @override
+  String get staffRehearsalCheckinActiveSlot => 'Slot de ensayo activo';
+
+  @override
   String get staffRehearsalAdminSelectSlot => 'Selecciona un slot de ensayo';
+
+  @override
+  String get staffRehearsalCheckinSelectSlotFirst =>
+      'Primero selecciona un slot de ensayo';
 
   @override
   String get staffRehearsalAdminBookedChildrenTitle => 'Niños inscritos';
@@ -2948,6 +3012,9 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffScanHeaderBackstage => 'Entrada a backstage';
 
   @override
+  String get staffScanHeaderRehearsalCheckin => 'Check-in de ensayo';
+
+  @override
   String get staffScanHeaderInfo => 'Escanear para info';
 
   @override
@@ -2964,6 +3031,10 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   @override
   String get staffScanHintBackstage =>
       'Escanea QR de ticket backstage para permitir entrada';
+
+  @override
+  String get staffScanHintRehearsalCheckin =>
+      'Escanea QR de check-in del niño para cerrar el paso de ensayo';
 
   @override
   String get staffScanHintInfo =>
@@ -3013,6 +3084,31 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   @override
   String get staffBackstageResultAccessClosed =>
       'CODIGO ACEPTADO, PERO ACCESO CERRADO';
+
+  @override
+  String get staffRehearsalCheckinScanResultTitle => 'Resultado del escaneo';
+
+  @override
+  String get staffRehearsalCheckinResultNotFound =>
+      'CODIGO DE CHECK-IN NO ENCONTRADO';
+
+  @override
+  String get staffRehearsalCheckinResultWrongSlot =>
+      'EL NIÑO NO ESTÁ INSCRITO EN ESTE SLOT';
+
+  @override
+  String get staffRehearsalCheckinResultAlreadyClosed =>
+      'EL CHECK-IN DE ENSAYO YA ESTÁ CERRADO';
+
+  @override
+  String get staffRehearsalCheckinResultClosedNow =>
+      'CHECK-IN DE ENSAYO CERRADO';
+
+  @override
+  String get staffRehearsalCheckinFieldChild => 'Niño';
+
+  @override
+  String get staffRehearsalCheckinFieldSlot => 'Slot';
 
   @override
   String get staffParkingFieldEvent => 'Evento';
@@ -3094,6 +3190,10 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffRoleSubtitleRehearsalAdmin => 'Administración de ensayos';
+
+  @override
+  String get staffRoleSubtitleRehearsalCheckin =>
+      'Escaneo check-in por slots de ensayo';
 
   @override
   String get staffRoleSubtitleGiftIssue => 'Control de entrega de regalos';

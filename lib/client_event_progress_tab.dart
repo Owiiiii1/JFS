@@ -242,7 +242,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
     for (var pi = 0; pi < a.preparatoryStages.length; pi++) {
       final prep = a.preparatoryStages[pi];
       final bookings = a.rehearsalBookings;
-      if (prep.isRehearsalMilestone && bookings.length > 1) {
+      if (prep.isRehearsalMilestone && bookings.isNotEmpty) {
         final n = bookings.length;
         for (var i = 0; i < n; i++) {
           out.add(
@@ -346,11 +346,12 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
   /// Без дат — порядок как в таймлайне: [prepIndex], [bookingIndex].
   static int? _pickCurrentExpandedPrepIndex(
     List<_ExpandedPrepRow> expandedPrep,
+    ActiveAssignment a,
   ) {
     final now = DateTime.now();
     final incomplete = <int>[];
     for (var ei = 0; ei < expandedPrep.length; ei++) {
-      if (!expandedPrep[ei].prep.isCompleted) {
+      if (!_expandedPrepRowSlotDone(expandedPrep[ei], a)) {
         incomplete.add(ei);
       }
     }
@@ -387,6 +388,20 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
       }
     }
     return best;
+  }
+
+  /// Завершённость строки таймлайна: для основной репетиции по слотам — из брони; иначе из API prep.
+  static bool _expandedPrepRowSlotDone(_ExpandedPrepRow row, ActiveAssignment a) {
+    final prep = row.prep;
+    if (prep.isRehearsalMilestone) {
+      if (row.booking != null) {
+        return row.booking!.rehearsalCheckinCompleted;
+      }
+      if (a.rehearsalBookings.length == 1) {
+        return a.rehearsalBookings.single.rehearsalCheckinCompleted;
+      }
+    }
+    return prep.isCompleted;
   }
 
   static String _rehearsalBookingSubtitle(RehearsalBookingInfo b) {
@@ -505,7 +520,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
 
       final rehearsalHint =
           prep.isRehearsalMilestone &&
-              !prep.isCompleted &&
+              !_expandedPrepRowSlotDone(row, a) &&
               prep.scheduledAt == null &&
               a.rehearsalBookings.isEmpty
           ? l10n.rehearsalNextBookHint
@@ -597,6 +612,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
 
     final currentExpandedPrepIndex = _pickCurrentExpandedPrepIndex(
       expandedPrep,
+      a,
     );
     var prepSlot = 0;
     for (var i = 0; i < items.length && prepSlot < prepRowCount; i++) {
@@ -606,7 +622,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
       }
       final exp = expandedPrep[prepSlot];
       final _MilestoneStatus status;
-      if (exp.prep.isCompleted) {
+      if (_expandedPrepRowSlotDone(exp, a)) {
         status = _MilestoneStatus.completed;
       } else if (currentExpandedPrepIndex != null &&
           prepSlot == currentExpandedPrepIndex) {

@@ -1138,7 +1138,7 @@ abstract class AppLocalizations {
   /// No description provided for @eventSettingsParkingTitle.
   ///
   /// In en, this message translates to:
-  /// **'Parking'**
+  /// **'Valet Parking'**
   String get eventSettingsParkingTitle;
 
   /// No description provided for @eventSettingsParkingSubtitle.
@@ -1150,13 +1150,13 @@ abstract class AppLocalizations {
   /// No description provided for @eventSettingsParkingCta.
   ///
   /// In en, this message translates to:
-  /// **'OPEN PARKING'**
+  /// **'OPEN VALET PARKING'**
   String get eventSettingsParkingCta;
 
   /// No description provided for @parkingChooseModeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Parking mode'**
+  /// **'Valet parking mode'**
   String get parkingChooseModeTitle;
 
   /// No description provided for @parkingChooseModeHint.
@@ -1180,7 +1180,7 @@ abstract class AppLocalizations {
   /// No description provided for @parkingInactiveHeadline.
   ///
   /// In en, this message translates to:
-  /// **'NO ACTIVE PARKING'**
+  /// **'NO ACTIVE VALET PARKING'**
   String get parkingInactiveHeadline;
 
   /// No description provided for @parkingInactiveBody.
@@ -1204,7 +1204,7 @@ abstract class AppLocalizations {
   /// No description provided for @parkingInactiveVipBookCta.
   ///
   /// In en, this message translates to:
-  /// **'BOOK PARKING'**
+  /// **'BOOK VALET PARKING'**
   String get parkingInactiveVipBookCta;
 
   /// No description provided for @parkingActiveTicketLabel.
@@ -1234,7 +1234,7 @@ abstract class AppLocalizations {
   /// No description provided for @parkingActiveStatusLine.
   ///
   /// In en, this message translates to:
-  /// **'PARKING ACTIVE'**
+  /// **'VALET PARKING ACTIVE'**
   String get parkingActiveStatusLine;
 
   /// No description provided for @parkingActiveShowEntryPointCta.
@@ -1324,7 +1324,7 @@ abstract class AppLocalizations {
   /// No description provided for @parkingCreateBookCta.
   ///
   /// In en, this message translates to:
-  /// **'BOOK PARKING'**
+  /// **'BOOK VALET PARKING'**
   String get parkingCreateBookCta;
 
   /// No description provided for @parkingCheckoutInBrowser.
@@ -2272,7 +2272,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffParkingButton.
   ///
   /// In en, this message translates to:
-  /// **'PARKING'**
+  /// **'VALET PARKING'**
   String get staffParkingButton;
 
   /// No description provided for @staffExtraZoneButton.
@@ -2287,6 +2287,12 @@ abstract class AppLocalizations {
   /// **'BACKSTAGE'**
   String get staffBackstageButton;
 
+  /// No description provided for @staffRehearsalCheckinButton.
+  ///
+  /// In en, this message translates to:
+  /// **'REHEARSAL CHECK-IN'**
+  String get staffRehearsalCheckinButton;
+
   /// No description provided for @staffTapToScanModelLanyard.
   ///
   /// In en, this message translates to:
@@ -2296,7 +2302,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffTapToScanParkingQr.
   ///
   /// In en, this message translates to:
-  /// **'TAP TO SCAN PARKING QR'**
+  /// **'TAP TO SCAN VALET PARKING QR'**
   String get staffTapToScanParkingQr;
 
   /// No description provided for @staffTapToScanExtraZoneQr.
@@ -2310,6 +2316,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TAP TO SCAN BACKSTAGE QR'**
   String get staffTapToScanBackstageQr;
+
+  /// No description provided for @staffTapToScanRehearsalCheckinQr.
+  ///
+  /// In en, this message translates to:
+  /// **'TAP TO SCAN REHEARSAL CHECK-IN QR'**
+  String get staffTapToScanRehearsalCheckinQr;
 
   /// No description provided for @staffCurrentTask.
   ///
@@ -2413,11 +2425,23 @@ abstract class AppLocalizations {
   /// **'Rehearsal Slots'**
   String get staffRehearsalAdminSlotsTitle;
 
+  /// No description provided for @staffRehearsalCheckinActiveSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Active rehearsal slot'**
+  String get staffRehearsalCheckinActiveSlot;
+
   /// No description provided for @staffRehearsalAdminSelectSlot.
   ///
   /// In en, this message translates to:
   /// **'Select rehearsal slot'**
   String get staffRehearsalAdminSelectSlot;
+
+  /// No description provided for @staffRehearsalCheckinSelectSlotFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select rehearsal slot first'**
+  String get staffRehearsalCheckinSelectSlotFirst;
 
   /// No description provided for @staffRehearsalAdminBookedChildrenTitle.
   ///
@@ -2620,7 +2644,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffScanHeaderParking.
   ///
   /// In en, this message translates to:
-  /// **'Parking Scan'**
+  /// **'Valet Parking Scan'**
   String get staffScanHeaderParking;
 
   /// No description provided for @staffScanHeaderExtraZone.
@@ -2634,6 +2658,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Backstage Entry'**
   String get staffScanHeaderBackstage;
+
+  /// No description provided for @staffScanHeaderRehearsalCheckin.
+  ///
+  /// In en, this message translates to:
+  /// **'Rehearsal Check-in'**
+  String get staffScanHeaderRehearsalCheckin;
 
   /// No description provided for @staffScanHeaderInfo.
   ///
@@ -2650,7 +2680,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffScanHintParking.
   ///
   /// In en, this message translates to:
-  /// **'Scan parking QR code to show ticket details'**
+  /// **'Scan valet parking QR code to show ticket details'**
   String get staffScanHintParking;
 
   /// No description provided for @staffScanHintExtraZone.
@@ -2664,6 +2694,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan backstage ticket QR code to allow entry'**
   String get staffScanHintBackstage;
+
+  /// No description provided for @staffScanHintRehearsalCheckin.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan child check-in QR to close rehearsal check-in'**
+  String get staffScanHintRehearsalCheckin;
 
   /// No description provided for @staffScanHintInfo.
   ///
@@ -2692,7 +2728,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffParkingTicketTitle.
   ///
   /// In en, this message translates to:
-  /// **'Parking Ticket'**
+  /// **'Valet Parking Ticket'**
   String get staffParkingTicketTitle;
 
   /// No description provided for @staffExtraZonePassTitle.
@@ -2748,6 +2784,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'CODE ACCEPTED, BUT ACCESS CLOSED'**
   String get staffBackstageResultAccessClosed;
+
+  /// No description provided for @staffRehearsalCheckinScanResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Result'**
+  String get staffRehearsalCheckinScanResultTitle;
+
+  /// No description provided for @staffRehearsalCheckinResultNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'CHECK-IN CODE NOT FOUND'**
+  String get staffRehearsalCheckinResultNotFound;
+
+  /// No description provided for @staffRehearsalCheckinResultWrongSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'CHILD IS NOT IN THE SELECTED SLOT'**
+  String get staffRehearsalCheckinResultWrongSlot;
+
+  /// No description provided for @staffRehearsalCheckinResultAlreadyClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'REHEARSAL CHECK-IN ALREADY CLOSED'**
+  String get staffRehearsalCheckinResultAlreadyClosed;
+
+  /// No description provided for @staffRehearsalCheckinResultClosedNow.
+  ///
+  /// In en, this message translates to:
+  /// **'REHEARSAL CHECK-IN CLOSED'**
+  String get staffRehearsalCheckinResultClosedNow;
+
+  /// No description provided for @staffRehearsalCheckinFieldChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Child'**
+  String get staffRehearsalCheckinFieldChild;
+
+  /// No description provided for @staffRehearsalCheckinFieldSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot'**
+  String get staffRehearsalCheckinFieldSlot;
 
   /// No description provided for @staffParkingFieldEvent.
   ///
@@ -2878,7 +2956,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffRoleSubtitleParking.
   ///
   /// In en, this message translates to:
-  /// **'Parking flow & access'**
+  /// **'Valet parking flow & access'**
   String get staffRoleSubtitleParking;
 
   /// No description provided for @staffRoleSubtitleExtraZone.
@@ -2898,6 +2976,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rehearsal administration'**
   String get staffRoleSubtitleRehearsalAdmin;
+
+  /// No description provided for @staffRoleSubtitleRehearsalCheckin.
+  ///
+  /// In en, this message translates to:
+  /// **'Rehearsal slot check-in scan'**
+  String get staffRoleSubtitleRehearsalCheckin;
 
   /// No description provided for @staffRoleSubtitleGiftIssue.
   ///
