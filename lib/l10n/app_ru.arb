@@ -29,6 +29,26 @@
   "atLeast8Chars": "Не менее 8 символов",
   "backToSignIn": "Вернуться к входу",
   "registrationFailed": "Ошибка регистрации: {error}",
+  "loginPasswordOptionalHint": "Если профиль создал админ или импорт, оставьте пароль пустым и продолжайте.",
+  "setPasswordTitle": "Создание пароля",
+  "setPasswordSubtitle": "Создайте пароль для {email}",
+  "@setPasswordSubtitle": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "passwordSetupMinLength": "Пароль должен быть не менее 6 символов",
+  "savePasswordAndContinue": "Сохранить пароль и продолжить",
+  "passwordSetupFailed": "Не удалось создать пароль: {error}",
+  "@passwordSetupFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "account": "Аккаунт",
   "editInfo": "РЕДАКТИРОВАТЬ",
   "fullName": "Имя",
@@ -320,6 +340,13 @@
   "extraTicketAccessOpen": "ДОСТУП В ЭКСТРА ЗОНУ ОТКРЫТ",
   "extraTicketCheckoutInBrowser": "Завершите оплату в браузере.",
   "extraTicketCheckoutError": "Не удалось запустить оплату экстра билета. Попробуйте снова.",
+  "backstageTicketButton": "БЕКСТЕЙДЖ",
+  "backstageTicketSelectEventFirst": "Сначала выберите ивент.",
+  "backstageTicketNoActiveHeadline": "НЕТ АКТИВНЫХ БЕКСТЕЙДЖ БИЛЕТОВ",
+  "backstageTicketBuyCta": "КУПИТЬ",
+  "backstageTicketAccessOpen": "ДОСТУП В БЕКСТЕЙДЖ ОТКРЫТ",
+  "backstageTicketCheckoutInBrowser": "Завершите оплату в браузере.",
+  "backstageTicketCheckoutError": "Не удалось запустить оплату бекстейдж билета. Попробуйте снова.",
   "ticketsNoEvents": "Пока нет событий с билетами",
   "ticketsNoneForEvent": "Нет билетов на это событие",
   "ticketsLoadError": "Не удалось загрузить билеты",
@@ -409,9 +436,11 @@
   "staffScanButton": "СКАН",
   "staffParkingButton": "ПАРКОВКА",
   "staffExtraZoneButton": "ЭКСТРА ЗОНА",
+  "staffBackstageButton": "БЕКСТЕЙДЖ",
   "staffTapToScanModelLanyard": "НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ БЕЙДЖ МОДЕЛИ",
   "staffTapToScanParkingQr": "НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR ПАРКОВКИ",
   "staffTapToScanExtraZoneQr": "НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR ЭКСТРА ЗОНЫ",
+  "staffTapToScanBackstageQr": "НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR БЕКСТЕЙДЖА",
   "staffCurrentTask": "Текущая задача",
   "staffUtilitiesAndTools": "ИНСТРУМЕНТЫ",
   "staffScanForInfoTitle": "Скан для информации",
@@ -470,10 +499,12 @@
   "staffSecurity": "Охрана",
   "staffScanHeaderParking": "Скан парковки",
   "staffScanHeaderExtraZone": "Вход в экстра зону",
+  "staffScanHeaderBackstage": "Вход в бекстейдж",
   "staffScanHeaderInfo": "Скан для информации",
   "staffScanHeaderQr": "Скан QR кода",
   "staffScanHintParking": "Сканируйте QR парковки, чтобы показать данные талона",
   "staffScanHintExtraZone": "Сканируйте QR экстра билета для входа",
+  "staffScanHintBackstage": "Сканируйте QR бекстейдж билета для входа",
   "staffScanHintInfo": "Сканируйте бейдж ребенка или родителя, чтобы открыть профиль",
   "staffScanHintQr": "Поместите QR-код в рамку",
   "staffScanErrorTitle": "Ошибка сканирования",
@@ -484,6 +515,10 @@
   "staffExtraZoneResultNotFound": "КОД ОТСУТСТВУЕТ В БАЗЕ",
   "staffExtraZoneResultAccessGranted": "КОД ПРИНЯТ, ПРОХОД РАЗРЕШЕН",
   "staffExtraZoneResultAccessClosed": "КОД ПРИНЯТ, НО ДОСТУП ЗАКРЫТ",
+  "staffBackstageScanResultTitle": "Результат сканирования",
+  "staffBackstageResultNotFound": "КОД ОТСУТСТВУЕТ В БАЗЕ",
+  "staffBackstageResultAccessGranted": "КОД ПРИНЯТ, ПРОХОД РАЗРЕШЕН",
+  "staffBackstageResultAccessClosed": "КОД ПРИНЯТ, НО ДОСТУП ЗАКРЫТ",
   "staffParkingFieldEvent": "Событие",
   "staffParkingFieldClient": "Клиент",
   "staffParkingFieldCar": "Автомобиль",
@@ -517,6 +552,7 @@
   "staffRoleSubtitleHostess": "Поддержка гостей и зон",
   "staffRoleSubtitleParking": "Парковка и доступ",
   "staffRoleSubtitleExtraZone": "Доступ в экстра зону",
+  "staffRoleSubtitleBackstage": "Доступ в бекстейдж",
   "staffRoleSubtitleRehearsalAdmin": "Управление репетициями",
   "staffRoleSubtitleGiftIssue": "Контроль выдачи подарков",
   "staffRoleSubtitleInterview": "Поток интервью",

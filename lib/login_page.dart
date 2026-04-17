@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
 import 'push/push_token_service.dart';
 import 'client_home_page.dart';
+import 'client_password_setup_page.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'register_page.dart';
 import 'staff_home_page.dart';
@@ -42,43 +43,62 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final result = await widget.auth.login(
         email: _emailController.text.trim(),
-        password: _passwordController.text,
+        password: _passwordController.text.trim().isEmpty
+            ? null
+            : _passwordController.text,
       );
+
+      if (result.requiresPasswordSetup) {
+        if (!mounted) return;
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ClientPasswordSetupPage(
+              auth: widget.auth,
+              email: result.setupEmail ?? _emailController.text.trim(),
+            ),
+          ),
+        );
+        return;
+      }
+
+      final token = result.token;
+      final user = result.user;
+      if (token == null || user == null) {
+        throw Exception('Invalid login response');
+      }
 
       // сохраняем токен (пригодится позже)
-      await widget.auth.saveToken(result.token);
+      await widget.auth.saveToken(token);
       unawaited(PushTokenServiceHolder.instance?.syncWithBackendIfLoggedIn());
 
-      final role = (result.user['role'] ?? '').toString().toLowerCase();
+      final role = (user['role'] ?? '').toString().toLowerCase();
 
-final next = (role == 'worker')
-    ? StaffHomePage(auth: widget.auth, user: result.user)
-    : ClientHomePage(auth: widget.auth, user: result.user);
+      final next = (role == 'worker')
+          ? StaffHomePage(auth: widget.auth, user: user)
+          : ClientHomePage(auth: widget.auth, user: user);
 
-    if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => next),
-      );
+      if (!mounted) return;
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => next));
     } catch (e) {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context)!;
       final message = e is ApiEndpointNotFoundException
           ? l10n.apiEndpointNotFoundHint
           : l10n.signInFailed(e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
   void _onSignUp() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => RegisterPage(auth: widget.auth),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => RegisterPage(auth: widget.auth)));
   }
 
   @override
@@ -96,12 +116,17 @@ final next = (role == 'worker')
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 520),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   child: Column(
                     children: [
                       Expanded(
                         flex: isWide ? 3 : 2,
-                        child: _LogoBlock(titleStyle: theme.textTheme.headlineMedium),
+                        child: _LogoBlock(
+                          titleStyle: theme.textTheme.headlineMedium,
+                        ),
                       ),
                       Expanded(
                         flex: 3,
@@ -114,24 +139,34 @@ final next = (role == 'worker')
                               children: [
                                 Text(
                                   AppLocalizations.of(context)!.signIn,
-                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  style: theme.textTheme.headlineSmall
+                                      ?.copyWith(fontWeight: FontWeight.w600),
                                 ),
                                 const SizedBox(height: 16),
 
                                 TextFormField(
                                   controller: _emailController,
                                   keyboardType: TextInputType.emailAddress,
-                                  autofillHints: const [AutofillHints.username, AutofillHints.email],
+                                  autofillHints: const [
+                                    AutofillHints.username,
+                                    AutofillHints.email,
+                                  ],
                                   decoration: InputDecoration(
-                                    labelText: AppLocalizations.of(context)!.email,
+                                    labelText: AppLocalizations.of(
+                                      context,
+                                    )!.email,
                                     border: const OutlineInputBorder(),
                                   ),
                                   validator: (v) {
                                     final value = (v ?? '').trim();
-                                    if (value.isEmpty) return AppLocalizations.of(context)!.emailRequired;
-                                    if (!value.contains('@')) return AppLocalizations.of(context)!.enterValidEmail;
+                                    if (value.isEmpty)
+                                      return AppLocalizations.of(
+                                        context,
+                                      )!.emailRequired;
+                                    if (!value.contains('@'))
+                                      return AppLocalizations.of(
+                                        context,
+                                      )!.enterValidEmail;
                                     return null;
                                   },
                                 ),
@@ -142,20 +177,45 @@ final next = (role == 'worker')
                                   obscureText: !_isPasswordVisible,
                                   autofillHints: const [AutofillHints.password],
                                   decoration: InputDecoration(
-                                    labelText: AppLocalizations.of(context)!.password,
+                                    labelText: AppLocalizations.of(
+                                      context,
+                                    )!.password,
                                     border: const OutlineInputBorder(),
                                     suffixIcon: IconButton(
-                                      onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
-                                      icon: Icon(_isPasswordVisible ? Icons.visibility_off : Icons.visibility),
-                                      tooltip: _isPasswordVisible ? AppLocalizations.of(context)!.hidePassword : AppLocalizations.of(context)!.showPassword,
+                                      onPressed: () => setState(
+                                        () => _isPasswordVisible =
+                                            !_isPasswordVisible,
+                                      ),
+                                      icon: Icon(
+                                        _isPasswordVisible
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                      ),
+                                      tooltip: _isPasswordVisible
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.hidePassword
+                                          : AppLocalizations.of(
+                                              context,
+                                            )!.showPassword,
                                     ),
                                   ),
                                   validator: (v) {
-                                    final value = v ?? '';
-                                    if (value.isEmpty) return AppLocalizations.of(context)!.passwordRequired;
                                     return null;
                                   },
                                   onFieldSubmitted: (_) => _onSignIn(),
+                                ),
+                                const SizedBox(height: 6),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.loginPasswordOptionalHint,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: Colors.white70,
+                                    ),
+                                  ),
                                 ),
 
                                 const SizedBox(height: 16),
@@ -173,9 +233,15 @@ final next = (role == 'worker')
                                         ? const SizedBox(
                                             width: 22,
                                             height: 22,
-                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
                                           )
-                                        : Text(AppLocalizations.of(context)!.signIn),
+                                        : Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.signIn,
+                                          ),
                                   ),
                                 ),
                                 const SizedBox(height: 12),
@@ -185,10 +251,14 @@ final next = (role == 'worker')
                                   child: OutlinedButton(
                                     style: OutlinedButton.styleFrom(
                                       foregroundColor: Colors.white,
-                                      side: const BorderSide(color: Colors.white),
+                                      side: const BorderSide(
+                                        color: Colors.white,
+                                      ),
                                     ),
                                     onPressed: _isLoading ? null : _onSignUp,
-                                    child: Text(AppLocalizations.of(context)!.signUp),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.signUp,
+                                    ),
                                   ),
                                 ),
                               ],

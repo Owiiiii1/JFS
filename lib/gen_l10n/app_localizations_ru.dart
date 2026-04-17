@@ -102,6 +102,29 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get loginPasswordOptionalHint =>
+      'Если профиль создал админ или импорт, оставьте пароль пустым и продолжайте.';
+
+  @override
+  String get setPasswordTitle => 'Создание пароля';
+
+  @override
+  String setPasswordSubtitle(String email) {
+    return 'Создайте пароль для $email';
+  }
+
+  @override
+  String get passwordSetupMinLength => 'Пароль должен быть не менее 6 символов';
+
+  @override
+  String get savePasswordAndContinue => 'Сохранить пароль и продолжить';
+
+  @override
+  String passwordSetupFailed(String error) {
+    return 'Не удалось создать пароль: $error';
+  }
+
+  @override
   String get account => 'Аккаунт';
 
   @override
@@ -950,6 +973,29 @@ class AppLocalizationsRu extends AppLocalizations {
       'Не удалось запустить оплату экстра билета. Попробуйте снова.';
 
   @override
+  String get backstageTicketButton => 'БЕКСТЕЙДЖ';
+
+  @override
+  String get backstageTicketSelectEventFirst => 'Сначала выберите ивент.';
+
+  @override
+  String get backstageTicketNoActiveHeadline =>
+      'НЕТ АКТИВНЫХ БЕКСТЕЙДЖ БИЛЕТОВ';
+
+  @override
+  String get backstageTicketBuyCta => 'КУПИТЬ';
+
+  @override
+  String get backstageTicketAccessOpen => 'ДОСТУП В БЕКСТЕЙДЖ ОТКРЫТ';
+
+  @override
+  String get backstageTicketCheckoutInBrowser => 'Завершите оплату в браузере.';
+
+  @override
+  String get backstageTicketCheckoutError =>
+      'Не удалось запустить оплату бекстейдж билета. Попробуйте снова.';
+
+  @override
   String get ticketsNoEvents => 'Пока нет событий с билетами';
 
   @override
@@ -1147,6 +1193,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get staffExtraZoneButton => 'ЭКСТРА ЗОНА';
 
   @override
+  String get staffBackstageButton => 'БЕКСТЕЙДЖ';
+
+  @override
   String get staffTapToScanModelLanyard =>
       'НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ БЕЙДЖ МОДЕЛИ';
 
@@ -1157,6 +1206,10 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get staffTapToScanExtraZoneQr =>
       'НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR ЭКСТРА ЗОНЫ';
+
+  @override
+  String get staffTapToScanBackstageQr =>
+      'НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR БЕКСТЕЙДЖА';
 
   @override
   String get staffCurrentTask => 'Текущая задача';
@@ -1331,6 +1384,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get staffScanHeaderExtraZone => 'Вход в экстра зону';
 
   @override
+  String get staffScanHeaderBackstage => 'Вход в бекстейдж';
+
+  @override
   String get staffScanHeaderInfo => 'Скан для информации';
 
   @override
@@ -1342,6 +1398,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get staffScanHintExtraZone => 'Сканируйте QR экстра билета для входа';
+
+  @override
+  String get staffScanHintBackstage =>
+      'Сканируйте QR бекстейдж билета для входа';
 
   @override
   String get staffScanHintInfo =>
@@ -1373,6 +1433,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get staffExtraZoneResultAccessClosed => 'КОД ПРИНЯТ, НО ДОСТУП ЗАКРЫТ';
+
+  @override
+  String get staffBackstageScanResultTitle => 'Результат сканирования';
+
+  @override
+  String get staffBackstageResultNotFound => 'КОД ОТСУТСТВУЕТ В БАЗЕ';
+
+  @override
+  String get staffBackstageResultAccessGranted => 'КОД ПРИНЯТ, ПРОХОД РАЗРЕШЕН';
+
+  @override
+  String get staffBackstageResultAccessClosed => 'КОД ПРИНЯТ, НО ДОСТУП ЗАКРЫТ';
 
   @override
   String get staffParkingFieldEvent => 'Событие';
@@ -1446,6 +1518,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleExtraZone => 'Доступ в экстра зону';
+
+  @override
+  String get staffRoleSubtitleBackstage => 'Доступ в бекстейдж';
 
   @override
   String get staffRoleSubtitleRehearsalAdmin => 'Управление репетициями';

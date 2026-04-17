@@ -43,6 +43,26 @@
       }
     }
   },
+  "loginPasswordOptionalHint": "If your profile was created by admin/import, leave password empty and continue.",
+  "setPasswordTitle": "Set password",
+  "setPasswordSubtitle": "Create a password for {email}",
+  "@setPasswordSubtitle": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "passwordSetupMinLength": "Password must be at least 6 characters",
+  "savePasswordAndContinue": "Save password and continue",
+  "passwordSetupFailed": "Password setup failed: {error}",
+  "@passwordSetupFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "account": "Account",
   "editInfo": "EDIT INFO",
   "fullName": "Name",
@@ -380,6 +400,13 @@
   "extraTicketAccessOpen": "ACCESS TO EXTRA ZONE IS OPEN",
   "extraTicketCheckoutInBrowser": "Complete payment in your browser.",
   "extraTicketCheckoutError": "Could not start extra ticket payment. Try again.",
+  "backstageTicketButton": "BACKSTAGE",
+  "backstageTicketSelectEventFirst": "Select an event first.",
+  "backstageTicketNoActiveHeadline": "NO ACTIVE BACKSTAGE TICKETS",
+  "backstageTicketBuyCta": "BUY",
+  "backstageTicketAccessOpen": "BACKSTAGE ACCESS IS OPEN",
+  "backstageTicketCheckoutInBrowser": "Complete payment in your browser.",
+  "backstageTicketCheckoutError": "Could not start backstage ticket payment. Try again.",
   "ticketsNoEvents": "No events with tickets yet",
   "ticketsNoneForEvent": "No tickets for this event",
   "ticketsLoadError": "Could not load tickets",
@@ -469,9 +496,11 @@
   "staffScanButton": "SCAN",
   "staffParkingButton": "PARKING",
   "staffExtraZoneButton": "EXTRA ZONE",
+  "staffBackstageButton": "BACKSTAGE",
   "staffTapToScanModelLanyard": "TAP TO SCAN MODEL LANYARD",
   "staffTapToScanParkingQr": "TAP TO SCAN PARKING QR",
   "staffTapToScanExtraZoneQr": "TAP TO SCAN EXTRA ZONE QR",
+  "staffTapToScanBackstageQr": "TAP TO SCAN BACKSTAGE QR",
   "staffCurrentTask": "Current Task",
   "staffUtilitiesAndTools": "UTILITIES & TOOLS",
   "staffScanForInfoTitle": "Scan for Info",
@@ -530,10 +559,12 @@
   "staffSecurity": "Security",
   "staffScanHeaderParking": "Parking Scan",
   "staffScanHeaderExtraZone": "Extra Zone Entry",
+  "staffScanHeaderBackstage": "Backstage Entry",
   "staffScanHeaderInfo": "Scan for Info",
   "staffScanHeaderQr": "Scan QR Code",
   "staffScanHintParking": "Scan parking QR code to show ticket details",
   "staffScanHintExtraZone": "Scan extra ticket QR code to allow entry",
+  "staffScanHintBackstage": "Scan backstage ticket QR code to allow entry",
   "staffScanHintInfo": "Scan child or parent badge to view profile",
   "staffScanHintQr": "Align QR code within the frame",
   "staffScanErrorTitle": "Scan Error",
@@ -544,6 +575,10 @@
   "staffExtraZoneResultNotFound": "CODE NOT FOUND IN DATABASE",
   "staffExtraZoneResultAccessGranted": "CODE ACCEPTED, ACCESS GRANTED",
   "staffExtraZoneResultAccessClosed": "CODE ACCEPTED, BUT ACCESS CLOSED",
+  "staffBackstageScanResultTitle": "Scan Result",
+  "staffBackstageResultNotFound": "CODE NOT FOUND IN DATABASE",
+  "staffBackstageResultAccessGranted": "CODE ACCEPTED, ACCESS GRANTED",
+  "staffBackstageResultAccessClosed": "CODE ACCEPTED, BUT ACCESS CLOSED",
   "staffParkingFieldEvent": "Event",
   "staffParkingFieldClient": "Client",
   "staffParkingFieldCar": "Car",
@@ -577,6 +612,7 @@
   "staffRoleSubtitleHostess": "Guest & zone support",
   "staffRoleSubtitleParking": "Parking flow & access",
   "staffRoleSubtitleExtraZone": "Extra zone access",
+  "staffRoleSubtitleBackstage": "Backstage access",
   "staffRoleSubtitleRehearsalAdmin": "Rehearsal administration",
   "staffRoleSubtitleGiftIssue": "Gift issue control",
   "staffRoleSubtitleInterview": "Interview flow",

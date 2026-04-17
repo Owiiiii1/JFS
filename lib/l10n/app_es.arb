@@ -39,6 +39,22 @@
       "error": { "type": "String" }
     }
   },
+  "loginPasswordOptionalHint": "Si tu perfil fue creado por admin/importación, deja la contraseña vacía y continúa.",
+  "setPasswordTitle": "Crear contraseña",
+  "setPasswordSubtitle": "Crea una contraseña para {email}",
+  "@setPasswordSubtitle": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "passwordSetupMinLength": "La contraseña debe tener al menos 6 caracteres",
+  "savePasswordAndContinue": "Guardar contraseña y continuar",
+  "passwordSetupFailed": "No se pudo crear la contraseña: {error}",
+  "@passwordSetupFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
   "account": "Cuenta",
   "editInfo": "EDITAR INFORMACIГ“N",
   "fullName": "Nombre",
@@ -364,6 +380,13 @@
   "extraTicketAccessOpen": "ACCESO A LA ZONA EXTRA ABIERTO",
   "extraTicketCheckoutInBrowser": "Completa el pago en tu navegador.",
   "extraTicketCheckoutError": "No se pudo iniciar el pago del ticket extra. Intentalo de nuevo.",
+  "backstageTicketButton": "BACKSTAGE",
+  "backstageTicketSelectEventFirst": "Selecciona primero un evento.",
+  "backstageTicketNoActiveHeadline": "NO HAY TICKETS BACKSTAGE ACTIVOS",
+  "backstageTicketBuyCta": "COMPRAR",
+  "backstageTicketAccessOpen": "ACCESO A BACKSTAGE ABIERTO",
+  "backstageTicketCheckoutInBrowser": "Completa el pago en tu navegador.",
+  "backstageTicketCheckoutError": "No se pudo iniciar el pago del ticket backstage. Intentalo de nuevo.",
   "ticketsNoEvents": "AГєn no hay eventos con entradas",
   "ticketsNoneForEvent": "No hay entradas para este evento",
   "ticketsLoadError": "No se pudieron cargar las entradas",
@@ -453,9 +476,11 @@
   "staffScanButton": "ESCANEAR",
   "staffParkingButton": "PARKING",
   "staffExtraZoneButton": "ZONA EXTRA",
+  "staffBackstageButton": "BACKSTAGE",
   "staffTapToScanModelLanyard": "TOCA PARA ESCANEAR EL GAFETE DE LA MODELO",
   "staffTapToScanParkingQr": "TOCA PARA ESCANEAR QR DE PARKING",
   "staffTapToScanExtraZoneQr": "TOCA PARA ESCANEAR QR DE ZONA EXTRA",
+  "staffTapToScanBackstageQr": "TOCA PARA ESCANEAR QR DE BACKSTAGE",
   "staffCurrentTask": "Tarea actual",
   "staffUtilitiesAndTools": "UTILIDADES Y HERRAMIENTAS",
   "staffScanForInfoTitle": "Escanear para info",
@@ -514,10 +539,12 @@
   "staffSecurity": "Seguridad",
   "staffScanHeaderParking": "Escaneo de parking",
   "staffScanHeaderExtraZone": "Entrada a zona extra",
+  "staffScanHeaderBackstage": "Entrada a backstage",
   "staffScanHeaderInfo": "Escanear para info",
   "staffScanHeaderQr": "Escanear código QR",
   "staffScanHintParking": "Escanea QR de parking para mostrar datos del ticket",
   "staffScanHintExtraZone": "Escanea QR de ticket extra para permitir entrada",
+  "staffScanHintBackstage": "Escanea QR de ticket backstage para permitir entrada",
   "staffScanHintInfo": "Escanea gafete de niño o padre para ver el perfil",
   "staffScanHintQr": "Alinea el código QR dentro del marco",
   "staffScanErrorTitle": "Error de escaneo",
@@ -528,6 +555,10 @@
   "staffExtraZoneResultNotFound": "CODIGO NO ENCONTRADO EN LA BASE DE DATOS",
   "staffExtraZoneResultAccessGranted": "CODIGO ACEPTADO, ACCESO PERMITIDO",
   "staffExtraZoneResultAccessClosed": "CODIGO ACEPTADO, PERO ACCESO CERRADO",
+  "staffBackstageScanResultTitle": "Resultado del escaneo",
+  "staffBackstageResultNotFound": "CODIGO NO ENCONTRADO EN LA BASE DE DATOS",
+  "staffBackstageResultAccessGranted": "CODIGO ACEPTADO, ACCESO PERMITIDO",
+  "staffBackstageResultAccessClosed": "CODIGO ACEPTADO, PERO ACCESO CERRADO",
   "staffParkingFieldEvent": "Evento",
   "staffParkingFieldClient": "Cliente",
   "staffParkingFieldCar": "Auto",
@@ -561,6 +592,7 @@
   "staffRoleSubtitleHostess": "Soporte de invitados y zonas",
   "staffRoleSubtitleParking": "Flujo y acceso de parking",
   "staffRoleSubtitleExtraZone": "Acceso a zona extra",
+  "staffRoleSubtitleBackstage": "Acceso a backstage",
   "staffRoleSubtitleRehearsalAdmin": "Administración de ensayos",
   "staffRoleSubtitleGiftIssue": "Control de entrega de regalos",
   "staffRoleSubtitleInterview": "Flujo de entrevistas",

@@ -102,6 +102,29 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get loginPasswordOptionalHint =>
+      'Якщо профіль створив адмін або імпорт, залиште пароль порожнім і продовжуйте.';
+
+  @override
+  String get setPasswordTitle => 'Створення пароля';
+
+  @override
+  String setPasswordSubtitle(String email) {
+    return 'Створіть пароль для $email';
+  }
+
+  @override
+  String get passwordSetupMinLength => 'Пароль має бути не менше 6 символів';
+
+  @override
+  String get savePasswordAndContinue => 'Зберегти пароль і продовжити';
+
+  @override
+  String passwordSetupFailed(String error) {
+    return 'Не вдалося створити пароль: $error';
+  }
+
+  @override
   String get account => 'Обліковий запис';
 
   @override
@@ -946,6 +969,29 @@ class AppLocalizationsUk extends AppLocalizations {
       'Не вдалося запустити оплату екстра квитка. Спробуйте ще раз.';
 
   @override
+  String get backstageTicketButton => 'БЕКСТЕЙДЖ';
+
+  @override
+  String get backstageTicketSelectEventFirst => 'Спочатку оберіть івент.';
+
+  @override
+  String get backstageTicketNoActiveHeadline =>
+      'НЕМАЄ АКТИВНИХ БЕКСТЕЙДЖ КВИТКІВ';
+
+  @override
+  String get backstageTicketBuyCta => 'КУПИТИ';
+
+  @override
+  String get backstageTicketAccessOpen => 'ДОСТУП ДО БЕКСТЕЙДЖУ ВІДКРИТО';
+
+  @override
+  String get backstageTicketCheckoutInBrowser => 'Завершіть оплату у браузері.';
+
+  @override
+  String get backstageTicketCheckoutError =>
+      'Не вдалося запустити оплату бекстейдж квитка. Спробуйте ще раз.';
+
+  @override
   String get ticketsNoEvents => 'Поки немає заходів із квитками';
 
   @override
@@ -1142,6 +1188,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffExtraZoneButton => 'ЕКСТРА ЗОНА';
 
   @override
+  String get staffBackstageButton => 'БЕКСТЕЙДЖ';
+
+  @override
   String get staffTapToScanModelLanyard =>
       'НАТИСНІТЬ, ЩОБ СКАНУВАТИ БЕЙДЖ МОДЕЛІ';
 
@@ -1152,6 +1201,10 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get staffTapToScanExtraZoneQr =>
       'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ЕКСТРА ЗОНИ';
+
+  @override
+  String get staffTapToScanBackstageQr =>
+      'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR БЕКСТЕЙДЖУ';
 
   @override
   String get staffCurrentTask => 'Поточне завдання';
@@ -1327,6 +1380,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffScanHeaderExtraZone => 'Вхід до екстра зони';
 
   @override
+  String get staffScanHeaderBackstage => 'Вхід до бекстейджу';
+
+  @override
   String get staffScanHeaderInfo => 'Скан для інформації';
 
   @override
@@ -1338,6 +1394,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffScanHintExtraZone => 'Скануйте QR екстра квитка для входу';
+
+  @override
+  String get staffScanHintBackstage => 'Скануйте QR бекстейдж квитка для входу';
 
   @override
   String get staffScanHintInfo =>
@@ -1370,6 +1429,20 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffExtraZoneResultAccessClosed =>
+      'КОД ПРИЙНЯТО, АЛЕ ДОСТУП ЗАКРИТО';
+
+  @override
+  String get staffBackstageScanResultTitle => 'Результат сканування';
+
+  @override
+  String get staffBackstageResultNotFound => 'КОД ВІДСУТНІЙ У БАЗІ';
+
+  @override
+  String get staffBackstageResultAccessGranted =>
+      'КОД ПРИЙНЯТО, ПРОХІД ДОЗВОЛЕНО';
+
+  @override
+  String get staffBackstageResultAccessClosed =>
       'КОД ПРИЙНЯТО, АЛЕ ДОСТУП ЗАКРИТО';
 
   @override
@@ -1444,6 +1517,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleExtraZone => 'Доступ до екстра зони';
+
+  @override
+  String get staffRoleSubtitleBackstage => 'Доступ до бекстейджу';
 
   @override
   String get staffRoleSubtitleRehearsalAdmin => 'Керування репетиціями';

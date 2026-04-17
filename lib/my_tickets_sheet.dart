@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'api/auth_service.dart';
+import 'client_event_backstage_ticket_flow.dart';
 import 'client_event_extra_ticket_flow.dart';
 import 'client_ticket_pdf_page.dart';
 import 'gen_l10n/app_localizations.dart';
@@ -244,6 +245,49 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.extraTicketCheckoutError)));
+    }
+  }
+
+  Future<void> _openBackstageTicketFlow() async {
+    final l10n = AppLocalizations.of(context)!;
+    final eventId = _selectedEventId;
+    if (eventId == null || eventId <= 0) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.backstageTicketSelectEventFirst)),
+      );
+      return;
+    }
+
+    final eventName = _selectedEventName ?? '—';
+    try {
+      final payload = await widget.auth.getEventBackstageTickets(eventId);
+      if (!mounted) return;
+      final page = payload.hasActiveTickets
+          ? ClientBackstageTicketActiveScreen(
+              eventName: eventName,
+              l10n: l10n,
+              auth: widget.auth,
+              eventId: eventId,
+              canBuy: payload.canBuy,
+              tickets: payload.tickets,
+            )
+          : ClientBackstageTicketInactiveScreen(
+              l10n: l10n,
+              eventName: eventName,
+              auth: widget.auth,
+              eventId: eventId,
+              canBuy: payload.canBuy,
+            );
+
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute<void>(builder: (_) => page));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.backstageTicketCheckoutError)),
+      );
     }
   }
 
@@ -508,6 +552,35 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
                         ),
                         label: Text(
                           l10n.extraTicketButton,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: _openBackstageTicketFlow,
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: _kGold,
+                          side: const BorderSide(color: _kGold),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        icon: const Icon(
+                          Icons.workspace_premium_outlined,
+                          color: _kGold,
+                          size: 20,
+                        ),
+                        label: Text(
+                          l10n.backstageTicketButton,
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w800,

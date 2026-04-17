@@ -103,6 +103,30 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get loginPasswordOptionalHint =>
+      'Si tu perfil fue creado por admin/importación, deja la contraseña vacía y continúa.';
+
+  @override
+  String get setPasswordTitle => 'Crear contraseña';
+
+  @override
+  String setPasswordSubtitle(String email) {
+    return 'Crea una contraseña para $email';
+  }
+
+  @override
+  String get passwordSetupMinLength =>
+      'La contraseña debe tener al menos 6 caracteres';
+
+  @override
+  String get savePasswordAndContinue => 'Guardar contraseña y continuar';
+
+  @override
+  String passwordSetupFailed(String error) {
+    return 'No se pudo crear la contraseña: $error';
+  }
+
+  @override
   String get account => 'Cuenta';
 
   @override
@@ -955,6 +979,30 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo iniciar el pago del ticket extra. Intentalo de nuevo.';
 
   @override
+  String get backstageTicketButton => 'BACKSTAGE';
+
+  @override
+  String get backstageTicketSelectEventFirst => 'Selecciona primero un evento.';
+
+  @override
+  String get backstageTicketNoActiveHeadline =>
+      'NO HAY TICKETS BACKSTAGE ACTIVOS';
+
+  @override
+  String get backstageTicketBuyCta => 'COMPRAR';
+
+  @override
+  String get backstageTicketAccessOpen => 'ACCESO A BACKSTAGE ABIERTO';
+
+  @override
+  String get backstageTicketCheckoutInBrowser =>
+      'Completa el pago en tu navegador.';
+
+  @override
+  String get backstageTicketCheckoutError =>
+      'No se pudo iniciar el pago del ticket backstage. Intentalo de nuevo.';
+
+  @override
   String get ticketsNoEvents => 'AГєn no hay eventos con entradas';
 
   @override
@@ -1153,6 +1201,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffExtraZoneButton => 'ZONA EXTRA';
 
   @override
+  String get staffBackstageButton => 'BACKSTAGE';
+
+  @override
   String get staffTapToScanModelLanyard =>
       'TOCA PARA ESCANEAR EL GAFETE DE LA MODELO';
 
@@ -1161,6 +1212,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get staffTapToScanExtraZoneQr => 'TOCA PARA ESCANEAR QR DE ZONA EXTRA';
+
+  @override
+  String get staffTapToScanBackstageQr => 'TOCA PARA ESCANEAR QR DE BACKSTAGE';
 
   @override
   String get staffCurrentTask => 'Tarea actual';
@@ -1336,6 +1390,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffScanHeaderExtraZone => 'Entrada a zona extra';
 
   @override
+  String get staffScanHeaderBackstage => 'Entrada a backstage';
+
+  @override
   String get staffScanHeaderInfo => 'Escanear para info';
 
   @override
@@ -1348,6 +1405,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get staffScanHintExtraZone =>
       'Escanea QR de ticket extra para permitir entrada';
+
+  @override
+  String get staffScanHintBackstage =>
+      'Escanea QR de ticket backstage para permitir entrada';
 
   @override
   String get staffScanHintInfo =>
@@ -1381,6 +1442,21 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get staffExtraZoneResultAccessClosed =>
+      'CODIGO ACEPTADO, PERO ACCESO CERRADO';
+
+  @override
+  String get staffBackstageScanResultTitle => 'Resultado del escaneo';
+
+  @override
+  String get staffBackstageResultNotFound =>
+      'CODIGO NO ENCONTRADO EN LA BASE DE DATOS';
+
+  @override
+  String get staffBackstageResultAccessGranted =>
+      'CODIGO ACEPTADO, ACCESO PERMITIDO';
+
+  @override
+  String get staffBackstageResultAccessClosed =>
       'CODIGO ACEPTADO, PERO ACCESO CERRADO';
 
   @override
@@ -1457,6 +1533,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleExtraZone => 'Acceso a zona extra';
+
+  @override
+  String get staffRoleSubtitleBackstage => 'Acceso a backstage';
 
   @override
   String get staffRoleSubtitleRehearsalAdmin => 'Administración de ensayos';
@@ -1579,6 +1658,30 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   }
 
   @override
+  String get loginPasswordOptionalHint =>
+      'Si tu perfil fue creado por admin/importación, deja la contraseña vacía y continúa.';
+
+  @override
+  String get setPasswordTitle => 'Crear contraseña';
+
+  @override
+  String setPasswordSubtitle(String email) {
+    return 'Crea una contraseña para $email';
+  }
+
+  @override
+  String get passwordSetupMinLength =>
+      'La contraseña debe tener al menos 6 caracteres';
+
+  @override
+  String get savePasswordAndContinue => 'Guardar contraseña y continuar';
+
+  @override
+  String passwordSetupFailed(String error) {
+    return 'No se pudo crear la contraseña: $error';
+  }
+
+  @override
   String get account => 'Cuenta';
 
   @override
@@ -2431,6 +2534,30 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
       'No se pudo iniciar el pago del ticket extra. Intentalo de nuevo.';
 
   @override
+  String get backstageTicketButton => 'BACKSTAGE';
+
+  @override
+  String get backstageTicketSelectEventFirst => 'Selecciona primero un evento.';
+
+  @override
+  String get backstageTicketNoActiveHeadline =>
+      'NO HAY TICKETS BACKSTAGE ACTIVOS';
+
+  @override
+  String get backstageTicketBuyCta => 'COMPRAR';
+
+  @override
+  String get backstageTicketAccessOpen => 'ACCESO A BACKSTAGE ABIERTO';
+
+  @override
+  String get backstageTicketCheckoutInBrowser =>
+      'Completa el pago en tu navegador.';
+
+  @override
+  String get backstageTicketCheckoutError =>
+      'No se pudo iniciar el pago del ticket backstage. Intentalo de nuevo.';
+
+  @override
   String get ticketsNoEvents => 'AГєn no hay eventos con entradas';
 
   @override
@@ -2629,6 +2756,9 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffExtraZoneButton => 'ZONA EXTRA';
 
   @override
+  String get staffBackstageButton => 'BACKSTAGE';
+
+  @override
   String get staffTapToScanModelLanyard =>
       'TOCA PARA ESCANEAR EL GAFETE DE LA MODELO';
 
@@ -2637,6 +2767,9 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffTapToScanExtraZoneQr => 'TOCA PARA ESCANEAR QR DE ZONA EXTRA';
+
+  @override
+  String get staffTapToScanBackstageQr => 'TOCA PARA ESCANEAR QR DE BACKSTAGE';
 
   @override
   String get staffCurrentTask => 'Tarea actual';
@@ -2812,6 +2945,9 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffScanHeaderExtraZone => 'Entrada a zona extra';
 
   @override
+  String get staffScanHeaderBackstage => 'Entrada a backstage';
+
+  @override
   String get staffScanHeaderInfo => 'Escanear para info';
 
   @override
@@ -2824,6 +2960,10 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   @override
   String get staffScanHintExtraZone =>
       'Escanea QR de ticket extra para permitir entrada';
+
+  @override
+  String get staffScanHintBackstage =>
+      'Escanea QR de ticket backstage para permitir entrada';
 
   @override
   String get staffScanHintInfo =>
@@ -2857,6 +2997,21 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffExtraZoneResultAccessClosed =>
+      'CODIGO ACEPTADO, PERO ACCESO CERRADO';
+
+  @override
+  String get staffBackstageScanResultTitle => 'Resultado del escaneo';
+
+  @override
+  String get staffBackstageResultNotFound =>
+      'CODIGO NO ENCONTRADO EN LA BASE DE DATOS';
+
+  @override
+  String get staffBackstageResultAccessGranted =>
+      'CODIGO ACEPTADO, ACCESO PERMITIDO';
+
+  @override
+  String get staffBackstageResultAccessClosed =>
       'CODIGO ACEPTADO, PERO ACCESO CERRADO';
 
   @override
@@ -2933,6 +3088,9 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffRoleSubtitleExtraZone => 'Acceso a zona extra';
+
+  @override
+  String get staffRoleSubtitleBackstage => 'Acceso a backstage';
 
   @override
   String get staffRoleSubtitleRehearsalAdmin => 'Administración de ensayos';

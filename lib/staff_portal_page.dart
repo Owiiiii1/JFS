@@ -377,6 +377,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     if (_matchesAnyToken(role, const ['extra_zone', 'extra zone', 'экстра зона', 'зона экстра'])) {
       return 'extra_zone';
     }
+    if (_matchesAnyToken(role, const ['backstage', 'backstage entry', 'бекстейдж', 'бэкстейдж'])) {
+      return 'backstage';
+    }
     if (_matchesAnyToken(role, const ['rehearsal_admin', 'rehearsal admin', 'админ репетиций'])) {
       return 'rehearsal_admin';
     }
@@ -402,6 +405,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
         return _buildHomeTab(accent, parkingMode: true);
       case 'extra_zone':
         return _buildHomeTab(accent, extraZoneMode: true);
+      case 'backstage':
+        return _buildHomeTab(accent, backstageMode: true);
       case 'rehearsal_admin':
         return _buildRehearsalAdminHomeTab(accent);
       case 'gift_issue':
@@ -611,12 +616,13 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     Color accent, {
     bool parkingMode = false,
     bool extraZoneMode = false,
+    bool backstageMode = false,
   }) {
     final l10n = AppLocalizations.of(context)!;
     final roleDesc = (_selectedRole?.description ?? '').trim();
     final eventId = AppSettings.staffActiveEventId;
     final roleActive = _selectedRole?.isActive ?? false;
-    final scanEnabled = (parkingMode || extraZoneMode)
+    final scanEnabled = (parkingMode || extraZoneMode || backstageMode)
         ? roleActive
         : (!_homeStagesLoading &&
               roleActive &&
@@ -627,7 +633,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!parkingMode && !extraZoneMode)
+        if (!parkingMode && !extraZoneMode && !backstageMode)
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
             child: Column(
@@ -751,6 +757,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                               context,
                               parkingScan: parkingMode,
                               extraZoneScan: extraZoneMode,
+                              backstageScan: backstageMode,
                             ),
                           )
                         : null,
@@ -787,7 +794,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                                   ? Icons.local_parking_outlined
                                   : (extraZoneMode
                                       ? Icons.workspace_premium_outlined
-                                      : Icons.qr_code_scanner),
+                                      : (backstageMode
+                                            ? Icons.theater_comedy_outlined
+                                            : Icons.qr_code_scanner)),
                               color: scanEnabled
                                   ? Colors.white
                                   : Colors.white38,
@@ -799,7 +808,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                                   ? l10n.staffParkingButton
                                   : (extraZoneMode
                                         ? l10n.staffExtraZoneButton
-                                        : l10n.staffScanButton),
+                                        : (backstageMode
+                                              ? l10n.staffBackstageButton
+                                              : l10n.staffScanButton)),
                               style: TextStyle(
                                 color: scanEnabled
                                     ? Colors.white
@@ -821,7 +832,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                       ? l10n.staffTapToScanParkingQr
                       : (extraZoneMode
                             ? l10n.staffTapToScanExtraZoneQr
-                            : l10n.staffTapToScanModelLanyard),
+                            : (backstageMode
+                                  ? l10n.staffTapToScanBackstageQr
+                                  : l10n.staffTapToScanModelLanyard)),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: scanEnabled
@@ -977,6 +990,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     bool scanForInfo = false,
     bool parkingScan = false,
     bool extraZoneScan = false,
+    bool backstageScan = false,
   }) async {
     final ok = await _refreshLiveWorkerStatus(showError: true);
     if (!ok || !mounted || !context.mounted) return;
@@ -1003,6 +1017,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           scanForInfo: scanForInfo,
           parkingScan: parkingScan,
           extraZoneScan: extraZoneScan,
+          backstageScan: backstageScan,
         ),
       ),
     );

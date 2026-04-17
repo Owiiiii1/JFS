@@ -277,6 +277,42 @@ abstract class AppLocalizations {
   /// **'Registration failed: {error}'**
   String registrationFailed(String error);
 
+  /// No description provided for @loginPasswordOptionalHint.
+  ///
+  /// In en, this message translates to:
+  /// **'If your profile was created by admin/import, leave password empty and continue.'**
+  String get loginPasswordOptionalHint;
+
+  /// No description provided for @setPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set password'**
+  String get setPasswordTitle;
+
+  /// No description provided for @setPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a password for {email}'**
+  String setPasswordSubtitle(String email);
+
+  /// No description provided for @passwordSetupMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordSetupMinLength;
+
+  /// No description provided for @savePasswordAndContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Save password and continue'**
+  String get savePasswordAndContinue;
+
+  /// No description provided for @passwordSetupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Password setup failed: {error}'**
+  String passwordSetupFailed(String error);
+
   /// No description provided for @account.
   ///
   /// In en, this message translates to:
@@ -1855,6 +1891,48 @@ abstract class AppLocalizations {
   /// **'Could not start extra ticket payment. Try again.'**
   String get extraTicketCheckoutError;
 
+  /// No description provided for @backstageTicketButton.
+  ///
+  /// In en, this message translates to:
+  /// **'BACKSTAGE'**
+  String get backstageTicketButton;
+
+  /// No description provided for @backstageTicketSelectEventFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an event first.'**
+  String get backstageTicketSelectEventFirst;
+
+  /// No description provided for @backstageTicketNoActiveHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'NO ACTIVE BACKSTAGE TICKETS'**
+  String get backstageTicketNoActiveHeadline;
+
+  /// No description provided for @backstageTicketBuyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'BUY'**
+  String get backstageTicketBuyCta;
+
+  /// No description provided for @backstageTicketAccessOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'BACKSTAGE ACCESS IS OPEN'**
+  String get backstageTicketAccessOpen;
+
+  /// No description provided for @backstageTicketCheckoutInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete payment in your browser.'**
+  String get backstageTicketCheckoutInBrowser;
+
+  /// No description provided for @backstageTicketCheckoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start backstage ticket payment. Try again.'**
+  String get backstageTicketCheckoutError;
+
   /// No description provided for @ticketsNoEvents.
   ///
   /// In en, this message translates to:
@@ -2203,6 +2281,12 @@ abstract class AppLocalizations {
   /// **'EXTRA ZONE'**
   String get staffExtraZoneButton;
 
+  /// No description provided for @staffBackstageButton.
+  ///
+  /// In en, this message translates to:
+  /// **'BACKSTAGE'**
+  String get staffBackstageButton;
+
   /// No description provided for @staffTapToScanModelLanyard.
   ///
   /// In en, this message translates to:
@@ -2220,6 +2304,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TAP TO SCAN EXTRA ZONE QR'**
   String get staffTapToScanExtraZoneQr;
+
+  /// No description provided for @staffTapToScanBackstageQr.
+  ///
+  /// In en, this message translates to:
+  /// **'TAP TO SCAN BACKSTAGE QR'**
+  String get staffTapToScanBackstageQr;
 
   /// No description provided for @staffCurrentTask.
   ///
@@ -2539,6 +2629,12 @@ abstract class AppLocalizations {
   /// **'Extra Zone Entry'**
   String get staffScanHeaderExtraZone;
 
+  /// No description provided for @staffScanHeaderBackstage.
+  ///
+  /// In en, this message translates to:
+  /// **'Backstage Entry'**
+  String get staffScanHeaderBackstage;
+
   /// No description provided for @staffScanHeaderInfo.
   ///
   /// In en, this message translates to:
@@ -2562,6 +2658,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan extra ticket QR code to allow entry'**
   String get staffScanHintExtraZone;
+
+  /// No description provided for @staffScanHintBackstage.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan backstage ticket QR code to allow entry'**
+  String get staffScanHintBackstage;
 
   /// No description provided for @staffScanHintInfo.
   ///
@@ -2622,6 +2724,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'CODE ACCEPTED, BUT ACCESS CLOSED'**
   String get staffExtraZoneResultAccessClosed;
+
+  /// No description provided for @staffBackstageScanResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Result'**
+  String get staffBackstageScanResultTitle;
+
+  /// No description provided for @staffBackstageResultNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'CODE NOT FOUND IN DATABASE'**
+  String get staffBackstageResultNotFound;
+
+  /// No description provided for @staffBackstageResultAccessGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'CODE ACCEPTED, ACCESS GRANTED'**
+  String get staffBackstageResultAccessGranted;
+
+  /// No description provided for @staffBackstageResultAccessClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'CODE ACCEPTED, BUT ACCESS CLOSED'**
+  String get staffBackstageResultAccessClosed;
 
   /// No description provided for @staffParkingFieldEvent.
   ///
@@ -2760,6 +2886,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Extra zone access'**
   String get staffRoleSubtitleExtraZone;
+
+  /// No description provided for @staffRoleSubtitleBackstage.
+  ///
+  /// In en, this message translates to:
+  /// **'Backstage access'**
+  String get staffRoleSubtitleBackstage;
 
   /// No description provided for @staffRoleSubtitleRehearsalAdmin.
   ///

@@ -30,7 +30,9 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isLoading = false;
 
   // только + и цифры для телефона
-  static final _phoneAllow = FilteringTextInputFormatter.allow(RegExp(r'[\d+]'));
+  static final _phoneAllow = FilteringTextInputFormatter.allow(
+    RegExp(r'[\d+]'),
+  );
 
   @override
   void dispose() {
@@ -57,24 +59,31 @@ class _RegisterPageState extends State<RegisterPage> {
         role: 'client',
       );
 
-      await widget.auth.saveToken(result.token);
+      final token = result.token;
+      final user = result.user;
+      if (token == null || user == null) {
+        throw Exception('Invalid registration response');
+      }
+
+      await widget.auth.saveToken(token);
       unawaited(PushTokenServiceHolder.instance?.syncWithBackendIfLoggedIn());
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => ClientHomePage(auth: widget.auth, user: result.user)),
+        MaterialPageRoute(
+          builder: (_) => ClientHomePage(auth: widget.auth, user: user),
+        ),
         (route) => false,
       );
-
     } catch (e) {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context)!;
       final message = e is ApiEndpointNotFoundException
           ? l10n.apiEndpointNotFoundHint
           : l10n.registrationFailed(e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -118,7 +127,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     validator: (v) {
                       final value = (v ?? '').trim();
-                      if (value.isEmpty) return AppLocalizations.of(context)!.nameRequired;
+                      if (value.isEmpty)
+                        return AppLocalizations.of(context)!.nameRequired;
                       return null;
                     },
                   ),
@@ -134,7 +144,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     validator: (v) {
                       final value = (v ?? '').trim();
-                      if (value.isEmpty) return AppLocalizations.of(context)!.emailRequired;
+                      if (value.isEmpty)
+                        return AppLocalizations.of(context)!.emailRequired;
                       if (!RegExp(r'^[\w.-]+@[\w.-]+\.\w+$').hasMatch(value)) {
                         return AppLocalizations.of(context)!.enterValidEmail;
                       }
@@ -154,10 +165,15 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     validator: (v) {
                       final value = (v ?? '').trim();
-                      if (value.isEmpty) return AppLocalizations.of(context)!.phoneRequired;
-                      if (!value.startsWith('+')) return AppLocalizations.of(context)!.phoneMustStartWithPlus;
+                      if (value.isEmpty)
+                        return AppLocalizations.of(context)!.phoneRequired;
+                      if (!value.startsWith('+'))
+                        return AppLocalizations.of(
+                          context,
+                        )!.phoneMustStartWithPlus;
                       final digits = value.replaceAll(RegExp(r'\D'), '');
-                      if (digits.length < 10) return AppLocalizations.of(context)!.enterValidPhone;
+                      if (digits.length < 10)
+                        return AppLocalizations.of(context)!.enterValidPhone;
                       return null;
                     },
                   ),
@@ -172,13 +188,20 @@ class _RegisterPageState extends State<RegisterPage> {
                       hintText: AppLocalizations.of(context)!.atLeast8Chars,
                       border: const OutlineInputBorder(),
                       suffixIcon: IconButton(
-                        onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
-                        icon: Icon(_isPasswordVisible ? Icons.visibility_off : Icons.visibility),
+                        onPressed: () => setState(
+                          () => _isPasswordVisible = !_isPasswordVisible,
+                        ),
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
                       ),
                     ),
                     validator: (v) {
                       final value = v ?? '';
-                      if (value.length < 8) return AppLocalizations.of(context)!.passwordMinLength;
+                      if (value.length < 8)
+                        return AppLocalizations.of(context)!.passwordMinLength;
                       return null;
                     },
                   ),
@@ -192,14 +215,22 @@ class _RegisterPageState extends State<RegisterPage> {
                       labelText: AppLocalizations.of(context)!.confirmPassword,
                       border: const OutlineInputBorder(),
                       suffixIcon: IconButton(
-                          onPressed: () => setState(
-                              () => _isPasswordConfirmVisible = !_isPasswordConfirmVisible),
-                          icon: Icon(_isPasswordConfirmVisible ? Icons.visibility_off : Icons.visibility),
+                        onPressed: () => setState(
+                          () => _isPasswordConfirmVisible =
+                              !_isPasswordConfirmVisible,
                         ),
+                        icon: Icon(
+                          _isPasswordConfirmVisible
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                      ),
                     ),
                     validator: (v) {
                       if ((v ?? '') != _passwordController.text) {
-                        return AppLocalizations.of(context)!.passwordsDoNotMatch;
+                        return AppLocalizations.of(
+                          context,
+                        )!.passwordsDoNotMatch;
                       }
                       return null;
                     },

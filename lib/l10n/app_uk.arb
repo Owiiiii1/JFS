@@ -29,6 +29,26 @@
   "atLeast8Chars": "Не менше 8 символів",
   "backToSignIn": "Повернутися до входу",
   "registrationFailed": "Помилка реєстрації: {error}",
+  "loginPasswordOptionalHint": "Якщо профіль створив адмін або імпорт, залиште пароль порожнім і продовжуйте.",
+  "setPasswordTitle": "Створення пароля",
+  "setPasswordSubtitle": "Створіть пароль для {email}",
+  "@setPasswordSubtitle": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "passwordSetupMinLength": "Пароль має бути не менше 6 символів",
+  "savePasswordAndContinue": "Зберегти пароль і продовжити",
+  "passwordSetupFailed": "Не вдалося створити пароль: {error}",
+  "@passwordSetupFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "account": "Обліковий запис",
   "editInfo": "РЕДАГУВАТИ",
   "fullName": "Ім'я",
@@ -320,6 +340,13 @@
   "extraTicketAccessOpen": "ДОСТУП ДО ЕКСТРА ЗОНИ ВІДКРИТО",
   "extraTicketCheckoutInBrowser": "Завершіть оплату у браузері.",
   "extraTicketCheckoutError": "Не вдалося запустити оплату екстра квитка. Спробуйте ще раз.",
+  "backstageTicketButton": "БЕКСТЕЙДЖ",
+  "backstageTicketSelectEventFirst": "Спочатку оберіть івент.",
+  "backstageTicketNoActiveHeadline": "НЕМАЄ АКТИВНИХ БЕКСТЕЙДЖ КВИТКІВ",
+  "backstageTicketBuyCta": "КУПИТИ",
+  "backstageTicketAccessOpen": "ДОСТУП ДО БЕКСТЕЙДЖУ ВІДКРИТО",
+  "backstageTicketCheckoutInBrowser": "Завершіть оплату у браузері.",
+  "backstageTicketCheckoutError": "Не вдалося запустити оплату бекстейдж квитка. Спробуйте ще раз.",
   "ticketsNoEvents": "Поки немає заходів із квитками",
   "ticketsNoneForEvent": "Немає квитків на цей захід",
   "ticketsLoadError": "Не вдалося завантажити квитки",
@@ -409,9 +436,11 @@
   "staffScanButton": "СКАН",
   "staffParkingButton": "ПАРКУВАННЯ",
   "staffExtraZoneButton": "ЕКСТРА ЗОНА",
+  "staffBackstageButton": "БЕКСТЕЙДЖ",
   "staffTapToScanModelLanyard": "НАТИСНІТЬ, ЩОБ СКАНУВАТИ БЕЙДЖ МОДЕЛІ",
   "staffTapToScanParkingQr": "НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ПАРКУВАННЯ",
   "staffTapToScanExtraZoneQr": "НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ЕКСТРА ЗОНИ",
+  "staffTapToScanBackstageQr": "НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR БЕКСТЕЙДЖУ",
   "staffCurrentTask": "Поточне завдання",
   "staffUtilitiesAndTools": "ІНСТРУМЕНТИ",
   "staffScanForInfoTitle": "Скан для інформації",
@@ -470,10 +499,12 @@
   "staffSecurity": "Охорона",
   "staffScanHeaderParking": "Скан паркування",
   "staffScanHeaderExtraZone": "Вхід до екстра зони",
+  "staffScanHeaderBackstage": "Вхід до бекстейджу",
   "staffScanHeaderInfo": "Скан для інформації",
   "staffScanHeaderQr": "Скан QR коду",
   "staffScanHintParking": "Скануйте QR паркування, щоб показати дані талона",
   "staffScanHintExtraZone": "Скануйте QR екстра квитка для входу",
+  "staffScanHintBackstage": "Скануйте QR бекстейдж квитка для входу",
   "staffScanHintInfo": "Скануйте бейдж дитини або батьків, щоб відкрити профіль",
   "staffScanHintQr": "Розмістіть QR-код у рамці",
   "staffScanErrorTitle": "Помилка сканування",
@@ -484,6 +515,10 @@
   "staffExtraZoneResultNotFound": "КОД ВІДСУТНІЙ У БАЗІ",
   "staffExtraZoneResultAccessGranted": "КОД ПРИЙНЯТО, ПРОХІД ДОЗВОЛЕНО",
   "staffExtraZoneResultAccessClosed": "КОД ПРИЙНЯТО, АЛЕ ДОСТУП ЗАКРИТО",
+  "staffBackstageScanResultTitle": "Результат сканування",
+  "staffBackstageResultNotFound": "КОД ВІДСУТНІЙ У БАЗІ",
+  "staffBackstageResultAccessGranted": "КОД ПРИЙНЯТО, ПРОХІД ДОЗВОЛЕНО",
+  "staffBackstageResultAccessClosed": "КОД ПРИЙНЯТО, АЛЕ ДОСТУП ЗАКРИТО",
   "staffParkingFieldEvent": "Подія",
   "staffParkingFieldClient": "Клієнт",
   "staffParkingFieldCar": "Автомобіль",
@@ -517,6 +552,7 @@
   "staffRoleSubtitleHostess": "Підтримка гостей та зон",
   "staffRoleSubtitleParking": "Паркування та доступ",
   "staffRoleSubtitleExtraZone": "Доступ до екстра зони",
+  "staffRoleSubtitleBackstage": "Доступ до бекстейджу",
   "staffRoleSubtitleRehearsalAdmin": "Керування репетиціями",
   "staffRoleSubtitleGiftIssue": "Контроль видачі подарунків",
   "staffRoleSubtitleInterview": "Потік інтерв'ю",

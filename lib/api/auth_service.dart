@@ -80,10 +80,7 @@ class AuthService {
       _storage.write(key: _tokenKey, value: token);
   Future<void> clearToken() => _storage.delete(key: _tokenKey);
 
-  Future<LoginResult> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<LoginResult> login({required String email, String? password}) async {
     final uri = Uri.parse('$baseUrl/api/app/login');
 
     final res = await http.post(
@@ -92,7 +89,10 @@ class AuthService {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: jsonEncode({'email': email, 'password': password}),
+      body: jsonEncode({
+        'email': email,
+        'password': (password ?? '').trim().isEmpty ? null : password,
+      }),
     );
 
     if (res.statusCode == 404) {
@@ -105,9 +105,54 @@ class AuthService {
     }
 
     final json = jsonDecode(res.body) as Map<String, dynamic>;
+    if ((json['requires_password_setup'] as bool?) ?? false) {
+      return LoginResult(
+        requiresPasswordSetup: true,
+        setupEmail: (json['email'] as String? ?? email).trim(),
+      );
+    }
+
     return LoginResult(
-      token: json['token'] as String,
-      user: json['user'] as Map<String, dynamic>,
+      token: json['token'] as String?,
+      user: json['user'] as Map<String, dynamic>?,
+      requiresPasswordSetup: false,
+    );
+  }
+
+  Future<LoginResult> setupClientPassword({
+    required String email,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final uri = Uri.parse('$baseUrl/api/app/client/password/setup');
+
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+        'password_confirmation': passwordConfirmation,
+      }),
+    );
+
+    if (res.statusCode == 404) {
+      throw ApiEndpointNotFoundException(uri.toString());
+    }
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ?? 'Password setup failed (${res.statusCode})',
+      );
+    }
+
+    final json = jsonDecode(res.body) as Map<String, dynamic>;
+    return LoginResult(
+      token: json['token'] as String?,
+      user: json['user'] as Map<String, dynamic>?,
+      requiresPasswordSetup: false,
     );
   }
 
@@ -502,7 +547,37 @@ class AuthService {
     }
     throw Exception(
       _tryMessage(res.body) ??
-          (map['message'] as String? ?? 'Could not resolve extra ticket QR code'),
+          (map['message'] as String? ??
+              'Could not resolve extra ticket QR code'),
+    );
+  }
+
+  /// POST /api/app/worker/backstage-ticket-scan-lookup — данные backstage ticket по QR.
+  Future<BackstageTicketScanLookupResult> backstageTicketScanLookup({
+    required String code,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final uri = Uri.parse(
+      '$baseUrl/api/app/worker/backstage-ticket-scan-lookup',
+    );
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'code': code}),
+    );
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode == 200 || res.statusCode == 422) {
+      return BackstageTicketScanLookupResult.fromJson(map);
+    }
+    throw Exception(
+      _tryMessage(res.body) ??
+          (map['message'] as String? ??
+              'Could not resolve backstage ticket QR code'),
     );
   }
 
@@ -1003,6 +1078,72 @@ class AuthService {
     return ExtraCheckoutResult(purchased: false, checkoutUrl: url);
   }
 
+  /// GET /api/app/client/events/{event}/backstage-tickets
+  Future<BackstageTicketsPayload> getEventBackstageTickets(int eventId) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/backstage-tickets',
+    );
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode == 403) {
+      throw Exception(_tryMessage(res.body) ?? 'Forbidden');
+    }
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load backstage tickets (${res.statusCode})',
+      );
+    }
+
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return BackstageTicketsPayload.fromJson(map);
+  }
+
+  /// POST /api/app/client/events/{event}/backstage-checkout
+  Future<BackstageCheckoutResult> createBackstageCheckoutSession({
+    required int eventId,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/backstage-checkout',
+    );
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(<String, dynamic>{}),
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ?? 'Failed to start checkout (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final purchased = map['purchased'] == true;
+    if (purchased) {
+      return const BackstageCheckoutResult(purchased: true, checkoutUrl: null);
+    }
+    final url = map['checkout_url'] as String?;
+    if (url == null || url.isEmpty) {
+      throw Exception('No checkout URL in response');
+    }
+    return BackstageCheckoutResult(purchased: false, checkoutUrl: url);
+  }
+
   /// [contentLocale] — локаль UI приложения; влияет на язык названий/описаний этапов (Accept-Language).
   /// Если null, используется системная локаль устройства.
   Future<ClientDashboard> getClientDashboard({Locale? contentLocale}) async {
@@ -1354,10 +1495,7 @@ class AuthService {
     );
     final res = await http.delete(
       uri,
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
     if (res.statusCode == 403) {
       throw Exception(_tryMessage(res.body) ?? 'Forbidden');
@@ -2019,9 +2157,16 @@ class AppAboutBlock {
 }
 
 class LoginResult {
-  LoginResult({required this.token, required this.user});
-  final String token;
-  final Map<String, dynamic> user;
+  LoginResult({
+    this.token,
+    this.user,
+    this.requiresPasswordSetup = false,
+    this.setupEmail,
+  });
+  final String? token;
+  final Map<String, dynamic>? user;
+  final bool requiresPasswordSetup;
+  final String? setupEmail;
 }
 
 class AppVersionCheckResult {
@@ -2075,7 +2220,7 @@ class StaffRole {
   /// Соответствует `is_active` роли в админке.
   final bool isActive;
 
-  /// Код из API (`home_screen_type`): scan, supervisor, hostess, parking, extra_zone, rehearsal_admin, gift_issue, interview, lunches, superadmin.
+  /// Код из API (`home_screen_type`): scan, supervisor, hostess, parking, extra_zone, backstage, rehearsal_admin, gift_issue, interview, lunches, superadmin.
   /// Пусто — до обновления бэкенда; клиент может определить экран по legacy-токенам code/name.
   final String homeScreenType;
 
@@ -2776,6 +2921,75 @@ class ExtraTicketsPayload {
   }
 }
 
+class BackstageTicketInfo {
+  BackstageTicketInfo({
+    required this.id,
+    required this.label,
+    required this.qrData,
+    this.paidAt,
+  });
+
+  final int id;
+  final String label;
+  final String qrData;
+  final DateTime? paidAt;
+
+  factory BackstageTicketInfo.fromJson(Map<String, dynamic> json) {
+    return BackstageTicketInfo(
+      id: _jsonInt(json['id']),
+      label: (json['label'] as String? ?? '').trim(),
+      qrData: (json['qr_data'] as String? ?? '').trim(),
+      paidAt: _jsonDateTimeNullable(json['paid_at']),
+    );
+  }
+}
+
+class BackstageCheckoutResult {
+  const BackstageCheckoutResult({
+    required this.purchased,
+    required this.checkoutUrl,
+  });
+
+  final bool purchased;
+  final String? checkoutUrl;
+}
+
+class BackstageTicketsPayload {
+  BackstageTicketsPayload({
+    required this.eventId,
+    required this.canBuy,
+    required this.freeMode,
+    required this.paymentRequired,
+    required this.tickets,
+  });
+
+  final int eventId;
+  final bool canBuy;
+  final bool freeMode;
+  final bool paymentRequired;
+  final List<BackstageTicketInfo> tickets;
+
+  bool get hasActiveTickets => tickets.isNotEmpty;
+
+  factory BackstageTicketsPayload.fromJson(Map<String, dynamic> json) {
+    final rawTickets = json['tickets'];
+    final tickets = rawTickets is List
+        ? rawTickets
+              .whereType<Map<String, dynamic>>()
+              .map(BackstageTicketInfo.fromJson)
+              .toList()
+        : const <BackstageTicketInfo>[];
+
+    return BackstageTicketsPayload(
+      eventId: _jsonInt(json['event_id']),
+      canBuy: json['can_buy'] == true,
+      freeMode: json['free_mode'] == true,
+      paymentRequired: json['payment_required'] == true,
+      tickets: tickets,
+    );
+  }
+}
+
 class ActiveAssignment {
   ActiveAssignment({
     required this.id,
@@ -3454,16 +3668,18 @@ class RehearsalAdminRosterResponse {
       slots: slotList is List
           ? slotList
                 .map(
-                  (e) =>
-                      RehearsalAdminSlotItem.fromJson(e as Map<String, dynamic>),
+                  (e) => RehearsalAdminSlotItem.fromJson(
+                    e as Map<String, dynamic>,
+                  ),
                 )
                 .toList()
           : const [],
       children: childList is List
           ? childList
                 .map(
-                  (e) =>
-                      RehearsalAdminChildItem.fromJson(e as Map<String, dynamic>),
+                  (e) => RehearsalAdminChildItem.fromJson(
+                    e as Map<String, dynamic>,
+                  ),
                 )
                 .toList()
           : const [],
@@ -3520,13 +3736,16 @@ class GiftControlReportResponse {
       eventId: _jsonInt(json['event_id']),
       stages: stageList is List
           ? stageList
-                .map((e) => WorkerEventStage.fromJson(e as Map<String, dynamic>))
+                .map(
+                  (e) => WorkerEventStage.fromJson(e as Map<String, dynamic>),
+                )
                 .toList()
           : const [],
       children: childList is List
           ? childList
                 .map(
-                  (e) => GiftControlChildItem.fromJson(e as Map<String, dynamic>),
+                  (e) =>
+                      GiftControlChildItem.fromJson(e as Map<String, dynamic>),
                 )
                 .toList()
           : const [],
@@ -3890,6 +4109,41 @@ class ExtraTicketScanLookupResult {
         (ok ? 'access_granted' : 'not_found');
 
     return ExtraTicketScanLookupResult(
+      ok: ok,
+      resultCode: code,
+      message: (json['message'] as String? ?? '').trim(),
+      eventName: (json['event_name'] as String? ?? '').trim(),
+      clientName: (json['client_name'] as String? ?? '').trim(),
+    );
+  }
+}
+
+class BackstageTicketScanLookupResult {
+  BackstageTicketScanLookupResult({
+    required this.ok,
+    required this.resultCode,
+    required this.message,
+    required this.eventName,
+    required this.clientName,
+  });
+
+  final bool ok;
+  final String resultCode;
+  final String message;
+  final String eventName;
+  final String clientName;
+
+  bool get isNotFound => resultCode == 'not_found';
+  bool get isAccessGranted => resultCode == 'access_granted';
+  bool get isAccessClosed => resultCode == 'access_closed';
+
+  factory BackstageTicketScanLookupResult.fromJson(Map<String, dynamic> json) {
+    final ok = json['ok'] == true;
+    final code =
+        (json['result_code'] as String?)?.trim().toLowerCase() ??
+        (ok ? 'access_granted' : 'not_found');
+
+    return BackstageTicketScanLookupResult(
       ok: ok,
       resultCode: code,
       message: (json['message'] as String? ?? '').trim(),

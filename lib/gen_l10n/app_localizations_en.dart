@@ -102,6 +102,29 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get loginPasswordOptionalHint =>
+      'If your profile was created by admin/import, leave password empty and continue.';
+
+  @override
+  String get setPasswordTitle => 'Set password';
+
+  @override
+  String setPasswordSubtitle(String email) {
+    return 'Create a password for $email';
+  }
+
+  @override
+  String get passwordSetupMinLength => 'Password must be at least 6 characters';
+
+  @override
+  String get savePasswordAndContinue => 'Save password and continue';
+
+  @override
+  String passwordSetupFailed(String error) {
+    return 'Password setup failed: $error';
+  }
+
+  @override
   String get account => 'Account';
 
   @override
@@ -943,6 +966,29 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not start extra ticket payment. Try again.';
 
   @override
+  String get backstageTicketButton => 'BACKSTAGE';
+
+  @override
+  String get backstageTicketSelectEventFirst => 'Select an event first.';
+
+  @override
+  String get backstageTicketNoActiveHeadline => 'NO ACTIVE BACKSTAGE TICKETS';
+
+  @override
+  String get backstageTicketBuyCta => 'BUY';
+
+  @override
+  String get backstageTicketAccessOpen => 'BACKSTAGE ACCESS IS OPEN';
+
+  @override
+  String get backstageTicketCheckoutInBrowser =>
+      'Complete payment in your browser.';
+
+  @override
+  String get backstageTicketCheckoutError =>
+      'Could not start backstage ticket payment. Try again.';
+
+  @override
   String get ticketsNoEvents => 'No events with tickets yet';
 
   @override
@@ -1137,6 +1183,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffExtraZoneButton => 'EXTRA ZONE';
 
   @override
+  String get staffBackstageButton => 'BACKSTAGE';
+
+  @override
   String get staffTapToScanModelLanyard => 'TAP TO SCAN MODEL LANYARD';
 
   @override
@@ -1144,6 +1193,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffTapToScanExtraZoneQr => 'TAP TO SCAN EXTRA ZONE QR';
+
+  @override
+  String get staffTapToScanBackstageQr => 'TAP TO SCAN BACKSTAGE QR';
 
   @override
   String get staffCurrentTask => 'Current Task';
@@ -1317,6 +1369,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffScanHeaderExtraZone => 'Extra Zone Entry';
 
   @override
+  String get staffScanHeaderBackstage => 'Backstage Entry';
+
+  @override
   String get staffScanHeaderInfo => 'Scan for Info';
 
   @override
@@ -1329,6 +1384,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get staffScanHintExtraZone =>
       'Scan extra ticket QR code to allow entry';
+
+  @override
+  String get staffScanHintBackstage =>
+      'Scan backstage ticket QR code to allow entry';
 
   @override
   String get staffScanHintInfo => 'Scan child or parent badge to view profile';
@@ -1360,6 +1419,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffExtraZoneResultAccessClosed =>
+      'CODE ACCEPTED, BUT ACCESS CLOSED';
+
+  @override
+  String get staffBackstageScanResultTitle => 'Scan Result';
+
+  @override
+  String get staffBackstageResultNotFound => 'CODE NOT FOUND IN DATABASE';
+
+  @override
+  String get staffBackstageResultAccessGranted =>
+      'CODE ACCEPTED, ACCESS GRANTED';
+
+  @override
+  String get staffBackstageResultAccessClosed =>
       'CODE ACCEPTED, BUT ACCESS CLOSED';
 
   @override
@@ -1434,6 +1507,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleExtraZone => 'Extra zone access';
+
+  @override
+  String get staffRoleSubtitleBackstage => 'Backstage access';
 
   @override
   String get staffRoleSubtitleRehearsalAdmin => 'Rehearsal administration';
