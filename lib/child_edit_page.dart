@@ -17,6 +17,7 @@ class ChildEditPage extends StatefulWidget {
 
   final ProfileChild child;
   final AuthService auth;
+
   /// Вызывается после успешного обновления (можно обновить профиль в родителе).
   final VoidCallback? onChildUpdated;
 
@@ -198,7 +199,9 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                       context: context,
                       initial: _birthdate,
                       onSave: (v) async {
-                        await _update({'birthdate': v != null ? _formatDate(v) : null});
+                        await _update({
+                          'birthdate': v != null ? _formatDate(v) : null,
+                        });
                         setState(() => _birthdate = v);
                       },
                     ),
@@ -220,7 +223,9 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                           '${AppLocalizations.of(context)!.height} (${_lengthUnitSuffix(context)})',
                       value: _displayHeight,
                       onSave: (v) async {
-                        final metric = v != null ? AppSettings.lengthToMetric(v) : null;
+                        final metric = v != null
+                            ? AppSettings.lengthToMetric(v)
+                            : null;
                         await _update({'height_value': metric});
                         setState(() => _heightValue = metric);
                       },
@@ -237,7 +242,9 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                           '${AppLocalizations.of(context)!.chest} (${_lengthUnitSuffix(context)})',
                       value: _displayChest,
                       onSave: (v) async {
-                        final metric = v != null ? AppSettings.lengthToMetric(v) : null;
+                        final metric = v != null
+                            ? AppSettings.lengthToMetric(v)
+                            : null;
                         await _update({'chest_value': metric});
                         setState(() => _chestValue = metric);
                       },
@@ -254,7 +261,9 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                           '${AppLocalizations.of(context)!.waist} (${_lengthUnitSuffix(context)})',
                       value: _displayWaist,
                       onSave: (v) async {
-                        final metric = v != null ? AppSettings.lengthToMetric(v) : null;
+                        final metric = v != null
+                            ? AppSettings.lengthToMetric(v)
+                            : null;
                         await _update({'waist_value': metric});
                         setState(() => _waistValue = metric);
                       },
@@ -271,7 +280,9 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                           '${AppLocalizations.of(context)!.hips} (${_lengthUnitSuffix(context)})',
                       value: _displayHips,
                       onSave: (v) async {
-                        final metric = v != null ? AppSettings.lengthToMetric(v) : null;
+                        final metric = v != null
+                            ? AppSettings.lengthToMetric(v)
+                            : null;
                         await _update({'hips_value': metric});
                         setState(() => _hipsValue = metric);
                       },
@@ -291,10 +302,7 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
       children: [
         Text(
           AppLocalizations.of(context)!.mainPhoto,
-          style: TextStyle(
-            color: Colors.white54,
-            fontSize: 12,
-          ),
+          style: TextStyle(color: Colors.white54, fontSize: 12),
         ),
         const SizedBox(height: 8),
         Row(
@@ -338,7 +346,11 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                   if (_mainPhotoUrl != null && _mainPhotoUrl!.isNotEmpty) ...[
                     TextButton.icon(
                       onPressed: _saving ? null : _pickAndUploadMainPhoto,
-                      icon: const Icon(Icons.edit, size: 20, color: Colors.white70),
+                      icon: const Icon(
+                        Icons.edit,
+                        size: 20,
+                        color: Colors.white70,
+                      ),
                       label: Text(
                         AppLocalizations.of(context)!.changePhoto,
                         style: TextStyle(color: Colors.white70),
@@ -346,7 +358,11 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                     ),
                     TextButton.icon(
                       onPressed: _saving ? null : _deleteMainPhoto,
-                      icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        size: 20,
+                        color: Colors.redAccent,
+                      ),
                       label: Text(
                         AppLocalizations.of(context)!.deletePhoto,
                         style: const TextStyle(color: Colors.redAccent),
@@ -380,7 +396,10 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
     if (xFile == null || !mounted) return;
     setState(() => _saving = true);
     try {
-      final url = await widget.auth.uploadChildMainPhoto(widget.child.id, xFile.path);
+      final url = await widget.auth.uploadChildMainPhoto(
+        widget.child.id,
+        xFile.path,
+      );
       if (!mounted) return;
       widget.onChildUpdated?.call();
       setState(() {
@@ -441,24 +460,22 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
       children: [
         Text(
           AppLocalizations.of(context)!.extraPhotos,
-          style: const TextStyle(
-            color: Colors.white54,
-            fontSize: 12,
-          ),
+          style: const TextStyle(color: Colors.white54, fontSize: 12),
         ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 12,
           runSpacing: 12,
           children: [
-            ..._extraPhotoUrls.asMap().entries.map((e) => _extraPhotoThumb(
-                  url: e.value,
-                  index: e.key,
-                  onTap: () => _showFullPhoto(e.value),
-                  onDelete: () => _deleteExtraPhoto(e.key),
-                )),
-            if (!_saving)
-              _addExtraPhotoButton(),
+            ..._extraPhotoUrls.asMap().entries.map(
+              (e) => _extraPhotoThumb(
+                url: e.value,
+                index: e.key,
+                onTap: () => _showFullPhoto(e.value),
+                onDelete: () => _deleteExtraPhoto(e.key),
+              ),
+            ),
+            if (!_saving) _addExtraPhotoButton(),
           ],
         ),
       ],
@@ -523,7 +540,11 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.white24),
         ),
-        child: const Icon(Icons.add_photo_alternate, color: Colors.white54, size: 32),
+        child: const Icon(
+          Icons.add_photo_alternate,
+          color: Colors.white54,
+          size: 32,
+        ),
       ),
     );
   }
@@ -537,7 +558,10 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
     if (xFile == null || !mounted) return;
     setState(() => _saving = true);
     try {
-      final list = await widget.auth.uploadChildExtraPhoto(widget.child.id, xFile.path);
+      final list = await widget.auth.uploadChildExtraPhoto(
+        widget.child.id,
+        xFile.path,
+      );
       if (!mounted) return;
       widget.onChildUpdated?.call();
       setState(() {
@@ -566,7 +590,10 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
   Future<void> _deleteExtraPhoto(int index) async {
     setState(() => _saving = true);
     try {
-      final list = await widget.auth.deleteChildExtraPhoto(widget.child.id, index);
+      final list = await widget.auth.deleteChildExtraPhoto(
+        widget.child.id,
+        index,
+      );
       if (!mounted) return;
       widget.onChildUpdated?.call();
       setState(() {
@@ -600,7 +627,7 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.all(16),
         child: Stack(
-          alignment: Alignment.topRight,
+          alignment: Alignment.topLeft,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
@@ -611,21 +638,29 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                   loadingBuilder: (_, child, progress) {
                     if (progress == null) return child;
                     return const Center(
-                      child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFD4AF37),
+                      ),
                     );
                   },
                   errorBuilder: (_, __, ___) => const Center(
-                    child: Icon(Icons.broken_image, size: 64, color: Colors.grey),
+                    child: Icon(
+                      Icons.broken_image,
+                      size: 64,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               ),
             ),
             IconButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              icon: const Icon(Icons.close, color: Colors.white, size: 28),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.black54,
+              icon: const Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20,
               ),
+              style: IconButton.styleFrom(backgroundColor: Colors.black54),
             ),
           ],
         ),
@@ -669,7 +704,10 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppLocalizations.of(context)!.cancel, style: const TextStyle(color: Colors.white70)),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: Colors.white70),
+            ),
           ),
           FilledButton(
             onPressed: () async {
@@ -691,7 +729,11 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
     required Future<void> Function(double?) onSave,
   }) {
     final controller = TextEditingController(
-      text: value != null ? (value == value.roundToDouble() ? '${value.toInt()}' : value.toString()) : '',
+      text: value != null
+          ? (value == value.roundToDouble()
+                ? '${value.toInt()}'
+                : value.toString())
+          : '',
     );
     showDialog<void>(
       context: context,
@@ -702,7 +744,9 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
           controller: controller,
           autofocus: true,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))],
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+          ],
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             hintText: label,
@@ -715,14 +759,20 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppLocalizations.of(context)!.cancel, style: const TextStyle(color: Colors.white70)),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: Colors.white70),
+            ),
           ),
           TextButton(
             onPressed: () async {
               Navigator.of(ctx).pop();
               await onSave(null);
             },
-            child: Text(AppLocalizations.of(context)!.clear, style: const TextStyle(color: Colors.white70)),
+            child: Text(
+              AppLocalizations.of(context)!.clear,
+              style: const TextStyle(color: Colors.white70),
+            ),
           ),
           FilledButton(
             onPressed: () async {
@@ -750,7 +800,10 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
         builder: (context, setDialogState) {
           return AlertDialog(
             backgroundColor: const Color(0xFF121212),
-            title: Text(AppLocalizations.of(context)!.birthdateDialogTitle, style: const TextStyle(color: Colors.white)),
+            title: Text(
+              AppLocalizations.of(context)!.birthdateDialogTitle,
+              style: const TextStyle(color: Colors.white),
+            ),
             content: SizedBox(
               width: double.maxFinite,
               child: CalendarDatePicker(
@@ -764,14 +817,20 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
-                child: Text(AppLocalizations.of(context)!.cancel, style: const TextStyle(color: Colors.white70)),
+                child: Text(
+                  AppLocalizations.of(context)!.cancel,
+                  style: const TextStyle(color: Colors.white70),
+                ),
               ),
               TextButton(
                 onPressed: () async {
                   Navigator.of(ctx).pop();
                   await onSave(null);
                 },
-                child: Text(AppLocalizations.of(context)!.clear, style: const TextStyle(color: Colors.white70)),
+                child: Text(
+                  AppLocalizations.of(context)!.clear,
+                  style: const TextStyle(color: Colors.white70),
+                ),
               ),
               FilledButton(
                 onPressed: () async {
@@ -850,7 +909,10 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
                   Navigator.of(ctx).pop();
                   await onSave(null);
                 },
-                child: Text(AppLocalizations.of(context)!.clear, style: const TextStyle(color: Colors.white70)),
+                child: Text(
+                  AppLocalizations.of(context)!.clear,
+                  style: const TextStyle(color: Colors.white70),
+                ),
               ),
               FilledButton(
                 onPressed: () async {
@@ -868,11 +930,7 @@ class _ChildEditPageState extends State<ChildEditPage> with RouteAware {
 }
 
 class _EditableRow extends StatelessWidget {
-  const _EditableRow({
-    required this.label,
-    required this.value,
-    this.onTap,
-  });
+  const _EditableRow({required this.label, required this.value, this.onTap});
 
   final String label;
   final String value;
@@ -893,18 +951,12 @@ class _EditableRow extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: const TextStyle(
-                      color: Colors.white54,
-                      fontSize: 12,
-                    ),
+                    style: const TextStyle(color: Colors.white54, fontSize: 12),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     value,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],

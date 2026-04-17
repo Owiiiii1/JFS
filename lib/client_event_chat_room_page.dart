@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'app_settings.dart';
 import 'api/auth_service.dart';
@@ -32,6 +34,10 @@ class ClientEventChatRoomPage extends StatefulWidget {
 }
 
 class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
+  static final RegExp _urlPattern = RegExp(
+    r'((?:https?:\/\/|www\.)[^\s]+)',
+    caseSensitive: false,
+  );
   static final _imagePicker = ImagePicker();
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
@@ -42,6 +48,7 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
   String? _pickedPhotoPath;
   String? _error;
   int? _replyToMessageId;
+  int? _editingMessageId;
   String _replyToSenderName = '';
   String _replyToPreview = '';
 
@@ -68,6 +75,10 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
     _replyToPreview = '';
   }
 
+  void _clearEditDraft() {
+    _editingMessageId = null;
+  }
+
   void _beginReplyTo(ClientChatMessage m) {
     final l10n = AppLocalizations.of(context)!;
     final t = m.body.trim();
@@ -75,9 +86,19 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
         ? (t.length > 100 ? '${t.substring(0, 100)}…' : t)
         : (m.hasImage ? l10n.chatReplyPreviewPhoto : '');
     setState(() {
+      _clearEditDraft();
       _replyToMessageId = m.id;
       _replyToSenderName = m.senderName;
       _replyToPreview = preview;
+    });
+  }
+
+  void _beginEdit(ClientChatMessage m) {
+    setState(() {
+      _clearReplyDraft();
+      _editingMessageId = m.id;
+      _controller.text = m.body;
+      _pickedPhotoPath = null;
     });
   }
 
@@ -87,6 +108,7 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
       if (!mounted) return;
       setState(() {
         _clearReplyDraft();
+        _clearEditDraft();
         _messages
           ..clear()
           ..addAll(payload.messages);
@@ -105,26 +127,93 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
 
   Future<void> _pollNewMessages() async {
     if (!mounted) return;
-    final afterId = _messages.isNotEmpty ? _messages.last.id : 0;
     try {
-      final payload = await widget.auth.getChatRoomMessages(
-        widget.roomId,
-        afterId: afterId,
-      );
-      if (!mounted || payload.messages.isEmpty) return;
-      setState(() {
-        _messages.addAll(payload.messages);
-      });
-      _scrollToBottom();
+      final payload = await widget.auth.getChatRoomMessages(widget.roomId);
+      if (!mounted) return;
+      final next = payload.messages;
+      if (!_areMessageListsEqual(_messages, next)) {
+        setState(() {
+          _messages
+            ..clear()
+            ..addAll(next);
+        });
+      }
     } catch (_) {
       // silent background poll errors
     }
+  }
+
+  bool _areMessageListsEqual(
+    List<ClientChatMessage> a,
+    List<ClientChatMessage> b,
+  ) {
+    if (identical(a, b)) return true;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      final left = a[i];
+      final right = b[i];
+      if (left.id != right.id ||
+          left.senderRole != right.senderRole ||
+          left.senderName != right.senderName ||
+          left.body != right.body ||
+          left.imageUrl != right.imageUrl ||
+          left.isMine != right.isMine ||
+          left.createdAt != right.createdAt) {
+        return false;
+      }
+      final lReply = left.replyTo;
+      final rReply = right.replyTo;
+      if ((lReply == null) != (rReply == null)) {
+        return false;
+      }
+      if (lReply != null &&
+          rReply != null &&
+          (lReply.id != rReply.id ||
+              lReply.senderName != rReply.senderName ||
+              lReply.bodyPreview != rReply.bodyPreview ||
+              lReply.hasImage != rReply.hasImage ||
+              lReply.imageUrl != rReply.imageUrl)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   Future<void> _send() async {
     final l10n = AppLocalizations.of(context)!;
     final text = _controller.text.trim();
     final photoPath = _pickedPhotoPath;
+    final editingId = _editingMessageId;
+    if (editingId != null) {
+      if (text.isEmpty || _sending) {
+        return;
+      }
+      setState(() => _sending = true);
+      try {
+        final updated = await widget.auth.editChatRoomMessage(
+          widget.roomId,
+          editingId,
+          body: text,
+        );
+        if (!mounted) return;
+        final idx = _messages.indexWhere((m) => m.id == editingId);
+        _controller.clear();
+        setState(() {
+          if (idx >= 0) {
+            _messages[idx] = updated;
+          }
+          _sending = false;
+          _clearEditDraft();
+        });
+      } catch (_) {
+        if (!mounted) return;
+        setState(() => _sending = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.chatEditFailed)));
+      }
+      return;
+    }
     if ((text.isEmpty && (photoPath == null || photoPath.isEmpty)) || _sending) {
       return;
     }
@@ -154,6 +243,64 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
     }
   }
 
+  Future<void> _deleteMessage(ClientChatMessage m) async {
+    final l10n = AppLocalizations.of(context)!;
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF1B1B1B),
+          title: Text(
+            l10n.chatDeleteTitle,
+            style: const TextStyle(color: Colors.white),
+          ),
+          content: Text(
+            l10n.chatDeleteMessageConfirm,
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(l10n.chatReplyCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(
+                l10n.chatDelete,
+                style: const TextStyle(color: Colors.redAccent),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    if (shouldDelete != true) {
+      return;
+    }
+    setState(() => _sending = true);
+    try {
+      await widget.auth.deleteChatRoomMessage(widget.roomId, m.id);
+      if (!mounted) return;
+      setState(() {
+        _messages.removeWhere((x) => x.id == m.id);
+        if (_replyToMessageId == m.id) {
+          _clearReplyDraft();
+        }
+        if (_editingMessageId == m.id) {
+          _clearEditDraft();
+          _controller.clear();
+        }
+        _sending = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _sending = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.chatDeleteFailed)));
+    }
+  }
+
   Future<void> _pickPhoto() async {
     if (_sending) return;
     try {
@@ -173,6 +320,66 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
         SnackBar(content: Text(AppLocalizations.of(context)!.chatCouldNotPickPhoto)),
       );
     }
+  }
+
+  Future<void> _openMessageLink(String rawLink) async {
+    final normalized = rawLink.toLowerCase().startsWith('http')
+        ? rawLink
+        : 'https://$rawLink';
+    final uri = Uri.tryParse(normalized);
+    if (uri == null) {
+      return;
+    }
+    final ok = await canLaunchUrl(uri);
+    if (!ok) {
+      return;
+    }
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Widget _buildMessageBodyText(String text, {required bool mine}) {
+    final baseStyle = TextStyle(
+      color: mine ? const Color(0xFF3C2F00) : Colors.white,
+      fontSize: 14,
+      height: 1.3,
+    );
+    final linkStyle = baseStyle.copyWith(
+      decoration: TextDecoration.underline,
+      color: mine ? const Color(0xFF2E5AAC) : const Color(0xFF7CC4FF),
+      fontWeight: FontWeight.w500,
+    );
+    final spans = <InlineSpan>[];
+    var cursor = 0;
+    final matches = _urlPattern.allMatches(text).toList();
+    for (final match in matches) {
+      if (match.start > cursor) {
+        spans.add(TextSpan(text: text.substring(cursor, match.start)));
+      }
+      final raw = text.substring(match.start, match.end);
+      spans.add(
+        TextSpan(
+          text: raw,
+          style: linkStyle,
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              _openMessageLink(raw);
+            },
+        ),
+      );
+      cursor = match.end;
+    }
+    if (cursor < text.length) {
+      spans.add(TextSpan(text: text.substring(cursor)));
+    }
+    if (spans.isEmpty) {
+      return Text(text, style: baseStyle);
+    }
+    return RichText(
+      text: TextSpan(
+        style: baseStyle,
+        children: spans,
+      ),
+    );
   }
 
   void _scrollToBottom() {
@@ -258,14 +465,41 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
           onSelected: (value) {
             if (value == 'reply') {
               _beginReplyTo(m);
+              return;
+            }
+            if (value == 'edit') {
+              _beginEdit(m);
+              return;
+            }
+            if (value == 'delete') {
+              _deleteMessage(m);
             }
           },
-          itemBuilder: (context) => [
-            PopupMenuItem<String>(
-              value: 'reply',
-              child: Text(l10n.chatReply),
-            ),
-          ],
+          itemBuilder: (context) {
+            final items = <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'reply',
+                child: Text(l10n.chatReply),
+              ),
+            ];
+            if (mine && m.body.trim().isNotEmpty) {
+              items.add(
+                PopupMenuItem<String>(
+                  value: 'edit',
+                  child: Text(l10n.chatEdit),
+                ),
+              );
+            }
+            if (mine) {
+              items.add(
+                PopupMenuItem<String>(
+                  value: 'delete',
+                  child: Text(l10n.chatDelete),
+                ),
+              );
+            }
+            return items;
+          },
         ),
       ),
     );
@@ -394,16 +628,7 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
                                   ),
                                 if (m.body.trim().isNotEmpty) ...[
                                   if (m.hasImage) const SizedBox(height: 8),
-                                  Text(
-                                    m.body,
-                                    style: TextStyle(
-                                      color: mine
-                                          ? const Color(0xFF3C2F00)
-                                          : Colors.white,
-                                      fontSize: 14,
-                                      height: 1.3,
-                                    ),
-                                  ),
+                                  _buildMessageBodyText(m.body, mine: mine),
                                 ],
                                 const SizedBox(height: 4),
                                 Align(
@@ -506,6 +731,51 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
                                 size: 20,
                               ),
                               tooltip: l10n.chatReplyCancel,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  if (_editingMessageId != null)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.fromLTRB(10, 8, 6, 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1B1B1B),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.lightBlueAccent.withValues(alpha: 0.35),
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                l10n.chatEditingLabel,
+                                style: const TextStyle(
+                                  color: Colors.lightBlueAccent,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: _sending
+                                  ? null
+                                  : () => setState(() {
+                                      _clearEditDraft();
+                                      _controller.clear();
+                                    }),
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.white54,
+                                size: 20,
+                              ),
+                              tooltip: l10n.chatCancelEdit,
                             ),
                           ],
                         ),

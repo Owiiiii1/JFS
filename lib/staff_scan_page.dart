@@ -15,6 +15,7 @@ class StaffScanPage extends StatefulWidget {
     required this.backgroundColor,
     this.scanForInfo = false,
     this.parkingScan = false,
+    this.extraZoneScan = false,
   });
 
   final AuthService auth;
@@ -26,6 +27,9 @@ class StaffScanPage extends StatefulWidget {
 
   /// Режим парковщика: lookup парковочного QR и окно результата.
   final bool parkingScan;
+
+  /// Режим входа в extra-зону: lookup extra ticket QR и окно результата.
+  final bool extraZoneScan;
 
   @override
   State<StaffScanPage> createState() => _StaffScanPageState();
@@ -89,6 +93,25 @@ class _StaffScanPageState extends State<StaffScanPage> {
 
   Future<void> _onScanned(String code) async {
     if (_processing) return;
+
+    if (widget.extraZoneScan) {
+      setState(() => _processing = true);
+      await _controller.stop();
+      try {
+        final result = await widget.auth.extraTicketScanLookup(code: code);
+        if (!mounted) return;
+        await _showExtraZoneResultDialog(result);
+      } catch (e) {
+        if (!mounted) return;
+        await _showScanErrorDialog(e.toString());
+      } finally {
+        if (mounted) {
+          setState(() => _processing = false);
+          await _controller.start();
+        }
+      }
+      return;
+    }
 
     if (widget.parkingScan) {
       setState(() => _processing = true);
@@ -161,7 +184,7 @@ class _StaffScanPageState extends State<StaffScanPage> {
     await _controller.stop();
     try {
       final result = await widget.auth.submitStageScan(
-        badgeCode: code,
+        scanCode: code,
         eventId: eventId,
         stageId: stageId,
         stageType: stageType,
@@ -214,16 +237,22 @@ class _StaffScanPageState extends State<StaffScanPage> {
               onTap: () => Navigator.of(context).pop(),
               child: const Padding(
                 padding: EdgeInsets.all(12),
-                child: Icon(Icons.close, color: Colors.white, size: 24),
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
             ),
           ),
           Text(
-            widget.parkingScan
+            widget.extraZoneScan
+                ? l10n.staffScanHeaderExtraZone
+                : (widget.parkingScan
                 ? l10n.staffScanHeaderParking
                 : (widget.scanForInfo
                       ? l10n.staffScanHeaderInfo
-                      : l10n.staffScanHeaderQr),
+                      : l10n.staffScanHeaderQr)),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -335,11 +364,13 @@ class _StaffScanPageState extends State<StaffScanPage> {
         borderRadius: BorderRadius.circular(24),
       ),
       child: Text(
-        widget.parkingScan
+        widget.extraZoneScan
+            ? l10n.staffScanHintExtraZone
+            : (widget.parkingScan
             ? l10n.staffScanHintParking
             : (widget.scanForInfo
                   ? l10n.staffScanHintInfo
-                  : l10n.staffScanHintQr),
+                  : l10n.staffScanHintQr)),
         style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16),
         textAlign: TextAlign.center,
       ),
@@ -368,6 +399,15 @@ class _StaffScanPageState extends State<StaffScanPage> {
               children: [
                 Row(
                   children: [
+                    IconButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.white70,
+                        size: 18,
+                      ),
+                      tooltip: l10n.close,
+                    ),
                     Expanded(
                       child: Text(
                         l10n.staffScanErrorTitle,
@@ -378,11 +418,7 @@ class _StaffScanPageState extends State<StaffScanPage> {
                         ),
                       ),
                     ),
-                    IconButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      icon: const Icon(Icons.close, color: Colors.white70),
-                      tooltip: l10n.close,
-                    ),
+                    const SizedBox(width: 40),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -441,6 +477,15 @@ class _StaffScanPageState extends State<StaffScanPage> {
               children: [
                 Row(
                   children: [
+                    IconButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.white70,
+                        size: 18,
+                      ),
+                      tooltip: l10n.close,
+                    ),
                     Expanded(
                       child: Text(
                         l10n.staffParkingTicketTitle,
@@ -451,11 +496,7 @@ class _StaffScanPageState extends State<StaffScanPage> {
                         ),
                       ),
                     ),
-                    IconButton(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      icon: const Icon(Icons.close, color: Colors.white70),
-                      tooltip: l10n.close,
-                    ),
+                    const SizedBox(width: 40),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -467,6 +508,94 @@ class _StaffScanPageState extends State<StaffScanPage> {
                   l10n.staffParkingFieldVipClient,
                   result.isVipClient ? l10n.staffYes : l10n.staffNo,
                 ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showExtraZoneResultDialog(
+    ExtraTicketScanLookupResult result,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final statusText = result.isNotFound
+        ? l10n.staffExtraZoneResultNotFound
+        : (result.isAccessClosed
+              ? l10n.staffExtraZoneResultAccessClosed
+              : l10n.staffExtraZoneResultAccessGranted);
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        final navigator = Navigator.of(ctx);
+        Future<void>.delayed(const Duration(seconds: 5), () {
+          if (navigator.canPop()) {
+            navigator.pop();
+          }
+        });
+
+        Widget row(String label, String value) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white54,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value.isEmpty ? '—' : value,
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return Dialog(
+          backgroundColor: const Color(0xFF131313),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.staffExtraZoneScanResultTitle,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  statusText,
+                  style: TextStyle(
+                    color: result.isAccessGranted
+                        ? widget.accent
+                        : Colors.redAccent.shade100,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                if (!result.isNotFound) ...[
+                  row(l10n.staffParkingFieldEvent, result.eventName),
+                  row(l10n.staffParkingFieldClient, result.clientName),
+                ],
               ],
             ),
           ),

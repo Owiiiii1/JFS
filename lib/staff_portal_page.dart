@@ -43,10 +43,25 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   List<SupervisorStageItem> _supervisorStages = [];
   int? _selectedSupervisorStageId;
   bool _showAllSupervisorChildren = false;
+  bool _showSupervisorRoleCard = true;
   List<SupervisorChildItem>? _supervisorChildren;
   bool _supervisorChildrenLoading = false;
   String? _supervisorChildrenError;
   int? _supervisorChildrenEventId;
+  List<RehearsalAdminSlotItem> _rehearsalAdminSlots = [];
+  int? _selectedRehearsalAdminSlotId;
+  List<RehearsalAdminChildItem>? _rehearsalAdminChildren;
+  bool _rehearsalAdminLoading = false;
+  String? _rehearsalAdminError;
+  int? _rehearsalAdminEventId;
+  List<WorkerEventStage> _giftControlStages = [];
+  int? _selectedGiftControlStageId;
+  String _giftControlStatusFilter = 'all';
+  List<GiftControlChildItem>? _giftControlChildren;
+  bool _giftControlLoading = false;
+  String? _giftControlError;
+  int? _giftControlEventId;
+  Timer? _supervisorAutoRefreshTimer;
   // ignore: unused_field
   int _unreadNotifications = 0;
   List<WorkerEventStage> _homeVisibleStages = [];
@@ -57,9 +72,30 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     super.initState();
     _liveStatus = widget.status;
     _initSelectedRole();
+    _startSupervisorAutoRefresh();
     _refreshUnreadSilently();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(_loadHomeTabStages());
+    });
+  }
+
+  @override
+  void dispose() {
+    _supervisorAutoRefreshTimer?.cancel();
+    super.dispose();
+  }
+
+  bool _isSupervisorHomeActive() {
+    return _currentTab == 0 && _resolvedHomeScreenType(_selectedRole) == 'supervisor';
+  }
+
+  void _startSupervisorAutoRefresh() {
+    _supervisorAutoRefreshTimer?.cancel();
+    _supervisorAutoRefreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (!mounted) return;
+      if (!_isSupervisorHomeActive()) return;
+      if (_supervisorChildrenLoading) return;
+      unawaited(_loadSupervisorChildren());
     });
   }
 
@@ -241,6 +277,95 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     }
   }
 
+  Future<void> _loadRehearsalAdminRoster() async {
+    final eventId = AppSettings.staffActiveEventId;
+    if (eventId == null || eventId <= 0) {
+      setState(() {
+        _rehearsalAdminSlots = [];
+        _selectedRehearsalAdminSlotId = null;
+        _rehearsalAdminChildren = [];
+        _rehearsalAdminLoading = false;
+        _rehearsalAdminError = null;
+        _rehearsalAdminEventId = eventId;
+      });
+      return;
+    }
+
+    setState(() {
+      _rehearsalAdminLoading = true;
+      _rehearsalAdminError = null;
+    });
+    try {
+      final data = await widget.auth.getWorkerRehearsalAdminRoster(
+        eventId,
+        slotId: _selectedRehearsalAdminSlotId,
+      );
+      if (!mounted) return;
+      setState(() {
+        _rehearsalAdminSlots = data.slots;
+        _selectedRehearsalAdminSlotId =
+            data.currentSlotId ??
+            (data.slots.isNotEmpty ? data.slots.first.id : null);
+        _rehearsalAdminChildren = data.children;
+        _rehearsalAdminLoading = false;
+        _rehearsalAdminEventId = eventId;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _rehearsalAdminError = e.toString();
+        _rehearsalAdminLoading = false;
+        _rehearsalAdminChildren = null;
+      });
+    }
+  }
+
+  Future<void> _loadGiftControlReport() async {
+    final eventId = AppSettings.staffActiveEventId;
+    if (eventId == null || eventId <= 0) {
+      setState(() {
+        _giftControlStages = [];
+        _selectedGiftControlStageId = null;
+        _giftControlChildren = [];
+        _giftControlLoading = false;
+        _giftControlError = null;
+        _giftControlEventId = eventId;
+      });
+      return;
+    }
+
+    setState(() {
+      _giftControlLoading = true;
+      _giftControlError = null;
+    });
+    try {
+      final data = await widget.auth.getWorkerGiftControlReport(
+        eventId,
+        stageId: _selectedGiftControlStageId,
+        staffRoleId: _selectedRole?.id,
+        statusFilter: _giftControlStatusFilter,
+      );
+      if (!mounted) return;
+      setState(() {
+        _giftControlStages = data.stages;
+        _selectedGiftControlStageId =
+            data.currentStageId ??
+            (data.stages.isNotEmpty ? data.stages.first.id : null);
+        _giftControlChildren = data.children;
+        _giftControlStatusFilter = data.statusFilter;
+        _giftControlLoading = false;
+        _giftControlEventId = eventId;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _giftControlError = e.toString();
+        _giftControlLoading = false;
+        _giftControlChildren = null;
+      });
+    }
+  }
+
   /// Тип главной вкладки: из админки (`home_screen_type`) или legacy по code/name.
   String _resolvedHomeScreenType(StaffRole? role) {
     if (role == null) return 'scan';
@@ -248,6 +373,15 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     if (fromApi.isNotEmpty) return fromApi;
     if (_matchesAnyToken(role, const ['parking', 'парковка'])) {
       return 'parking';
+    }
+    if (_matchesAnyToken(role, const ['extra_zone', 'extra zone', 'экстра зона', 'зона экстра'])) {
+      return 'extra_zone';
+    }
+    if (_matchesAnyToken(role, const ['rehearsal_admin', 'rehearsal admin', 'админ репетиций'])) {
+      return 'rehearsal_admin';
+    }
+    if (_matchesAnyToken(role, const ['gift_issue', 'gift issue', 'выдача подарков'])) {
+      return 'gift_issue';
     }
     if (_matchesAnyToken(role, const ['hostess', 'hs', 'хостесс'])) {
       return 'hostess';
@@ -266,6 +400,12 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
         return _buildHostessStub();
       case 'parking':
         return _buildHomeTab(accent, parkingMode: true);
+      case 'extra_zone':
+        return _buildHomeTab(accent, extraZoneMode: true);
+      case 'rehearsal_admin':
+        return _buildRehearsalAdminHomeTab(accent);
+      case 'gift_issue':
+        return _buildGiftIssueHomeTab(accent);
       case 'interview':
         return _buildInterviewStub();
       case 'lunches':
@@ -467,12 +607,16 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   }
 
   /// Универсальное сканирование: этап синхронизирован с настройками, описание роли из админки.
-  Widget _buildHomeTab(Color accent, {bool parkingMode = false}) {
+  Widget _buildHomeTab(
+    Color accent, {
+    bool parkingMode = false,
+    bool extraZoneMode = false,
+  }) {
     final l10n = AppLocalizations.of(context)!;
     final roleDesc = (_selectedRole?.description ?? '').trim();
     final eventId = AppSettings.staffActiveEventId;
     final roleActive = _selectedRole?.isActive ?? false;
-    final scanEnabled = parkingMode
+    final scanEnabled = (parkingMode || extraZoneMode)
         ? roleActive
         : (!_homeStagesLoading &&
               roleActive &&
@@ -483,7 +627,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!parkingMode)
+        if (!parkingMode && !extraZoneMode)
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
             child: Column(
@@ -603,7 +747,11 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                   child: InkWell(
                     onTap: scanEnabled
                         ? () => unawaited(
-                            _openScanner(context, parkingScan: parkingMode),
+                            _openScanner(
+                              context,
+                              parkingScan: parkingMode,
+                              extraZoneScan: extraZoneMode,
+                            ),
                           )
                         : null,
                     borderRadius: BorderRadius.circular(96),
@@ -637,7 +785,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                             Icon(
                               parkingMode
                                   ? Icons.local_parking_outlined
-                                  : Icons.qr_code_scanner,
+                                  : (extraZoneMode
+                                      ? Icons.workspace_premium_outlined
+                                      : Icons.qr_code_scanner),
                               color: scanEnabled
                                   ? Colors.white
                                   : Colors.white38,
@@ -647,7 +797,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                             Text(
                               parkingMode
                                   ? l10n.staffParkingButton
-                                  : l10n.staffScanButton,
+                                  : (extraZoneMode
+                                        ? l10n.staffExtraZoneButton
+                                        : l10n.staffScanButton),
                               style: TextStyle(
                                 color: scanEnabled
                                     ? Colors.white
@@ -667,7 +819,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                 Text(
                   parkingMode
                       ? l10n.staffTapToScanParkingQr
-                      : l10n.staffTapToScanModelLanyard,
+                      : (extraZoneMode
+                            ? l10n.staffTapToScanExtraZoneQr
+                            : l10n.staffTapToScanModelLanyard),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: scanEnabled
@@ -822,6 +976,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     BuildContext context, {
     bool scanForInfo = false,
     bool parkingScan = false,
+    bool extraZoneScan = false,
   }) async {
     final ok = await _refreshLiveWorkerStatus(showError: true);
     if (!ok || !mounted || !context.mounted) return;
@@ -847,6 +1002,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           backgroundColor: _kBgDark,
           scanForInfo: scanForInfo,
           parkingScan: parkingScan,
+          extraZoneScan: extraZoneScan,
         ),
       ),
     );
@@ -886,38 +1042,60 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Supervisor Role card
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.06),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.staffSupervisorRoleTitle,
-                  style: TextStyle(
-                    color: accent,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+          // Supervisor Role card (shown by default on app start, can be closed for current session)
+          if (_showSupervisorRoleCard) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.06),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.1)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l10n.staffSupervisorRoleTitle,
+                          style: TextStyle(
+                            color: accent,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        iconSize: 18,
+                        splashRadius: 18,
+                        tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                        onPressed: () {
+                          setState(() => _showSupervisorRoleCard = false);
+                        },
+                        icon: Icon(
+                          Icons.close,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.staffSupervisorRoleDescription,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 14,
-                    height: 1.35,
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.staffSupervisorRoleDescription,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                      height: 1.35,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
+          ],
           Row(
             children: [
               Expanded(
@@ -1302,6 +1480,646 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
       icon: Icons.admin_panel_settings_outlined,
       title: AppLocalizations.of(context)!.staffRoleSuperadminTitle,
       message: AppLocalizations.of(context)!.staffRoleSuperadminPlaceholder,
+    );
+  }
+
+  Widget _buildRehearsalAdminHomeTab(Color accent) {
+    final l10n = AppLocalizations.of(context)!;
+    final eventId = AppSettings.staffActiveEventId;
+    if (eventId != _rehearsalAdminEventId && !_rehearsalAdminLoading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _loadRehearsalAdminRoster());
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.staffRehearsalAdminSlotsTitle,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white.withOpacity(0.15)),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int?>(
+                value: _selectedRehearsalAdminSlotId,
+                isExpanded: true,
+                dropdownColor: const Color(0xFF2a1a14),
+                icon: Icon(Icons.keyboard_arrow_down, color: accent),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+                hint: Text(
+                  l10n.staffRehearsalAdminSelectSlot,
+                  style: const TextStyle(color: Colors.white54),
+                ),
+                items: _rehearsalAdminSlots
+                    .map(
+                      (slot) => DropdownMenuItem<int?>(
+                        value: slot.id,
+                        child: Text(
+                          _formatRehearsalAdminSlotLabel(slot),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: _rehearsalAdminSlots.isEmpty
+                    ? null
+                    : (value) {
+                        if (value == null) return;
+                        setState(() => _selectedRehearsalAdminSlotId = value);
+                        _loadRehearsalAdminRoster();
+                      },
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              Icon(Icons.people_outline, color: accent, size: 22),
+              const SizedBox(width: 8),
+              Text(
+                l10n.staffRehearsalAdminBookedChildrenTitle,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              if (_rehearsalAdminChildren != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: accent,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    l10n.staffChildrenListed(_rehearsalAdminChildren!.length),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (eventId == null || eventId <= 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                l10n.staffSelectActiveEventForRegistry,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white54, fontSize: 14),
+              ),
+            )
+          else if (_rehearsalAdminLoading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: Center(child: CircularProgressIndicator(color: _kPrimary)),
+            )
+          else if (_rehearsalAdminError != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                _rehearsalAdminError!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.red.shade300, fontSize: 14),
+              ),
+            )
+          else if (_rehearsalAdminSlots.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                l10n.staffRehearsalAdminNoSlots,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white54, fontSize: 14),
+              ),
+            )
+          else if (_rehearsalAdminChildren == null || _rehearsalAdminChildren!.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                l10n.staffRehearsalAdminNoChildrenForSlot,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white54, fontSize: 14),
+              ),
+            )
+          else
+            ..._rehearsalAdminChildren!.map((c) => _buildRehearsalAdminChildRow(accent, c)),
+        ],
+      ),
+    );
+  }
+
+  String _formatRehearsalAdminSlotLabel(RehearsalAdminSlotItem slot) {
+    final date = slot.slotDate;
+    final dateLabel = date != null ? DateFormat('dd.MM').format(date.toLocal()) : '--.--';
+    final timeLabel = AppSettings.formatTimeLabel(slot.slotTime);
+    final place = slot.place.trim();
+    final capacityPart = '${slot.bookedCount}/${slot.capacity}';
+    if (place.isEmpty) {
+      return '$dateLabel $timeLabel · $capacityPart';
+    }
+    return '$dateLabel $timeLabel · $place · $capacityPart';
+  }
+
+  Widget _buildRehearsalAdminChildRow(Color accent, RehearsalAdminChildItem child) {
+    final checked = child.checkedIn;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withOpacity(0.08)),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: Colors.white12,
+            backgroundImage: child.photoUrl != null && child.photoUrl!.isNotEmpty
+                ? NetworkImage(child.photoUrl!)
+                : null,
+            child: child.photoUrl == null || child.photoUrl!.isEmpty
+                ? Text(
+                    (child.firstName.isNotEmpty ? child.firstName[0] : '?').toUpperCase(),
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  )
+                : null,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              child.firstName,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Icon(
+            checked ? Icons.check_circle : Icons.radio_button_unchecked,
+            color: checked ? Colors.greenAccent : Colors.white38,
+            size: 22,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGiftIssueHomeTab(Color accent) {
+    final l10n = AppLocalizations.of(context)!;
+    final eventId = AppSettings.staffActiveEventId;
+    if (eventId != _giftControlEventId && !_giftControlLoading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _loadGiftControlReport());
+    }
+    final roleDesc = (_selectedRole?.description ?? '').trim();
+    final roleActive = _selectedRole?.isActive ?? false;
+    final scanEnabled =
+        !_homeStagesLoading &&
+        roleActive &&
+        eventId != null &&
+        eventId > 0 &&
+        AppSettings.staffActiveStageId != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.staffActiveStage,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.5),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (_homeStagesLoading)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: _kPrimary,
+                      ),
+                    ),
+                  ),
+                )
+              else if (eventId == null || eventId <= 0)
+                Text(
+                  l10n.staffSelectEventInSettings,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.6),
+                    fontSize: 14,
+                  ),
+                )
+              else
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int?>(
+                      value: _homeEffectiveStageDropdownValue(),
+                      isExpanded: true,
+                      dropdownColor: const Color(0xFF2a1a14),
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: accent,
+                        size: 24,
+                      ),
+                      style: const TextStyle(color: Colors.white, fontSize: 15),
+                      hint: Text(
+                        l10n.staffSelectStage,
+                        style: const TextStyle(color: Colors.white54),
+                      ),
+                      items: [
+                        DropdownMenuItem<int?>(
+                          value: null,
+                          child: Text(l10n.staffNoneSelected),
+                        ),
+                        ..._homeVisibleStages.map(
+                          (s) => DropdownMenuItem<int?>(
+                            value: s.id,
+                            child: Text(
+                              s.type == 'preparatory'
+                                  ? l10n.staffPreparatoryStageLabel(s.name)
+                                  : s.name,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                      onChanged: (int? value) async {
+                        if (value == null) {
+                          await AppSettings.setStaffActiveStageId(null);
+                          await AppSettings.setStaffActiveStageType(null);
+                        } else {
+                          WorkerEventStage? stage;
+                          for (final s in _homeVisibleStages) {
+                            if (s.id == value) {
+                              stage = s;
+                              break;
+                            }
+                          }
+                          await AppSettings.setStaffActiveStageId(value);
+                          await AppSettings.setStaffActiveStageType(
+                            stage?.type ?? 'main',
+                          );
+                        }
+                        if (mounted) setState(() {});
+                      },
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: scanEnabled ? () => unawaited(_openScanner(context)) : null,
+                    borderRadius: BorderRadius.circular(96),
+                    child: Container(
+                      width: 192,
+                      height: 192,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: scanEnabled
+                            ? LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [accent, accent.withOpacity(0.8)],
+                              )
+                            : null,
+                        color: scanEnabled ? null : const Color(0xFF3D3D3D),
+                        boxShadow: scanEnabled
+                            ? [
+                                BoxShadow(
+                                  color: accent.withOpacity(0.3),
+                                  blurRadius: 40,
+                                  spreadRadius: 0,
+                                ),
+                              ]
+                            : const [],
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.qr_code_scanner,
+                              color: scanEnabled ? Colors.white : Colors.white38,
+                              size: 56,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              l10n.staffScanButton,
+                              style: TextStyle(
+                                color: scanEnabled ? Colors.white : Colors.white38,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                OutlinedButton.icon(
+                  onPressed: eventId == null || eventId <= 0
+                      ? null
+                      : () => unawaited(_openGiftControlSheet(accent)),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: accent.withOpacity(0.7)),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
+                  icon: const Icon(Icons.rule_folder_outlined),
+                  label: Text(l10n.staffGiftControlButton),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  l10n.staffTapToScanModelLanyard,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: scanEnabled
+                        ? Colors.white.withOpacity(0.4)
+                        : Colors.white.withOpacity(0.22),
+                    fontSize: 11,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border(
+                left: BorderSide(
+                  color: roleActive ? accent : Colors.white24,
+                  width: 4,
+                ),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.staffCurrentTask,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  roleDesc.isEmpty ? '—' : roleDesc,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _openGiftControlSheet(Color accent) async {
+    final l10n = AppLocalizations.of(context)!;
+    await _loadGiftControlReport();
+    if (!mounted) return;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF121212),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setModalState) {
+            Future<void> reload() async {
+              setModalState(() {});
+              await _loadGiftControlReport();
+              if (ctx.mounted) setModalState(() {});
+            }
+
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  top: 16,
+                  bottom: 16 + MediaQuery.of(ctx).viewInsets.bottom,
+                ),
+                child: SizedBox(
+                  height: MediaQuery.of(ctx).size.height * 0.78,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        l10n.staffGiftControlTitle,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.06),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.white.withOpacity(0.12)),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<int?>(
+                            value: _selectedGiftControlStageId,
+                            isExpanded: true,
+                            dropdownColor: const Color(0xFF2a1a14),
+                            icon: Icon(Icons.keyboard_arrow_down, color: accent),
+                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            hint: Text(
+                              l10n.staffGiftControlSelectStage,
+                              style: const TextStyle(color: Colors.white54),
+                            ),
+                            items: _giftControlStages
+                                .map(
+                                  (s) => DropdownMenuItem<int?>(
+                                    value: s.id,
+                                    child: Text(
+                                      s.type == 'preparatory'
+                                          ? l10n.staffPreparatoryStageLabel(s.name)
+                                          : s.name,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: _giftControlStages.isEmpty
+                                ? null
+                                : (value) async {
+                                    if (value == null) return;
+                                    _selectedGiftControlStageId = value;
+                                    await reload();
+                                  },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          ChoiceChip(
+                            label: Text(l10n.staffGiftControlFilterAll),
+                            selected: _giftControlStatusFilter == 'all',
+                            onSelected: (_) async {
+                              _giftControlStatusFilter = 'all';
+                              await reload();
+                            },
+                          ),
+                          ChoiceChip(
+                            label: Text(l10n.staffGiftControlFilterPassed),
+                            selected: _giftControlStatusFilter == 'passed',
+                            onSelected: (_) async {
+                              _giftControlStatusFilter = 'passed';
+                              await reload();
+                            },
+                          ),
+                          ChoiceChip(
+                            label: Text(l10n.staffGiftControlFilterNotPassed),
+                            selected: _giftControlStatusFilter == 'not_passed',
+                            onSelected: (_) async {
+                              _giftControlStatusFilter = 'not_passed';
+                              await reload();
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Expanded(
+                        child: _giftControlLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(color: _kPrimary),
+                              )
+                            : _giftControlError != null
+                            ? Center(
+                                child: Text(
+                                  _giftControlError!,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.red.shade300),
+                                ),
+                              )
+                            : (_giftControlChildren == null || _giftControlChildren!.isEmpty)
+                            ? Center(
+                                child: Text(
+                                  l10n.staffGiftControlNoChildren,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: Colors.white54),
+                                ),
+                              )
+                            : ListView.separated(
+                                itemCount: _giftControlChildren!.length,
+                                separatorBuilder: (context, index) => const SizedBox(height: 8),
+                                itemBuilder: (context, index) {
+                                  final c = _giftControlChildren![index];
+                                  return _buildGiftControlChildRow(c, accent);
+                                },
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildGiftControlChildRow(GiftControlChildItem child, Color accent) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: Colors.white12,
+            backgroundImage: child.photoUrl != null && child.photoUrl!.isNotEmpty
+                ? NetworkImage(child.photoUrl!)
+                : null,
+            child: child.photoUrl == null || child.photoUrl!.isEmpty
+                ? Text(
+                    (child.firstName.isNotEmpty ? child.firstName[0] : '?').toUpperCase(),
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  )
+                : null,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              child.firstName,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Icon(
+            child.isPassed ? Icons.check_circle : Icons.cancel_outlined,
+            color: child.isPassed ? Colors.greenAccent : Colors.orangeAccent,
+            size: 22,
+          ),
+        ],
+      ),
     );
   }
 

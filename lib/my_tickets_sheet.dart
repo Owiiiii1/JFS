@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'api/auth_service.dart';
+import 'client_event_extra_ticket_flow.dart';
 import 'client_ticket_pdf_page.dart';
 import 'gen_l10n/app_localizations.dart';
 
@@ -13,6 +14,7 @@ const _kCard = Color(0xFF1A1A1A);
 Future<void> showMyTicketsSheet(
   BuildContext context, {
   required AuthService auth,
+
   /// Покупка билета только если клиент записан хотя бы на один активный ивент.
   required bool canPurchaseTickets,
 }) {
@@ -20,18 +22,13 @@ Future<void> showMyTicketsSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (ctx) => _MyTicketsSheet(
-      auth: auth,
-      canPurchaseTickets: canPurchaseTickets,
-    ),
+    builder: (ctx) =>
+        _MyTicketsSheet(auth: auth, canPurchaseTickets: canPurchaseTickets),
   );
 }
 
 class _MyTicketsSheet extends StatefulWidget {
-  const _MyTicketsSheet({
-    required this.auth,
-    required this.canPurchaseTickets,
-  });
+  const _MyTicketsSheet({required this.auth, required this.canPurchaseTickets});
 
   final AuthService auth;
   final bool canPurchaseTickets;
@@ -79,6 +76,18 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
     }
     final f = _buyUrlFromSettings;
     if (f != null && f.isNotEmpty) return f;
+    return null;
+  }
+
+  String? get _selectedEventName {
+    final sel = _selectedEventId;
+    if (sel == null || _events == null) return null;
+    for (final e in _events!) {
+      if (e.id == sel) {
+        final name = e.name.trim();
+        return name.isEmpty ? null : name;
+      }
+    }
     return null;
   }
 
@@ -158,43 +167,83 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
     final raw = _effectiveBuyUrl;
     if (raw == null || raw.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.ticketsBuyNoLink)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyNoLink)));
       return;
     }
     final normalized = _normalizeBuyUrl(raw);
     if (normalized == null) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)));
       return;
     }
     final uri = Uri.tryParse(normalized);
     if (uri == null || !uri.hasScheme) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)));
       return;
     }
     try {
-      final ok = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!ok && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)));
       }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)));
       }
+    }
+  }
+
+  Future<void> _openExtraTicketFlow() async {
+    final l10n = AppLocalizations.of(context)!;
+    final eventId = _selectedEventId;
+    if (eventId == null || eventId <= 0) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.extraTicketSelectEventFirst)));
+      return;
+    }
+
+    final eventName = _selectedEventName ?? '—';
+    try {
+      final payload = await widget.auth.getEventExtraTickets(eventId);
+      if (!mounted) return;
+      final page = payload.hasActiveTickets
+          ? ClientExtraTicketActiveScreen(
+              eventName: eventName,
+              l10n: l10n,
+              auth: widget.auth,
+              eventId: eventId,
+              canBuy: payload.canBuy,
+              tickets: payload.tickets,
+            )
+          : ClientExtraTicketInactiveScreen(
+              l10n: l10n,
+              eventName: eventName,
+              auth: widget.auth,
+              eventId: eventId,
+              canBuy: payload.canBuy,
+            );
+
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute<void>(builder: (_) => page));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.extraTicketCheckoutError)));
     }
   }
 
@@ -229,21 +278,28 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: Colors.white70,
+                      size: 20,
+                    ),
+                  ),
                   Expanded(
-                    child: Text(
-                      l10n.myTicketsTitle,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white,
-                        fontFamily: 'HelveticaNeueCyr',
+                    child: Center(
+                      child: Text(
+                        l10n.myTicketsTitle,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white,
+                          fontFamily: 'HelveticaNeueCyr',
+                        ),
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Colors.white54),
-                  ),
+                  const SizedBox(width: 48),
                 ],
               ),
             ),
@@ -291,10 +347,7 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
                         child: DropdownButton<int>(
                           isExpanded: true,
                           dropdownColor: _kCard,
-                          icon: const Icon(
-                            Icons.expand_more,
-                            color: _kGold,
-                          ),
+                          icon: const Icon(Icons.expand_more, color: _kGold),
                           value: _selectedEventId,
                           hint: Text(
                             l10n.selectEventForTickets,
@@ -362,7 +415,9 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
                             dateLabel: l10n.ticketsEventDate,
                             dateText: _formatDate(t.eventStartsAt),
                             parentLabel: l10n.ticketsMomName,
-                            parentName: t.parentName.isEmpty ? '—' : t.parentName,
+                            parentName: t.parentName.isEmpty
+                                ? '—'
+                                : t.parentName,
                             openLabel: t.pdfAvailable
                                 ? l10n.ticketsOpenPdf
                                 : l10n.ticketsPdfUnavailable,
@@ -394,8 +449,9 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFBBF24)
-                                .withValues(alpha: 0.15),
+                            color: const Color(
+                              0xFFFBBF24,
+                            ).withValues(alpha: 0.15),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),
@@ -432,13 +488,32 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      l10n.ticketsBuySubtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 10,
-                        letterSpacing: 0.8,
-                        color: Colors.grey[600],
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: _openExtraTicketFlow,
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: _kGold,
+                          side: const BorderSide(color: _kGold),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        icon: const Icon(
+                          Icons.add_circle_outline,
+                          color: _kGold,
+                          size: 20,
+                        ),
+                        label: Text(
+                          l10n.extraTicketButton,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
                       ),
                     ),
                   ],

@@ -34,8 +34,11 @@ String? _defaultSelectedDateKeyForSlots(List<RehearsalSlotOption> list) {
   if (maxD == null) {
     return null;
   }
-  final start = DateTime(maxD.year, maxD.month, maxD.day)
-      .subtract(const Duration(days: 6));
+  final start = DateTime(
+    maxD.year,
+    maxD.month,
+    maxD.day,
+  ).subtract(const Duration(days: 6));
   for (var i = 6; i >= 0; i--) {
     final day = start.add(Duration(days: i));
     final key = _rehearsalDateKey(day);
@@ -308,7 +311,9 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
       }
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.rehearsalBookingSaved)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.rehearsalBookingSaved),
+        ),
       );
       widget.onSaved?.call();
       await _syncChildrenFromDashboard();
@@ -381,14 +386,18 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                 ),
                 Positioned(
                   top: 8,
-                  right: 8,
+                  left: 8,
                   child: Material(
                     color: Colors.black.withValues(alpha: 0.35),
                     shape: const CircleBorder(),
                     clipBehavior: Clip.antiAlias,
                     child: IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close_rounded, color: _kOnSurface),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new,
+                        color: _kOnSurface,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -455,7 +464,10 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                         value: _childIndex,
                         isExpanded: true,
                         dropdownColor: _kSurfaceHigh,
-                        style: const TextStyle(color: _kOnSurface, fontSize: 15),
+                        style: const TextStyle(
+                          color: _kOnSurface,
+                          fontSize: 15,
+                        ),
                         items: List.generate(
                           _children.length,
                           (i) => DropdownMenuItem(
@@ -470,8 +482,9 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                           setState(() {
                             _childIndex = v;
                             _isChangingBooking = false;
-                            _selectedDate =
-                                _defaultSelectedDateKeyForSlots(_slots);
+                            _selectedDate = _defaultSelectedDateKeyForSlots(
+                              _slots,
+                            );
                             _selectedSlotIds.clear();
                           });
                           _loadSlots();
@@ -498,7 +511,10 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                       ),
                       TextButton(
                         onPressed: _loadSlots,
-                        child: Text(l10n.rehearsalLoadError, style: const TextStyle(color: _kPrimary)),
+                        child: Text(
+                          l10n.rehearsalLoadError,
+                          style: const TextStyle(color: _kPrimary),
+                        ),
                       ),
                     ],
                   )
@@ -547,9 +563,9 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 6),
                         child: Text(
-                          DateFormat.yMMMM(locale)
-                              .format(_monthRef())
-                              .toUpperCase(),
+                          DateFormat.yMMMM(
+                            locale,
+                          ).format(_monthRef()).toUpperCase(),
                           style: const TextStyle(
                             color: _kPrimary,
                             fontSize: 11,
@@ -627,10 +643,12 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                       const SizedBox(height: 20),
                       ..._slots
                           .where((s) => _selectedSlotIds.contains(s.id))
-                          .map((s) => Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: _DescriptionPanel(slot: s, l10n: l10n),
-                              )),
+                          .map(
+                            (s) => Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: _DescriptionPanel(slot: s, l10n: l10n),
+                            ),
+                          ),
                       const SizedBox(height: 16),
                       if (_isChangingBooking) ...[
                         SizedBox(
@@ -648,7 +666,9 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton(
-                          onPressed: _booking || _selectedSlotIds.isEmpty ? null : _onConfirm,
+                          onPressed: _booking || _selectedSlotIds.isEmpty
+                              ? null
+                              : _onConfirm,
                           style: FilledButton.styleFrom(
                             backgroundColor: _kPrimary,
                             foregroundColor: _kOnPrimary,
@@ -763,16 +783,14 @@ class _CalendarDayStrip extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: !has
                           ? Colors.transparent
-                          : (selected
-                              ? _kPrimary
-                              : _kSurfaceHigh),
+                          : (selected ? _kPrimary : _kSurfaceHigh),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: selected
                             ? _kPrimary
                             : (has
-                                ? _kOutline.withValues(alpha: 0.12)
-                                : Colors.transparent),
+                                  ? _kOutline.withValues(alpha: 0.12)
+                                  : Colors.transparent),
                       ),
                       boxShadow: selected
                           ? [
@@ -792,9 +810,7 @@ class _CalendarDayStrip extends StatelessWidget {
                           style: TextStyle(
                             color: !has
                                 ? _kOnSurface.withValues(alpha: 0.38)
-                                : (selected
-                                    ? _kOnPrimary
-                                    : _kOnSurface),
+                                : (selected ? _kOnPrimary : _kOnSurface),
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                           ),
@@ -885,15 +901,11 @@ class _TimeSlotGrid extends StatelessWidget {
                 color: full
                     ? _kSurfaceHigh.withValues(alpha: 0.35)
                     : booked
-                        ? _kSurfaceHigh.withValues(alpha: 0.45)
-                    : (sel
-                        ? _kPrimary.withValues(alpha: 0.15)
-                        : _kSurfaceHigh),
+                    ? _kSurfaceHigh.withValues(alpha: 0.45)
+                    : (sel ? _kPrimary.withValues(alpha: 0.15) : _kSurfaceHigh),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: sel
-                      ? _kPrimary
-                      : _kOutline.withValues(alpha: 0.2),
+                  color: sel ? _kPrimary : _kOutline.withValues(alpha: 0.2),
                 ),
               ),
               child: Padding(
@@ -940,10 +952,7 @@ class _TimeSlotGrid extends StatelessWidget {
 }
 
 class _DescriptionPanel extends StatelessWidget {
-  const _DescriptionPanel({
-    required this.slot,
-    required this.l10n,
-  });
+  const _DescriptionPanel({required this.slot, required this.l10n});
 
   final RehearsalSlotOption slot;
   final AppLocalizations l10n;
@@ -996,7 +1005,11 @@ class _DescriptionPanel extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    const Icon(Icons.schedule_rounded, color: _kPrimary, size: 18),
+                    const Icon(
+                      Icons.schedule_rounded,
+                      color: _kPrimary,
+                      size: 18,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       slot.place,
@@ -1094,12 +1107,19 @@ class _BookedPanel extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.place_outlined, color: _kTertiary, size: 17),
+                      const Icon(
+                        Icons.place_outlined,
+                        color: _kTertiary,
+                        size: 17,
+                      ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           booking.place,
-                          style: const TextStyle(color: _kTertiary, fontSize: 12),
+                          style: const TextStyle(
+                            color: _kTertiary,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],
@@ -1111,8 +1131,7 @@ class _BookedPanel extends StatelessWidget {
         }),
         const SizedBox(height: 24),
         OutlinedButton(
-          onPressed:
-              (bookingBusy || !canEdit) ? null : onAddMore,
+          onPressed: (bookingBusy || !canEdit) ? null : onAddMore,
           style: OutlinedButton.styleFrom(
             foregroundColor: canEdit ? _kPrimary : _kTertiary,
             side: BorderSide(
@@ -1158,7 +1177,11 @@ class _BookedPanel extends StatelessWidget {
         const SizedBox(height: 16),
         Row(
           children: [
-            Icon(Icons.info_outline, color: _kTertiary.withValues(alpha: 0.6), size: 18),
+            Icon(
+              Icons.info_outline,
+              color: _kTertiary.withValues(alpha: 0.6),
+              size: 18,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(

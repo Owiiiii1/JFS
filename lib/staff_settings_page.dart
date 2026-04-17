@@ -166,7 +166,7 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
             const SizedBox(height: 24),
             _buildActiveEventSection(),
             const SizedBox(height: 20),
-            _buildActiveStageSection(),
+            if (_shouldShowActiveStageSection()) _buildActiveStageSection(),
             const SizedBox(height: 24),
             _buildSwitchRole(l10n),
             const SizedBox(height: 24),
@@ -175,6 +175,11 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
         ),
       ),
     );
+  }
+
+  bool _shouldShowActiveStageSection() {
+    final type = _selectedRole?.homeScreenType.trim().toLowerCase() ?? '';
+    return type != 'extra_zone' && type != 'rehearsal_admin';
   }
 
   Widget _buildActiveEventSection() {
@@ -571,6 +576,12 @@ class _RoleCard extends StatelessWidget {
         return Icons.badge_outlined;
       case 'parking':
         return Icons.local_parking_outlined;
+      case 'extra_zone':
+        return Icons.workspace_premium_outlined;
+      case 'gift_issue':
+        return Icons.redeem_outlined;
+      case 'rehearsal_admin':
+        return Icons.event_note_outlined;
       case 'interview':
         return Icons.mic_outlined;
       case 'lunches':
@@ -665,6 +676,12 @@ class _RoleCard extends StatelessWidget {
         return AppLocalizations.of(context)!.staffRoleSubtitleHostess;
       case 'parking':
         return AppLocalizations.of(context)!.staffRoleSubtitleParking;
+      case 'extra_zone':
+        return AppLocalizations.of(context)!.staffRoleSubtitleExtraZone;
+      case 'gift_issue':
+        return AppLocalizations.of(context)!.staffRoleSubtitleGiftIssue;
+      case 'rehearsal_admin':
+        return AppLocalizations.of(context)!.staffRoleSubtitleRehearsalAdmin;
       case 'interview':
         return AppLocalizations.of(context)!.staffRoleSubtitleInterview;
       case 'lunches':

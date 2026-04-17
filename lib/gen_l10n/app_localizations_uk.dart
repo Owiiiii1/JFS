@@ -701,6 +701,32 @@ class AppLocalizationsUk extends AppLocalizations {
   String get chatReplyPreviewPhoto => 'Фото';
 
   @override
+  String get chatEdit => 'Змінити';
+
+  @override
+  String get chatDelete => 'Видалити';
+
+  @override
+  String get chatDeleteTitle => 'Видалити повідомлення?';
+
+  @override
+  String get chatDeleteMessageConfirm => 'Цю дію неможливо скасувати.';
+
+  @override
+  String get chatDeleteFailed =>
+      'Не вдалося видалити повідомлення. Спробуйте ще раз.';
+
+  @override
+  String get chatEditFailed =>
+      'Не вдалося змінити повідомлення. Спробуйте ще раз.';
+
+  @override
+  String get chatEditingLabel => 'Редагування повідомлення';
+
+  @override
+  String get chatCancelEdit => 'Скасувати редагування';
+
+  @override
   String eventSettingsChatMoreParticipants(int count) {
     return '+$count';
   }
@@ -898,6 +924,28 @@ class AppLocalizationsUk extends AppLocalizations {
   String get ticketsBuySubtitle => 'Доступні VIP і стандартні місця';
 
   @override
+  String get extraTicketButton => 'ЕКСТРА КВИТОК';
+
+  @override
+  String get extraTicketSelectEventFirst => 'Спочатку оберіть івент.';
+
+  @override
+  String get extraTicketNoActiveHeadline => 'НЕМАЄ АКТИВНИХ ЕКСТРА КВИТКІВ';
+
+  @override
+  String get extraTicketBuyCta => 'КУПИТИ';
+
+  @override
+  String get extraTicketAccessOpen => 'ДОСТУП ДО ЕКСТРА ЗОНИ ВІДКРИТО';
+
+  @override
+  String get extraTicketCheckoutInBrowser => 'Завершіть оплату у браузері.';
+
+  @override
+  String get extraTicketCheckoutError =>
+      'Не вдалося запустити оплату екстра квитка. Спробуйте ще раз.';
+
+  @override
   String get ticketsNoEvents => 'Поки немає заходів із квитками';
 
   @override
@@ -1091,12 +1139,19 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffParkingButton => 'ПАРКУВАННЯ';
 
   @override
+  String get staffExtraZoneButton => 'ЕКСТРА ЗОНА';
+
+  @override
   String get staffTapToScanModelLanyard =>
       'НАТИСНІТЬ, ЩОБ СКАНУВАТИ БЕЙДЖ МОДЕЛІ';
 
   @override
   String get staffTapToScanParkingQr =>
       'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ПАРКУВАННЯ';
+
+  @override
+  String get staffTapToScanExtraZoneQr =>
+      'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ЕКСТРА ЗОНИ';
 
   @override
   String get staffCurrentTask => 'Поточне завдання';
@@ -1153,6 +1208,45 @@ class AppLocalizationsUk extends AppLocalizations {
       'Для цієї події немає призначених дітей.';
 
   @override
+  String get staffRehearsalAdminSlotsTitle => 'Слоти репетицій';
+
+  @override
+  String get staffRehearsalAdminSelectSlot => 'Оберіть слот репетиції';
+
+  @override
+  String get staffRehearsalAdminBookedChildrenTitle => 'Записані діти';
+
+  @override
+  String get staffRehearsalAdminNoSlots =>
+      'Для цієї події ще не створено слотів репетицій.';
+
+  @override
+  String get staffRehearsalAdminNoChildrenForSlot =>
+      'На цей слот поки ніхто не записаний.';
+
+  @override
+  String get staffGiftControlButton => 'КОНТРОЛЬ';
+
+  @override
+  String get staffGiftControlTitle => 'Контроль видачі подарунків';
+
+  @override
+  String get staffGiftControlSelectStage => 'Оберіть етап звіту';
+
+  @override
+  String get staffGiftControlFilterAll => 'Усі';
+
+  @override
+  String get staffGiftControlFilterPassed => 'Пройдено';
+
+  @override
+  String get staffGiftControlFilterNotPassed => 'Не пройдено';
+
+  @override
+  String get staffGiftControlNoChildren =>
+      'Немає дітей за вибраними фільтрами.';
+
+  @override
   String get staffTableProfile => 'ПРОФІЛЬ';
 
   @override
@@ -1199,6 +1293,13 @@ class AppLocalizationsUk extends AppLocalizations {
       'Екран ролі суперадміна буде додано пізніше.';
 
   @override
+  String get staffRoleRehearsalAdminTitle => 'Роль: адмін репетицій';
+
+  @override
+  String get staffRoleRehearsalAdminPlaceholder =>
+      'Екран ролі адміна репетицій буде додано пізніше.';
+
+  @override
   String get staffNavHome => 'Головна';
 
   @override
@@ -1223,6 +1324,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffScanHeaderParking => 'Скан паркування';
 
   @override
+  String get staffScanHeaderExtraZone => 'Вхід до екстра зони';
+
+  @override
   String get staffScanHeaderInfo => 'Скан для інформації';
 
   @override
@@ -1231,6 +1335,9 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get staffScanHintParking =>
       'Скануйте QR паркування, щоб показати дані талона';
+
+  @override
+  String get staffScanHintExtraZone => 'Скануйте QR екстра квитка для входу';
 
   @override
   String get staffScanHintInfo =>
@@ -1247,6 +1354,23 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffParkingTicketTitle => 'Паркувальний талон';
+
+  @override
+  String get staffExtraZonePassTitle => 'Перепустка до екстра зони';
+
+  @override
+  String get staffExtraZoneScanResultTitle => 'Результат сканування';
+
+  @override
+  String get staffExtraZoneResultNotFound => 'КОД ВІДСУТНІЙ У БАЗІ';
+
+  @override
+  String get staffExtraZoneResultAccessGranted =>
+      'КОД ПРИЙНЯТО, ПРОХІД ДОЗВОЛЕНО';
+
+  @override
+  String get staffExtraZoneResultAccessClosed =>
+      'КОД ПРИЙНЯТО, АЛЕ ДОСТУП ЗАКРИТО';
 
   @override
   String get staffParkingFieldEvent => 'Подія';
@@ -1317,6 +1441,15 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleParking => 'Паркування та доступ';
+
+  @override
+  String get staffRoleSubtitleExtraZone => 'Доступ до екстра зони';
+
+  @override
+  String get staffRoleSubtitleRehearsalAdmin => 'Керування репетиціями';
+
+  @override
+  String get staffRoleSubtitleGiftIssue => 'Контроль видачі подарунків';
 
   @override
   String get staffRoleSubtitleInterview => 'Потік інтерв\'ю';

@@ -12,6 +12,7 @@ import 'login_page.dart';
 import 'about_page.dart';
 import 'client_event_checkin_page.dart';
 import 'client_event_description_page.dart';
+import 'client_event_parking_flow.dart';
 import 'client_event_progress_tab.dart';
 import 'contact_manager_page.dart';
 import 'client_event_settings_page.dart';
@@ -325,6 +326,51 @@ class _ClientHomePageState extends State<ClientHomePage>
         ),
       ),
     );
+  }
+
+  Future<void> _openParkingFlowFromAssignment(
+    ActiveAssignment assignment,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final eventId = assignment.event.id;
+    if (eventId <= 0) return;
+    try {
+      final payload = await widget.auth.getEventParkingTickets(eventId);
+      if (!mounted) return;
+
+      final page = payload.hasActiveTickets
+          ? ClientParkingActiveScreen(
+              eventName: assignment.event.name,
+              accountName: (widget.user['name'] as String? ?? '').trim(),
+              l10n: l10n,
+              auth: widget.auth,
+              eventId: eventId,
+              canBuy: payload.canBuy,
+              vipMode: payload.vipMode,
+              entryMapUrl: payload.entryMapUrl,
+              entryAppleMapUrl: payload.entryAppleMapUrl,
+              tickets: payload.tickets,
+            )
+          : ClientParkingInactiveScreen(
+              l10n: l10n,
+              eventName: assignment.event.name,
+              accountName: (widget.user['name'] as String? ?? '').trim(),
+              auth: widget.auth,
+              eventId: eventId,
+              canBuy: payload.canBuy,
+              vipMode: payload.vipMode,
+            );
+
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute<void>(builder: (_) => page));
+      _refreshDashboardSilently();
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.parkingCheckoutError)));
+    }
   }
 
   Future<void> _signOut() async {
@@ -750,66 +796,11 @@ class _ClientHomePageState extends State<ClientHomePage>
   // ---------------------------------------------------------------------------
 
   Widget _buildEventsContent() {
-    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: double.infinity,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(999),
-                gradient: const LinearGradient(
-                  colors: [_kGold, _kGoldLight, _kGoldDark],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFFBBF24).withValues(alpha: 0.22),
-                    blurRadius: 14,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Material(
-                type: MaterialType.transparency,
-                child: InkWell(
-                  onTap: () {
-                    showMyTicketsSheet(
-                      context,
-                      auth: widget.auth,
-                      canPurchaseTickets: _canPurchaseTickets,
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(999),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 18,
-                      horizontal: 12,
-                    ),
-                    child: Center(
-                      child: Text(
-                        l10n.myTicketsButton,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.8,
-                          color: Color(0xFF1A1408),
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 28),
           _buildCurrentParticipationForEventsTab(),
           const SizedBox(height: 36),
           _buildNextShowsSection(),
@@ -981,26 +972,28 @@ class _ClientHomePageState extends State<ClientHomePage>
   Widget _buildCurrentParticipation() {
     final selectedChild = _selectedDashboardChild;
     final Widget content;
+    final Widget? quickActions;
     if (_loading) {
       content = _buildLoadingCard();
+      quickActions = null;
     } else if (_error != null) {
       content = _buildErrorCard();
+      quickActions = null;
     } else if (selectedChild?.activeAssignment != null) {
       content = _buildEventCard(selectedChild!);
+      quickActions = _buildEventActionsCard(selectedChild);
     } else {
       content = _buildBecomeModelButton();
+      quickActions = null;
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle(AppLocalizations.of(context)!.currentParticipation),
-        if ((_dashboard?.children.length ?? 0) > 1) ...[
-          const SizedBox(height: 10),
-          _buildDashboardChildSwitcher(),
-        ],
         const SizedBox(height: 12),
         content,
+        if (quickActions != null) ...[const SizedBox(height: 12), quickActions],
       ],
     );
   }
@@ -1023,49 +1016,165 @@ class _ClientHomePageState extends State<ClientHomePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionTitle(AppLocalizations.of(context)!.currentParticipation),
-        if ((_dashboard?.children.length ?? 0) > 1) ...[
-          const SizedBox(height: 10),
-          _buildDashboardChildSwitcher(),
-        ],
         const SizedBox(height: 12),
         content,
       ],
     );
   }
 
-  Widget _buildDashboardChildSwitcher() {
-    final children = _dashboard?.children ?? const <ChildWithAssignment>[];
-    final selectedId = _selectedDashboardChild?.id;
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+  Widget _buildEventActionsCard(ChildWithAssignment child) {
+    final l10n = AppLocalizations.of(context)!;
+    final assignment = child.activeAssignment;
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white10),
+        color: _kCardBg,
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
       child: Row(
-        children: children.map((child) {
-          final isSelected = child.id == selectedId;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: Text(
-                child.firstName,
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () {
+                showMyTicketsSheet(
+                  context,
+                  auth: widget.auth,
+                  canPurchaseTickets: _canPurchaseTickets,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _kGold,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                l10n.myTicketsButton,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  letterSpacing: 1.4,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
-              selected: isSelected,
-              onSelected: (_) {
-                setState(() => _selectedDashboardChildId = child.id);
-              },
-              backgroundColor: Colors.white.withOpacity(0.04),
-              selectedColor: _kGold.withOpacity(0.2),
-              side: BorderSide(
-                color: isSelected ? _kGold.withOpacity(0.6) : Colors.white24,
-              ),
-              labelStyle: TextStyle(
-                color: isSelected ? _kGoldLight : Colors.white70,
-                fontWeight: FontWeight.w600,
-              ),
-              visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
             ),
-          );
-        }).toList(),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: OutlinedButton(
+              onPressed: assignment == null
+                  ? null
+                  : () => _openParkingFlowFromAssignment(assignment),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: const BorderSide(color: _kGold),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                l10n.eventSettingsParkingTitle,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  letterSpacing: 1.4,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<ChildWithAssignment> _childrenForActiveCardDropdown() {
+    final all = _dashboard?.children ?? const <ChildWithAssignment>[];
+    final withAssignments = all
+        .where((c) => c.activeAssignment != null)
+        .toList();
+    return withAssignments.isNotEmpty ? withAssignments : all;
+  }
+
+  Widget _buildInlineChildDropdown({
+    required ChildWithAssignment selectedChild,
+    required TextStyle textStyle,
+    Color? iconColor,
+    Color? borderColor,
+    Color? backgroundColor,
+  }) {
+    final options = _childrenForActiveCardDropdown();
+    if (options.length <= 1) {
+      return SizedBox(
+        width: double.infinity,
+        child: Text(
+          selectedChild.firstName,
+          style: textStyle,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          softWrap: true,
+        ),
+      );
+    }
+
+    final selectedId = options.any((c) => c.id == selectedChild.id)
+        ? selectedChild.id
+        : options.first.id;
+
+    return SizedBox(
+      width: double.infinity,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        decoration: BoxDecoration(
+          color: backgroundColor ?? Colors.white.withOpacity(0.22),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: borderColor ?? Colors.white24),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: SizedBox(
+            height: 34,
+            child: DropdownButton<int>(
+              value: selectedId,
+              isDense: true,
+              isExpanded: true,
+              menuMaxHeight: 220,
+              borderRadius: BorderRadius.circular(12),
+              dropdownColor: const Color(0xFF1A1A1A),
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+                color: iconColor ?? _kGold,
+                size: 18,
+              ),
+              style: textStyle,
+              items: options
+                  .map(
+                    (child) => DropdownMenuItem<int>(
+                      value: child.id,
+                      child: Text(
+                        child.firstName,
+                        style: const TextStyle(color: Colors.white),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                if (value == null) return;
+                setState(() => _selectedDashboardChildId = value);
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -1125,6 +1234,11 @@ class _ClientHomePageState extends State<ClientHomePage>
 
     final l10nCard = AppLocalizations.of(context)!;
     final nextStageText = _nextPreparatoryHint(a, l10nCard);
+    final dateText = a.event.startsAt != null
+        ? (a.event.endsAt != null && a.event.endsAt != a.event.startsAt
+              ? '${_formatEventDate(a.event.startsAt!)} – ${_formatEventDate(a.event.endsAt!)}'
+              : _formatEventDate(a.event.startsAt!))
+        : '';
 
     return Container(
       decoration: BoxDecoration(
@@ -1147,39 +1261,21 @@ class _ClientHomePageState extends State<ClientHomePage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title row
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      a.event.name,
-                      style: const TextStyle(
-                        fontFamily: _kFontFamilyLuxenta,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      maxLines: 4,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: true,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      AppLocalizations.of(context)!.model(child.firstName),
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: _kGold,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: true,
-                    ),
-                  ],
+                child: Text(
+                  a.event.name,
+                  style: const TextStyle(
+                    fontFamily: _kFontFamilyLuxenta,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                 ),
               ),
               const SizedBox(width: 12),
@@ -1204,6 +1300,32 @@ class _ClientHomePageState extends State<ClientHomePage>
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          if (dateText.isNotEmpty) ...[
+            Text(
+              dateText,
+              style: const TextStyle(
+                fontSize: 13,
+                color: _kGold,
+                fontWeight: FontWeight.w700,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
+            ),
+            const SizedBox(height: 8),
+          ],
+          _buildInlineChildDropdown(
+            selectedChild: child,
+            textStyle: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF1A1408),
+            ),
+            iconColor: const Color(0xFF1A1408),
+            borderColor: _kGold.withOpacity(0.25),
+            backgroundColor: _kGold.withOpacity(0.32),
           ),
 
           const SizedBox(height: 22),
@@ -1490,20 +1612,32 @@ class _ClientHomePageState extends State<ClientHomePage>
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
                         ),
+                        const SizedBox(height: 8),
                         if (dateText.isNotEmpty) ...[
-                          const SizedBox(height: 4),
                           Text(
                             dateText,
                             style: const TextStyle(
                               fontSize: 13,
                               color: _kGold,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w700,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             softWrap: true,
                           ),
+                          const SizedBox(height: 8),
                         ],
+                        _buildInlineChildDropdown(
+                          selectedChild: child,
+                          textStyle: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF1A1408),
+                            fontWeight: FontWeight.w500,
+                          ),
+                          iconColor: const Color(0xFF1A1408),
+                          borderColor: _kGold.withOpacity(0.65),
+                          backgroundColor: _kGold.withOpacity(0.32),
+                        ),
                       ],
                     ),
                   ),
@@ -1587,77 +1721,6 @@ class _ClientHomePageState extends State<ClientHomePage>
                       ),
                     ];
                   }(),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => _openProgressPage(child),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              l10n.viewProgress,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                letterSpacing: 1.5,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_forward_ios, size: 14),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () => _openEventSettingsPage(child),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        side: const BorderSide(color: _kGold),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              l10n.eventSettings,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                letterSpacing: 1.5,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.settings_outlined, size: 18),
-                        ],
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),

@@ -282,7 +282,7 @@ class AuthService {
 
   /// POST /api/scan/stage/complete — закрытие этапа по QR с контекстом сотрудника.
   Future<ScanStageResult> submitStageScan({
-    required String badgeCode,
+    required String scanCode,
     required int eventId,
     required int stageId,
     required String stageType,
@@ -298,7 +298,7 @@ class AuthService {
       final request = http.MultipartRequest('POST', uri);
       request.headers['Accept'] = 'application/json';
       request.headers['Authorization'] = 'Bearer $token';
-      request.fields['badge_code'] = badgeCode;
+      request.fields['scan_code'] = scanCode;
       request.fields['event_id'] = eventId.toString();
       request.fields['stage_id'] = stageId.toString();
       request.fields['stage_type'] = stageType;
@@ -317,7 +317,7 @@ class AuthService {
           'Authorization': 'Bearer $token',
         },
         body: jsonEncode({
-          'badge_code': badgeCode,
+          'scan_code': scanCode,
           'event_id': eventId,
           'stage_id': stageId,
           'stage_type': stageType,
@@ -364,6 +364,64 @@ class AuthService {
     }
     final json = jsonDecode(res.body) as Map<String, dynamic>;
     return SupervisorChildrenResponse.fromJson(json);
+  }
+
+  /// GET /api/app/worker/rehearsal-admin/roster?event_id=&slot_id=
+  Future<RehearsalAdminRosterResponse> getWorkerRehearsalAdminRoster(
+    int eventId, {
+    int? slotId,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final query = <String, String>{'event_id': eventId.toString()};
+    if (slotId != null && slotId > 0) query['slot_id'] = slotId.toString();
+    final uri = Uri.parse(
+      '$baseUrl/api/app/worker/rehearsal-admin/roster',
+    ).replace(queryParameters: query);
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load rehearsal roster (${res.statusCode})',
+      );
+    }
+    final json = jsonDecode(res.body) as Map<String, dynamic>;
+    return RehearsalAdminRosterResponse.fromJson(json);
+  }
+
+  /// GET /api/app/worker/gift-control-report?event_id=&stage_id=&status_filter=
+  Future<GiftControlReportResponse> getWorkerGiftControlReport(
+    int eventId, {
+    int? stageId,
+    int? staffRoleId,
+    String statusFilter = 'all',
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final query = <String, String>{'event_id': eventId.toString()};
+    if (stageId != null && stageId > 0) query['stage_id'] = stageId.toString();
+    if (staffRoleId != null && staffRoleId > 0) {
+      query['staff_role_id'] = staffRoleId.toString();
+    }
+    if (statusFilter.isNotEmpty) query['status_filter'] = statusFilter;
+    final uri = Uri.parse(
+      '$baseUrl/api/app/worker/gift-control-report',
+    ).replace(queryParameters: query);
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load gift control report (${res.statusCode})',
+      );
+    }
+    final json = jsonDecode(res.body) as Map<String, dynamic>;
+    return GiftControlReportResponse.fromJson(json);
   }
 
   /// POST /api/app/worker/scan-info-lookup — полная карточка по QR для любого worker (без ивента в приложении).
@@ -419,6 +477,32 @@ class AuthService {
     throw Exception(
       _tryMessage(res.body) ??
           (map['message'] as String? ?? 'Could not resolve parking QR code'),
+    );
+  }
+
+  /// POST /api/app/worker/extra-ticket-scan-lookup — данные extra ticket по QR.
+  Future<ExtraTicketScanLookupResult> extraTicketScanLookup({
+    required String code,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final uri = Uri.parse('$baseUrl/api/app/worker/extra-ticket-scan-lookup');
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'code': code}),
+    );
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode == 200 || res.statusCode == 422) {
+      return ExtraTicketScanLookupResult.fromJson(map);
+    }
+    throw Exception(
+      _tryMessage(res.body) ??
+          (map['message'] as String? ?? 'Could not resolve extra ticket QR code'),
     );
   }
 
@@ -853,6 +937,72 @@ class AuthService {
     return ParkingCheckoutResult(purchased: false, checkoutUrl: url);
   }
 
+  /// GET /api/app/client/events/{event}/extra-tickets
+  Future<ExtraTicketsPayload> getEventExtraTickets(int eventId) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/extra-tickets',
+    );
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode == 403) {
+      throw Exception(_tryMessage(res.body) ?? 'Forbidden');
+    }
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load extra tickets (${res.statusCode})',
+      );
+    }
+
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return ExtraTicketsPayload.fromJson(map);
+  }
+
+  /// POST /api/app/client/events/{event}/extra-checkout
+  Future<ExtraCheckoutResult> createExtraCheckoutSession({
+    required int eventId,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/extra-checkout',
+    );
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(<String, dynamic>{}),
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ?? 'Failed to start checkout (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final purchased = map['purchased'] == true;
+    if (purchased) {
+      return const ExtraCheckoutResult(purchased: true, checkoutUrl: null);
+    }
+    final url = map['checkout_url'] as String?;
+    if (url == null || url.isEmpty) {
+      throw Exception('No checkout URL in response');
+    }
+    return ExtraCheckoutResult(purchased: false, checkoutUrl: url);
+  }
+
   /// [contentLocale] — локаль UI приложения; влияет на язык названий/описаний этапов (Accept-Language).
   /// Если null, используется системная локаль устройства.
   Future<ClientDashboard> getClientDashboard({Locale? contentLocale}) async {
@@ -890,7 +1040,9 @@ class AuthService {
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
     }
-    var uri = Uri.parse('$baseUrl/api/app/client/events/$eventId/rehearsal-slots');
+    var uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/rehearsal-slots',
+    );
     if (assignmentId != null && assignmentId > 0) {
       uri = uri.replace(
         queryParameters: {
@@ -1143,6 +1295,79 @@ class AuthService {
       throw Exception('Invalid chat response');
     }
     return ClientChatMessage.fromJson(msg);
+  }
+
+  /// PATCH /api/app/client/chat-rooms/{room}/messages/{message}
+  Future<ClientChatMessage> editChatRoomMessage(
+    int roomId,
+    int messageId, {
+    required String body,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final normalizedBody = body.trim();
+    if (normalizedBody.isEmpty) {
+      throw Exception('Validation failed');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/chat-rooms/$roomId/messages/$messageId',
+    );
+    final res = await http.patch(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'body': normalizedBody}),
+    );
+    if (res.statusCode == 422) {
+      throw Exception(_tryMessage(res.body) ?? 'Validation failed');
+    }
+    if (res.statusCode == 403) {
+      throw Exception(_tryMessage(res.body) ?? 'Forbidden');
+    }
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to edit chat message (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final msg = map['message'];
+    if (msg is! Map<String, dynamic>) {
+      throw Exception('Invalid chat response');
+    }
+    return ClientChatMessage.fromJson(msg);
+  }
+
+  /// DELETE /api/app/client/chat-rooms/{room}/messages/{message}
+  Future<void> deleteChatRoomMessage(int roomId, int messageId) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/chat-rooms/$roomId/messages/$messageId',
+    );
+    final res = await http.delete(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (res.statusCode == 403) {
+      throw Exception(_tryMessage(res.body) ?? 'Forbidden');
+    }
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to delete chat message (${res.statusCode})',
+      );
+    }
   }
 
   /// POST /api/app/client/assignments/{id}/rehearsal-booking
@@ -1850,7 +2075,7 @@ class StaffRole {
   /// Соответствует `is_active` роли в админке.
   final bool isActive;
 
-  /// Код из API (`home_screen_type`): scan, supervisor, hostess, parking, interview, lunches, superadmin.
+  /// Код из API (`home_screen_type`): scan, supervisor, hostess, parking, extra_zone, rehearsal_admin, gift_issue, interview, lunches, superadmin.
   /// Пусто — до обновления бэкенда; клиент может определить экран по legacy-токенам code/name.
   final String homeScreenType;
 
@@ -2482,6 +2707,75 @@ class ParkingTicketsPayload {
   }
 }
 
+class ExtraTicketInfo {
+  ExtraTicketInfo({
+    required this.id,
+    required this.label,
+    required this.qrData,
+    this.paidAt,
+  });
+
+  final int id;
+  final String label;
+  final String qrData;
+  final DateTime? paidAt;
+
+  factory ExtraTicketInfo.fromJson(Map<String, dynamic> json) {
+    return ExtraTicketInfo(
+      id: _jsonInt(json['id']),
+      label: (json['label'] as String? ?? '').trim(),
+      qrData: (json['qr_data'] as String? ?? '').trim(),
+      paidAt: _jsonDateTimeNullable(json['paid_at']),
+    );
+  }
+}
+
+class ExtraCheckoutResult {
+  const ExtraCheckoutResult({
+    required this.purchased,
+    required this.checkoutUrl,
+  });
+
+  final bool purchased;
+  final String? checkoutUrl;
+}
+
+class ExtraTicketsPayload {
+  ExtraTicketsPayload({
+    required this.eventId,
+    required this.canBuy,
+    required this.freeMode,
+    required this.paymentRequired,
+    required this.tickets,
+  });
+
+  final int eventId;
+  final bool canBuy;
+  final bool freeMode;
+  final bool paymentRequired;
+  final List<ExtraTicketInfo> tickets;
+
+  bool get hasActiveTickets => tickets.isNotEmpty;
+
+  factory ExtraTicketsPayload.fromJson(Map<String, dynamic> json) {
+    final rawTickets = json['tickets'];
+    final tickets = rawTickets is List
+        ? rawTickets
+              .whereType<Map<String, dynamic>>()
+              .map(ExtraTicketInfo.fromJson)
+              .toList()
+        : const <ExtraTicketInfo>[];
+
+    return ExtraTicketsPayload(
+      eventId: _jsonInt(json['event_id']),
+      canBuy: json['can_buy'] == true,
+      freeMode: json['free_mode'] == true,
+      paymentRequired: json['payment_required'] == true,
+      tickets: tickets,
+    );
+  }
+}
+
 class ActiveAssignment {
   ActiveAssignment({
     required this.id,
@@ -3081,6 +3375,167 @@ class SupervisorChildrenResponse {
   }
 }
 
+class RehearsalAdminSlotItem {
+  RehearsalAdminSlotItem({
+    required this.id,
+    this.slotDate,
+    required this.slotTime,
+    required this.place,
+    required this.description,
+    required this.capacity,
+    required this.bookedCount,
+  });
+
+  final int id;
+  final DateTime? slotDate;
+  final String slotTime;
+  final String place;
+  final String description;
+  final int capacity;
+  final int bookedCount;
+
+  factory RehearsalAdminSlotItem.fromJson(Map<String, dynamic> json) {
+    return RehearsalAdminSlotItem(
+      id: _jsonInt(json['id']),
+      slotDate: _jsonDateTimeNullable(json['slot_date']),
+      slotTime: (json['slot_time'] as String? ?? '').toString(),
+      place: (json['place'] as String? ?? '').toString(),
+      description: (json['description'] as String? ?? '').toString(),
+      capacity: _jsonInt(json['capacity']),
+      bookedCount: _jsonInt(json['booked_count']),
+    );
+  }
+}
+
+class RehearsalAdminChildItem {
+  RehearsalAdminChildItem({
+    required this.assignmentId,
+    required this.childId,
+    required this.firstName,
+    this.photoUrl,
+    required this.checkedIn,
+  });
+
+  final int assignmentId;
+  final int childId;
+  final String firstName;
+  final String? photoUrl;
+  final bool checkedIn;
+
+  factory RehearsalAdminChildItem.fromJson(Map<String, dynamic> json) {
+    return RehearsalAdminChildItem(
+      assignmentId: _jsonInt(json['assignment_id']),
+      childId: _jsonInt(json['child_id']),
+      firstName: (json['first_name'] as String? ?? '').toString(),
+      photoUrl: json['photo_url'] as String?,
+      checkedIn: json['checked_in'] == true,
+    );
+  }
+}
+
+class RehearsalAdminRosterResponse {
+  RehearsalAdminRosterResponse({
+    required this.eventId,
+    required this.slots,
+    required this.children,
+    this.currentSlotId,
+  });
+
+  final int eventId;
+  final List<RehearsalAdminSlotItem> slots;
+  final List<RehearsalAdminChildItem> children;
+  final int? currentSlotId;
+
+  factory RehearsalAdminRosterResponse.fromJson(Map<String, dynamic> json) {
+    final slotList = json['slots'];
+    final childList = json['children'];
+    return RehearsalAdminRosterResponse(
+      eventId: _jsonInt(json['event_id']),
+      slots: slotList is List
+          ? slotList
+                .map(
+                  (e) =>
+                      RehearsalAdminSlotItem.fromJson(e as Map<String, dynamic>),
+                )
+                .toList()
+          : const [],
+      children: childList is List
+          ? childList
+                .map(
+                  (e) =>
+                      RehearsalAdminChildItem.fromJson(e as Map<String, dynamic>),
+                )
+                .toList()
+          : const [],
+      currentSlotId: _jsonIntNullable(json['current_slot_id']),
+    );
+  }
+}
+
+class GiftControlChildItem {
+  GiftControlChildItem({
+    required this.assignmentId,
+    required this.childId,
+    required this.firstName,
+    this.photoUrl,
+    required this.isPassed,
+  });
+
+  final int assignmentId;
+  final int childId;
+  final String firstName;
+  final String? photoUrl;
+  final bool isPassed;
+
+  factory GiftControlChildItem.fromJson(Map<String, dynamic> json) {
+    return GiftControlChildItem(
+      assignmentId: _jsonInt(json['assignment_id']),
+      childId: _jsonInt(json['child_id']),
+      firstName: (json['first_name'] as String? ?? '').toString(),
+      photoUrl: json['photo_url'] as String?,
+      isPassed: json['is_passed'] == true,
+    );
+  }
+}
+
+class GiftControlReportResponse {
+  GiftControlReportResponse({
+    required this.eventId,
+    required this.stages,
+    required this.children,
+    required this.statusFilter,
+    this.currentStageId,
+  });
+
+  final int eventId;
+  final List<WorkerEventStage> stages;
+  final List<GiftControlChildItem> children;
+  final String statusFilter;
+  final int? currentStageId;
+
+  factory GiftControlReportResponse.fromJson(Map<String, dynamic> json) {
+    final stageList = json['stages'];
+    final childList = json['children'];
+    return GiftControlReportResponse(
+      eventId: _jsonInt(json['event_id']),
+      stages: stageList is List
+          ? stageList
+                .map((e) => WorkerEventStage.fromJson(e as Map<String, dynamic>))
+                .toList()
+          : const [],
+      children: childList is List
+          ? childList
+                .map(
+                  (e) => GiftControlChildItem.fromJson(e as Map<String, dynamic>),
+                )
+                .toList()
+          : const [],
+      statusFilter: (json['status_filter'] as String? ?? 'all').toString(),
+      currentStageId: _jsonIntNullable(json['current_stage_id']),
+    );
+  }
+}
+
 /// Main-flow stage for Scan for Info / supervisor child detail (`status`: done | in_progress | pending).
 class StaffMainProgressStage {
   StaffMainProgressStage({
@@ -3405,6 +3860,41 @@ class ParkingScanLookupResult {
       carModel: (json['car_model'] as String? ?? '').trim(),
       plateNumber: (json['plate_number'] as String? ?? '').trim(),
       isVipClient: _jsonBool(json['is_vip_client'], false),
+    );
+  }
+}
+
+class ExtraTicketScanLookupResult {
+  ExtraTicketScanLookupResult({
+    required this.ok,
+    required this.resultCode,
+    required this.message,
+    required this.eventName,
+    required this.clientName,
+  });
+
+  final bool ok;
+  final String resultCode;
+  final String message;
+  final String eventName;
+  final String clientName;
+
+  bool get isNotFound => resultCode == 'not_found';
+  bool get isAccessGranted => resultCode == 'access_granted';
+  bool get isAccessClosed => resultCode == 'access_closed';
+
+  factory ExtraTicketScanLookupResult.fromJson(Map<String, dynamic> json) {
+    final ok = json['ok'] == true;
+    final code =
+        (json['result_code'] as String?)?.trim().toLowerCase() ??
+        (ok ? 'access_granted' : 'not_found');
+
+    return ExtraTicketScanLookupResult(
+      ok: ok,
+      resultCode: code,
+      message: (json['message'] as String? ?? '').trim(),
+      eventName: (json['event_name'] as String? ?? '').trim(),
+      clientName: (json['client_name'] as String? ?? '').trim(),
     );
   }
 }

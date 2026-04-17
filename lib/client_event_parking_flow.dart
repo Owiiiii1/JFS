@@ -128,12 +128,13 @@ class _ClientParkingInactiveScreenState
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Align(
-                    alignment: Alignment.centerRight,
+                    alignment: Alignment.centerLeft,
                     child: IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: Icon(
-                        Icons.close,
+                        Icons.arrow_back_ios_new,
                         color: _kTertiary.withValues(alpha: 0.9),
+                        size: 20,
                       ),
                     ),
                   ),
@@ -426,7 +427,14 @@ class _ClientParkingCreateTicketScreenState
             children: [
               Row(
                 children: [
-                  const SizedBox(width: 48, height: 48),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: _kOnSurface,
+                      size: 20,
+                    ),
+                  ),
                   Expanded(
                     child: Text(
                       l10n.parkingCreateTicketTitle,
@@ -439,10 +447,7 @@ class _ClientParkingCreateTicketScreenState
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: _kOnSurface),
-                  ),
+                  const SizedBox(width: 48, height: 48),
                 ],
               ),
               const SizedBox(height: 18),
@@ -792,7 +797,14 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: Row(
                     children: [
-                      const SizedBox(width: 48, height: 48),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new,
+                          color: _kOnSurface,
+                          size: 20,
+                        ),
+                      ),
                       Expanded(
                         child: Text(
                           widget.eventName.trim().isEmpty
@@ -810,10 +822,7 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
                           ),
                         ),
                       ),
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.close, color: _kOnSurface),
-                      ),
+                      const SizedBox(width: 48, height: 48),
                     ],
                   ),
                 ),

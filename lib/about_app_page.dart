@@ -48,7 +48,9 @@ class _AboutAppPageState extends State<AboutAppPage> {
     if (!await canLaunchUrl(_kOwlSolutionsUri)) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.aboutLinkCouldNotOpen)),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.aboutLinkCouldNotOpen),
+          ),
         );
       }
       return;
@@ -85,8 +87,14 @@ class _AboutAppPageState extends State<AboutAppPage> {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(Icons.close, color: _kGoldPrimary, size: 22),
-                    tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: _kGoldPrimary,
+                      size: 20,
+                    ),
+                    tooltip: MaterialLocalizations.of(
+                      context,
+                    ).closeButtonTooltip,
                   ),
                   Expanded(
                     child: Center(

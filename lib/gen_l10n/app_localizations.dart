@@ -1399,6 +1399,54 @@ abstract class AppLocalizations {
   /// **'Photo'**
   String get chatReplyPreviewPhoto;
 
+  /// No description provided for @chatEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get chatEdit;
+
+  /// No description provided for @chatDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get chatDelete;
+
+  /// No description provided for @chatDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete message?'**
+  String get chatDeleteTitle;
+
+  /// No description provided for @chatDeleteMessageConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone.'**
+  String get chatDeleteMessageConfirm;
+
+  /// No description provided for @chatDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete message. Try again.'**
+  String get chatDeleteFailed;
+
+  /// No description provided for @chatEditFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not edit message. Try again.'**
+  String get chatEditFailed;
+
+  /// No description provided for @chatEditingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing message'**
+  String get chatEditingLabel;
+
+  /// No description provided for @chatCancelEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel edit'**
+  String get chatCancelEdit;
+
   /// No description provided for @eventSettingsChatMoreParticipants.
   ///
   /// In en, this message translates to:
@@ -1765,6 +1813,48 @@ abstract class AppLocalizations {
   /// **'VIP and standard seats available'**
   String get ticketsBuySubtitle;
 
+  /// No description provided for @extraTicketButton.
+  ///
+  /// In en, this message translates to:
+  /// **'EXTRA TICKET'**
+  String get extraTicketButton;
+
+  /// No description provided for @extraTicketSelectEventFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an event first.'**
+  String get extraTicketSelectEventFirst;
+
+  /// No description provided for @extraTicketNoActiveHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'NO ACTIVE EXTRA TICKETS'**
+  String get extraTicketNoActiveHeadline;
+
+  /// No description provided for @extraTicketBuyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'BUY'**
+  String get extraTicketBuyCta;
+
+  /// No description provided for @extraTicketAccessOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCESS TO EXTRA ZONE IS OPEN'**
+  String get extraTicketAccessOpen;
+
+  /// No description provided for @extraTicketCheckoutInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete payment in your browser.'**
+  String get extraTicketCheckoutInBrowser;
+
+  /// No description provided for @extraTicketCheckoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start extra ticket payment. Try again.'**
+  String get extraTicketCheckoutError;
+
   /// No description provided for @ticketsNoEvents.
   ///
   /// In en, this message translates to:
@@ -1870,7 +1960,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffNoneSelected.
   ///
   /// In en, this message translates to:
-  /// **'вЂ” None вЂ”'**
+  /// **'-- None --'**
   String get staffNoneSelected;
 
   /// No description provided for @staffRoleInactive.
@@ -2107,6 +2197,12 @@ abstract class AppLocalizations {
   /// **'PARKING'**
   String get staffParkingButton;
 
+  /// No description provided for @staffExtraZoneButton.
+  ///
+  /// In en, this message translates to:
+  /// **'EXTRA ZONE'**
+  String get staffExtraZoneButton;
+
   /// No description provided for @staffTapToScanModelLanyard.
   ///
   /// In en, this message translates to:
@@ -2118,6 +2214,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TAP TO SCAN PARKING QR'**
   String get staffTapToScanParkingQr;
+
+  /// No description provided for @staffTapToScanExtraZoneQr.
+  ///
+  /// In en, this message translates to:
+  /// **'TAP TO SCAN EXTRA ZONE QR'**
+  String get staffTapToScanExtraZoneQr;
 
   /// No description provided for @staffCurrentTask.
   ///
@@ -2215,6 +2317,78 @@ abstract class AppLocalizations {
   /// **'No children assigned for this event.'**
   String get staffNoChildrenAssigned;
 
+  /// No description provided for @staffRehearsalAdminSlotsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rehearsal Slots'**
+  String get staffRehearsalAdminSlotsTitle;
+
+  /// No description provided for @staffRehearsalAdminSelectSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Select rehearsal slot'**
+  String get staffRehearsalAdminSelectSlot;
+
+  /// No description provided for @staffRehearsalAdminBookedChildrenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked Children'**
+  String get staffRehearsalAdminBookedChildrenTitle;
+
+  /// No description provided for @staffRehearsalAdminNoSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'No rehearsal slots created for this event.'**
+  String get staffRehearsalAdminNoSlots;
+
+  /// No description provided for @staffRehearsalAdminNoChildrenForSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'No children booked for this slot.'**
+  String get staffRehearsalAdminNoChildrenForSlot;
+
+  /// No description provided for @staffGiftControlButton.
+  ///
+  /// In en, this message translates to:
+  /// **'CONTROL'**
+  String get staffGiftControlButton;
+
+  /// No description provided for @staffGiftControlTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift Issue Control'**
+  String get staffGiftControlTitle;
+
+  /// No description provided for @staffGiftControlSelectStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select report stage'**
+  String get staffGiftControlSelectStage;
+
+  /// No description provided for @staffGiftControlFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get staffGiftControlFilterAll;
+
+  /// No description provided for @staffGiftControlFilterPassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Passed'**
+  String get staffGiftControlFilterPassed;
+
+  /// No description provided for @staffGiftControlFilterNotPassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not passed'**
+  String get staffGiftControlFilterNotPassed;
+
+  /// No description provided for @staffGiftControlNoChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'No children for selected filters.'**
+  String get staffGiftControlNoChildren;
+
   /// No description provided for @staffTableProfile.
   ///
   /// In en, this message translates to:
@@ -2299,6 +2473,18 @@ abstract class AppLocalizations {
   /// **'The superadmin role screen will be added later.'**
   String get staffRoleSuperadminPlaceholder;
 
+  /// No description provided for @staffRoleRehearsalAdminTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Role: rehearsal admin'**
+  String get staffRoleRehearsalAdminTitle;
+
+  /// No description provided for @staffRoleRehearsalAdminPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'The rehearsal admin role screen will be added later.'**
+  String get staffRoleRehearsalAdminPlaceholder;
+
   /// No description provided for @staffNavHome.
   ///
   /// In en, this message translates to:
@@ -2347,6 +2533,12 @@ abstract class AppLocalizations {
   /// **'Parking Scan'**
   String get staffScanHeaderParking;
 
+  /// No description provided for @staffScanHeaderExtraZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra Zone Entry'**
+  String get staffScanHeaderExtraZone;
+
   /// No description provided for @staffScanHeaderInfo.
   ///
   /// In en, this message translates to:
@@ -2364,6 +2556,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan parking QR code to show ticket details'**
   String get staffScanHintParking;
+
+  /// No description provided for @staffScanHintExtraZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan extra ticket QR code to allow entry'**
+  String get staffScanHintExtraZone;
 
   /// No description provided for @staffScanHintInfo.
   ///
@@ -2394,6 +2592,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Parking Ticket'**
   String get staffParkingTicketTitle;
+
+  /// No description provided for @staffExtraZonePassTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra Zone Pass'**
+  String get staffExtraZonePassTitle;
+
+  /// No description provided for @staffExtraZoneScanResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Result'**
+  String get staffExtraZoneScanResultTitle;
+
+  /// No description provided for @staffExtraZoneResultNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'CODE NOT FOUND IN DATABASE'**
+  String get staffExtraZoneResultNotFound;
+
+  /// No description provided for @staffExtraZoneResultAccessGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'CODE ACCEPTED, ACCESS GRANTED'**
+  String get staffExtraZoneResultAccessGranted;
+
+  /// No description provided for @staffExtraZoneResultAccessClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'CODE ACCEPTED, BUT ACCESS CLOSED'**
+  String get staffExtraZoneResultAccessClosed;
 
   /// No description provided for @staffParkingFieldEvent.
   ///
@@ -2526,6 +2754,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Parking flow & access'**
   String get staffRoleSubtitleParking;
+
+  /// No description provided for @staffRoleSubtitleExtraZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra zone access'**
+  String get staffRoleSubtitleExtraZone;
+
+  /// No description provided for @staffRoleSubtitleRehearsalAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Rehearsal administration'**
+  String get staffRoleSubtitleRehearsalAdmin;
+
+  /// No description provided for @staffRoleSubtitleGiftIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift issue control'**
+  String get staffRoleSubtitleGiftIssue;
 
   /// No description provided for @staffRoleSubtitleInterview.
   ///

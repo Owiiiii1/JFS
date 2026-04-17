@@ -70,7 +70,11 @@ class FaqArticleDetailPage extends StatelessWidget {
                       onTap: () => Navigator.of(context).pop(),
                       child: const Padding(
                         padding: EdgeInsets.all(12),
-                        child: Icon(Icons.close, color: Colors.white, size: 22),
+                        child: Icon(
+                          Icons.arrow_back_ios_new,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                     ),
                   ),

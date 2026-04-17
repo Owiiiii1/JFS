@@ -708,6 +708,32 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chatReplyPreviewPhoto => 'Foto';
 
   @override
+  String get chatEdit => 'Editar';
+
+  @override
+  String get chatDelete => 'Eliminar';
+
+  @override
+  String get chatDeleteTitle => '¿Eliminar mensaje?';
+
+  @override
+  String get chatDeleteMessageConfirm => 'Esta acción no se puede deshacer.';
+
+  @override
+  String get chatDeleteFailed =>
+      'No se pudo eliminar el mensaje. Inténtalo de nuevo.';
+
+  @override
+  String get chatEditFailed =>
+      'No se pudo editar el mensaje. Inténtalo de nuevo.';
+
+  @override
+  String get chatEditingLabel => 'Editando mensaje';
+
+  @override
+  String get chatCancelEdit => 'Cancelar edición';
+
+  @override
   String eventSettingsChatMoreParticipants(int count) {
     return '+$count';
   }
@@ -906,6 +932,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get ticketsBuySubtitle => 'Asientos VIP y estГЎndar disponibles';
 
   @override
+  String get extraTicketButton => 'TICKET EXTRA';
+
+  @override
+  String get extraTicketSelectEventFirst => 'Selecciona primero un evento.';
+
+  @override
+  String get extraTicketNoActiveHeadline => 'NO HAY TICKETS EXTRA ACTIVOS';
+
+  @override
+  String get extraTicketBuyCta => 'COMPRAR';
+
+  @override
+  String get extraTicketAccessOpen => 'ACCESO A LA ZONA EXTRA ABIERTO';
+
+  @override
+  String get extraTicketCheckoutInBrowser =>
+      'Completa el pago en tu navegador.';
+
+  @override
+  String get extraTicketCheckoutError =>
+      'No se pudo iniciar el pago del ticket extra. Intentalo de nuevo.';
+
+  @override
   String get ticketsNoEvents => 'AГєn no hay eventos con entradas';
 
   @override
@@ -962,7 +1011,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get showAll => 'Ver todo';
 
   @override
-  String get staffNoneSelected => 'вЂ” Ninguno вЂ”';
+  String get staffNoneSelected => '-- Ninguno --';
 
   @override
   String get staffRoleInactive => 'INACTIVA';
@@ -1101,11 +1150,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffParkingButton => 'PARKING';
 
   @override
+  String get staffExtraZoneButton => 'ZONA EXTRA';
+
+  @override
   String get staffTapToScanModelLanyard =>
       'TOCA PARA ESCANEAR EL GAFETE DE LA MODELO';
 
   @override
   String get staffTapToScanParkingQr => 'TOCA PARA ESCANEAR QR DE PARKING';
+
+  @override
+  String get staffTapToScanExtraZoneQr => 'TOCA PARA ESCANEAR QR DE ZONA EXTRA';
 
   @override
   String get staffCurrentTask => 'Tarea actual';
@@ -1162,6 +1217,45 @@ class AppLocalizationsEs extends AppLocalizations {
       'No hay niños asignados para este evento.';
 
   @override
+  String get staffRehearsalAdminSlotsTitle => 'Slots de ensayo';
+
+  @override
+  String get staffRehearsalAdminSelectSlot => 'Selecciona un slot de ensayo';
+
+  @override
+  String get staffRehearsalAdminBookedChildrenTitle => 'Niños inscritos';
+
+  @override
+  String get staffRehearsalAdminNoSlots =>
+      'No hay slots de ensayo creados para este evento.';
+
+  @override
+  String get staffRehearsalAdminNoChildrenForSlot =>
+      'No hay niños inscritos en este slot.';
+
+  @override
+  String get staffGiftControlButton => 'CONTROL';
+
+  @override
+  String get staffGiftControlTitle => 'Control de entrega de regalos';
+
+  @override
+  String get staffGiftControlSelectStage => 'Selecciona la etapa del reporte';
+
+  @override
+  String get staffGiftControlFilterAll => 'Todos';
+
+  @override
+  String get staffGiftControlFilterPassed => 'Completado';
+
+  @override
+  String get staffGiftControlFilterNotPassed => 'No completado';
+
+  @override
+  String get staffGiftControlNoChildren =>
+      'No hay niños para los filtros seleccionados.';
+
+  @override
   String get staffTableProfile => 'PERFIL';
 
   @override
@@ -1208,6 +1302,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'La pantalla del rol superadmin se añadirá más tarde.';
 
   @override
+  String get staffRoleRehearsalAdminTitle => 'Rol: admin de ensayos';
+
+  @override
+  String get staffRoleRehearsalAdminPlaceholder =>
+      'La pantalla del rol admin de ensayos se añadirá más tarde.';
+
+  @override
   String get staffNavHome => 'Inicio';
 
   @override
@@ -1232,6 +1333,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffScanHeaderParking => 'Escaneo de parking';
 
   @override
+  String get staffScanHeaderExtraZone => 'Entrada a zona extra';
+
+  @override
   String get staffScanHeaderInfo => 'Escanear para info';
 
   @override
@@ -1240,6 +1344,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get staffScanHintParking =>
       'Escanea QR de parking para mostrar datos del ticket';
+
+  @override
+  String get staffScanHintExtraZone =>
+      'Escanea QR de ticket extra para permitir entrada';
 
   @override
   String get staffScanHintInfo =>
@@ -1256,6 +1364,24 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get staffParkingTicketTitle => 'Ticket de parking';
+
+  @override
+  String get staffExtraZonePassTitle => 'Pase de zona extra';
+
+  @override
+  String get staffExtraZoneScanResultTitle => 'Resultado del escaneo';
+
+  @override
+  String get staffExtraZoneResultNotFound =>
+      'CODIGO NO ENCONTRADO EN LA BASE DE DATOS';
+
+  @override
+  String get staffExtraZoneResultAccessGranted =>
+      'CODIGO ACEPTADO, ACCESO PERMITIDO';
+
+  @override
+  String get staffExtraZoneResultAccessClosed =>
+      'CODIGO ACEPTADO, PERO ACCESO CERRADO';
 
   @override
   String get staffParkingFieldEvent => 'Evento';
@@ -1328,6 +1454,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleParking => 'Flujo y acceso de parking';
+
+  @override
+  String get staffRoleSubtitleExtraZone => 'Acceso a zona extra';
+
+  @override
+  String get staffRoleSubtitleRehearsalAdmin => 'Administración de ensayos';
+
+  @override
+  String get staffRoleSubtitleGiftIssue => 'Control de entrega de regalos';
 
   @override
   String get staffRoleSubtitleInterview => 'Flujo de entrevistas';
@@ -2049,6 +2184,32 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get chatReplyPreviewPhoto => 'Foto';
 
   @override
+  String get chatEdit => 'Editar';
+
+  @override
+  String get chatDelete => 'Eliminar';
+
+  @override
+  String get chatDeleteTitle => '¿Eliminar mensaje?';
+
+  @override
+  String get chatDeleteMessageConfirm => 'Esta acción no se puede deshacer.';
+
+  @override
+  String get chatDeleteFailed =>
+      'No se pudo eliminar el mensaje. Inténtalo de nuevo.';
+
+  @override
+  String get chatEditFailed =>
+      'No se pudo editar el mensaje. Inténtalo de nuevo.';
+
+  @override
+  String get chatEditingLabel => 'Editando mensaje';
+
+  @override
+  String get chatCancelEdit => 'Cancelar edición';
+
+  @override
   String eventSettingsChatMoreParticipants(int count) {
     return '+$count';
   }
@@ -2247,6 +2408,29 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get ticketsBuySubtitle => 'Asientos VIP y estГЎndar disponibles';
 
   @override
+  String get extraTicketButton => 'TICKET EXTRA';
+
+  @override
+  String get extraTicketSelectEventFirst => 'Selecciona primero un evento.';
+
+  @override
+  String get extraTicketNoActiveHeadline => 'NO HAY TICKETS EXTRA ACTIVOS';
+
+  @override
+  String get extraTicketBuyCta => 'COMPRAR';
+
+  @override
+  String get extraTicketAccessOpen => 'ACCESO A LA ZONA EXTRA ABIERTO';
+
+  @override
+  String get extraTicketCheckoutInBrowser =>
+      'Completa el pago en tu navegador.';
+
+  @override
+  String get extraTicketCheckoutError =>
+      'No se pudo iniciar el pago del ticket extra. Intentalo de nuevo.';
+
+  @override
   String get ticketsNoEvents => 'AГєn no hay eventos con entradas';
 
   @override
@@ -2303,7 +2487,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get showAll => 'Ver todo';
 
   @override
-  String get staffNoneSelected => 'вЂ” Ninguno вЂ”';
+  String get staffNoneSelected => '-- Ninguno --';
 
   @override
   String get staffRoleInactive => 'INACTIVA';
@@ -2442,11 +2626,17 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffParkingButton => 'PARKING';
 
   @override
+  String get staffExtraZoneButton => 'ZONA EXTRA';
+
+  @override
   String get staffTapToScanModelLanyard =>
       'TOCA PARA ESCANEAR EL GAFETE DE LA MODELO';
 
   @override
   String get staffTapToScanParkingQr => 'TOCA PARA ESCANEAR QR DE PARKING';
+
+  @override
+  String get staffTapToScanExtraZoneQr => 'TOCA PARA ESCANEAR QR DE ZONA EXTRA';
 
   @override
   String get staffCurrentTask => 'Tarea actual';
@@ -2503,6 +2693,45 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
       'No hay niños asignados para este evento.';
 
   @override
+  String get staffRehearsalAdminSlotsTitle => 'Slots de ensayo';
+
+  @override
+  String get staffRehearsalAdminSelectSlot => 'Selecciona un slot de ensayo';
+
+  @override
+  String get staffRehearsalAdminBookedChildrenTitle => 'Niños inscritos';
+
+  @override
+  String get staffRehearsalAdminNoSlots =>
+      'No hay slots de ensayo creados para este evento.';
+
+  @override
+  String get staffRehearsalAdminNoChildrenForSlot =>
+      'No hay niños inscritos en este slot.';
+
+  @override
+  String get staffGiftControlButton => 'CONTROL';
+
+  @override
+  String get staffGiftControlTitle => 'Control de entrega de regalos';
+
+  @override
+  String get staffGiftControlSelectStage => 'Selecciona la etapa del reporte';
+
+  @override
+  String get staffGiftControlFilterAll => 'Todos';
+
+  @override
+  String get staffGiftControlFilterPassed => 'Completado';
+
+  @override
+  String get staffGiftControlFilterNotPassed => 'No completado';
+
+  @override
+  String get staffGiftControlNoChildren =>
+      'No hay niños para los filtros seleccionados.';
+
+  @override
   String get staffTableProfile => 'PERFIL';
 
   @override
@@ -2549,6 +2778,13 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
       'La pantalla del rol superadmin se añadirá más tarde.';
 
   @override
+  String get staffRoleRehearsalAdminTitle => 'Rol: admin de ensayos';
+
+  @override
+  String get staffRoleRehearsalAdminPlaceholder =>
+      'La pantalla del rol admin de ensayos se añadirá más tarde.';
+
+  @override
   String get staffNavHome => 'Inicio';
 
   @override
@@ -2573,6 +2809,9 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffScanHeaderParking => 'Escaneo de parking';
 
   @override
+  String get staffScanHeaderExtraZone => 'Entrada a zona extra';
+
+  @override
   String get staffScanHeaderInfo => 'Escanear para info';
 
   @override
@@ -2581,6 +2820,10 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   @override
   String get staffScanHintParking =>
       'Escanea QR de parking para mostrar datos del ticket';
+
+  @override
+  String get staffScanHintExtraZone =>
+      'Escanea QR de ticket extra para permitir entrada';
 
   @override
   String get staffScanHintInfo =>
@@ -2597,6 +2840,24 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffParkingTicketTitle => 'Ticket de parking';
+
+  @override
+  String get staffExtraZonePassTitle => 'Pase de zona extra';
+
+  @override
+  String get staffExtraZoneScanResultTitle => 'Resultado del escaneo';
+
+  @override
+  String get staffExtraZoneResultNotFound =>
+      'CODIGO NO ENCONTRADO EN LA BASE DE DATOS';
+
+  @override
+  String get staffExtraZoneResultAccessGranted =>
+      'CODIGO ACEPTADO, ACCESO PERMITIDO';
+
+  @override
+  String get staffExtraZoneResultAccessClosed =>
+      'CODIGO ACEPTADO, PERO ACCESO CERRADO';
 
   @override
   String get staffParkingFieldEvent => 'Evento';
@@ -2669,6 +2930,15 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffRoleSubtitleParking => 'Flujo y acceso de parking';
+
+  @override
+  String get staffRoleSubtitleExtraZone => 'Acceso a zona extra';
+
+  @override
+  String get staffRoleSubtitleRehearsalAdmin => 'Administración de ensayos';
+
+  @override
+  String get staffRoleSubtitleGiftIssue => 'Control de entrega de regalos';
 
   @override
   String get staffRoleSubtitleInterview => 'Flujo de entrevistas';
