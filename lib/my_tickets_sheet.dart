@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'api/auth_service.dart';
+import 'client_ticket_service_ui.dart';
 import 'client_event_backstage_ticket_flow.dart';
 import 'client_event_extra_ticket_flow.dart';
 import 'client_ticket_pdf_page.dart';
@@ -88,6 +89,16 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
         final name = e.name.trim();
         return name.isEmpty ? null : name;
       }
+    }
+    return null;
+  }
+
+  ClientTicketEventRef? _selectedEventRef() {
+    final sel = _selectedEventId;
+    final evs = _events;
+    if (sel == null || evs == null) return null;
+    for (final e in evs) {
+      if (e.id == sel) return e;
     }
     return null;
   }
@@ -217,6 +228,15 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
     }
 
     final eventName = _selectedEventName ?? '—';
+    final evRef = _selectedEventRef();
+    if (evRef != null &&
+        shouldBlockClientTicketPrefetch(
+          serviceEnabled: evRef.clientExtraTicketsServiceEnabled,
+          userHasTicket: evRef.userHasExtraTicket,
+        )) {
+      await showClientTicketServiceUnavailableDialog(context, l10n);
+      return;
+    }
     try {
       final payload = await widget.auth.getEventExtraTickets(eventId);
       if (!mounted) return;
@@ -240,6 +260,9 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
       await Navigator.of(
         context,
       ).push(MaterialPageRoute<void>(builder: (_) => page));
+    } on ApiServiceDisabledException catch (e) {
+      if (!mounted) return;
+      await showClientTicketServiceUnavailableDialog(context, l10n, message: e.message);
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -260,6 +283,15 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
     }
 
     final eventName = _selectedEventName ?? '—';
+    final evRef = _selectedEventRef();
+    if (evRef != null &&
+        shouldBlockClientTicketPrefetch(
+          serviceEnabled: evRef.clientBackstageTicketsServiceEnabled,
+          userHasTicket: evRef.userHasBackstageTicket,
+        )) {
+      await showClientTicketServiceUnavailableDialog(context, l10n);
+      return;
+    }
     try {
       final payload = await widget.auth.getEventBackstageTickets(eventId);
       if (!mounted) return;
@@ -283,6 +315,9 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
       await Navigator.of(
         context,
       ).push(MaterialPageRoute<void>(builder: (_) => page));
+    } on ApiServiceDisabledException catch (e) {
+      if (!mounted) return;
+      await showClientTicketServiceUnavailableDialog(context, l10n, message: e.message);
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

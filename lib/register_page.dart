@@ -122,7 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: _nameController,
                     textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.name,
+                      labelText: AppLocalizations.of(context)!.registerNameLabel,
                       border: const OutlineInputBorder(),
                     ),
                     validator: (v) {

@@ -3,6 +3,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'api/auth_service.dart';
+import 'client_ticket_service_ui.dart';
 import 'gen_l10n/app_localizations.dart';
 
 const Color _kExtraSurfaceLowest = Color(0xFF0E0E0E);
@@ -124,6 +125,13 @@ class _ClientExtraTicketInactiveScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.extraTicketCheckoutInBrowser)),
+      );
+    } on ApiServiceDisabledException catch (e) {
+      if (!mounted) return;
+      await showClientTicketServiceUnavailableDialog(
+        context,
+        l10n,
+        message: e.message,
       );
     } catch (_) {
       if (!mounted) return;

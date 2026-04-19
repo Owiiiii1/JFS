@@ -15,6 +15,11 @@ const _kChatIncoming = Color(0xFF242424);
 const _kChatOutgoing = Color(0xFFF2CA50);
 const _kChatPrimary = Color(0xFFF2CA50);
 
+const int _kChatPollIntervalSeconds = 10;
+
+/// Every Nth poll does a full history fetch so edits/deletes sync (incremental only sees new ids).
+const int _kFullSyncEveryPolls = 6;
+
 class ClientEventChatRoomPage extends StatefulWidget {
   const ClientEventChatRoomPage({
     super.key,
@@ -33,7 +38,8 @@ class ClientEventChatRoomPage extends StatefulWidget {
   State<ClientEventChatRoomPage> createState() => _ClientEventChatRoomPageState();
 }
 
-class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
+class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage>
+    with WidgetsBindingObserver {
   static final RegExp _urlPattern = RegExp(
     r'((?:https?:\/\/|www\.)[^\s]+)',
     caseSensitive: false,
@@ -43,6 +49,8 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
   final _scrollController = ScrollController();
   final List<ClientChatMessage> _messages = [];
   Timer? _pollTimer;
+  int _pollTickCount = 0;
+  bool _pollInFlight = false;
   bool _loading = true;
   bool _sending = false;
   String? _pickedPhotoPath;
@@ -55,18 +63,78 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
   @override
   void initState() {
     super.initState();
-    _loadInitial();
-    _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      _pollNewMessages();
-    });
+    WidgetsBinding.instance.addObserver(this);
+    unawaited(_bootstrap());
   }
 
   @override
   void dispose() {
-    _pollTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    _stopPollTimer();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (!mounted || _loading || _error != null) {
+          return;
+        }
+        unawaited(_onAppResumed());
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        _stopPollTimer();
+        break;
+    }
+  }
+
+  Future<void> _bootstrap() async {
+    await _loadInitial();
+    if (!mounted) {
+      return;
+    }
+    if (_error == null) {
+      _startPollTimer();
+    }
+  }
+
+  void _startPollTimer() {
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(
+      const Duration(seconds: _kChatPollIntervalSeconds),
+      (_) => unawaited(_pollNewMessages()),
+    );
+  }
+
+  void _stopPollTimer() {
+    _pollTimer?.cancel();
+    _pollTimer = null;
+  }
+
+  Future<void> _onAppResumed() async {
+    await _fetchFullAndApplyIfChanged();
+    if (mounted && !_loading && _error == null) {
+      _startPollTimer();
+    }
+  }
+
+  int _maxLocalMessageId() {
+    if (_messages.isEmpty) {
+      return 0;
+    }
+    var maxId = 0;
+    for (final m in _messages) {
+      if (m.id > maxId) {
+        maxId = m.id;
+      }
+    }
+    return maxId;
   }
 
   void _clearReplyDraft() {
@@ -126,21 +194,68 @@ class _ClientEventChatRoomPageState extends State<ClientEventChatRoomPage> {
   }
 
   Future<void> _pollNewMessages() async {
-    if (!mounted) return;
+    if (!mounted || _loading || _error != null) {
+      return;
+    }
+    if (_pollInFlight) {
+      return;
+    }
+    _pollInFlight = true;
     try {
-      final payload = await widget.auth.getChatRoomMessages(widget.roomId);
-      if (!mounted) return;
-      final next = payload.messages;
-      if (!_areMessageListsEqual(_messages, next)) {
-        setState(() {
-          _messages
-            ..clear()
-            ..addAll(next);
-        });
+      _pollTickCount++;
+      final doFull =
+          _pollTickCount % _kFullSyncEveryPolls == 0 || _messages.isEmpty;
+      if (doFull) {
+        await _fetchFullAndApplyIfChanged();
+      } else {
+        await _fetchIncrementalAndMerge();
       }
     } catch (_) {
       // silent background poll errors
+    } finally {
+      _pollInFlight = false;
     }
+  }
+
+  Future<void> _fetchFullAndApplyIfChanged() async {
+    final payload = await widget.auth.getChatRoomMessages(widget.roomId);
+    if (!mounted) {
+      return;
+    }
+    final next = payload.messages;
+    if (!_areMessageListsEqual(_messages, next)) {
+      setState(() {
+        _messages
+          ..clear()
+          ..addAll(next);
+      });
+      _scrollToBottom();
+    }
+  }
+
+  Future<void> _fetchIncrementalAndMerge() async {
+    final afterId = _maxLocalMessageId();
+    final payload = await widget.auth.getChatRoomMessages(
+      widget.roomId,
+      afterId: afterId,
+    );
+    if (!mounted) {
+      return;
+    }
+    final incoming = payload.messages;
+    if (incoming.isEmpty) {
+      return;
+    }
+    final existingIds = _messages.map((m) => m.id).toSet();
+    final toAdd = incoming.where((m) => !existingIds.contains(m.id)).toList();
+    if (toAdd.isEmpty) {
+      return;
+    }
+    setState(() {
+      _messages.addAll(toAdd);
+      _messages.sort((a, b) => a.id.compareTo(b.id));
+    });
+    _scrollToBottom();
   }
 
   bool _areMessageListsEqual(

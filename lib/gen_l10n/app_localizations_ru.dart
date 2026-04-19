@@ -67,6 +67,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get name => 'Имя';
 
   @override
+  String get registerNameLabel => 'Введите имя и фамилию';
+
+  @override
   String get nameRequired => 'Введите имя';
 
   @override
@@ -604,6 +607,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get parkingInactiveVipBookCta => 'ЗАКАЗАТЬ ВАЛЕТ-ПАРКОВКУ';
 
   @override
+  String get parkingPayForParkingCta => 'ОПЛАТИТЬ ВАЛЕТ-ПАРКОВКУ';
+
+  @override
+  String get parkingVipQuotaNextPaymentBody =>
+      'БЕСПЛАТНЫЕ ВАЛЕТ-БИЛЕТЫ НА ЭТОТ ИВЕНТ ИСЧЕРПАНЫ. МОЖНО ОФОРМИТЬ ЕЩЁ МЕСТО ПО ОБЫЧНОЙ ЦЕНЕ.';
+
+  @override
+  String parkingFreeTicketsQuotaLine(int used, int quota, int remaining) {
+    return 'Бесплатный валет: использовано $used из $quota (осталось $remaining)';
+  }
+
+  @override
   String get parkingActiveTicketLabel => 'БИЛЕТ';
 
   @override
@@ -676,6 +691,13 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get parkingCheckoutError =>
       'Не удалось начать оплату валет-парковки. Попробуйте снова.';
+
+  @override
+  String get clientTicketServiceUnavailableTitle => 'Сервис недоступен';
+
+  @override
+  String get clientTicketServiceUnavailableBody =>
+      'Этот сервис билетов сейчас не активен.';
 
   @override
   String get parkingActivePassLabel => 'КОД ПРОПУСКА';
@@ -951,49 +973,48 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ticketsBuySubtitle => 'Доступны VIP и стандартные места';
 
   @override
-  String get extraTicketButton => 'ЭКСТРА БИЛЕТ';
+  String get extraTicketButton => 'BEVERAGE PACKAGE';
 
   @override
   String get extraTicketSelectEventFirst => 'Сначала выберите ивент.';
 
   @override
-  String get extraTicketNoActiveHeadline => 'НЕТ АКТИВНЫХ ЭКСТРА БИЛЕТОВ';
+  String get extraTicketNoActiveHeadline => 'НЕТ АКТИВНЫХ BEVERAGE PACKAGE';
 
   @override
   String get extraTicketBuyCta => 'КУПИТЬ';
 
   @override
-  String get extraTicketAccessOpen => 'ДОСТУП В ЭКСТРА ЗОНУ ОТКРЫТ';
+  String get extraTicketAccessOpen => 'ДОСТУП К BEVERAGE PACKAGE ОТКРЫТ';
 
   @override
   String get extraTicketCheckoutInBrowser => 'Завершите оплату в браузере.';
 
   @override
   String get extraTicketCheckoutError =>
-      'Не удалось запустить оплату экстра билета. Попробуйте снова.';
+      'Не удалось запустить оплату BEVERAGE PACKAGE. Попробуйте снова.';
 
   @override
-  String get backstageTicketButton => 'БЕКСТЕЙДЖ';
+  String get backstageTicketButton => 'BACKSTAGE PASS';
 
   @override
   String get backstageTicketSelectEventFirst => 'Сначала выберите ивент.';
 
   @override
-  String get backstageTicketNoActiveHeadline =>
-      'НЕТ АКТИВНЫХ БЕКСТЕЙДЖ БИЛЕТОВ';
+  String get backstageTicketNoActiveHeadline => 'НЕТ АКТИВНЫХ BACKSTAGE PASS';
 
   @override
   String get backstageTicketBuyCta => 'КУПИТЬ';
 
   @override
-  String get backstageTicketAccessOpen => 'ДОСТУП В БЕКСТЕЙДЖ ОТКРЫТ';
+  String get backstageTicketAccessOpen => 'ДОСТУП К BACKSTAGE PASS ОТКРЫТ';
 
   @override
   String get backstageTicketCheckoutInBrowser => 'Завершите оплату в браузере.';
 
   @override
   String get backstageTicketCheckoutError =>
-      'Не удалось запустить оплату бекстейдж билета. Попробуйте снова.';
+      'Не удалось запустить оплату BACKSTAGE PASS. Попробуйте снова.';
 
   @override
   String get ticketsNoEvents => 'Пока нет событий с билетами';
@@ -1190,10 +1211,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get staffParkingButton => 'ВАЛЕТ-ПАРКОВКА';
 
   @override
-  String get staffExtraZoneButton => 'ЭКСТРА ЗОНА';
+  String get staffExtraZoneButton => 'BEVERAGE PACKAGE';
 
   @override
-  String get staffBackstageButton => 'БЕКСТЕЙДЖ';
+  String get staffBackstageButton => 'BACKSTAGE PASS';
 
   @override
   String get staffRehearsalCheckinButton => 'ЧЕК-ИН РЕПЕТИЦИЙ';
@@ -1208,11 +1229,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get staffTapToScanExtraZoneQr =>
-      'НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR ЭКСТРА ЗОНЫ';
+      'НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR BEVERAGE PACKAGE';
 
   @override
   String get staffTapToScanBackstageQr =>
-      'НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR БЕКСТЕЙДЖА';
+      'НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR BACKSTAGE PASS';
 
   @override
   String get staffTapToScanRehearsalCheckinQr =>
@@ -1395,10 +1416,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get staffScanHeaderParking => 'Скан валет-парковки';
 
   @override
-  String get staffScanHeaderExtraZone => 'Вход в экстра зону';
+  String get staffScanHeaderExtraZone => 'Вход: BEVERAGE PACKAGE';
 
   @override
-  String get staffScanHeaderBackstage => 'Вход в бекстейдж';
+  String get staffScanHeaderBackstage => 'Вход: BACKSTAGE PASS';
 
   @override
   String get staffScanHeaderRehearsalCheckin => 'Чекин репетиций';
@@ -1414,11 +1435,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Сканируйте QR валет-парковки, чтобы показать данные талона';
 
   @override
-  String get staffScanHintExtraZone => 'Сканируйте QR экстра билета для входа';
+  String get staffScanHintExtraZone =>
+      'Сканируйте QR BEVERAGE PACKAGE для входа';
 
   @override
-  String get staffScanHintBackstage =>
-      'Сканируйте QR бекстейдж билета для входа';
+  String get staffScanHintBackstage => 'Сканируйте QR BACKSTAGE PASS для входа';
 
   @override
   String get staffScanHintRehearsalCheckin =>
@@ -1441,7 +1462,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get staffParkingTicketTitle => 'Талон валет-парковки';
 
   @override
-  String get staffExtraZonePassTitle => 'Пропуск в экстра зону';
+  String get staffExtraZonePassTitle => 'Пропуск BEVERAGE PACKAGE';
 
   @override
   String get staffExtraZoneScanResultTitle => 'Результат сканирования';
@@ -1561,10 +1582,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get staffRoleSubtitleParking => 'Валет-парковка и доступ';
 
   @override
-  String get staffRoleSubtitleExtraZone => 'Доступ в экстра зону';
+  String get staffRoleSubtitleExtraZone => 'Доступ к BEVERAGE PACKAGE';
 
   @override
-  String get staffRoleSubtitleBackstage => 'Доступ в бекстейдж';
+  String get staffRoleSubtitleBackstage => 'Доступ к BACKSTAGE PASS';
 
   @override
   String get staffRoleSubtitleRehearsalAdmin => 'Управление репетициями';

@@ -16,6 +16,7 @@ import 'client_event_parking_flow.dart';
 import 'client_event_progress_tab.dart';
 import 'contact_manager_page.dart';
 import 'client_event_settings_page.dart';
+import 'client_ticket_service_ui.dart';
 import 'faq_sections_page.dart';
 import 'news_detail_page.dart';
 import 'about_app_page.dart';
@@ -334,6 +335,14 @@ class _ClientHomePageState extends State<ClientHomePage>
     final l10n = AppLocalizations.of(context)!;
     final eventId = assignment.event.id;
     if (eventId <= 0) return;
+    final ev = assignment.event;
+    if (shouldBlockClientTicketPrefetch(
+      serviceEnabled: ev.clientParkingServiceEnabled,
+      userHasTicket: ev.userHasParkingTicket,
+    )) {
+      await showClientTicketServiceUnavailableDialog(context, l10n);
+      return;
+    }
     try {
       final payload = await widget.auth.getEventParkingTickets(eventId);
       if (!mounted) return;
@@ -347,6 +356,10 @@ class _ClientHomePageState extends State<ClientHomePage>
               eventId: eventId,
               canBuy: payload.canBuy,
               vipMode: payload.vipMode,
+              paymentRequired: payload.paymentRequired,
+              freeParkingQuota: payload.freeParkingQuota,
+              freeParkingUsed: payload.freeParkingUsed,
+              freeParkingRemaining: payload.freeParkingRemaining,
               entryMapUrl: payload.entryMapUrl,
               entryAppleMapUrl: payload.entryAppleMapUrl,
               tickets: payload.tickets,
@@ -359,12 +372,19 @@ class _ClientHomePageState extends State<ClientHomePage>
               eventId: eventId,
               canBuy: payload.canBuy,
               vipMode: payload.vipMode,
+              paymentRequired: payload.paymentRequired,
+              freeParkingQuota: payload.freeParkingQuota,
+              freeParkingUsed: payload.freeParkingUsed,
+              freeParkingRemaining: payload.freeParkingRemaining,
             );
 
       await Navigator.of(
         context,
       ).push(MaterialPageRoute<void>(builder: (_) => page));
       _refreshDashboardSilently();
+    } on ApiServiceDisabledException catch (e) {
+      if (!mounted) return;
+      await showClientTicketServiceUnavailableDialog(context, l10n, message: e.message);
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(

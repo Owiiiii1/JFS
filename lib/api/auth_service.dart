@@ -984,6 +984,12 @@ class AuthService {
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
     if (res.statusCode == 403) {
+      final code = _tryApiCode(res.body);
+      if (code == 'service_disabled') {
+        throw ApiServiceDisabledException(
+          _tryMessage(res.body) ?? 'Service unavailable',
+        );
+      }
       throw Exception(_tryMessage(res.body) ?? 'Forbidden');
     }
     if (res.statusCode != 200) {
@@ -1026,6 +1032,12 @@ class AuthService {
       }),
     );
     if (res.statusCode != 200) {
+      if (res.statusCode == 403 &&
+          _tryApiCode(res.body) == 'service_disabled') {
+        throw ApiServiceDisabledException(
+          _tryMessage(res.body) ?? 'Service unavailable',
+        );
+      }
       throw Exception(
         _tryMessage(res.body) ?? 'Failed to start checkout (${res.statusCode})',
       );
@@ -1057,6 +1069,12 @@ class AuthService {
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
     if (res.statusCode == 403) {
+      final code = _tryApiCode(res.body);
+      if (code == 'service_disabled') {
+        throw ApiServiceDisabledException(
+          _tryMessage(res.body) ?? 'Service unavailable',
+        );
+      }
       throw Exception(_tryMessage(res.body) ?? 'Forbidden');
     }
     if (res.statusCode != 200) {
@@ -1092,6 +1110,12 @@ class AuthService {
       body: jsonEncode(<String, dynamic>{}),
     );
     if (res.statusCode != 200) {
+      if (res.statusCode == 403 &&
+          _tryApiCode(res.body) == 'service_disabled') {
+        throw ApiServiceDisabledException(
+          _tryMessage(res.body) ?? 'Service unavailable',
+        );
+      }
       throw Exception(
         _tryMessage(res.body) ?? 'Failed to start checkout (${res.statusCode})',
       );
@@ -1123,6 +1147,12 @@ class AuthService {
       headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
     if (res.statusCode == 403) {
+      final code = _tryApiCode(res.body);
+      if (code == 'service_disabled') {
+        throw ApiServiceDisabledException(
+          _tryMessage(res.body) ?? 'Service unavailable',
+        );
+      }
       throw Exception(_tryMessage(res.body) ?? 'Forbidden');
     }
     if (res.statusCode != 200) {
@@ -1158,6 +1188,12 @@ class AuthService {
       body: jsonEncode(<String, dynamic>{}),
     );
     if (res.statusCode != 200) {
+      if (res.statusCode == 403 &&
+          _tryApiCode(res.body) == 'service_disabled') {
+        throw ApiServiceDisabledException(
+          _tryMessage(res.body) ?? 'Service unavailable',
+        );
+      }
       throw Exception(
         _tryMessage(res.body) ?? 'Failed to start checkout (${res.statusCode})',
       );
@@ -2021,6 +2057,26 @@ class AuthService {
     } catch (_) {}
     return null;
   }
+
+  /// JSON API `code` from error body (e.g. `service_disabled`).
+  String? _tryApiCode(String body) {
+    try {
+      final j = jsonDecode(body);
+      if (j is Map) {
+        final c = j['code'];
+        if (c is String && c.trim().isNotEmpty) {
+          return c.trim();
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+}
+
+/// 403 with `code: service_disabled` from ticket endpoints.
+class ApiServiceDisabledException implements Exception {
+  ApiServiceDisabledException(this.message);
+  final String message;
 }
 
 /// Публичные настройки раздела Info в приложении (фото, соцсети, сайт).
@@ -2845,9 +2901,13 @@ class ParkingTicketsPayload {
     required this.eventId,
     required this.capacity,
     required this.soldCount,
+    required this.serviceEnabled,
     required this.canBuy,
     required this.vipMode,
     required this.paymentRequired,
+    this.freeParkingQuota,
+    this.freeParkingUsed = 0,
+    this.freeParkingRemaining,
     required this.entryMapUrl,
     required this.entryAppleMapUrl,
     required this.tickets,
@@ -2856,9 +2916,15 @@ class ParkingTicketsPayload {
   final int eventId;
   final int capacity;
   final int soldCount;
+  final bool serviceEnabled;
   final bool canBuy;
   final bool vipMode;
   final bool paymentRequired;
+  /// Package complimentary parking cap for this user; null = unlimited.
+  final int? freeParkingQuota;
+  final int freeParkingUsed;
+  /// Remaining complimentary tickets; null when unlimited.
+  final int? freeParkingRemaining;
   final String? entryMapUrl;
   final String? entryAppleMapUrl;
   final List<ParkingTicketInfo> tickets;
@@ -2878,9 +2944,13 @@ class ParkingTicketsPayload {
       eventId: _jsonInt(json['event_id']),
       capacity: _jsonInt(json['capacity']),
       soldCount: _jsonInt(json['sold_count']),
+      serviceEnabled: json['service_enabled'] != false,
       canBuy: json['can_buy'] == true,
       vipMode: json['vip_mode'] == true,
       paymentRequired: json['payment_required'] == true,
+      freeParkingQuota: _jsonIntNullable(json['free_parking_quota']),
+      freeParkingUsed: _jsonInt(json['free_parking_used']),
+      freeParkingRemaining: _jsonIntNullable(json['free_parking_remaining']),
       entryMapUrl: (json['entry_map_url'] as String?)?.trim().isNotEmpty == true
           ? (json['entry_map_url'] as String).trim()
           : null,
@@ -2929,6 +2999,7 @@ class ExtraCheckoutResult {
 class ExtraTicketsPayload {
   ExtraTicketsPayload({
     required this.eventId,
+    required this.serviceEnabled,
     required this.canBuy,
     required this.freeMode,
     required this.paymentRequired,
@@ -2936,6 +3007,7 @@ class ExtraTicketsPayload {
   });
 
   final int eventId;
+  final bool serviceEnabled;
   final bool canBuy;
   final bool freeMode;
   final bool paymentRequired;
@@ -2954,6 +3026,7 @@ class ExtraTicketsPayload {
 
     return ExtraTicketsPayload(
       eventId: _jsonInt(json['event_id']),
+      serviceEnabled: json['service_enabled'] != false,
       canBuy: json['can_buy'] == true,
       freeMode: json['free_mode'] == true,
       paymentRequired: json['payment_required'] == true,
@@ -2998,6 +3071,7 @@ class BackstageCheckoutResult {
 class BackstageTicketsPayload {
   BackstageTicketsPayload({
     required this.eventId,
+    required this.serviceEnabled,
     required this.canBuy,
     required this.freeMode,
     required this.paymentRequired,
@@ -3005,6 +3079,7 @@ class BackstageTicketsPayload {
   });
 
   final int eventId;
+  final bool serviceEnabled;
   final bool canBuy;
   final bool freeMode;
   final bool paymentRequired;
@@ -3023,6 +3098,7 @@ class BackstageTicketsPayload {
 
     return BackstageTicketsPayload(
       eventId: _jsonInt(json['event_id']),
+      serviceEnabled: json['service_enabled'] != false,
       canBuy: json['can_buy'] == true,
       freeMode: json['free_mode'] == true,
       paymentRequired: json['payment_required'] == true,
@@ -3334,6 +3410,12 @@ class EventSummary {
     this.startsAt,
     this.endsAt,
     this.imageUrl,
+    this.clientParkingServiceEnabled = true,
+    this.clientExtraTicketsServiceEnabled = true,
+    this.clientBackstageTicketsServiceEnabled = true,
+    this.userHasParkingTicket,
+    this.userHasExtraTicket,
+    this.userHasBackstageTicket,
   });
   final int id;
   final String name;
@@ -3342,7 +3424,24 @@ class EventSummary {
   final DateTime? endsAt;
   final String? imageUrl;
 
+  /// When false, new valet parking purchases are blocked (server + UI).
+  final bool clientParkingServiceEnabled;
+
+  final bool clientExtraTicketsServiceEnabled;
+
+  final bool clientBackstageTicketsServiceEnabled;
+
+  /// From dashboard when known; null on older API clients.
+  final bool? userHasParkingTicket;
+  final bool? userHasExtraTicket;
+  final bool? userHasBackstageTicket;
+
   factory EventSummary.fromJson(Map<String, dynamic> json) {
+    bool? readBoolKey(String k) {
+      final v = json[k];
+      return v is bool ? v : null;
+    }
+
     return EventSummary(
       id: json['id'] as int? ?? 0,
       name: (json['name'] as String? ?? ''),
@@ -3354,6 +3453,14 @@ class EventSummary {
           ? DateTime.tryParse(json['ends_at'] as String)
           : null,
       imageUrl: json['image_url'] as String?,
+      clientParkingServiceEnabled: json['client_parking_service_enabled'] != false,
+      clientExtraTicketsServiceEnabled:
+          json['client_extra_tickets_service_enabled'] != false,
+      clientBackstageTicketsServiceEnabled:
+          json['client_backstage_tickets_service_enabled'] != false,
+      userHasParkingTicket: readBoolKey('user_has_parking_ticket'),
+      userHasExtraTicket: readBoolKey('user_has_extra_ticket'),
+      userHasBackstageTicket: readBoolKey('user_has_backstage_ticket'),
     );
   }
 }
@@ -3366,6 +3473,12 @@ class ClientTicketEventRef {
     required this.name,
     this.startsAt,
     this.ticketStoreUrl,
+    this.clientParkingServiceEnabled = true,
+    this.clientExtraTicketsServiceEnabled = true,
+    this.clientBackstageTicketsServiceEnabled = true,
+    this.userHasParkingTicket,
+    this.userHasExtraTicket,
+    this.userHasBackstageTicket,
   });
 
   final int id;
@@ -3375,8 +3488,20 @@ class ClientTicketEventRef {
   /// Ссылка на магазин билетов для этого ивента (из админки).
   final String? ticketStoreUrl;
 
+  final bool clientParkingServiceEnabled;
+  final bool clientExtraTicketsServiceEnabled;
+  final bool clientBackstageTicketsServiceEnabled;
+  final bool? userHasParkingTicket;
+  final bool? userHasExtraTicket;
+  final bool? userHasBackstageTicket;
+
   factory ClientTicketEventRef.fromJson(Map<String, dynamic> json) {
     final rawUrl = json['ticket_store_url'];
+    bool? readBoolKey(String k) {
+      final v = json[k];
+      return v is bool ? v : null;
+    }
+
     return ClientTicketEventRef(
       id: json['id'] as int? ?? 0,
       name: (json['name'] as String? ?? ''),
@@ -3386,6 +3511,15 @@ class ClientTicketEventRef {
       ticketStoreUrl: rawUrl is String && rawUrl.trim().isNotEmpty
           ? rawUrl.trim()
           : null,
+      clientParkingServiceEnabled:
+          json['client_parking_service_enabled'] != false,
+      clientExtraTicketsServiceEnabled:
+          json['client_extra_tickets_service_enabled'] != false,
+      clientBackstageTicketsServiceEnabled:
+          json['client_backstage_tickets_service_enabled'] != false,
+      userHasParkingTicket: readBoolKey('user_has_parking_ticket'),
+      userHasExtraTicket: readBoolKey('user_has_extra_ticket'),
+      userHasBackstageTicket: readBoolKey('user_has_backstage_ticket'),
     );
   }
 }

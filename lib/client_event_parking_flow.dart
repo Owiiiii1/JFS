@@ -4,6 +4,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'api/auth_service.dart';
+import 'client_ticket_service_ui.dart';
 import 'gen_l10n/app_localizations.dart';
 
 /// «Midnight Runway» — те же токены, что и на странице «Мой ивент».
@@ -17,6 +18,21 @@ const Color _kOutlineVariant = Color(0xFF4D4635);
 
 const String _kFont = 'HelveticaNeueCyr';
 
+String _parkingPurchaseCta(
+  AppLocalizations l10n, {
+  required bool vipMode,
+  required bool paymentRequired,
+  bool useCreateScreenBuyLabel = false,
+}) {
+  final regularBuy = useCreateScreenBuyLabel
+      ? l10n.parkingCreateBuyCta
+      : l10n.parkingInactiveBuyCta;
+  if (!paymentRequired) {
+    return vipMode ? l10n.parkingInactiveVipBookCta : regularBuy;
+  }
+  return vipMode ? l10n.parkingPayForParkingCta : regularBuy;
+}
+
 /// Неактивная парковка (референс 18, без верхней шапки и нижней навигации).
 class ClientParkingInactiveScreen extends StatefulWidget {
   const ClientParkingInactiveScreen({
@@ -28,6 +44,10 @@ class ClientParkingInactiveScreen extends StatefulWidget {
     required this.eventId,
     required this.canBuy,
     required this.vipMode,
+    required this.paymentRequired,
+    this.freeParkingQuota,
+    this.freeParkingUsed = 0,
+    this.freeParkingRemaining,
   });
 
   final AppLocalizations l10n;
@@ -37,6 +57,10 @@ class ClientParkingInactiveScreen extends StatefulWidget {
   final int eventId;
   final bool canBuy;
   final bool vipMode;
+  final bool paymentRequired;
+  final int? freeParkingQuota;
+  final int freeParkingUsed;
+  final int? freeParkingRemaining;
 
   @override
   State<ClientParkingInactiveScreen> createState() =>
@@ -47,6 +71,10 @@ class _ClientParkingInactiveScreenState
     extends State<ClientParkingInactiveScreen>
     with WidgetsBindingObserver {
   late bool _canBuy;
+  late bool _paymentRequired;
+  int? _freeParkingQuota;
+  late int _freeParkingUsed;
+  int? _freeParkingRemaining;
   bool _checking = false;
   bool _navigating = false;
 
@@ -54,6 +82,10 @@ class _ClientParkingInactiveScreenState
   void initState() {
     super.initState();
     _canBuy = widget.canBuy;
+    _paymentRequired = widget.paymentRequired;
+    _freeParkingQuota = widget.freeParkingQuota;
+    _freeParkingUsed = widget.freeParkingUsed;
+    _freeParkingRemaining = widget.freeParkingRemaining;
     WidgetsBinding.instance.addObserver(this);
     _refreshAndOpenActiveIfNeeded();
   }
@@ -79,9 +111,13 @@ class _ClientParkingInactiveScreenState
       final payload = await widget.auth.getEventParkingTickets(widget.eventId);
       if (!mounted) return;
 
-      if (_canBuy != payload.canBuy) {
-        setState(() => _canBuy = payload.canBuy);
-      }
+      setState(() {
+        _canBuy = payload.canBuy;
+        _paymentRequired = payload.paymentRequired;
+        _freeParkingQuota = payload.freeParkingQuota;
+        _freeParkingUsed = payload.freeParkingUsed;
+        _freeParkingRemaining = payload.freeParkingRemaining;
+      });
 
       if (payload.hasActiveTickets) {
         _navigating = true;
@@ -95,6 +131,10 @@ class _ClientParkingInactiveScreenState
               eventId: widget.eventId,
               canBuy: payload.canBuy,
               vipMode: payload.vipMode,
+              paymentRequired: payload.paymentRequired,
+              freeParkingQuota: payload.freeParkingQuota,
+              freeParkingUsed: payload.freeParkingUsed,
+              freeParkingRemaining: payload.freeParkingRemaining,
               entryMapUrl: payload.entryMapUrl,
               entryAppleMapUrl: payload.entryAppleMapUrl,
               tickets: payload.tickets,
@@ -238,7 +278,9 @@ class _ClientParkingInactiveScreenState
                                   const SizedBox(height: 14),
                                   Text(
                                     widget.vipMode
-                                        ? l10n.parkingInactiveVipBody
+                                        ? (_paymentRequired
+                                              ? l10n.parkingVipQuotaNextPaymentBody
+                                              : l10n.parkingInactiveVipBody)
                                         : l10n.parkingInactiveBody,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
@@ -246,9 +288,32 @@ class _ClientParkingInactiveScreenState
                                       fontSize: 12,
                                       height: 1.55,
                                       letterSpacing: 2.1,
-                                      color: _kTertiary.withValues(alpha: 0.35),
+                                      color: _kOnSurface.withValues(
+                                        alpha: 0.78,
+                                      ),
                                     ),
                                   ),
+                                  if (widget.vipMode &&
+                                      _freeParkingQuota != null) ...[
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      l10n.parkingFreeTicketsQuotaLine(
+                                        _freeParkingUsed,
+                                        _freeParkingQuota!,
+                                        _freeParkingRemaining ?? 0,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontFamily: _kFont,
+                                        fontSize: 11,
+                                        height: 1.45,
+                                        letterSpacing: 1.4,
+                                        color: _kOnSurface.withValues(
+                                          alpha: 0.82,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ],
@@ -270,6 +335,10 @@ class _ClientParkingInactiveScreenState
                                   auth: widget.auth,
                                   eventId: widget.eventId,
                                   vipMode: widget.vipMode,
+                                  paymentRequired: _paymentRequired,
+                                  freeParkingQuota: _freeParkingQuota,
+                                  freeParkingUsed: _freeParkingUsed,
+                                  freeParkingRemaining: _freeParkingRemaining,
                                 ),
                               ),
                             );
@@ -286,9 +355,11 @@ class _ClientParkingInactiveScreenState
                       ),
                     ),
                     child: Text(
-                      widget.vipMode
-                          ? l10n.parkingInactiveVipBookCta
-                          : l10n.parkingInactiveBuyCta,
+                      _parkingPurchaseCta(
+                        l10n,
+                        vipMode: widget.vipMode,
+                        paymentRequired: _paymentRequired,
+                      ),
                       style: const TextStyle(
                         fontFamily: _kFont,
                         fontSize: 15,
@@ -344,6 +415,10 @@ class ClientParkingCreateTicketScreen extends StatefulWidget {
     required this.auth,
     required this.eventId,
     required this.vipMode,
+    required this.paymentRequired,
+    this.freeParkingQuota,
+    this.freeParkingUsed = 0,
+    this.freeParkingRemaining,
   });
 
   final String eventName;
@@ -352,6 +427,10 @@ class ClientParkingCreateTicketScreen extends StatefulWidget {
   final AuthService auth;
   final int eventId;
   final bool vipMode;
+  final bool paymentRequired;
+  final int? freeParkingQuota;
+  final int freeParkingUsed;
+  final int? freeParkingRemaining;
 
   @override
   State<ClientParkingCreateTicketScreen> createState() =>
@@ -473,15 +552,34 @@ class _ClientParkingCreateTicketScreenState
               const SizedBox(height: 22),
               if (widget.vipMode) ...[
                 Text(
-                  l10n.parkingInactiveVipBody,
+                  widget.paymentRequired
+                      ? l10n.parkingVipQuotaNextPaymentBody
+                      : l10n.parkingInactiveVipBody,
                   style: TextStyle(
                     fontFamily: _kFont,
                     fontSize: 12,
                     height: 1.45,
                     letterSpacing: 1.6,
-                    color: _kTertiary.withValues(alpha: 0.6),
+                    color: _kOnSurface.withValues(alpha: 0.84),
                   ),
                 ),
+                if (widget.freeParkingQuota != null) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    l10n.parkingFreeTicketsQuotaLine(
+                      widget.freeParkingUsed,
+                      widget.freeParkingQuota!,
+                      widget.freeParkingRemaining ?? 0,
+                    ),
+                    style: TextStyle(
+                      fontFamily: _kFont,
+                      fontSize: 11,
+                      height: 1.45,
+                      letterSpacing: 1.4,
+                      color: _kOnSurface.withValues(alpha: 0.86),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 16),
               ],
               Text(
@@ -588,7 +686,7 @@ class _ClientParkingCreateTicketScreenState
                             messenger.showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  widget.vipMode
+                                  widget.vipMode && !widget.paymentRequired
                                       ? l10n.parkingVipBooked
                                       : l10n.parkingPurchasedWithoutPayment,
                                 ),
@@ -616,6 +714,13 @@ class _ClientParkingCreateTicketScreenState
                               content: Text(l10n.parkingCheckoutInBrowser),
                             ),
                           );
+                        } on ApiServiceDisabledException catch (e) {
+                          if (!context.mounted) return;
+                          await showClientTicketServiceUnavailableDialog(
+                            context,
+                            l10n,
+                            message: e.message,
+                          );
                         } catch (_) {
                           if (!context.mounted) return;
                           messenger.showSnackBar(
@@ -637,9 +742,12 @@ class _ClientParkingCreateTicketScreenState
                   ),
                 ),
                 child: Text(
-                  widget.vipMode
-                      ? l10n.parkingInactiveVipBookCta
-                      : l10n.parkingCreateBuyCta,
+                  _parkingPurchaseCta(
+                    l10n,
+                    vipMode: widget.vipMode,
+                    paymentRequired: widget.paymentRequired,
+                    useCreateScreenBuyLabel: true,
+                  ),
                   style: const TextStyle(
                     fontFamily: _kFont,
                     fontSize: 15,
@@ -667,6 +775,10 @@ class ClientParkingActiveScreen extends StatefulWidget {
     required this.eventId,
     required this.canBuy,
     required this.vipMode,
+    required this.paymentRequired,
+    this.freeParkingQuota,
+    this.freeParkingUsed = 0,
+    this.freeParkingRemaining,
     required this.entryMapUrl,
     required this.entryAppleMapUrl,
     required this.tickets,
@@ -679,6 +791,10 @@ class ClientParkingActiveScreen extends StatefulWidget {
   final int eventId;
   final bool canBuy;
   final bool vipMode;
+  final bool paymentRequired;
+  final int? freeParkingQuota;
+  final int freeParkingUsed;
+  final int? freeParkingRemaining;
   final String? entryMapUrl;
   final String? entryAppleMapUrl;
   final List<ParkingTicketInfo> tickets;
@@ -693,6 +809,10 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
   late List<ParkingTicketInfo> _tickets;
   late bool _canBuy;
   late bool _vipMode;
+  late bool _paymentRequired;
+  int? _freeParkingQuota;
+  late int _freeParkingUsed;
+  int? _freeParkingRemaining;
   late String? _entryMapUrl;
   late String? _entryAppleMapUrl;
 
@@ -715,6 +835,10 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
     _tickets = List<ParkingTicketInfo>.from(widget.tickets);
     _canBuy = widget.canBuy;
     _vipMode = widget.vipMode;
+    _paymentRequired = widget.paymentRequired;
+    _freeParkingQuota = widget.freeParkingQuota;
+    _freeParkingUsed = widget.freeParkingUsed;
+    _freeParkingRemaining = widget.freeParkingRemaining;
     _entryMapUrl = widget.entryMapUrl;
     _entryAppleMapUrl = widget.entryAppleMapUrl;
     _ticketId = _tickets.first.id;
@@ -731,6 +855,10 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
           auth: widget.auth,
           eventId: widget.eventId,
           vipMode: _vipMode,
+          paymentRequired: _paymentRequired,
+          freeParkingQuota: _freeParkingQuota,
+          freeParkingUsed: _freeParkingUsed,
+          freeParkingRemaining: _freeParkingRemaining,
         ),
       ),
     );
@@ -742,6 +870,10 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
         _tickets = payload.tickets;
         _canBuy = payload.canBuy;
         _vipMode = payload.vipMode;
+        _paymentRequired = payload.paymentRequired;
+        _freeParkingQuota = payload.freeParkingQuota;
+        _freeParkingUsed = payload.freeParkingUsed;
+        _freeParkingRemaining = payload.freeParkingRemaining;
         _entryMapUrl = payload.entryMapUrl;
         _entryAppleMapUrl = payload.entryAppleMapUrl;
         final selectedStillExists = _tickets.any((t) => t.id == _ticketId);
@@ -749,6 +881,13 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
           _ticketId = _tickets.first.id;
         }
       });
+    } on ApiServiceDisabledException catch (e) {
+      if (!mounted) return;
+      await showClientTicketServiceUnavailableDialog(
+        context,
+        widget.l10n,
+        message: e.message,
+      );
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -828,27 +967,52 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
-                  child: FilledButton(
-                    onPressed: _canBuy ? _openCreateTicket : null,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: _kPrimary,
-                      foregroundColor: const Color(0xFF3C2F00),
-                      minimumSize: const Size.fromHeight(52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(999),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      FilledButton(
+                        onPressed: _canBuy ? _openCreateTicket : null,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: _kPrimary,
+                          foregroundColor: const Color(0xFF3C2F00),
+                          minimumSize: const Size.fromHeight(52),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                        ),
+                        child: Text(
+                          _parkingPurchaseCta(
+                            l10n,
+                            vipMode: _vipMode,
+                            paymentRequired: _paymentRequired,
+                          ),
+                          style: const TextStyle(
+                            fontFamily: _kFont,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.4,
+                          ),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      _vipMode
-                          ? l10n.parkingInactiveVipBookCta
-                          : l10n.parkingInactiveBuyCta,
-                      style: const TextStyle(
-                        fontFamily: _kFont,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.4,
-                      ),
-                    ),
+                      if (_vipMode && _freeParkingQuota != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          l10n.parkingFreeTicketsQuotaLine(
+                            _freeParkingUsed,
+                            _freeParkingQuota!,
+                            _freeParkingRemaining ?? 0,
+                          ),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: _kFont,
+                            fontSize: 10,
+                            height: 1.4,
+                            letterSpacing: 1.2,
+                            color: _kOnSurface.withValues(alpha: 0.84),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
                 Expanded(

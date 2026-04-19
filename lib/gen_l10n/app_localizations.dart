@@ -211,6 +211,12 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get name;
 
+  /// No description provided for @registerNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter first and last name'**
+  String get registerNameLabel;
+
   /// No description provided for @nameRequired.
   ///
   /// In en, this message translates to:
@@ -1207,6 +1213,24 @@ abstract class AppLocalizations {
   /// **'BOOK VALET PARKING'**
   String get parkingInactiveVipBookCta;
 
+  /// No description provided for @parkingPayForParkingCta.
+  ///
+  /// In en, this message translates to:
+  /// **'PAY FOR VALET PARKING'**
+  String get parkingPayForParkingCta;
+
+  /// No description provided for @parkingVipQuotaNextPaymentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR COMPLIMENTARY VALET TICKETS FOR THIS EVENT ARE USED UP. YOU CAN STILL ADD A SPOT AT THE REGULAR PRICE.'**
+  String get parkingVipQuotaNextPaymentBody;
+
+  /// No description provided for @parkingFreeTicketsQuotaLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Complimentary valet: {used} of {quota} used ({remaining} left)'**
+  String parkingFreeTicketsQuotaLine(int used, int quota, int remaining);
+
   /// No description provided for @parkingActiveTicketLabel.
   ///
   /// In en, this message translates to:
@@ -1350,6 +1374,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not start valet parking payment. Try again.'**
   String get parkingCheckoutError;
+
+  /// No description provided for @clientTicketServiceUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Service unavailable'**
+  String get clientTicketServiceUnavailableTitle;
+
+  /// No description provided for @clientTicketServiceUnavailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket service is not active right now.'**
+  String get clientTicketServiceUnavailableBody;
 
   /// No description provided for @parkingActivePassLabel.
   ///
@@ -1852,7 +1888,7 @@ abstract class AppLocalizations {
   /// No description provided for @extraTicketButton.
   ///
   /// In en, this message translates to:
-  /// **'EXTRA TICKET'**
+  /// **'BEVERAGE PACKAGE'**
   String get extraTicketButton;
 
   /// No description provided for @extraTicketSelectEventFirst.
@@ -1864,7 +1900,7 @@ abstract class AppLocalizations {
   /// No description provided for @extraTicketNoActiveHeadline.
   ///
   /// In en, this message translates to:
-  /// **'NO ACTIVE EXTRA TICKETS'**
+  /// **'NO ACTIVE BEVERAGE PACKAGES'**
   String get extraTicketNoActiveHeadline;
 
   /// No description provided for @extraTicketBuyCta.
@@ -1876,7 +1912,7 @@ abstract class AppLocalizations {
   /// No description provided for @extraTicketAccessOpen.
   ///
   /// In en, this message translates to:
-  /// **'ACCESS TO EXTRA ZONE IS OPEN'**
+  /// **'ACCESS TO BEVERAGE PACKAGE IS OPEN'**
   String get extraTicketAccessOpen;
 
   /// No description provided for @extraTicketCheckoutInBrowser.
@@ -1888,13 +1924,13 @@ abstract class AppLocalizations {
   /// No description provided for @extraTicketCheckoutError.
   ///
   /// In en, this message translates to:
-  /// **'Could not start extra ticket payment. Try again.'**
+  /// **'Could not start beverage package payment. Try again.'**
   String get extraTicketCheckoutError;
 
   /// No description provided for @backstageTicketButton.
   ///
   /// In en, this message translates to:
-  /// **'BACKSTAGE'**
+  /// **'BACKSTAGE PASS'**
   String get backstageTicketButton;
 
   /// No description provided for @backstageTicketSelectEventFirst.
@@ -1906,7 +1942,7 @@ abstract class AppLocalizations {
   /// No description provided for @backstageTicketNoActiveHeadline.
   ///
   /// In en, this message translates to:
-  /// **'NO ACTIVE BACKSTAGE TICKETS'**
+  /// **'NO ACTIVE BACKSTAGE PASSES'**
   String get backstageTicketNoActiveHeadline;
 
   /// No description provided for @backstageTicketBuyCta.
@@ -1918,7 +1954,7 @@ abstract class AppLocalizations {
   /// No description provided for @backstageTicketAccessOpen.
   ///
   /// In en, this message translates to:
-  /// **'BACKSTAGE ACCESS IS OPEN'**
+  /// **'ACCESS TO BACKSTAGE PASS IS OPEN'**
   String get backstageTicketAccessOpen;
 
   /// No description provided for @backstageTicketCheckoutInBrowser.
@@ -1930,7 +1966,7 @@ abstract class AppLocalizations {
   /// No description provided for @backstageTicketCheckoutError.
   ///
   /// In en, this message translates to:
-  /// **'Could not start backstage ticket payment. Try again.'**
+  /// **'Could not start backstage pass payment. Try again.'**
   String get backstageTicketCheckoutError;
 
   /// No description provided for @ticketsNoEvents.
@@ -2278,13 +2314,13 @@ abstract class AppLocalizations {
   /// No description provided for @staffExtraZoneButton.
   ///
   /// In en, this message translates to:
-  /// **'EXTRA ZONE'**
+  /// **'BEVERAGE PACKAGE'**
   String get staffExtraZoneButton;
 
   /// No description provided for @staffBackstageButton.
   ///
   /// In en, this message translates to:
-  /// **'BACKSTAGE'**
+  /// **'BACKSTAGE PASS'**
   String get staffBackstageButton;
 
   /// No description provided for @staffRehearsalCheckinButton.
@@ -2308,13 +2344,13 @@ abstract class AppLocalizations {
   /// No description provided for @staffTapToScanExtraZoneQr.
   ///
   /// In en, this message translates to:
-  /// **'TAP TO SCAN EXTRA ZONE QR'**
+  /// **'TAP TO SCAN BEVERAGE PACKAGE QR'**
   String get staffTapToScanExtraZoneQr;
 
   /// No description provided for @staffTapToScanBackstageQr.
   ///
   /// In en, this message translates to:
-  /// **'TAP TO SCAN BACKSTAGE QR'**
+  /// **'TAP TO SCAN BACKSTAGE PASS QR'**
   String get staffTapToScanBackstageQr;
 
   /// No description provided for @staffTapToScanRehearsalCheckinQr.
@@ -2650,13 +2686,13 @@ abstract class AppLocalizations {
   /// No description provided for @staffScanHeaderExtraZone.
   ///
   /// In en, this message translates to:
-  /// **'Extra Zone Entry'**
+  /// **'Beverage package entry'**
   String get staffScanHeaderExtraZone;
 
   /// No description provided for @staffScanHeaderBackstage.
   ///
   /// In en, this message translates to:
-  /// **'Backstage Entry'**
+  /// **'Backstage pass entry'**
   String get staffScanHeaderBackstage;
 
   /// No description provided for @staffScanHeaderRehearsalCheckin.
@@ -2686,13 +2722,13 @@ abstract class AppLocalizations {
   /// No description provided for @staffScanHintExtraZone.
   ///
   /// In en, this message translates to:
-  /// **'Scan extra ticket QR code to allow entry'**
+  /// **'Scan beverage package QR code to allow entry'**
   String get staffScanHintExtraZone;
 
   /// No description provided for @staffScanHintBackstage.
   ///
   /// In en, this message translates to:
-  /// **'Scan backstage ticket QR code to allow entry'**
+  /// **'Scan backstage pass QR code to allow entry'**
   String get staffScanHintBackstage;
 
   /// No description provided for @staffScanHintRehearsalCheckin.
@@ -2734,7 +2770,7 @@ abstract class AppLocalizations {
   /// No description provided for @staffExtraZonePassTitle.
   ///
   /// In en, this message translates to:
-  /// **'Extra Zone Pass'**
+  /// **'Beverage package pass'**
   String get staffExtraZonePassTitle;
 
   /// No description provided for @staffExtraZoneScanResultTitle.
@@ -2962,13 +2998,13 @@ abstract class AppLocalizations {
   /// No description provided for @staffRoleSubtitleExtraZone.
   ///
   /// In en, this message translates to:
-  /// **'Extra zone access'**
+  /// **'Beverage package access'**
   String get staffRoleSubtitleExtraZone;
 
   /// No description provided for @staffRoleSubtitleBackstage.
   ///
   /// In en, this message translates to:
-  /// **'Backstage access'**
+  /// **'Backstage pass access'**
   String get staffRoleSubtitleBackstage;
 
   /// No description provided for @staffRoleSubtitleRehearsalAdmin.
