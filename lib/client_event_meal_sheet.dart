@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -53,12 +55,17 @@ class _ClientEventMealSheetBodyState extends State<_ClientEventMealSheetBody> {
   late int _childIndex;
   int? _mealId;
   bool _saving = false;
+  MealPaymentStatusPayload? _mealPayStatus;
+  bool _mealPayLoading = false;
 
   @override
   void initState() {
     super.initState();
     _childIndex = 0;
     _mealId = widget.children[0].activeAssignment?.selectedEventMealId;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_refreshMealPaymentFlags());
+    });
   }
 
   ChildWithAssignment get _current => widget.children[_childIndex];
@@ -70,7 +77,116 @@ class _ClientEventMealSheetBodyState extends State<_ClientEventMealSheetBody> {
     setState(() {
       _childIndex = index;
       _mealId = widget.children[index].activeAssignment?.selectedEventMealId;
+      _mealPayStatus = null;
     });
+    unawaited(_refreshMealPaymentFlags());
+  }
+
+  bool _assignmentLooksAwaitingPayment(ActiveAssignment a) {
+    final fs = a.mealFulfillmentStatus;
+    return fs == 'awaiting_payment' ||
+        (fs == null &&
+            a.selectedEventMealId != null &&
+            !a.mealPaid &&
+            a.isMealOrderLocked);
+  }
+
+  Future<void> _refreshMealPaymentFlags() async {
+    final a = _current.activeAssignment;
+    if (a == null || !_assignmentLooksAwaitingPayment(a)) {
+      if (mounted) {
+        setState(() {
+          _mealPayStatus = null;
+          _mealPayLoading = false;
+        });
+      }
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+    setState(() => _mealPayLoading = true);
+    try {
+      final s = await widget.auth.getClientAssignmentMealPaymentStatus(a.id);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _mealPayStatus = s;
+        _mealPayLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _mealPayStatus = null;
+        _mealPayLoading = false;
+      });
+    }
+  }
+
+  Future<void> _continueMealPayment() async {
+    final a = _current.activeAssignment;
+    if (a == null) {
+      return;
+    }
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _saving = true);
+    try {
+      final url = await widget.auth.resumeClientAssignmentMealPayment(a.id);
+      final uri = Uri.parse(url);
+      if (!await canLaunchUrl(uri)) {
+        throw Exception('Cannot open checkout');
+      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!mounted) {
+        return;
+      }
+      widget.onSaved();
+      Navigator.of(context).pop();
+      messenger.showSnackBar(SnackBar(content: Text(l10n.mealPayInBrowser)));
+    } catch (_) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.mealCheckoutError)),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _saving = false);
+      }
+    }
+  }
+
+  Future<void> _cancelMealPayment() async {
+    final a = _current.activeAssignment;
+    if (a == null) {
+      return;
+    }
+    final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _saving = true);
+    try {
+      await widget.auth.cancelClientAssignmentMealPayment(a.id);
+      if (!mounted) {
+        return;
+      }
+      widget.onSaved();
+      Navigator.of(context).pop();
+      messenger.showSnackBar(SnackBar(content: Text(l10n.mealPaymentCanceled)));
+    } catch (_) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.mealCheckoutError)),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _saving = false);
+      }
+    }
   }
 
   String? _formatMealPrice(double? value, Locale locale) {
@@ -485,9 +601,7 @@ class _ClientEventMealSheetBodyState extends State<_ClientEventMealSheetBody> {
     final mealPaid = a?.mealPaid ?? false;
     final mealLocked = a?.isMealOrderLocked ?? false;
     final selectedFromServer = a?.selectedEventMealId;
-    final mealAwaitingPayment =
-        a?.mealFulfillmentStatus == 'awaiting_payment' ||
-        (mealLocked && !mealPaid && selectedFromServer != null);
+    final mealAwaitingPayment = a != null && _assignmentLooksAwaitingPayment(a);
     final mealDone = a?.mealFulfillmentStatus == 'fulfilled' || mealPaid;
     final canSelectMeals = ordersOpen && !mealLocked;
     final canSubmitOrder =
@@ -629,10 +743,88 @@ class _ClientEventMealSheetBodyState extends State<_ClientEventMealSheetBody> {
                     style: const TextStyle(color: _kTertiary, fontSize: 14),
                   )
                 else if (mealAwaitingPayment)
-                  Text(
-                    l10n.mealAwaitingPaymentDetail,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: _kTertiary, fontSize: 14),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        l10n.mealAwaitingPaymentDetail,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: _kTertiary, fontSize: 14),
+                      ),
+                      if (_mealPayLoading) ...[
+                        const SizedBox(height: 16),
+                        const Center(
+                          child: SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: _kGold,
+                            ),
+                          ),
+                        ),
+                      ] else if (_mealPayStatus == null) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          l10n.mealPaymentStatusLoadError,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: _kTertiary,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                          child: TextButton(
+                            onPressed: _saving ? null : () => _refreshMealPaymentFlags(),
+                            child: Text(l10n.retry),
+                          ),
+                        ),
+                      ] else ...[
+                        const SizedBox(height: 16),
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            if (_mealPayStatus!.canContinuePayment)
+                              OutlinedButton(
+                                onPressed: _saving ? null : _continueMealPayment,
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: _kGold,
+                                  side: const BorderSide(color: _kGold),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                    vertical: 12,
+                                  ),
+                                ),
+                                child: Text(l10n.mealPaymentContinue),
+                              ),
+                            if (_mealPayStatus!.canCancelPayment)
+                              TextButton(
+                                onPressed: _saving ? null : _cancelMealPayment,
+                                style: TextButton.styleFrom(
+                                  foregroundColor: _kTertiary,
+                                ),
+                                child: Text(l10n.mealPaymentCancel),
+                              ),
+                            if (_mealPayStatus!.canStartNewCheckout)
+                              FilledButton(
+                                onPressed: _saving ? null : _submitOrder,
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: _kGold,
+                                  foregroundColor: Colors.black,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                    vertical: 12,
+                                  ),
+                                ),
+                                child: Text(l10n.mealPaymentStartAgain),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ],
                   )
                 else
                   SizedBox(

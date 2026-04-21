@@ -470,7 +470,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rehearsalSelectChild => 'Child';
 
   @override
-  String get rehearsalUpdateBooking => 'Update booking';
+  String get rehearsalUpdateBooking => 'Add and update booking';
 
   @override
   String get rehearsalCancelChange => 'Cancel';
@@ -815,6 +815,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mealAwaitingPaymentDetail =>
       'Your dish is saved. Finish payment in the browser; status will update after Stripe confirms it.';
+
+  @override
+  String get mealPaymentContinue => 'Continue payment';
+
+  @override
+  String get mealPaymentCancel => 'Cancel payment';
+
+  @override
+  String get mealPaymentStartAgain => 'Start payment again';
+
+  @override
+  String get mealPaymentCanceled =>
+      'Payment canceled. You can start again when ready.';
+
+  @override
+  String get mealPaymentStatusLoadError =>
+      'Could not load payment status. Try again.';
 
   @override
   String get noActiveEvents => 'No active events';

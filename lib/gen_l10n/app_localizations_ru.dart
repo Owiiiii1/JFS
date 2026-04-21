@@ -472,7 +472,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get rehearsalSelectChild => 'Ребёнок';
 
   @override
-  String get rehearsalUpdateBooking => 'Изменить запись';
+  String get rehearsalUpdateBooking => 'Добавить и обновить бронирование';
 
   @override
   String get rehearsalCancelChange => 'Отмена';
@@ -823,6 +823,22 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get mealAwaitingPaymentDetail =>
       'Блюдо сохранено. Завершите оплату в браузере; статус обновится после подтверждения Stripe.';
+
+  @override
+  String get mealPaymentContinue => 'Продолжить оплату';
+
+  @override
+  String get mealPaymentCancel => 'Отменить оплату';
+
+  @override
+  String get mealPaymentStartAgain => 'Начать оплату снова';
+
+  @override
+  String get mealPaymentCanceled => 'Оплата отменена. Можно начать заново.';
+
+  @override
+  String get mealPaymentStatusLoadError =>
+      'Не удалось загрузить статус оплаты. Попробуйте снова.';
 
   @override
   String get noActiveEvents => 'Нет активных событий';

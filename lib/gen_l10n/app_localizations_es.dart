@@ -475,7 +475,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get rehearsalSelectChild => 'NiГ±o/a';
 
   @override
-  String get rehearsalUpdateBooking => 'Actualizar reserva';
+  String get rehearsalUpdateBooking => 'Añadir y actualizar reserva';
 
   @override
   String get rehearsalCancelChange => 'Cancelar';
@@ -828,6 +828,23 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get mealAwaitingPaymentDetail =>
       'Tu plato está guardado. Termina el pago en el navegador; el estado se actualizará cuando Stripe lo confirme.';
+
+  @override
+  String get mealPaymentContinue => 'Continuar pago';
+
+  @override
+  String get mealPaymentCancel => 'Cancelar pago';
+
+  @override
+  String get mealPaymentStartAgain => 'Iniciar pago de nuevo';
+
+  @override
+  String get mealPaymentCanceled =>
+      'Pago cancelado. Puedes empezar de nuevo cuando quieras.';
+
+  @override
+  String get mealPaymentStatusLoadError =>
+      'No se pudo cargar el estado del pago. Inténtalo de nuevo.';
 
   @override
   String get noActiveEvents => 'No hay eventos activos';
@@ -2104,7 +2121,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get rehearsalSelectChild => 'NiГ±o/a';
 
   @override
-  String get rehearsalUpdateBooking => 'Actualizar reserva';
+  String get rehearsalUpdateBooking => 'Agregar y actualizar reserva';
 
   @override
   String get rehearsalCancelChange => 'Cancelar';
@@ -2457,6 +2474,23 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   @override
   String get mealAwaitingPaymentDetail =>
       'Tu plato está guardado. Termina el pago en el navegador; el estado se actualizará cuando Stripe lo confirme.';
+
+  @override
+  String get mealPaymentContinue => 'Continuar pago';
+
+  @override
+  String get mealPaymentCancel => 'Cancelar pago';
+
+  @override
+  String get mealPaymentStartAgain => 'Iniciar pago de nuevo';
+
+  @override
+  String get mealPaymentCanceled =>
+      'Pago cancelado. Puedes empezar de nuevo cuando quieras.';
+
+  @override
+  String get mealPaymentStatusLoadError =>
+      'No se pudo cargar el estado del pago. Inténtalo de nuevo.';
 
   @override
   String get noActiveEvents => 'No hay eventos activos';

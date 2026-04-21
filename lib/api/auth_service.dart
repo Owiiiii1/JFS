@@ -969,6 +969,192 @@ class AuthService {
     return url;
   }
 
+  /// GET …/meal-payment-status — синхронизация с Stripe, флаги для UI.
+  Future<MealPaymentStatusPayload> getClientAssignmentMealPaymentStatus(
+    int assignmentId,
+  ) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/assignments/$assignmentId/meal-payment-status',
+    );
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load meal payment status (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return MealPaymentStatusPayload.fromJson(map);
+  }
+
+  /// POST …/meal-payment-resume — URL открытой сессии или 422 (нужен новый checkout).
+  Future<String> resumeClientAssignmentMealPayment(int assignmentId) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/assignments/$assignmentId/meal-payment-resume',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to resume meal checkout (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final url = map['checkout_url'] as String?;
+    if (url == null || url.isEmpty) {
+      throw Exception('No checkout URL in response');
+    }
+    return url;
+  }
+
+  /// POST …/meal-payment-cancel — expire Checkout Session в Stripe (обед).
+  Future<void> cancelClientAssignmentMealPayment(int assignmentId) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/assignments/$assignmentId/meal-payment-cancel',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to cancel meal checkout (${res.statusCode})',
+      );
+    }
+  }
+
+  Future<MealPaymentStatusPayload> getEventParkingPaymentStatus(
+    int eventId,
+  ) =>
+      _getEventTicketStripePaymentStatus(eventId, 'parking-payment');
+
+  Future<String> resumeEventParkingPayment(int eventId) =>
+      _resumeEventTicketStripePayment(eventId, 'parking-payment');
+
+  Future<void> cancelEventParkingPayment(int eventId) =>
+      _cancelEventTicketStripePayment(eventId, 'parking-payment');
+
+  Future<MealPaymentStatusPayload> getEventExtraTicketPaymentStatus(
+    int eventId,
+  ) =>
+      _getEventTicketStripePaymentStatus(eventId, 'extra-ticket-payment');
+
+  Future<String> resumeEventExtraTicketPayment(int eventId) =>
+      _resumeEventTicketStripePayment(eventId, 'extra-ticket-payment');
+
+  Future<void> cancelEventExtraTicketPayment(int eventId) =>
+      _cancelEventTicketStripePayment(eventId, 'extra-ticket-payment');
+
+  Future<MealPaymentStatusPayload> getEventBackstageTicketPaymentStatus(
+    int eventId,
+  ) =>
+      _getEventTicketStripePaymentStatus(
+        eventId,
+        'backstage-ticket-payment',
+      );
+
+  Future<String> resumeEventBackstageTicketPayment(int eventId) =>
+      _resumeEventTicketStripePayment(eventId, 'backstage-ticket-payment');
+
+  Future<void> cancelEventBackstageTicketPayment(int eventId) =>
+      _cancelEventTicketStripePayment(eventId, 'backstage-ticket-payment');
+
+  Future<MealPaymentStatusPayload> _getEventTicketStripePaymentStatus(
+    int eventId,
+    String pathSegment,
+  ) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/$pathSegment-status',
+    );
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load payment status (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return MealPaymentStatusPayload.fromJson(map);
+  }
+
+  Future<String> _resumeEventTicketStripePayment(
+    int eventId,
+    String pathSegment,
+  ) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/$pathSegment-resume',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to resume checkout (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final url = map['checkout_url'] as String?;
+    if (url == null || url.isEmpty) {
+      throw Exception('No checkout URL in response');
+    }
+    return url;
+  }
+
+  Future<void> _cancelEventTicketStripePayment(
+    int eventId,
+    String pathSegment,
+  ) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/events/$eventId/$pathSegment-cancel',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to cancel checkout (${res.statusCode})',
+      );
+    }
+  }
+
   /// GET /api/app/client/events/{event}/parking-tickets
   Future<ParkingTicketsPayload> getEventParkingTickets(int eventId) async {
     final token = await getToken();
@@ -3204,6 +3390,7 @@ class ActiveAssignment {
       case 'none':
         return false;
       default:
+        // Старые клиенты без meal_fulfillment_status: прежняя эвристика.
         return _legacyMealOrderLocked;
     }
   }
@@ -3335,6 +3522,47 @@ class ParentTimelineInfo {
                 .map(MainStageInfo.fromJson)
                 .toList()
           : const [],
+    );
+  }
+}
+
+class MealPaymentStatusPayload {
+  MealPaymentStatusPayload({
+    required this.mealFulfillmentStatus,
+    this.pendingCheckout = false,
+    required this.canContinuePayment,
+    required this.canCancelPayment,
+    required this.canStartNewCheckout,
+    this.paymentCheckoutUrl,
+  });
+
+  /// Обед: `meal_fulfillment_status` с API. Билеты: обычно `none`, см. [pendingCheckout].
+  final String mealFulfillmentStatus;
+
+  /// Парковка / extra / backstage: `pending_checkout` с API.
+  final bool pendingCheckout;
+  final bool canContinuePayment;
+  final bool canCancelPayment;
+  final bool canStartNewCheckout;
+  final String? paymentCheckoutUrl;
+
+  factory MealPaymentStatusPayload.fromJson(Map<String, dynamic> json) {
+    final pay = json['payment'];
+    String? url;
+    if (pay is Map<String, dynamic>) {
+      final u = pay['checkout_url'];
+      if (u is String && u.trim().isNotEmpty) {
+        url = u.trim();
+      }
+    }
+    return MealPaymentStatusPayload(
+      mealFulfillmentStatus:
+          (json['meal_fulfillment_status'] as String?)?.trim() ?? 'none',
+      pendingCheckout: json['pending_checkout'] == true,
+      canContinuePayment: json['can_continue_payment'] == true,
+      canCancelPayment: json['can_cancel_payment'] == true,
+      canStartNewCheckout: json['can_start_new_checkout'] == true,
+      paymentCheckoutUrl: url,
     );
   }
 }

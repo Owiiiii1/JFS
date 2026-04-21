@@ -43,6 +43,16 @@ class _ClientExtraTicketInactiveScreenState
   bool _checking = false;
   bool _navigating = false;
   bool _submitting = false;
+  MealPaymentStatusPayload? _stripeCheckoutStatus;
+  bool _stripeCheckoutActionsBusy = false;
+
+  bool get _stripeCheckoutRecoveryVisible {
+    final s = _stripeCheckoutStatus;
+    return s != null &&
+        (s.canContinuePayment ||
+            s.canCancelPayment ||
+            s.canStartNewCheckout);
+  }
 
   @override
   void initState() {
@@ -71,9 +81,24 @@ class _ClientExtraTicketInactiveScreenState
     try {
       final payload = await widget.auth.getEventExtraTickets(widget.eventId);
       if (!mounted) return;
-      if (_canBuy != payload.canBuy) {
-        setState(() => _canBuy = payload.canBuy);
+
+      MealPaymentStatusPayload? stripeSt;
+      if (!payload.hasActiveTickets && payload.paymentRequired) {
+        try {
+          stripeSt = await widget.auth.getEventExtraTicketPaymentStatus(
+            widget.eventId,
+          );
+        } catch (_) {
+          stripeSt = null;
+        }
       }
+
+      setState(() {
+        _canBuy = payload.canBuy;
+        _stripeCheckoutStatus = stripeSt;
+      });
+
+      if (!mounted) return;
       if (payload.hasActiveTickets) {
         _navigating = true;
         await Navigator.of(context).pushReplacement(
@@ -95,6 +120,63 @@ class _ClientExtraTicketInactiveScreenState
       if (mounted) {
         setState(() => _checking = false);
       }
+    }
+  }
+
+  Future<void> _continuePendingStripeExtra() async {
+    if (_stripeCheckoutActionsBusy || _checking) return;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _stripeCheckoutActionsBusy = true);
+    try {
+      final url = await widget.auth.resumeEventExtraTicketPayment(
+        widget.eventId,
+      );
+      final uri = Uri.parse(url);
+      if (!await canLaunchUrl(uri)) {
+        throw Exception('Cannot open checkout');
+      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!mounted) return;
+      messenger?.showSnackBar(
+        SnackBar(content: Text(l10n.extraTicketCheckoutInBrowser)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      messenger?.showSnackBar(
+        SnackBar(content: Text(l10n.extraTicketCheckoutError)),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _stripeCheckoutActionsBusy = false);
+      }
+    }
+    if (mounted) {
+      await _refreshAndOpenActiveIfNeeded();
+    }
+  }
+
+  Future<void> _cancelPendingStripeExtra() async {
+    if (_stripeCheckoutActionsBusy || _checking) return;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _stripeCheckoutActionsBusy = true);
+    try {
+      await widget.auth.cancelEventExtraTicketPayment(widget.eventId);
+      if (!mounted) return;
+      messenger?.showSnackBar(SnackBar(content: Text(l10n.mealPaymentCanceled)));
+    } catch (_) {
+      if (!mounted) return;
+      messenger?.showSnackBar(
+        SnackBar(content: Text(l10n.extraTicketCheckoutError)),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _stripeCheckoutActionsBusy = false);
+      }
+    }
+    if (mounted) {
+      await _refreshAndOpenActiveIfNeeded();
     }
   }
 
@@ -208,6 +290,86 @@ class _ClientExtraTicketInactiveScreenState
                       ),
                     ),
                   ),
+                  if (_stripeCheckoutRecoveryVisible) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            l10n.extraTicketCheckoutInBrowser,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: _kExtraFont,
+                              fontSize: 12,
+                              height: 1.45,
+                              letterSpacing: 1.4,
+                              color: _kExtraOnSurface.withValues(alpha: 0.78),
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: [
+                              if (_stripeCheckoutStatus!.canContinuePayment)
+                                OutlinedButton(
+                                  onPressed: (_checking ||
+                                          _stripeCheckoutActionsBusy ||
+                                          _submitting)
+                                      ? null
+                                      : _continuePendingStripeExtra,
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: _kExtraPrimary,
+                                    side: const BorderSide(
+                                      color: _kExtraPrimary,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 18,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  child: Text(l10n.mealPaymentContinue),
+                                ),
+                              if (_stripeCheckoutStatus!.canCancelPayment)
+                                TextButton(
+                                  onPressed: (_checking ||
+                                          _stripeCheckoutActionsBusy ||
+                                          _submitting)
+                                      ? null
+                                      : _cancelPendingStripeExtra,
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: _kExtraTertiary.withValues(
+                                      alpha: 0.9,
+                                    ),
+                                  ),
+                                  child: Text(l10n.mealPaymentCancel),
+                                ),
+                              if (_stripeCheckoutStatus!.canStartNewCheckout)
+                                FilledButton(
+                                  onPressed: (_checking ||
+                                          _stripeCheckoutActionsBusy ||
+                                          _submitting ||
+                                          !_canBuy)
+                                      ? null
+                                      : _buyTicket,
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: _kExtraPrimary,
+                                    foregroundColor: const Color(0xFF3C2F00),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 18,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  child: Text(l10n.mealPaymentStartAgain),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   FilledButton(
                     onPressed: (_canBuy && !_submitting) ? _buyTicket : null,
                     style: FilledButton.styleFrom(

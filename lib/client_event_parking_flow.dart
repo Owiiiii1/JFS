@@ -77,6 +77,16 @@ class _ClientParkingInactiveScreenState
   int? _freeParkingRemaining;
   bool _checking = false;
   bool _navigating = false;
+  MealPaymentStatusPayload? _stripeCheckoutStatus;
+  bool _stripeCheckoutActionsBusy = false;
+
+  bool get _stripeCheckoutRecoveryVisible {
+    final s = _stripeCheckoutStatus;
+    return s != null &&
+        (s.canContinuePayment ||
+            s.canCancelPayment ||
+            s.canStartNewCheckout);
+  }
 
   @override
   void initState() {
@@ -111,14 +121,27 @@ class _ClientParkingInactiveScreenState
       final payload = await widget.auth.getEventParkingTickets(widget.eventId);
       if (!mounted) return;
 
+      MealPaymentStatusPayload? stripeSt;
+      if (!payload.hasActiveTickets && payload.paymentRequired) {
+        try {
+          stripeSt = await widget.auth.getEventParkingPaymentStatus(
+            widget.eventId,
+          );
+        } catch (_) {
+          stripeSt = null;
+        }
+      }
+
       setState(() {
         _canBuy = payload.canBuy;
         _paymentRequired = payload.paymentRequired;
         _freeParkingQuota = payload.freeParkingQuota;
         _freeParkingUsed = payload.freeParkingUsed;
         _freeParkingRemaining = payload.freeParkingRemaining;
+        _stripeCheckoutStatus = stripeSt;
       });
 
+      if (!mounted) return;
       if (payload.hasActiveTickets) {
         _navigating = true;
         await Navigator.of(context).pushReplacement(
@@ -148,6 +171,76 @@ class _ClientParkingInactiveScreenState
       if (mounted) {
         setState(() => _checking = false);
       }
+    }
+  }
+
+  Future<void> _openParkingPurchaseFlow() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ClientParkingCreateTicketScreen(
+          eventName: widget.eventName,
+          accountName: widget.accountName,
+          l10n: widget.l10n,
+          auth: widget.auth,
+          eventId: widget.eventId,
+          vipMode: widget.vipMode,
+          paymentRequired: _paymentRequired,
+          freeParkingQuota: _freeParkingQuota,
+          freeParkingUsed: _freeParkingUsed,
+          freeParkingRemaining: _freeParkingRemaining,
+        ),
+      ),
+    );
+    if (!mounted) return;
+    await _refreshAndOpenActiveIfNeeded();
+  }
+
+  Future<void> _continuePendingStripeParking() async {
+    if (_stripeCheckoutActionsBusy || _checking) return;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _stripeCheckoutActionsBusy = true);
+    try {
+      final url = await widget.auth.resumeEventParkingPayment(widget.eventId);
+      final uri = Uri.parse(url);
+      if (!await canLaunchUrl(uri)) {
+        throw Exception('Cannot open checkout');
+      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!mounted) return;
+      messenger?.showSnackBar(SnackBar(content: Text(l10n.mealPayInBrowser)));
+    } catch (_) {
+      if (!mounted) return;
+      messenger?.showSnackBar(SnackBar(content: Text(l10n.mealCheckoutError)));
+    } finally {
+      if (mounted) {
+        setState(() => _stripeCheckoutActionsBusy = false);
+      }
+    }
+    if (mounted) {
+      await _refreshAndOpenActiveIfNeeded();
+    }
+  }
+
+  Future<void> _cancelPendingStripeParking() async {
+    if (_stripeCheckoutActionsBusy || _checking) return;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _stripeCheckoutActionsBusy = true);
+    try {
+      await widget.auth.cancelEventParkingPayment(widget.eventId);
+      if (!mounted) return;
+      messenger?.showSnackBar(SnackBar(content: Text(l10n.mealPaymentCanceled)));
+    } catch (_) {
+      if (!mounted) return;
+      messenger?.showSnackBar(SnackBar(content: Text(l10n.mealCheckoutError)));
+    } finally {
+      if (mounted) {
+        setState(() => _stripeCheckoutActionsBusy = false);
+      }
+    }
+    if (mounted) {
+      await _refreshAndOpenActiveIfNeeded();
     }
   }
 
@@ -322,30 +415,84 @@ class _ClientParkingInactiveScreenState
                       ),
                     ),
                   ),
+                  if (_stripeCheckoutRecoveryVisible) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            l10n.parkingCheckoutInBrowser,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: _kFont,
+                              fontSize: 12,
+                              height: 1.45,
+                              letterSpacing: 1.4,
+                              color: _kOnSurface.withValues(alpha: 0.78),
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: [
+                              if (_stripeCheckoutStatus!.canContinuePayment)
+                                OutlinedButton(
+                                  onPressed: (_checking ||
+                                          _stripeCheckoutActionsBusy)
+                                      ? null
+                                      : _continuePendingStripeParking,
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: _kPrimary,
+                                    side: const BorderSide(color: _kPrimary),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 18,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  child: Text(l10n.mealPaymentContinue),
+                                ),
+                              if (_stripeCheckoutStatus!.canCancelPayment)
+                                TextButton(
+                                  onPressed: (_checking ||
+                                          _stripeCheckoutActionsBusy)
+                                      ? null
+                                      : _cancelPendingStripeParking,
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: _kTertiary.withValues(
+                                      alpha: 0.9,
+                                    ),
+                                  ),
+                                  child: Text(l10n.mealPaymentCancel),
+                                ),
+                              if (_stripeCheckoutStatus!.canStartNewCheckout)
+                                FilledButton(
+                                  onPressed: (_checking ||
+                                          _stripeCheckoutActionsBusy ||
+                                          !_canBuy)
+                                      ? null
+                                      : _openParkingPurchaseFlow,
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: _kPrimary,
+                                    foregroundColor: const Color(0xFF3C2F00),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 18,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                  child: Text(l10n.mealPaymentStartAgain),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   FilledButton(
-                    onPressed: _canBuy
-                        ? () async {
-                            await Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => ClientParkingCreateTicketScreen(
-                                  eventName: widget.eventName,
-                                  accountName: widget.accountName,
-                                  l10n: l10n,
-                                  auth: widget.auth,
-                                  eventId: widget.eventId,
-                                  vipMode: widget.vipMode,
-                                  paymentRequired: _paymentRequired,
-                                  freeParkingQuota: _freeParkingQuota,
-                                  freeParkingUsed: _freeParkingUsed,
-                                  freeParkingRemaining: _freeParkingRemaining,
-                                ),
-                              ),
-                            );
-                            if (!mounted) return;
-                            await _refreshAndOpenActiveIfNeeded();
-                          }
-                        : null,
+                    onPressed: _canBuy ? _openParkingPurchaseFlow : null,
                     style: FilledButton.styleFrom(
                       backgroundColor: _kPrimary,
                       foregroundColor: const Color(0xFF3C2F00),

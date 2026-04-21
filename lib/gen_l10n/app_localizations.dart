@@ -982,7 +982,7 @@ abstract class AppLocalizations {
   /// No description provided for @rehearsalUpdateBooking.
   ///
   /// In en, this message translates to:
-  /// **'Update booking'**
+  /// **'Add and update booking'**
   String get rehearsalUpdateBooking;
 
   /// No description provided for @rehearsalCancelChange.
@@ -1608,6 +1608,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your dish is saved. Finish payment in the browser; status will update after Stripe confirms it.'**
   String get mealAwaitingPaymentDetail;
+
+  /// No description provided for @mealPaymentContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue payment'**
+  String get mealPaymentContinue;
+
+  /// No description provided for @mealPaymentCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel payment'**
+  String get mealPaymentCancel;
+
+  /// No description provided for @mealPaymentStartAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Start payment again'**
+  String get mealPaymentStartAgain;
+
+  /// No description provided for @mealPaymentCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment canceled. You can start again when ready.'**
+  String get mealPaymentCanceled;
+
+  /// No description provided for @mealPaymentStatusLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load payment status. Try again.'**
+  String get mealPaymentStatusLoadError;
 
   /// No description provided for @noActiveEvents.
   ///

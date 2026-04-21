@@ -471,7 +471,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get rehearsalSelectChild => 'Дитина';
 
   @override
-  String get rehearsalUpdateBooking => 'Змінити запис';
+  String get rehearsalUpdateBooking => 'Додати й оновити бронювання';
 
   @override
   String get rehearsalCancelChange => 'Скасувати';
@@ -819,6 +819,22 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get mealAwaitingPaymentDetail =>
       'Страву збережено. Завершіть оплату в браузері; статус оновиться після підтвердження Stripe.';
+
+  @override
+  String get mealPaymentContinue => 'Продовжити оплату';
+
+  @override
+  String get mealPaymentCancel => 'Скасувати оплату';
+
+  @override
+  String get mealPaymentStartAgain => 'Почати оплату знову';
+
+  @override
+  String get mealPaymentCanceled => 'Оплату скасовано. Можна почати знову.';
+
+  @override
+  String get mealPaymentStatusLoadError =>
+      'Не вдалося завантажити статус оплати. Спробуйте ще раз.';
 
   @override
   String get noActiveEvents => 'Немає активних подій';
