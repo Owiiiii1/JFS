@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../api/auth_service.dart';
+import 'in_app_notification_bell_hint.dart';
 import 'jfs_push_dispatch.dart';
 
 /// Registered from [App] so login / intro / logout can sync without extra props.
@@ -47,6 +48,7 @@ class PushTokenService {
     }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      InAppNotificationBellHint.applyFromPushMessage(message);
       final h = JfsPushDispatch.onForeground;
       if (h != null) {
         h(message);
@@ -59,6 +61,7 @@ class PushTokenService {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      InAppNotificationBellHint.applyFromPushMessage(message);
       final h = JfsPushDispatch.onOpenedFromBackground;
       if (h != null) {
         h(message);
@@ -69,6 +72,7 @@ class PushTokenService {
 
     final initial = await _messaging.getInitialMessage();
     if (initial != null) {
+      InAppNotificationBellHint.applyFromPushMessage(initial);
       final h = JfsPushDispatch.onOpenedFromTerminated;
       if (h != null) {
         h(initial);

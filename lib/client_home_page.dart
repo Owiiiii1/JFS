@@ -23,6 +23,7 @@ import 'about_app_page.dart';
 import 'settings_page.dart';
 import 'my_tickets_sheet.dart';
 import 'notifications_page.dart';
+import 'push/in_app_notification_bell_hint.dart';
 import 'push/push_token_service.dart';
 
 /// Заголовки ивента на карточке активного события (семейство из pubspec).
@@ -71,6 +72,14 @@ class _ClientHomePageState extends State<ClientHomePage>
   int _newsLoadSeq = 0;
   int _infoSettingsLoadSeq = 0;
 
+  void _bellLocalHintListener() {
+    if (mounted) setState(() {});
+  }
+
+  bool get _showUnreadBellDot =>
+      _unreadNotifications > 0 ||
+      InAppNotificationBellHint.hasPendingHint.value;
+
   bool get _canPurchaseTickets =>
       !_loading &&
       _error == null &&
@@ -106,6 +115,9 @@ class _ClientHomePageState extends State<ClientHomePage>
     WidgetsBinding.instance.addObserver(this);
     _loadDashboard();
     _refreshUnreadSilently();
+    InAppNotificationBellHint.hasPendingHint.addListener(
+      _bellLocalHintListener,
+    );
     _dashboardRefreshTimer = Timer.periodic(const Duration(seconds: 20), (_) {
       if (!mounted) return;
       _refreshDashboardSilently();
@@ -115,6 +127,9 @@ class _ClientHomePageState extends State<ClientHomePage>
 
   @override
   void dispose() {
+    InAppNotificationBellHint.hasPendingHint.removeListener(
+      _bellLocalHintListener,
+    );
     _dashboardRefreshTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -194,6 +209,7 @@ class _ClientHomePageState extends State<ClientHomePage>
     try {
       final count = await widget.auth.getUnreadNotificationsCount();
       if (!mounted) return;
+      InAppNotificationBellHint.clearOnUnreadSyncedFromApi();
       setState(() => _unreadNotifications = count);
     } catch (_) {
       // Silent badge refresh intentionally ignores transient errors.
@@ -384,7 +400,11 @@ class _ClientHomePageState extends State<ClientHomePage>
       _refreshDashboardSilently();
     } on ApiServiceDisabledException catch (e) {
       if (!mounted) return;
-      await showClientTicketServiceUnavailableDialog(context, l10n, message: e.message);
+      await showClientTicketServiceUnavailableDialog(
+        context,
+        l10n,
+        message: e.message,
+      );
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -463,7 +483,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                   ),
                   onPressed: _openNotifications,
                 ),
-                if (_unreadNotifications > 0)
+                if (_showUnreadBellDot)
                   const Positioned(right: 12, top: 12, child: _GoldDot()),
               ],
             ),

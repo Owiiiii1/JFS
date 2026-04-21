@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'app_settings.dart';
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
+import 'rehearsal_map_util.dart';
 
 const Color _kPrimary = Color(0xFFF2CA50);
 const Color _kOnPrimary = Color(0xFF3C2F00);
@@ -16,6 +17,41 @@ const Color _kOutline = Color(0xFF4D4635);
 /// Как в Stitch code.html — подложка шапки модалки.
 const String _kRehearsalHeroImageUrl =
     'https://lh3.googleusercontent.com/aida-public/AB6AXuCPHDD-yk8wDkm4sxxx7oA0uIXqHxRTZ8lH-rbgpW4aKaOq7WMgiU94QxIbT5H5Ow3zh8UXDgttSMlaTkHfeNt3e-ohE6DAw_KjUDRTaAPu-Bt5y818M3xFf3rCy51r8ONWUNFdImNaouQjGslehnTyP48hMa3OYZBILv6HuiAly3MardP-DikhLJHZexyIUu7NiFQ7Fsb-1MtrHqNOcEZ78MZon2lKL_TSz5ejxd5sx-jm8U00-RMcZPt0NdbG6MF90wJiBQo00co';
+
+/// Venue caption under rehearsal details; opens [mapUrl] when the API provided a valid HTTP(S) link.
+Widget _rehearsalVenueCaptionRow({
+  required String caption,
+  String? mapUrl,
+  required TextStyle style,
+  IconData leadingIcon = Icons.schedule_rounded,
+  Color leadingColor = _kPrimary,
+}) {
+  final raw = mapUrl?.trim();
+  final canOpen =
+      raw != null && raw.isNotEmpty && rehearsalMapLaunchUri(raw) != null;
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Icon(leadingIcon, color: leadingColor, size: 18),
+      const SizedBox(width: 6),
+      Expanded(
+        child: canOpen
+            ? GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => openRehearsalMapExternal(raw),
+                child: Text(
+                  caption,
+                  style: style.copyWith(
+                    decoration: TextDecoration.underline,
+                    decorationColor: style.color,
+                  ),
+                ),
+              )
+            : Text(caption, style: style),
+      ),
+    ],
+  );
+}
 
 String _rehearsalDateKey(DateTime d) =>
     '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
@@ -1003,23 +1039,14 @@ class _DescriptionPanel extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.schedule_rounded,
-                      color: _kPrimary,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      slot.place,
-                      style: const TextStyle(
-                        color: _kOnSurface,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+                _rehearsalVenueCaptionRow(
+                  caption: slot.place,
+                  mapUrl: slot.mapUrl,
+                  style: const TextStyle(
+                    color: _kOnSurface,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -1105,24 +1132,12 @@ class _BookedPanel extends StatelessWidget {
                     style: const TextStyle(color: _kOnSurface, fontSize: 14),
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.place_outlined,
-                        color: _kTertiary,
-                        size: 17,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          booking.place,
-                          style: const TextStyle(
-                            color: _kTertiary,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
+                  _rehearsalVenueCaptionRow(
+                    caption: booking.place,
+                    mapUrl: booking.mapUrl,
+                    leadingIcon: Icons.place_outlined,
+                    leadingColor: _kTertiary,
+                    style: const TextStyle(color: _kTertiary, fontSize: 12),
                   ),
                 ],
               ),

@@ -2477,6 +2477,7 @@ class RehearsalSlotOption {
     required this.slotDate,
     required this.slotTime,
     required this.place,
+    this.mapUrl,
     required this.description,
     required this.capacity,
     required this.bookedCount,
@@ -2490,6 +2491,9 @@ class RehearsalSlotOption {
   final String slotDate;
   final String slotTime;
   final String place;
+
+  /// Optional HTTPS map link; absent on older API responses.
+  final String? mapUrl;
   final String description;
   final int capacity;
   final int bookedCount;
@@ -2499,11 +2503,13 @@ class RehearsalSlotOption {
   final bool familyLookOnly;
 
   factory RehearsalSlotOption.fromJson(Map<String, dynamic> json) {
+    final mapStr = json['map_url']?.toString().trim();
     return RehearsalSlotOption(
       id: _jsonInt(json['id']),
       slotDate: (json['slot_date'] as String? ?? '').toString(),
       slotTime: (json['slot_time'] as String? ?? '').toString(),
       place: (json['place'] as String? ?? '').toString(),
+      mapUrl: (mapStr == null || mapStr.isEmpty) ? null : mapStr,
       description: (json['description'] as String? ?? '').toString(),
       capacity: _jsonInt(json['capacity']),
       bookedCount: _jsonInt(json['booked_count']),
@@ -2521,6 +2527,7 @@ class RehearsalBookingInfo {
     required this.slotDate,
     required this.slotTime,
     required this.place,
+    this.mapUrl,
     required this.description,
     this.bookedAt,
     this.startsAt,
@@ -2532,6 +2539,9 @@ class RehearsalBookingInfo {
   final String slotDate;
   final String slotTime;
   final String place;
+
+  /// Optional HTTPS map link; absent on older API responses.
+  final String? mapUrl;
   final String description;
   final DateTime? bookedAt;
 
@@ -2543,11 +2553,13 @@ class RehearsalBookingInfo {
   final DateTime? rehearsalCheckinAt;
 
   factory RehearsalBookingInfo.fromJson(Map<String, dynamic> json) {
+    final mapStr = json['map_url']?.toString().trim();
     return RehearsalBookingInfo(
       slotId: _jsonInt(json['slot_id']),
       slotDate: (json['slot_date'] as String? ?? '').toString(),
       slotTime: (json['slot_time'] as String? ?? '').toString(),
       place: (json['place'] as String? ?? '').toString(),
+      mapUrl: (mapStr == null || mapStr.isEmpty) ? null : mapStr,
       description: (json['description'] as String? ?? '').toString(),
       bookedAt: _jsonDateTimeNullable(json['booked_at']),
       startsAt: _jsonDateTimeNullable(json['starts_at']),
@@ -2920,9 +2932,11 @@ class ParkingTicketsPayload {
   final bool canBuy;
   final bool vipMode;
   final bool paymentRequired;
+
   /// Package complimentary parking cap for this user; null = unlimited.
   final int? freeParkingQuota;
   final int freeParkingUsed;
+
   /// Remaining complimentary tickets; null when unlimited.
   final int? freeParkingRemaining;
   final String? entryMapUrl;
@@ -3333,6 +3347,7 @@ class EventMealOption {
     this.nameUk,
     this.nameEs,
     this.price,
+    this.imageUrl,
   });
 
   final int id;
@@ -3342,7 +3357,11 @@ class EventMealOption {
   final String? nameEs;
   final double? price;
 
+  /// Full URL when the API includes `image_url` (newer backends).
+  final String? imageUrl;
+
   factory EventMealOption.fromJson(Map<String, dynamic> json) {
+    final rawImg = json['image_url']?.toString().trim();
     return EventMealOption(
       id: _jsonInt(json['id']),
       nameEn: json['name_en'] as String?,
@@ -3350,6 +3369,7 @@ class EventMealOption {
       nameUk: json['name_uk'] as String?,
       nameEs: json['name_es'] as String?,
       price: _jsonDoubleNullable(json['price']),
+      imageUrl: (rawImg == null || rawImg.isEmpty) ? null : rawImg,
     );
   }
 
@@ -3453,7 +3473,8 @@ class EventSummary {
           ? DateTime.tryParse(json['ends_at'] as String)
           : null,
       imageUrl: json['image_url'] as String?,
-      clientParkingServiceEnabled: json['client_parking_service_enabled'] != false,
+      clientParkingServiceEnabled:
+          json['client_parking_service_enabled'] != false,
       clientExtraTicketsServiceEnabled:
           json['client_extra_tickets_service_enabled'] != false,
       clientBackstageTicketsServiceEnabled:

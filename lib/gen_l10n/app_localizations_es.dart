@@ -823,11 +823,11 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo iniciar el pago. IntГ©ntalo de nuevo.';
 
   @override
-  String get mealAwaitingPayment => 'Pedido registrado вЂ” pendiente de pago';
+  String get mealAwaitingPayment => 'Pedido registrado — pendiente de pago';
 
   @override
   String get mealAwaitingPaymentDetail =>
-      'Tu plato estГЎ guardado. Termina el pago en el navegador; el estado se actualizarГЎ cuando Stripe lo confirme.';
+      'Tu plato está guardado. Termina el pago en el navegador; el estado se actualizará cuando Stripe lo confirme.';
 
   @override
   String get noActiveEvents => 'No hay eventos activos';
@@ -2452,11 +2452,11 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
       'No se pudo iniciar el pago. IntГ©ntalo de nuevo.';
 
   @override
-  String get mealAwaitingPayment => 'Pedido registrado вЂ” pendiente de pago';
+  String get mealAwaitingPayment => 'Pedido registrado — pendiente de pago';
 
   @override
   String get mealAwaitingPaymentDetail =>
-      'Tu plato estГЎ guardado. Termina el pago en el navegador; el estado se actualizarГЎ cuando Stripe lo confirme.';
+      'Tu plato está guardado. Termina el pago en el navegador; el estado se actualizará cuando Stripe lo confirme.';
 
   @override
   String get noActiveEvents => 'No hay eventos activos';

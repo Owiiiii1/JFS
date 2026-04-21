@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'app_settings.dart';
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
+import 'rehearsal_map_util.dart';
 
 /// Семейство шрифтов для названия ивента (как на главной).
 const _kFontFamilyLuxenta = 'Luxenta';
@@ -391,7 +392,10 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
   }
 
   /// Завершённость строки таймлайна: для основной репетиции по слотам — из брони; иначе из API prep.
-  static bool _expandedPrepRowSlotDone(_ExpandedPrepRow row, ActiveAssignment a) {
+  static bool _expandedPrepRowSlotDone(
+    _ExpandedPrepRow row,
+    ActiveAssignment a,
+  ) {
     final prep = row.prep;
     if (prep.isRehearsalMilestone) {
       if (row.booking != null) {
@@ -492,6 +496,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
       final DateTime? rawDate;
       final String timelineSubtitle;
       final String? address;
+      final String? addressMapUrl;
       final String? detailDesc;
       if (b != null) {
         // Prefer API slot_date + slot_time so the timeline matches the admin grid (event-local wall clock).
@@ -506,6 +511,11 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
               : _rehearsalBookingSubtitle(b);
         }
         address = b.place.trim().isNotEmpty ? b.place : prep.address;
+        final slotMap = b.mapUrl?.trim();
+        addressMapUrl =
+            b.place.trim().isNotEmpty && slotMap != null && slotMap.isNotEmpty
+            ? slotMap
+            : null;
         final slotDesc = b.description.trim();
         detailDesc = slotDesc.isNotEmpty ? slotDesc : null;
       } else {
@@ -514,6 +524,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
             ? _formatDateTime(prep.scheduledAt!)
             : '';
         address = prep.address;
+        addressMapUrl = null;
         final desc = prep.description?.trim();
         detailDesc = desc != null && desc.isNotEmpty ? desc : null;
       }
@@ -531,6 +542,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           subtitle: timelineSubtitle,
           rawDate: rawDate,
           address: address,
+          addressMapUrl: addressMapUrl,
           detailDescription: detailDesc,
           rehearsalBookingHint: rehearsalHint,
           isMainStage: false,
@@ -789,39 +801,59 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
   }
 
   static List<Widget> _milestoneDetailBodyWidgets(_JourneyMilestone m) {
-    final lines = <String>[];
+    const textStyle = TextStyle(color: Colors.white70, fontSize: 14);
+    final blocks = <Widget>[];
+    void push(Widget w) {
+      if (blocks.isNotEmpty) {
+        blocks.add(const SizedBox(height: 10));
+      }
+      blocks.add(w);
+    }
+
     if (m.rawDate != null) {
-      lines.add(_formatDateTime(m.rawDate!));
+      push(Text(_formatDateTime(m.rawDate!), style: textStyle, softWrap: true));
     }
     final addr = m.address?.trim();
     if (addr != null && addr.isNotEmpty) {
-      lines.add(addr);
+      final mapRaw = m.addressMapUrl?.trim();
+      final canOpen =
+          mapRaw != null &&
+          mapRaw.isNotEmpty &&
+          rehearsalMapLaunchUri(mapRaw) != null;
+      if (canOpen) {
+        push(
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => openRehearsalMapExternal(mapRaw),
+            child: Text(
+              addr,
+              style: textStyle.copyWith(
+                decoration: TextDecoration.underline,
+                decorationColor: textStyle.color,
+              ),
+              softWrap: true,
+            ),
+          ),
+        );
+      } else {
+        push(Text(addr, style: textStyle, softWrap: true));
+      }
     }
     final desc = m.detailDescription?.trim();
     if (desc != null && desc.isNotEmpty) {
-      lines.add(desc);
+      push(Text(desc, style: textStyle, softWrap: true));
     }
     final hint = m.rehearsalBookingHint?.trim();
     if (hint != null && hint.isNotEmpty) {
-      lines.add(hint);
+      push(Text(hint, style: textStyle, softWrap: true));
     }
-    if (lines.isEmpty && m.subtitle.trim().isNotEmpty) {
-      lines.add(m.subtitle.trim());
+    if (blocks.isEmpty && m.subtitle.trim().isNotEmpty) {
+      push(Text(m.subtitle.trim(), style: textStyle, softWrap: true));
     }
-    if (lines.isEmpty) {
+    if (blocks.isEmpty) {
       return const [];
     }
-    return [
-      const SizedBox(height: 14),
-      for (var i = 0; i < lines.length; i++) ...[
-        if (i > 0) const SizedBox(height: 10),
-        Text(
-          lines[i],
-          style: const TextStyle(color: Colors.white70, fontSize: 14),
-          softWrap: true,
-        ),
-      ],
-    ];
+    return [const SizedBox(height: 14), ...blocks];
   }
 
   static Future<void> _showMilestoneDetails(
@@ -1605,6 +1637,7 @@ class _JourneyMilestone {
     required this.subtitle,
     required this.rawDate,
     required this.address,
+    this.addressMapUrl,
     this.detailDescription,
     this.rehearsalBookingHint,
     required this.isMainStage,
@@ -1619,6 +1652,9 @@ class _JourneyMilestone {
   final String subtitle;
   final DateTime? rawDate;
   final String? address;
+
+  /// HTTPS map link for [address] when it comes from a booked rehearsal slot.
+  final String? addressMapUrl;
 
   /// Shown only in the details modal (e.g. brand rehearsal notes from API).
   final String? detailDescription;
@@ -1637,6 +1673,7 @@ class _JourneyMilestone {
     String? subtitle,
     DateTime? rawDate,
     String? address,
+    String? addressMapUrl,
     String? detailDescription,
     String? rehearsalBookingHint,
     bool? isMainStage,
@@ -1651,6 +1688,7 @@ class _JourneyMilestone {
       subtitle: subtitle ?? this.subtitle,
       rawDate: rawDate ?? this.rawDate,
       address: address ?? this.address,
+      addressMapUrl: addressMapUrl ?? this.addressMapUrl,
       detailDescription: detailDescription ?? this.detailDescription,
       rehearsalBookingHint: rehearsalBookingHint ?? this.rehearsalBookingHint,
       isMainStage: isMainStage ?? this.isMainStage,
