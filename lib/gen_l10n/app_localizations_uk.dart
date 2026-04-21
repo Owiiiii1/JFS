@@ -343,6 +343,11 @@ class AppLocalizationsUk extends AppLocalizations {
   String get currentParticipation => 'Поточна участь';
 
   @override
+  String childSubscribedBrands(String brands) {
+    return 'Бренди: $brands';
+  }
+
+  @override
   String get unknownError => 'Невідома помилка';
 
   @override
@@ -870,6 +875,16 @@ class AppLocalizationsUk extends AppLocalizations {
   String get navEvents => 'Події';
 
   @override
+  String get eventsYoutubeLiveButton => 'YouTube трансляція';
+
+  @override
+  String get eventsYoutubeLiveInvalidUrl =>
+      'Не вдалося відкрити це посилання YouTube.';
+
+  @override
+  String get eventsYoutubeLiveOpenExternally => 'Відкрити в YouTube';
+
+  @override
   String get navProfile => 'Профіль';
 
   @override
@@ -1219,6 +1234,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffScanButton => 'СКАН';
 
   @override
+  String get staffQrCheckButton => 'QR-ПЕРЕВІРКА';
+
+  @override
   String get staffParkingButton => 'ВАЛЕТ-ПАРКУВАННЯ';
 
   @override
@@ -1249,6 +1267,10 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get staffTapToScanRehearsalCheckinQr =>
       'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ЧЕК-ІНУ РЕПЕТИЦІЙ';
+
+  @override
+  String get staffTapToScanQrCheck =>
+      'НАТИСНІТЬ ДЛЯ СКАНУ БЕЙДЖА — ЕТАП І КАРТКА';
 
   @override
   String get staffCurrentTask => 'Поточне завдання';
@@ -1464,6 +1486,19 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffScanHintQr => 'Розмістіть QR-код у рамці';
 
   @override
+  String get staffScanHeaderQrCheck => 'QR-перевірка';
+
+  @override
+  String get staffScanHintQrCheck =>
+      'Відскануйте бейдж дитини, щоб відмітити обраний етап, далі відкриється картка';
+
+  @override
+  String get staffQrCheckSuccessTitle => 'Етап відмічено';
+
+  @override
+  String get staffQrCheckSuccessContinue => 'Далі';
+
+  @override
   String get staffScanErrorTitle => 'Помилка сканування';
 
   @override
@@ -1586,6 +1621,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleScan => 'Скан QR та етапи';
+
+  @override
+  String get staffRoleSubtitleQrCheck =>
+      'Відмітка етапу за бейджем, далі картка дитини';
 
   @override
   String get staffRoleSubtitleSupervisor => 'Повний доступ та керування';

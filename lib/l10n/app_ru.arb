@@ -121,6 +121,14 @@
   "measurementLengthUnitCm": "см",
   "measurementLengthUnitIn": "дюйм",
   "currentParticipation": "Текущее участие",
+  "childSubscribedBrands": "Бренды: {brands}",
+  "@childSubscribedBrands": {
+    "placeholders": {
+      "brands": {
+        "type": "String"
+      }
+    }
+  },
   "unknownError": "Неизвестная ошибка",
   "model": "Модель: {name}",
   "active": "АКТИВНО",
@@ -314,6 +322,9 @@
   "manageKids": "Мои\nдети",
   "navHome": "Главная",
   "navEvents": "События",
+  "eventsYoutubeLiveButton": "YouTube трансляция",
+  "eventsYoutubeLiveInvalidUrl": "Не удалось открыть эту ссылку YouTube.",
+  "eventsYoutubeLiveOpenExternally": "Открыть в YouTube",
   "navProfile": "Профиль",
   "navInfo": "Инфо",
   "continueButton": "Продолжить",
@@ -452,6 +463,7 @@
     }
   },
   "staffScanButton": "СКАН",
+  "staffQrCheckButton": "QR-ПРОВЕРКА",
   "staffParkingButton": "ВАЛЕТ-ПАРКОВКА",
   "staffExtraZoneButton": "BEVERAGE PACKAGE",
   "staffBackstageButton": "BACKSTAGE PASS",
@@ -461,6 +473,7 @@
   "staffTapToScanExtraZoneQr": "НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR BEVERAGE PACKAGE",
   "staffTapToScanBackstageQr": "НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR BACKSTAGE PASS",
   "staffTapToScanRehearsalCheckinQr": "НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR ЧЕК-ИНА РЕПЕТИЦИЙ",
+  "staffTapToScanQrCheck": "НАЖМИТЕ ДЛЯ СКАНА БЕЙДЖА — ЭТАП И КАРТОЧКА",
   "staffCurrentTask": "Текущая задача",
   "staffUtilitiesAndTools": "ИНСТРУМЕНТЫ",
   "staffScanForInfoTitle": "Скан для информации",
@@ -531,6 +544,10 @@
   "staffScanHintRehearsalCheckin": "Сканируйте check-in QR ребенка, чтобы закрыть прохождение репетиции",
   "staffScanHintInfo": "Сканируйте бейдж ребенка или родителя, чтобы открыть профиль",
   "staffScanHintQr": "Поместите QR-код в рамку",
+  "staffScanHeaderQrCheck": "QR-проверка",
+  "staffScanHintQrCheck": "Сканируйте бейдж ребёнка, чтобы отметить выбранный этап, затем откроется карточка",
+  "staffQrCheckSuccessTitle": "Этап отмечен",
+  "staffQrCheckSuccessContinue": "Далее",
   "staffScanErrorTitle": "Ошибка сканирования",
   "staffScanErrorUnknown": "Неизвестная ошибка сканирования.",
   "staffParkingTicketTitle": "Талон валет-парковки",
@@ -579,6 +596,7 @@
     }
   },
   "staffRoleSubtitleScan": "Скан QR и этапы",
+  "staffRoleSubtitleQrCheck": "Отметка этапа по бейджу, затем карточка ребёнка",
   "staffRoleSubtitleSupervisor": "Полный доступ и управление",
   "staffRoleSubtitleHostess": "Поддержка гостей и зон",
   "staffRoleSubtitleParking": "Валет-парковка и доступ",

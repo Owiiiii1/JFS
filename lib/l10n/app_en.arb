@@ -135,6 +135,14 @@
   "measurementLengthUnitCm": "cm",
   "measurementLengthUnitIn": "in",
   "currentParticipation": "Current Participation",
+  "childSubscribedBrands": "Brands: {brands}",
+  "@childSubscribedBrands": {
+    "placeholders": {
+      "brands": {
+        "type": "String"
+      }
+    }
+  },
   "unknownError": "Unknown error",
   "model": "Model: {name}",
   "@model": {
@@ -352,6 +360,9 @@
   "manageKids": "Manage\nKids",
   "navHome": "Home",
   "navEvents": "Events",
+  "eventsYoutubeLiveButton": "YouTube live",
+  "eventsYoutubeLiveInvalidUrl": "Could not open this YouTube link.",
+  "eventsYoutubeLiveOpenExternally": "Open in YouTube",
   "navProfile": "Profile",
   "navInfo": "Info",
   "continueButton": "Continue",
@@ -512,6 +523,7 @@
     }
   },
   "staffScanButton": "SCAN",
+  "staffQrCheckButton": "QR CHECK",
   "staffParkingButton": "VALET PARKING",
   "staffExtraZoneButton": "BEVERAGE PACKAGE",
   "staffBackstageButton": "BACKSTAGE PASS",
@@ -521,6 +533,7 @@
   "staffTapToScanExtraZoneQr": "TAP TO SCAN BEVERAGE PACKAGE QR",
   "staffTapToScanBackstageQr": "TAP TO SCAN BACKSTAGE PASS QR",
   "staffTapToScanRehearsalCheckinQr": "TAP TO SCAN REHEARSAL CHECK-IN QR",
+  "staffTapToScanQrCheck": "TAP TO SCAN BADGE — STAGE & CHILD CARD",
   "staffCurrentTask": "Current Task",
   "staffUtilitiesAndTools": "UTILITIES & TOOLS",
   "staffScanForInfoTitle": "Scan for Info",
@@ -591,6 +604,10 @@
   "staffScanHintRehearsalCheckin": "Scan child check-in QR to close rehearsal check-in",
   "staffScanHintInfo": "Scan child or parent badge to view profile",
   "staffScanHintQr": "Align QR code within the frame",
+  "staffScanHeaderQrCheck": "QR check",
+  "staffScanHintQrCheck": "Scan the child badge to mark the selected stage complete, then open the child card",
+  "staffQrCheckSuccessTitle": "Stage marked complete",
+  "staffQrCheckSuccessContinue": "Continue",
   "staffScanErrorTitle": "Scan Error",
   "staffScanErrorUnknown": "Unknown scan error.",
   "staffParkingTicketTitle": "Valet Parking Ticket",
@@ -639,6 +656,7 @@
     }
   },
   "staffRoleSubtitleScan": "QR scan & stage flow",
+  "staffRoleSubtitleQrCheck": "Mark stage by badge, then child details",
   "staffRoleSubtitleSupervisor": "Full access & management",
   "staffRoleSubtitleHostess": "Guest & zone support",
   "staffRoleSubtitleParking": "Valet parking flow & access",

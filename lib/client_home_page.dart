@@ -23,6 +23,9 @@ import 'about_app_page.dart';
 import 'settings_page.dart';
 import 'my_tickets_sheet.dart';
 import 'notifications_page.dart';
+import 'client_youtube_live_page.dart';
+import 'youtube_embed_utils.dart';
+import 'schedule_wall_clock.dart';
 import 'push/in_app_notification_bell_hint.dart';
 import 'push/push_token_service.dart';
 
@@ -34,6 +37,31 @@ const _kGoldLight = Color(0xFFF3E5AB);
 const _kGoldDark = Color(0xFFC5A028);
 const _kBgDark = Color(0xFF050505);
 const _kCardBg = Color(0xFF121212);
+
+/// Main → second → family look; duplicates by [ActiveAssignment] brand ids skipped.
+String? _childSubscribedBrandsLine(ActiveAssignment a, AppLocalizations l10n) {
+  final parts = <String>[];
+  final seen = <int>{};
+  void add(int? id, String? name) {
+    final bid = id ?? 0;
+    if (bid <= 0 || seen.contains(bid)) {
+      return;
+    }
+    seen.add(bid);
+    final n = name?.trim();
+    parts.add(
+      n != null && n.isNotEmpty ? n : l10n.brandRequirementsBrandNumber(bid),
+    );
+  }
+
+  add(a.brandId, a.brandName);
+  add(a.secondBrandId, a.secondBrandName);
+  add(a.familyLookBrandId, a.familyLookBrandName);
+  if (parts.isEmpty) {
+    return null;
+  }
+  return l10n.childSubscribedBrands(parts.join(', '));
+}
 
 class ClientHomePage extends StatefulWidget {
   const ClientHomePage({super.key, required this.auth, required this.user});
@@ -835,12 +863,105 @@ class _ClientHomePageState extends State<ClientHomePage>
   // Events tab
   // ---------------------------------------------------------------------------
 
+  /// Текущее назначение + предстоящие ивенты; без дубликатов по id.
+  List<({String url, String title})> _youtubeLiveEntriesForEventsTab() {
+    final out = <({String url, String title})>[];
+    final seen = <int>{};
+    void push(int id, String name, String? url, bool active) {
+      if (!active) {
+        return;
+      }
+      final u = url?.trim();
+      if (u == null || u.isEmpty) {
+        return;
+      }
+      if (seen.contains(id)) {
+        return;
+      }
+      seen.add(id);
+      out.add((url: u, title: name));
+    }
+
+    final ev = _selectedDashboardChild?.activeAssignment?.event;
+    if (ev != null) {
+      push(ev.id, ev.name, ev.youtubeLiveUrl, ev.youtubeLiveActive);
+    }
+    for (final e in _upcomingEvents ?? const <UpcomingEvent>[]) {
+      push(e.id, e.name, e.youtubeLiveUrl, e.youtubeLiveActive);
+    }
+    return out;
+  }
+
+  void _openYoutubeLiveInApp(String rawUrl, String titleText) {
+    final id = extractYoutubeVideoId(rawUrl);
+    final l10n = AppLocalizations.of(context)!;
+    if (id == null || id.isEmpty) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(content: Text(l10n.eventsYoutubeLiveInvalidUrl)),
+      );
+      return;
+    }
+    final openUri = youtubeWatchUriFromAnyYoutubeUrl(rawUrl);
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ClientYoutubeLivePage(
+          videoId: id,
+          titleText: titleText,
+          fallbackOpenUri: openUri,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildYoutubeLiveEventsBanner() {
+    final entries = _youtubeLiveEntriesForEventsTab();
+    if (entries.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final l10n = AppLocalizations.of(context)!;
+    final multi = entries.length > 1;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final e in entries)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: FilledButton(
+              onPressed: () => _openYoutubeLiveInApp(e.url, e.title),
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFFE53935),
+                foregroundColor: Colors.white,
+                minimumSize: const Size.fromHeight(52),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                multi
+                    ? '${l10n.eventsYoutubeLiveButton} · ${e.title}'
+                    : l10n.eventsYoutubeLiveButton,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
   Widget _buildEventsContent() {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildYoutubeLiveEventsBanner(),
           _buildCurrentParticipationForEventsTab(),
           const SizedBox(height: 36),
           _buildNextShowsSection(),
@@ -1273,6 +1394,7 @@ class _ClientHomePageState extends State<ClientHomePage>
     final parentProgress = a.parentProgress;
 
     final l10nCard = AppLocalizations.of(context)!;
+    final brandsLine = _childSubscribedBrandsLine(a, l10nCard);
     final nextStageText = _nextPreparatoryHint(a, l10nCard);
     final dateText = a.event.startsAt != null
         ? (a.event.endsAt != null && a.event.endsAt != a.event.startsAt
@@ -1367,6 +1489,20 @@ class _ClientHomePageState extends State<ClientHomePage>
             borderColor: _kGold.withOpacity(0.25),
             backgroundColor: _kGold.withOpacity(0.32),
           ),
+          if (brandsLine != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              brandsLine,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: Colors.grey[400],
+              ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
+            ),
+          ],
 
           const SizedBox(height: 22),
 
@@ -1542,6 +1678,7 @@ class _ClientHomePageState extends State<ClientHomePage>
     final progress = totalStages > 0 ? completed / totalStages : 0.0;
     final parentProgress = a.parentProgress;
     final l10n = AppLocalizations.of(context)!;
+    final brandsLine = _childSubscribedBrandsLine(a, l10n);
 
     final eventImageUrl =
         a.event.imageUrl != null && !a.event.imageUrl!.startsWith('http')
@@ -1678,6 +1815,20 @@ class _ClientHomePageState extends State<ClientHomePage>
                           borderColor: _kGold.withOpacity(0.65),
                           backgroundColor: _kGold.withOpacity(0.32),
                         ),
+                        if (brandsLine != null) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            brandsLine,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white.withOpacity(0.78),
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -2030,12 +2181,13 @@ class _ClientHomePageState extends State<ClientHomePage>
       return null;
     }
     final p = a.preparatoryStages[idx];
-    if (p.isRehearsalMilestone && p.scheduledAt == null) {
+    final scheduleHint = parseScheduleWallToDateTime(p.scheduledAtWall) ?? p.scheduledAt;
+    if (p.isRehearsalMilestone && scheduleHint == null) {
       return l10n.rehearsalNextBookHint;
     }
-    if (p.scheduledAt != null && p.scheduledAt!.isAfter(DateTime.now())) {
+    if (scheduleHint != null && scheduleHint.isAfter(DateTime.now())) {
       final name = p.displayTitle(l10n);
-      return '${l10n.next(name)} (${_formatShortEventDate(p.scheduledAt!)})';
+      return '${l10n.next(name)} (${_formatShortEventDate(scheduleHint)})';
     }
     final title = p.displayTitle(l10n);
     if (title.isNotEmpty) {

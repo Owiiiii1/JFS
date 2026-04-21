@@ -745,6 +745,12 @@ abstract class AppLocalizations {
   /// **'Current Participation'**
   String get currentParticipation;
 
+  /// No description provided for @childSubscribedBrands.
+  ///
+  /// In en, this message translates to:
+  /// **'Brands: {brands}'**
+  String childSubscribedBrands(String brands);
+
   /// No description provided for @unknownError.
   ///
   /// In en, this message translates to:
@@ -1705,6 +1711,24 @@ abstract class AppLocalizations {
   /// **'Events'**
   String get navEvents;
 
+  /// No description provided for @eventsYoutubeLiveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube live'**
+  String get eventsYoutubeLiveButton;
+
+  /// No description provided for @eventsYoutubeLiveInvalidUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open this YouTube link.'**
+  String get eventsYoutubeLiveInvalidUrl;
+
+  /// No description provided for @eventsYoutubeLiveOpenExternally.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in YouTube'**
+  String get eventsYoutubeLiveOpenExternally;
+
   /// No description provided for @navProfile.
   ///
   /// In en, this message translates to:
@@ -2335,6 +2359,12 @@ abstract class AppLocalizations {
   /// **'SCAN'**
   String get staffScanButton;
 
+  /// No description provided for @staffQrCheckButton.
+  ///
+  /// In en, this message translates to:
+  /// **'QR CHECK'**
+  String get staffQrCheckButton;
+
   /// No description provided for @staffParkingButton.
   ///
   /// In en, this message translates to:
@@ -2388,6 +2418,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TAP TO SCAN REHEARSAL CHECK-IN QR'**
   String get staffTapToScanRehearsalCheckinQr;
+
+  /// No description provided for @staffTapToScanQrCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'TAP TO SCAN BADGE — STAGE & CHILD CARD'**
+  String get staffTapToScanQrCheck;
 
   /// No description provided for @staffCurrentTask.
   ///
@@ -2779,6 +2815,30 @@ abstract class AppLocalizations {
   /// **'Align QR code within the frame'**
   String get staffScanHintQr;
 
+  /// No description provided for @staffScanHeaderQrCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'QR check'**
+  String get staffScanHeaderQrCheck;
+
+  /// No description provided for @staffScanHintQrCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the child badge to mark the selected stage complete, then open the child card'**
+  String get staffScanHintQrCheck;
+
+  /// No description provided for @staffQrCheckSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage marked complete'**
+  String get staffQrCheckSuccessTitle;
+
+  /// No description provided for @staffQrCheckSuccessContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get staffQrCheckSuccessContinue;
+
   /// No description provided for @staffScanErrorTitle.
   ///
   /// In en, this message translates to:
@@ -3006,6 +3066,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'QR scan & stage flow'**
   String get staffRoleSubtitleScan;
+
+  /// No description provided for @staffRoleSubtitleQrCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark stage by badge, then child details'**
+  String get staffRoleSubtitleQrCheck;
 
   /// No description provided for @staffRoleSubtitleSupervisor.
   ///

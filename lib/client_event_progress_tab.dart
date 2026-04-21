@@ -6,6 +6,7 @@ import 'app_settings.dart';
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'rehearsal_map_util.dart';
+import 'schedule_wall_clock.dart';
 
 /// Семейство шрифтов для названия ивента (как на главной).
 const _kFontFamilyLuxenta = 'Luxenta';
@@ -299,6 +300,10 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
       if (b.startsAt != null) return b.startsAt;
       return _parseSlotDateTimeForSort(b.slotDate, b.slotTime);
     }
+    final wall = parseScheduleWallToDateTime(row.prep.scheduledAtWall);
+    if (wall != null) {
+      return wall;
+    }
     return row.prep.scheduledAt;
   }
 
@@ -519,20 +524,35 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
         final slotDesc = b.description.trim();
         detailDesc = slotDesc.isNotEmpty ? slotDesc : null;
       } else {
-        rawDate = prep.scheduledAt;
-        timelineSubtitle = prep.scheduledAt != null
-            ? _formatDateTime(prep.scheduledAt!)
-            : '';
+        final wallDt = parseScheduleWallToDateTime(prep.scheduledAtWall);
+        if (wallDt != null) {
+          rawDate = wallDt;
+          timelineSubtitle = _formatWallClockParts(
+            wallDt.year,
+            wallDt.month,
+            wallDt.day,
+            wallDt.hour,
+            wallDt.minute,
+          );
+        } else {
+          rawDate = prep.scheduledAt;
+          timelineSubtitle = prep.scheduledAt != null
+              ? _formatDateTime(prep.scheduledAt!)
+              : '';
+        }
         address = prep.address;
         addressMapUrl = null;
         final desc = prep.description?.trim();
         detailDesc = desc != null && desc.isNotEmpty ? desc : null;
       }
 
+      final hasPrepSchedule =
+          parseScheduleWallToDateTime(prep.scheduledAtWall) != null ||
+          prep.scheduledAt != null;
       final rehearsalHint =
           prep.isRehearsalMilestone &&
               !_expandedPrepRowSlotDone(row, a) &&
-              prep.scheduledAt == null &&
+              !hasPrepSchedule &&
               a.rehearsalBookings.isEmpty
           ? l10n.rehearsalNextBookHint
           : null;

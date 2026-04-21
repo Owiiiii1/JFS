@@ -33,6 +33,54 @@ String _parkingPurchaseCta(
   return vipMode ? l10n.parkingPayForParkingCta : regularBuy;
 }
 
+/// Показ только при незавершённой сессии Stripe (продолжить / отменить).
+/// [MealPaymentStatusPayload.canStartNewCheckout] не используем — дублирует основную CTA парковки.
+bool _parkingStripeRecoveryVisible(MealPaymentStatusPayload? s) {
+  return s != null &&
+      (s.canContinuePayment || s.canCancelPayment);
+}
+
+Widget _buildParkingStripeRecoveryActions({
+  required AppLocalizations l10n,
+  required MealPaymentStatusPayload status,
+  required bool checking,
+  required bool actionsBusy,
+  required VoidCallback onContinue,
+  required VoidCallback onCancel,
+}) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 12),
+    child: Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 10,
+      runSpacing: 10,
+      children: [
+        if (status.canContinuePayment)
+          OutlinedButton(
+            onPressed: (checking || actionsBusy) ? null : onContinue,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: _kPrimary,
+              side: const BorderSide(color: _kPrimary),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 12,
+              ),
+            ),
+            child: Text(l10n.mealPaymentContinue),
+          ),
+        if (status.canCancelPayment)
+          TextButton(
+            onPressed: (checking || actionsBusy) ? null : onCancel,
+            style: TextButton.styleFrom(
+              foregroundColor: _kTertiary.withValues(alpha: 0.9),
+            ),
+            child: Text(l10n.mealPaymentCancel),
+          ),
+      ],
+    ),
+  );
+}
+
 /// Неактивная парковка (референс 18, без верхней шапки и нижней навигации).
 class ClientParkingInactiveScreen extends StatefulWidget {
   const ClientParkingInactiveScreen({
@@ -79,14 +127,6 @@ class _ClientParkingInactiveScreenState
   bool _navigating = false;
   MealPaymentStatusPayload? _stripeCheckoutStatus;
   bool _stripeCheckoutActionsBusy = false;
-
-  bool get _stripeCheckoutRecoveryVisible {
-    final s = _stripeCheckoutStatus;
-    return s != null &&
-        (s.canContinuePayment ||
-            s.canCancelPayment ||
-            s.canStartNewCheckout);
-  }
 
   @override
   void initState() {
@@ -415,79 +455,14 @@ class _ClientParkingInactiveScreenState
                       ),
                     ),
                   ),
-                  if (_stripeCheckoutRecoveryVisible) ...[
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            l10n.parkingCheckoutInBrowser,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: _kFont,
-                              fontSize: 12,
-                              height: 1.45,
-                              letterSpacing: 1.4,
-                              color: _kOnSurface.withValues(alpha: 0.78),
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                          Wrap(
-                            alignment: WrapAlignment.center,
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: [
-                              if (_stripeCheckoutStatus!.canContinuePayment)
-                                OutlinedButton(
-                                  onPressed: (_checking ||
-                                          _stripeCheckoutActionsBusy)
-                                      ? null
-                                      : _continuePendingStripeParking,
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: _kPrimary,
-                                    side: const BorderSide(color: _kPrimary),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 18,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                  child: Text(l10n.mealPaymentContinue),
-                                ),
-                              if (_stripeCheckoutStatus!.canCancelPayment)
-                                TextButton(
-                                  onPressed: (_checking ||
-                                          _stripeCheckoutActionsBusy)
-                                      ? null
-                                      : _cancelPendingStripeParking,
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: _kTertiary.withValues(
-                                      alpha: 0.9,
-                                    ),
-                                  ),
-                                  child: Text(l10n.mealPaymentCancel),
-                                ),
-                              if (_stripeCheckoutStatus!.canStartNewCheckout)
-                                FilledButton(
-                                  onPressed: (_checking ||
-                                          _stripeCheckoutActionsBusy ||
-                                          !_canBuy)
-                                      ? null
-                                      : _openParkingPurchaseFlow,
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: _kPrimary,
-                                    foregroundColor: const Color(0xFF3C2F00),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 18,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                  child: Text(l10n.mealPaymentStartAgain),
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
+                  if (_parkingStripeRecoveryVisible(_stripeCheckoutStatus)) ...[
+                    _buildParkingStripeRecoveryActions(
+                      l10n: l10n,
+                      status: _stripeCheckoutStatus!,
+                      checking: _checking,
+                      actionsBusy: _stripeCheckoutActionsBusy,
+                      onContinue: _continuePendingStripeParking,
+                      onCancel: _cancelPendingStripeParking,
                     ),
                   ],
                   const SizedBox(height: 16),
@@ -951,7 +926,8 @@ class ClientParkingActiveScreen extends StatefulWidget {
       _ClientParkingActiveScreenState();
 }
 
-class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
+class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen>
+    with WidgetsBindingObserver {
   late int _ticketId;
   late List<ParkingTicketInfo> _tickets;
   late bool _canBuy;
@@ -962,6 +938,8 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
   int? _freeParkingRemaining;
   late String? _entryMapUrl;
   late String? _entryAppleMapUrl;
+  MealPaymentStatusPayload? _stripeCheckoutStatus;
+  bool _stripeCheckoutActionsBusy = false;
 
   ParkingTicketInfo _selectedTicketData() {
     for (final ticket in _tickets) {
@@ -989,6 +967,131 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
     _entryMapUrl = widget.entryMapUrl;
     _entryAppleMapUrl = widget.entryAppleMapUrl;
     _ticketId = _tickets.first.id;
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshStripeCheckoutStatus();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _refreshStripeCheckoutStatus();
+    }
+  }
+
+  Future<void> _refreshStripeCheckoutStatus() async {
+    if (!_paymentRequired) {
+      if (mounted) {
+        setState(() => _stripeCheckoutStatus = null);
+      }
+      return;
+    }
+    try {
+      final st = await widget.auth.getEventParkingPaymentStatus(
+        widget.eventId,
+      );
+      if (!mounted) return;
+      setState(() => _stripeCheckoutStatus = st);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _stripeCheckoutStatus = null);
+    }
+  }
+
+  void _applyParkingTicketsPayload(ParkingTicketsPayload payload) {
+    setState(() {
+      _tickets = payload.tickets;
+      _canBuy = payload.canBuy;
+      _vipMode = payload.vipMode;
+      _paymentRequired = payload.paymentRequired;
+      _freeParkingQuota = payload.freeParkingQuota;
+      _freeParkingUsed = payload.freeParkingUsed;
+      _freeParkingRemaining = payload.freeParkingRemaining;
+      _entryMapUrl = payload.entryMapUrl;
+      _entryAppleMapUrl = payload.entryAppleMapUrl;
+      final selectedStillExists = _tickets.any((t) => t.id == _ticketId);
+      if (!selectedStillExists) {
+        _ticketId = _tickets.first.id;
+      }
+    });
+  }
+
+  Future<void> _continuePendingStripeParkingActive() async {
+    if (_stripeCheckoutActionsBusy) return;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _stripeCheckoutActionsBusy = true);
+    try {
+      final url = await widget.auth.resumeEventParkingPayment(widget.eventId);
+      final uri = Uri.parse(url);
+      if (!await canLaunchUrl(uri)) {
+        throw Exception('Cannot open checkout');
+      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!mounted) return;
+      messenger?.showSnackBar(SnackBar(content: Text(l10n.mealPayInBrowser)));
+    } catch (_) {
+      if (!mounted) return;
+      messenger?.showSnackBar(SnackBar(content: Text(l10n.mealCheckoutError)));
+    } finally {
+      if (mounted) {
+        setState(() => _stripeCheckoutActionsBusy = false);
+      }
+    }
+    if (mounted) {
+      await _refreshStripeCheckoutStatus();
+      await _reloadTicketsFromServer();
+    }
+  }
+
+  Future<void> _cancelPendingStripeParkingActive() async {
+    if (_stripeCheckoutActionsBusy) return;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _stripeCheckoutActionsBusy = true);
+    try {
+      await widget.auth.cancelEventParkingPayment(widget.eventId);
+      if (!mounted) return;
+      messenger?.showSnackBar(SnackBar(content: Text(l10n.mealPaymentCanceled)));
+    } catch (_) {
+      if (!mounted) return;
+      messenger?.showSnackBar(SnackBar(content: Text(l10n.mealCheckoutError)));
+    } finally {
+      if (mounted) {
+        setState(() => _stripeCheckoutActionsBusy = false);
+      }
+    }
+    if (mounted) {
+      await _refreshStripeCheckoutStatus();
+      await _reloadTicketsFromServer();
+    }
+  }
+
+  Future<void> _reloadTicketsFromServer() async {
+    try {
+      final payload = await widget.auth.getEventParkingTickets(widget.eventId);
+      if (!mounted || payload.tickets.isEmpty) return;
+      _applyParkingTicketsPayload(payload);
+    } on ApiServiceDisabledException catch (e) {
+      if (!mounted) return;
+      await showClientTicketServiceUnavailableDialog(
+        context,
+        widget.l10n,
+        message: e.message,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(widget.l10n.parkingCheckoutError)));
+    }
   }
 
   Future<void> _openCreateTicket() async {
@@ -1013,21 +1116,7 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
     try {
       final payload = await widget.auth.getEventParkingTickets(widget.eventId);
       if (!mounted || payload.tickets.isEmpty) return;
-      setState(() {
-        _tickets = payload.tickets;
-        _canBuy = payload.canBuy;
-        _vipMode = payload.vipMode;
-        _paymentRequired = payload.paymentRequired;
-        _freeParkingQuota = payload.freeParkingQuota;
-        _freeParkingUsed = payload.freeParkingUsed;
-        _freeParkingRemaining = payload.freeParkingRemaining;
-        _entryMapUrl = payload.entryMapUrl;
-        _entryAppleMapUrl = payload.entryAppleMapUrl;
-        final selectedStillExists = _tickets.any((t) => t.id == _ticketId);
-        if (!selectedStillExists) {
-          _ticketId = _tickets.first.id;
-        }
-      });
+      _applyParkingTicketsPayload(payload);
     } on ApiServiceDisabledException catch (e) {
       if (!mounted) return;
       await showClientTicketServiceUnavailableDialog(
@@ -1040,6 +1129,9 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(widget.l10n.parkingCheckoutError)));
+    }
+    if (mounted) {
+      await _refreshStripeCheckoutStatus();
     }
   }
 
@@ -1157,6 +1249,17 @@ class _ClientParkingActiveScreenState extends State<ClientParkingActiveScreen> {
                             letterSpacing: 1.2,
                             color: _kOnSurface.withValues(alpha: 0.84),
                           ),
+                        ),
+                      ],
+                      if (_parkingStripeRecoveryVisible(_stripeCheckoutStatus)) ...[
+                        const SizedBox(height: 12),
+                        _buildParkingStripeRecoveryActions(
+                          l10n: l10n,
+                          status: _stripeCheckoutStatus!,
+                          checking: false,
+                          actionsBusy: _stripeCheckoutActionsBusy,
+                          onContinue: _continuePendingStripeParkingActive,
+                          onCancel: _cancelPendingStripeParkingActive,
                         ),
                       ],
                     ],

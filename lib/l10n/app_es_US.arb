@@ -135,6 +135,14 @@
   "measurementLengthUnitCm": "cm",
   "measurementLengthUnitIn": "in",
   "currentParticipation": "ParticipaciГіn actual",
+  "childSubscribedBrands": "Marcas: {brands}",
+  "@childSubscribedBrands": {
+    "placeholders": {
+      "brands": {
+        "type": "String"
+      }
+    }
+  },
   "unknownError": "Error desconocido",
   "model": "Modelo: {name}",
   "@model": {
@@ -354,6 +362,9 @@
   "manageKids": "Mis\nhijos",
   "navHome": "Inicio",
   "navEvents": "Eventos",
+  "eventsYoutubeLiveButton": "YouTube en directo",
+  "eventsYoutubeLiveInvalidUrl": "No se pudo abrir este enlace de YouTube.",
+  "eventsYoutubeLiveOpenExternally": "Abrir en YouTube",
   "navProfile": "Perfil",
   "navInfo": "InformaciГіn",
   "continueButton": "Continuar",
@@ -530,6 +541,7 @@
     }
   },
   "staffScanButton": "ESCANEAR",
+  "staffQrCheckButton": "QR CHECK",
   "staffParkingButton": "VALET PARKING",
   "staffExtraZoneButton": "BEVERAGE PACKAGE",
   "staffBackstageButton": "BACKSTAGE PASS",
@@ -539,6 +551,7 @@
   "staffTapToScanExtraZoneQr": "TOCA PARA ESCANEAR QR DE BEVERAGE PACKAGE",
   "staffTapToScanBackstageQr": "TOCA PARA ESCANEAR QR DE BACKSTAGE PASS",
   "staffTapToScanRehearsalCheckinQr": "TOCA PARA ESCANEAR QR DE CHECK-IN DE ENSAYO",
+  "staffTapToScanQrCheck": "TOCA PARA ESCANEAR BRAZALETE — ETAPA Y FICHA",
   "staffCurrentTask": "Tarea actual",
   "staffUtilitiesAndTools": "UTILIDADES Y HERRAMIENTAS",
   "staffScanForInfoTitle": "Escanear para info",
@@ -609,6 +622,10 @@
   "staffScanHintRehearsalCheckin": "Escanea QR de check-in del niño para cerrar el paso de ensayo",
   "staffScanHintInfo": "Escanea gafete de niño o padre para ver el perfil",
   "staffScanHintQr": "Alinea el código QR dentro del marco",
+  "staffScanHeaderQrCheck": "Verificación QR",
+  "staffScanHintQrCheck": "Escanea el brazalete del niño para marcar la etapa y abrir la ficha",
+  "staffQrCheckSuccessTitle": "Etapa marcada",
+  "staffQrCheckSuccessContinue": "Continuar",
   "staffScanErrorTitle": "Error de escaneo",
   "staffScanErrorUnknown": "Error de escaneo desconocido.",
   "staffParkingTicketTitle": "Ticket de valet parking",
@@ -657,6 +674,7 @@
     }
   },
   "staffRoleSubtitleScan": "Escaneo QR y flujo de etapas",
+  "staffRoleSubtitleQrCheck": "Marca etapa con brazalete y ficha del niño",
   "staffRoleSubtitleSupervisor": "Acceso completo y gestión",
   "staffRoleSubtitleHostess": "Soporte de invitados y zonas",
   "staffRoleSubtitleParking": "Valet parking: flujo y acceso",

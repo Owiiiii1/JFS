@@ -343,6 +343,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currentParticipation => 'Current Participation';
 
   @override
+  String childSubscribedBrands(String brands) {
+    return 'Brands: $brands';
+  }
+
+  @override
   String get unknownError => 'Unknown error';
 
   @override
@@ -867,6 +872,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navEvents => 'Events';
 
   @override
+  String get eventsYoutubeLiveButton => 'YouTube live';
+
+  @override
+  String get eventsYoutubeLiveInvalidUrl => 'Could not open this YouTube link.';
+
+  @override
+  String get eventsYoutubeLiveOpenExternally => 'Open in YouTube';
+
+  @override
   String get navProfile => 'Profile';
 
   @override
@@ -1216,6 +1230,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffScanButton => 'SCAN';
 
   @override
+  String get staffQrCheckButton => 'QR CHECK';
+
+  @override
   String get staffParkingButton => 'VALET PARKING';
 
   @override
@@ -1242,6 +1259,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get staffTapToScanRehearsalCheckinQr =>
       'TAP TO SCAN REHEARSAL CHECK-IN QR';
+
+  @override
+  String get staffTapToScanQrCheck => 'TAP TO SCAN BADGE — STAGE & CHILD CARD';
 
   @override
   String get staffCurrentTask => 'Current Task';
@@ -1456,6 +1476,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffScanHintQr => 'Align QR code within the frame';
 
   @override
+  String get staffScanHeaderQrCheck => 'QR check';
+
+  @override
+  String get staffScanHintQrCheck =>
+      'Scan the child badge to mark the selected stage complete, then open the child card';
+
+  @override
+  String get staffQrCheckSuccessTitle => 'Stage marked complete';
+
+  @override
+  String get staffQrCheckSuccessContinue => 'Continue';
+
+  @override
   String get staffScanErrorTitle => 'Scan Error';
 
   @override
@@ -1579,6 +1612,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleScan => 'QR scan & stage flow';
+
+  @override
+  String get staffRoleSubtitleQrCheck =>
+      'Mark stage by badge, then child details';
 
   @override
   String get staffRoleSubtitleSupervisor => 'Full access & management';

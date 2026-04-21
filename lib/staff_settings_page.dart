@@ -573,6 +573,8 @@ class _RoleCard extends StatelessWidget {
     switch (role.homeScreenType.trim().toLowerCase()) {
       case 'scan':
         return Icons.qr_code_scanner;
+      case 'qr_check':
+        return Icons.fact_check_outlined;
       case 'supervisor':
         return Icons.manage_accounts;
       case 'hostess':
@@ -677,6 +679,8 @@ class _RoleCard extends StatelessWidget {
     switch (role.homeScreenType.trim().toLowerCase()) {
       case 'scan':
         return AppLocalizations.of(context)!.staffRoleSubtitleScan;
+      case 'qr_check':
+        return AppLocalizations.of(context)!.staffRoleSubtitleQrCheck;
       case 'supervisor':
         return AppLocalizations.of(context)!.staffRoleSubtitleSupervisor;
       case 'hostess':

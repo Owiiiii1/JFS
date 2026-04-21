@@ -19,6 +19,7 @@ class StaffScanPage extends StatefulWidget {
     this.backstageScan = false,
     this.rehearsalCheckinScan = false,
     this.rehearsalSlotId,
+    this.qrCheck = false,
   });
 
   final AuthService auth;
@@ -40,6 +41,9 @@ class StaffScanPage extends StatefulWidget {
   /// Режим чекина репетиций: скан check-in QR и закрытие preparatory rehearsal этапа.
   final bool rehearsalCheckinScan;
   final int? rehearsalSlotId;
+
+  /// Режим «QR check»: как универсальный скан (этап из настроек), после успеха — модалка, затем карточка ребёнка как Scan for Info.
+  final bool qrCheck;
 
   @override
   State<StaffScanPage> createState() => _StaffScanPageState();
@@ -227,6 +231,93 @@ class _StaffScanPageState extends State<StaffScanPage> {
       return;
     }
 
+    if (widget.qrCheck) {
+      final eventId = AppSettings.staffActiveEventId;
+      final stageId = AppSettings.staffActiveStageId;
+      final stageType = AppSettings.staffActiveStageType ?? 'main';
+      final roleCode = AppSettings.staffSelectedRoleCode;
+      if (eventId == null || stageId == null) {
+        if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.staffScanSelectEventStageFirst),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+        return;
+      }
+
+      setState(() => _processing = true);
+      await _controller.stop();
+      final l10n = AppLocalizations.of(context)!;
+      try {
+        final result = await widget.auth.submitStageScan(
+          scanCode: code,
+          eventId: eventId,
+          stageId: stageId,
+          stageType: stageType,
+          roleCode: roleCode,
+        );
+        if (!mounted) return;
+        if (result.isSuccess) {
+          await _showQrCheckSuccessDialog(
+            result.message.isNotEmpty ? result.message : l10n.staffScanProcessed,
+          );
+          if (!mounted) return;
+          try {
+            final detail = await widget.auth.scanInfoLookup(badgeCode: code);
+            if (!mounted) return;
+            await Navigator.of(context).pushReplacement(
+              MaterialPageRoute<void>(
+                builder: (_) => StaffInfoChildProfilePage(
+                  detail: detail,
+                  baseUrl: widget.auth.baseUrl,
+                  accent: widget.accent,
+                  backgroundColor: widget.backgroundColor,
+                ),
+              ),
+            );
+          } catch (e) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.staffScanFailed(e.toString())),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+            setState(() => _processing = false);
+            await _controller.start();
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                result.message.isNotEmpty
+                    ? result.message
+                    : l10n.staffScanErrorUnknown,
+              ),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+          setState(() => _processing = false);
+          await _controller.start();
+        }
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.staffScanFailed(e.toString())),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        setState(() => _processing = false);
+        await _controller.start();
+      }
+      return;
+    }
+
     final eventId = AppSettings.staffActiveEventId;
     final stageId = AppSettings.staffActiveStageId;
     final stageType = AppSettings.staffActiveStageType ?? 'main';
@@ -320,7 +411,9 @@ class _StaffScanPageState extends State<StaffScanPage> {
                                   ? l10n.staffScanHeaderParking
                                   : (widget.scanForInfo
                                         ? l10n.staffScanHeaderInfo
-                                        : l10n.staffScanHeaderQr)))),
+                                        : (widget.qrCheck
+                                              ? l10n.staffScanHeaderQrCheck
+                                              : l10n.staffScanHeaderQr))))),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -442,10 +535,60 @@ class _StaffScanPageState extends State<StaffScanPage> {
                               ? l10n.staffScanHintParking
                               : (widget.scanForInfo
                                     ? l10n.staffScanHintInfo
-                                    : l10n.staffScanHintQr)))),
+                                    : (widget.qrCheck
+                                          ? l10n.staffScanHintQrCheck
+                                          : l10n.staffScanHintQr))))),
         style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16),
         textAlign: TextAlign.center,
       ),
+    );
+  }
+
+  Future<void> _showQrCheckSuccessDialog(String message) async {
+    final l10n = AppLocalizations.of(context)!;
+    final text = message.trim().isEmpty ? l10n.staffScanProcessed : message.trim();
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: const Color(0xFF131313),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  l10n.staffQrCheckSuccessTitle,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  text,
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+                const SizedBox(height: 20),
+                FilledButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: widget.accent,
+                    foregroundColor: Colors.black,
+                  ),
+                  child: Text(l10n.staffQrCheckSuccessContinue),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

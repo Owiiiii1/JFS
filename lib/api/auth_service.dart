@@ -2492,7 +2492,7 @@ class StaffRole {
   /// Соответствует `is_active` роли в админке.
   final bool isActive;
 
-  /// Код из API (`home_screen_type`): scan, supervisor, hostess, parking, extra_zone, backstage, rehearsal_admin, rehearsal_checkin, gift_issue, interview, lunches, superadmin.
+  /// Код из API (`home_screen_type`): scan, qr_check, supervisor, hostess, parking, extra_zone, backstage, rehearsal_admin, rehearsal_checkin, gift_issue, interview, lunches, superadmin.
   /// Пусто — до обновления бэкенда; клиент может определить экран по legacy-токенам code/name.
   final String homeScreenType;
 
@@ -2543,6 +2543,15 @@ int? _jsonIntNullable(dynamic v) {
     return v.toInt();
   }
   return int.tryParse(v.toString());
+}
+
+String? _optionalTrimmedApiString(dynamic v) {
+  if (v == null) {
+    return null;
+  }
+  final s = v is String ? v : v.toString();
+  final t = s.trim();
+  return t.isEmpty ? null : t;
 }
 
 int _jsonInt(dynamic v, [int fallback = 0]) => _jsonIntNullable(v) ?? fallback;
@@ -3311,7 +3320,9 @@ class ActiveAssignment {
   ActiveAssignment({
     required this.id,
     this.brandId,
+    this.brandName,
     this.secondBrandId,
+    this.secondBrandName,
     required this.event,
     required this.status,
     required this.totalMainStages,
@@ -3321,6 +3332,7 @@ class ActiveAssignment {
     this.requiredCompletedStages,
     this.familyLook = false,
     this.familyLookBrandId,
+    this.familyLookBrandName,
     this.parentParticipantsCount,
     this.parentProgress,
     this.parentTimelines = const [],
@@ -3339,7 +3351,11 @@ class ActiveAssignment {
   });
   final int id;
   final int? brandId;
+
+  /// Display name from API (client dashboard); optional for older API responses.
+  final String? brandName;
   final int? secondBrandId;
+  final String? secondBrandName;
   final EventSummary event;
   final String status;
   final int totalMainStages;
@@ -3349,6 +3365,7 @@ class ActiveAssignment {
   final int? requiredCompletedStages;
   final bool familyLook;
   final int? familyLookBrandId;
+  final String? familyLookBrandName;
   final int? parentParticipantsCount;
   final ParentProgressInfo? parentProgress;
   final List<ParentTimelineInfo> parentTimelines;
@@ -3436,7 +3453,9 @@ class ActiveAssignment {
     return ActiveAssignment(
       id: _jsonInt(json['id']),
       brandId: _jsonIntNullable(json['brand_id']),
+      brandName: _optionalTrimmedApiString(json['brand_name']),
       secondBrandId: _jsonIntNullable(json['second_brand_id']),
+      secondBrandName: _optionalTrimmedApiString(json['second_brand_name']),
       event: EventSummary.fromJson(ev),
       status: (json['status'] as String? ?? ''),
       totalMainStages: _jsonInt(json['total_main_stages']),
@@ -3448,6 +3467,9 @@ class ActiveAssignment {
       ),
       familyLook: json['family_look'] == true,
       familyLookBrandId: _jsonIntNullable(json['family_look_brand_id']),
+      familyLookBrandName: _optionalTrimmedApiString(
+        json['family_look_brand_name'],
+      ),
       parentParticipantsCount: _jsonIntNullable(
         json['parent_participants_count'],
       ),
@@ -3664,6 +3686,8 @@ class EventSummary {
     this.userHasParkingTicket,
     this.userHasExtraTicket,
     this.userHasBackstageTicket,
+    this.youtubeLiveActive = false,
+    this.youtubeLiveUrl,
   });
   final int id;
   final String name;
@@ -3671,6 +3695,10 @@ class EventSummary {
   final DateTime? startsAt;
   final DateTime? endsAt;
   final String? imageUrl;
+
+  /// When true and [youtubeLiveUrl] is set, Events tab may show a live button.
+  final bool youtubeLiveActive;
+  final String? youtubeLiveUrl;
 
   /// When false, new valet parking purchases are blocked (server + UI).
   final bool clientParkingServiceEnabled;
@@ -3710,6 +3738,8 @@ class EventSummary {
       userHasParkingTicket: readBoolKey('user_has_parking_ticket'),
       userHasExtraTicket: readBoolKey('user_has_extra_ticket'),
       userHasBackstageTicket: readBoolKey('user_has_backstage_ticket'),
+      youtubeLiveActive: json['youtube_live_active'] == true,
+      youtubeLiveUrl: _optionalTrimmedApiString(json['youtube_live_url']),
     );
   }
 }
@@ -3833,6 +3863,8 @@ class UpcomingEvent {
     this.startsAt,
     this.endsAt,
     this.imageUrl,
+    this.youtubeLiveActive = false,
+    this.youtubeLiveUrl,
   });
   final int id;
   final String name;
@@ -3843,6 +3875,9 @@ class UpcomingEvent {
 
   /// URL фото ивента (из настроек ивента), может быть относительным.
   final String? imageUrl;
+
+  final bool youtubeLiveActive;
+  final String? youtubeLiveUrl;
 
   factory UpcomingEvent.fromJson(Map<String, dynamic> json) {
     return UpcomingEvent(
@@ -3857,6 +3892,8 @@ class UpcomingEvent {
           ? DateTime.tryParse(json['ends_at'] as String)
           : null,
       imageUrl: json['image_url'] as String?,
+      youtubeLiveActive: json['youtube_live_active'] == true,
+      youtubeLiveUrl: _optionalTrimmedApiString(json['youtube_live_url']),
     );
   }
 }
@@ -3921,8 +3958,14 @@ class WorkerEventStage {
 }
 
 class StaffEventStage {
-  StaffEventStage({this.scheduledAt, this.title, this.address});
+  StaffEventStage({
+    this.scheduledAt,
+    this.scheduledAtWall,
+    this.title,
+    this.address,
+  });
   final DateTime? scheduledAt;
+  final String? scheduledAtWall;
   final String? title;
   final String? address;
 
@@ -3931,6 +3974,7 @@ class StaffEventStage {
       scheduledAt: json['scheduled_at'] != null
           ? DateTime.tryParse(json['scheduled_at'] as String)
           : null,
+      scheduledAtWall: _optionalTrimmedApiString(json['scheduled_at_wall']),
       title: json['title'] as String?,
       address: json['address'] as String?,
     );
@@ -4359,6 +4403,7 @@ class PreparatoryStageInfo {
     required this.id,
     required this.name,
     this.scheduledAt,
+    this.scheduledAtWall,
     this.address,
     this.description,
     this.brandName,
@@ -4369,6 +4414,9 @@ class PreparatoryStageInfo {
   final int id;
   final String name;
   final DateTime? scheduledAt;
+
+  /// `Y-m-dTHH:mm:ss` from API — same wall clock as admin; use for display/sort (no TZ shift).
+  final String? scheduledAtWall;
   final String? address;
 
   /// Admin notes for brand rehearsal rows (API `description`); optional.
@@ -4401,6 +4449,7 @@ class PreparatoryStageInfo {
       scheduledAt: json['scheduled_at'] != null
           ? DateTime.tryParse(json['scheduled_at'] as String)
           : null,
+      scheduledAtWall: _optionalTrimmedApiString(json['scheduled_at_wall']),
       address: json['address'] as String?,
       description: json['description'] as String?,
       brandName: json['brand_name'] as String?,

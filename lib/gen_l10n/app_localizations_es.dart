@@ -345,6 +345,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get currentParticipation => 'ParticipaciГіn actual';
 
   @override
+  String childSubscribedBrands(String brands) {
+    return 'Marcas: $brands';
+  }
+
+  @override
   String get unknownError => 'Error desconocido';
 
   @override
@@ -880,6 +885,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navEvents => 'Eventos';
 
   @override
+  String get eventsYoutubeLiveButton => 'YouTube en directo';
+
+  @override
+  String get eventsYoutubeLiveInvalidUrl =>
+      'No se pudo abrir este enlace de YouTube.';
+
+  @override
+  String get eventsYoutubeLiveOpenExternally => 'Abrir en YouTube';
+
+  @override
   String get navProfile => 'Perfil';
 
   @override
@@ -1233,6 +1248,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffScanButton => 'ESCANEAR';
 
   @override
+  String get staffQrCheckButton => 'QR CHECK';
+
+  @override
   String get staffParkingButton => 'VALET PARKING';
 
   @override
@@ -1263,6 +1281,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get staffTapToScanRehearsalCheckinQr =>
       'TOCA PARA ESCANEAR QR DE CHECK-IN DE ENSAYO';
+
+  @override
+  String get staffTapToScanQrCheck =>
+      'TOCA PARA ESCANEAR BRAZALETE — ETAPA Y FICHA';
 
   @override
   String get staffCurrentTask => 'Tarea actual';
@@ -1480,6 +1502,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get staffScanHintQr => 'Alinea el código QR dentro del marco';
 
   @override
+  String get staffScanHeaderQrCheck => 'Verificación QR';
+
+  @override
+  String get staffScanHintQrCheck =>
+      'Escanea el brazalete del niño para marcar la etapa y abrir la ficha';
+
+  @override
+  String get staffQrCheckSuccessTitle => 'Etapa marcada';
+
+  @override
+  String get staffQrCheckSuccessContinue => 'Continuar';
+
+  @override
   String get staffScanErrorTitle => 'Error de escaneo';
 
   @override
@@ -1608,6 +1643,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleScan => 'Escaneo QR y flujo de etapas';
+
+  @override
+  String get staffRoleSubtitleQrCheck =>
+      'Marca etapa con brazalete y ficha del niño';
 
   @override
   String get staffRoleSubtitleSupervisor => 'Acceso completo y gestión';
@@ -1989,6 +2028,11 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get currentParticipation => 'ParticipaciГіn actual';
+
+  @override
+  String childSubscribedBrands(String brands) {
+    return 'Marcas: $brands';
+  }
 
   @override
   String get unknownError => 'Error desconocido';
@@ -2526,6 +2570,16 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get navEvents => 'Eventos';
 
   @override
+  String get eventsYoutubeLiveButton => 'YouTube en directo';
+
+  @override
+  String get eventsYoutubeLiveInvalidUrl =>
+      'No se pudo abrir este enlace de YouTube.';
+
+  @override
+  String get eventsYoutubeLiveOpenExternally => 'Abrir en YouTube';
+
+  @override
   String get navProfile => 'Perfil';
 
   @override
@@ -2879,6 +2933,9 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffScanButton => 'ESCANEAR';
 
   @override
+  String get staffQrCheckButton => 'QR CHECK';
+
+  @override
   String get staffParkingButton => 'VALET PARKING';
 
   @override
@@ -2909,6 +2966,10 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   @override
   String get staffTapToScanRehearsalCheckinQr =>
       'TOCA PARA ESCANEAR QR DE CHECK-IN DE ENSAYO';
+
+  @override
+  String get staffTapToScanQrCheck =>
+      'TOCA PARA ESCANEAR BRAZALETE — ETAPA Y FICHA';
 
   @override
   String get staffCurrentTask => 'Tarea actual';
@@ -3126,6 +3187,19 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get staffScanHintQr => 'Alinea el código QR dentro del marco';
 
   @override
+  String get staffScanHeaderQrCheck => 'Verificación QR';
+
+  @override
+  String get staffScanHintQrCheck =>
+      'Escanea el brazalete del niño para marcar la etapa y abrir la ficha';
+
+  @override
+  String get staffQrCheckSuccessTitle => 'Etapa marcada';
+
+  @override
+  String get staffQrCheckSuccessContinue => 'Continuar';
+
+  @override
   String get staffScanErrorTitle => 'Error de escaneo';
 
   @override
@@ -3254,6 +3328,10 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get staffRoleSubtitleScan => 'Escaneo QR y flujo de etapas';
+
+  @override
+  String get staffRoleSubtitleQrCheck =>
+      'Marca etapa con brazalete y ficha del niño';
 
   @override
   String get staffRoleSubtitleSupervisor => 'Acceso completo y gestión';
