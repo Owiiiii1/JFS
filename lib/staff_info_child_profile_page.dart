@@ -70,8 +70,16 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
   @override
   void initState() {
     super.initState();
-    final n = _progressTabs(widget.detail).length;
+    final tabs = _progressTabs(widget.detail);
+    final n = tabs.length;
     _tabController = TabController(length: n > 0 ? n : 1, vsync: this);
+    final preferredKey = widget.detail.preferredProgressTabKey;
+    if (preferredKey != null && tabs.isNotEmpty) {
+      final idx = tabs.indexWhere((t) => t.key == preferredKey);
+      if (idx >= 0) {
+        _tabController.index = idx;
+      }
+    }
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         return;
@@ -140,7 +148,12 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
     Color accent,
   ) {
     final l10n = AppLocalizations.of(context)!;
-    final photo = _resolveUrl(d.photoUrl);
+    final profileTitle = d.isParentScan
+        ? (((d.parentRole ?? '').trim().isNotEmpty)
+              ? '${d.parentRole} Profile'
+              : 'Parent Profile')
+        : l10n.staffChildProfileTitle;
+    final photo = d.isParentScan ? null : _resolveUrl(d.photoUrl);
     final supPhoto = _resolveUrl(d.supervisorPhotoUrl);
     final tabs = _progressTabs(d);
     final tabIndex = _tabController.index.clamp(0, tabs.length - 1);
@@ -166,7 +179,7 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
               ),
               Expanded(
                 child: Text(
-                  l10n.staffChildProfileTitle,
+                  profileTitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: accent,
@@ -574,11 +587,13 @@ class _StaffInfoChildProfilePageState extends State<StaffInfoChildProfilePage>
   }
 
   Widget _photoFallback(SupervisorChildDetail d, Color accent) {
+    final displayName = d.fullName.trim();
+    final initial = displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
     return ColoredBox(
       color: _surfaceLow,
       child: Center(
         child: Text(
-          d.firstName.isNotEmpty ? d.firstName[0].toUpperCase() : '?',
+          initial,
           style: TextStyle(
             fontSize: 72,
             fontWeight: FontWeight.w200,

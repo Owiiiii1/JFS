@@ -865,6 +865,36 @@ abstract class AppLocalizations {
   /// **'MANAGE MENU'**
   String get eventSettingsMealCta;
 
+  /// No description provided for @eventSettingsMealOrderedPcs.
+  ///
+  /// In en, this message translates to:
+  /// **'Ordered: {count} pc'**
+  String eventSettingsMealOrderedPcs(int count);
+
+  /// No description provided for @eventSettingsMealPurchasesListHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Placed orders'**
+  String get eventSettingsMealPurchasesListHeading;
+
+  /// No description provided for @eventSettingsMealPurchaseChildLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Child: {name}'**
+  String eventSettingsMealPurchaseChildLine(String name);
+
+  /// No description provided for @mealPurchaseIssued.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued'**
+  String get mealPurchaseIssued;
+
+  /// No description provided for @mealPurchaseNotIssued.
+  ///
+  /// In en, this message translates to:
+  /// **'Not handed out yet'**
+  String get mealPurchaseNotIssued;
+
   /// No description provided for @eventSettingsRehearsalTitle.
   ///
   /// In en, this message translates to:
@@ -882,6 +912,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'BOOK NOW'**
   String get eventSettingsRehearsalCta;
+
+  /// No description provided for @eventSettingsBrandRehearsalsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Your brand rehearsals'**
+  String get eventSettingsBrandRehearsalsHeading;
 
   /// No description provided for @rehearsalModalTitle.
   ///
@@ -2418,6 +2454,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TAP TO SCAN REHEARSAL CHECK-IN QR'**
   String get staffTapToScanRehearsalCheckinQr;
+
+  /// No description provided for @staffMealHandoutButton.
+  ///
+  /// In en, this message translates to:
+  /// **'LUNCH'**
+  String get staffMealHandoutButton;
+
+  /// No description provided for @staffTapToScanMealBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'TAP TO SCAN A CHILD OR PARENT BADGE'**
+  String get staffTapToScanMealBadge;
+
+  /// No description provided for @staffMealIssueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lunch handout'**
+  String get staffMealIssueTitle;
+
+  /// No description provided for @staffMealIssueNoMeals.
+  ///
+  /// In en, this message translates to:
+  /// **'No lunch orders for this pass.'**
+  String get staffMealIssueNoMeals;
+
+  /// No description provided for @staffMealIssueHandOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Hand out'**
+  String get staffMealIssueHandOut;
+
+  /// No description provided for @staffMealIssueSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as handed out.'**
+  String get staffMealIssueSuccess;
+
+  /// No description provided for @staffMealIssueFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update: {error}'**
+  String staffMealIssueFailure(String error);
+
+  /// No description provided for @staffMealIssueAlreadyIssued.
+  ///
+  /// In en, this message translates to:
+  /// **'already handed out'**
+  String get staffMealIssueAlreadyIssued;
 
   /// No description provided for @staffTapToScanQrCheck.
   ///

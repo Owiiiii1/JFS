@@ -423,6 +423,19 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     ])) {
       return 'gift_issue';
     }
+    if (_matchesAnyToken(role, const [
+      'lunches',
+      'lunch',
+      'meals',
+      'meal_handout',
+      'meal issue',
+      'lunch handout',
+      'обед',
+      'обеды',
+      'выдача обедов',
+    ])) {
+      return 'lunches';
+    }
     if (_matchesAnyToken(role, const ['hostess', 'hs', 'хостесс'])) {
       return 'hostess';
     }
@@ -455,7 +468,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
       case 'interview':
         return _buildInterviewStub();
       case 'lunches':
-        return _buildLunchesStub();
+        return _buildHomeTab(accent, mealHandoutMode: true);
       case 'superadmin':
         return _buildSuperadminStub();
       default:
@@ -659,6 +672,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     bool extraZoneMode = false,
     bool backstageMode = false,
     bool qrCheckMode = false,
+    bool mealHandoutMode = false,
   }) {
     final l10n = AppLocalizations.of(context)!;
     final roleDesc = (_selectedRole?.description ?? '').trim();
@@ -666,16 +680,18 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     final roleActive = _selectedRole?.isActive ?? false;
     final scanEnabled = (parkingMode || extraZoneMode || backstageMode)
         ? roleActive
-        : (!_homeStagesLoading &&
-              roleActive &&
-              eventId != null &&
-              eventId > 0 &&
-              AppSettings.staffActiveStageId != null);
+        : (mealHandoutMode
+            ? (roleActive && eventId != null && eventId > 0)
+            : (!_homeStagesLoading &&
+                  roleActive &&
+                  eventId != null &&
+                  eventId > 0 &&
+                  AppSettings.staffActiveStageId != null));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!parkingMode && !extraZoneMode && !backstageMode)
+        if (!parkingMode && !extraZoneMode && !backstageMode && !mealHandoutMode)
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
             child: Column(
@@ -801,6 +817,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                               extraZoneScan: extraZoneMode,
                               backstageScan: backstageMode,
                               qrCheck: qrCheckMode,
+                              mealHandoutScan: mealHandoutMode,
                             ),
                           )
                         : null,
@@ -839,7 +856,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                                         ? Icons.workspace_premium_outlined
                                         : (backstageMode
                                               ? Icons.theater_comedy_outlined
-                                              : Icons.qr_code_scanner)),
+                                              : (mealHandoutMode
+                                                    ? Icons.restaurant_menu
+                                                    : Icons.qr_code_scanner))),
                               color: scanEnabled
                                   ? Colors.white
                                   : Colors.white38,
@@ -853,9 +872,11 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                                         ? l10n.staffExtraZoneButton
                                         : (backstageMode
                                               ? l10n.staffBackstageButton
-                                              : (qrCheckMode
-                                                    ? l10n.staffQrCheckButton
-                                                    : l10n.staffScanButton))),
+                                              : (mealHandoutMode
+                                                    ? l10n.staffMealHandoutButton
+                                                    : (qrCheckMode
+                                                          ? l10n.staffQrCheckButton
+                                                          : l10n.staffScanButton)))),
                               style: TextStyle(
                                 color: scanEnabled
                                     ? Colors.white
@@ -879,9 +900,11 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                             ? l10n.staffTapToScanExtraZoneQr
                             : (backstageMode
                                   ? l10n.staffTapToScanBackstageQr
-                                  : (qrCheckMode
-                                        ? l10n.staffTapToScanQrCheck
-                                        : l10n.staffTapToScanModelLanyard))),
+                                  : (mealHandoutMode
+                                        ? l10n.staffTapToScanMealBadge
+                                        : (qrCheckMode
+                                              ? l10n.staffTapToScanQrCheck
+                                              : l10n.staffTapToScanModelLanyard)))),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: scanEnabled
@@ -1041,6 +1064,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     bool rehearsalCheckinScan = false,
     int? rehearsalSlotId,
     bool qrCheck = false,
+    bool mealHandoutScan = false,
   }) async {
     final ok = await _refreshLiveWorkerStatus(showError: true);
     if (!ok || !mounted || !context.mounted) return;
@@ -1071,7 +1095,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           rehearsalCheckinScan: rehearsalCheckinScan,
           rehearsalSlotId: rehearsalSlotId,
           qrCheck: qrCheck,
-        ),
+          mealHandoutScan: mealHandoutScan,
+          staffRoleId: _selectedRole?.id,
+          ),
       ),
     );
   }
@@ -1780,14 +1806,6 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
       icon: Icons.mic_outlined,
       title: AppLocalizations.of(context)!.staffRoleInterviewTitle,
       message: AppLocalizations.of(context)!.staffRoleInterviewPlaceholder,
-    );
-  }
-
-  Widget _buildLunchesStub() {
-    return _buildPlaceholderHomeTab(
-      icon: Icons.restaurant_outlined,
-      title: AppLocalizations.of(context)!.staffRoleLunchesTitle,
-      message: AppLocalizations.of(context)!.staffRoleLunchesPlaceholder,
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'app_settings.dart';
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
+import 'schedule_wall_clock.dart';
 import 'rehearsal_map_util.dart';
 
 const Color _kPrimary = Color(0xFFF2CA50);
@@ -55,6 +56,41 @@ Widget _rehearsalVenueCaptionRow({
 
 String _rehearsalDateKey(DateTime d) =>
     '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+/// Aligned with server: slot start in local wall time vs now (rehearsal cut-off is start time).
+bool rehearsalSlotWallStartIsPast(RehearsalSlotOption s) {
+  return _rehearsalWallStartIsPast(
+    dateYmd: s.slotDate,
+    timeHm: s.slotTime,
+  );
+}
+
+bool rehearsalBookingWallStartIsPast(RehearsalBookingInfo b) {
+  final iso = b.startsAt;
+  if (iso != null) {
+    return iso.isBefore(DateTime.now());
+  }
+  return _rehearsalWallStartIsPast(
+    dateYmd: b.slotDate,
+    timeHm: b.slotTime,
+  );
+}
+
+bool _rehearsalWallStartIsPast({
+  required String dateYmd,
+  required String timeHm,
+}) {
+  final t = timeHm.trim();
+  if (dateYmd.isEmpty || t.isEmpty) {
+    return false;
+  }
+  final norm = t.length > 5 ? t.substring(0, 5) : t;
+  final p = DateTime.tryParse('${dateYmd}T$norm:00');
+  if (p == null) {
+    return false;
+  }
+  return p.isBefore(DateTime.now());
+}
 
 String? _defaultSelectedDateKeyForSlots(List<RehearsalSlotOption> list) {
   DateTime? maxD;
@@ -168,6 +204,13 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
 
   bool get _canBookMore => _bookings.length < _maxMainRehearsals;
   Set<int> get _alreadyBookedSlotIds => _bookings.map((b) => b.slotId).toSet();
+
+  /// Брони на уже прошедшее время — в лимит входят, снять/поменять нельзя (сервер тоже держит).
+  Set<int> get _lockedPastBookedIds => {
+    for (final b in _bookings)
+      if (rehearsalBookingWallStartIsPast(b)) b.slotId,
+  };
+
   bool get _currentChildHasAssignedBrand {
     final a = _assignment;
     if (a == null) return false;
@@ -176,6 +219,18 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
       return true;
     }
     return (a.brandId ?? 0) > 0 || (a.secondBrandId ?? 0) > 0;
+  }
+
+  /// Репетиции бренда из таймлайна — только просмотр (без брони в этом окне).
+  List<PreparatoryStageInfo> get _brandRehearsalStages {
+    final a = _assignment;
+    if (a == null || a.event.id != widget.eventId) {
+      return const [];
+    }
+    return [
+      for (final p in a.preparatoryStages)
+        if (p.isBrandRehearsalMilestone) p,
+    ];
   }
 
   @override
@@ -220,9 +275,21 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
       }
     });
     try {
+      final aid = _assignment?.id;
+      if (aid == null || aid <= 0) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _loading = false;
+          _slots = [];
+          _loadError = null;
+        });
+        return;
+      }
       final payload = await widget.auth.getEventRehearsalSlots(
         widget.eventId,
-        assignmentId: _assignment?.id,
+        assignmentId: aid,
       );
       if (!mounted) return;
       setState(() {
@@ -285,19 +352,26 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
   /// (как «15–21», если слоты только на 21-е).
   List<DateTime> _calendarWeekStrip() {
     DateTime? maxD;
-    for (final s in _slots) {
-      final d = DateTime.tryParse(s.slotDate);
+    void considerDate(String? ymd) {
+      final d = DateTime.tryParse(ymd ?? '');
       if (d != null) {
         final n = DateTime(d.year, d.month, d.day);
-        if (maxD == null || n.isAfter(maxD)) {
+        if (maxD == null || n.isAfter(maxD!)) {
           maxD = n;
         }
       }
     }
-    if (maxD == null) {
+    for (final s in _slots) {
+      considerDate(s.slotDate);
+    }
+    for (final b in _bookings) {
+      considerDate(b.slotDate);
+    }
+    final anchor = maxD;
+    if (anchor == null) {
       return [];
     }
-    final end = DateTime(maxD.year, maxD.month, maxD.day);
+    final end = DateTime(anchor.year, anchor.month, anchor.day);
     final start = end.subtract(const Duration(days: 6));
     return List.generate(7, (i) => start.add(Duration(days: i)));
   }
@@ -379,6 +453,7 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).toLanguageTag();
+    final scheduleLocale = Localizations.localeOf(context).toString();
 
     return Container(
       decoration: const BoxDecoration(
@@ -628,7 +703,8 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                         maxWidth: usable,
                         weekDays: _calendarWeekStrip(),
                         hasSlotsForKey: (key) =>
-                            _slots.any((s) => s.slotDate == key),
+                            _slots.any((s) => s.slotDate == key) ||
+                            _bookings.any((b) => b.slotDate == key),
                         locale: locale,
                         selectedKey: _selectedDate,
                         onSelectDayWithSlots: (key) {
@@ -656,14 +732,63 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                       ],
                     ),
                     const SizedBox(height: 12),
+                    if (_isChangingBooking && _lockedPastBookedIds.isNotEmpty) ...[
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final b in _bookings)
+                            if (rehearsalBookingWallStartIsPast(b))
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _kSurfaceHigh.withValues(alpha: 0.55),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: _kOutline.withValues(alpha: 0.25),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.lock_outline_rounded,
+                                      size: 14,
+                                      color: _kTertiary.withValues(alpha: 0.85),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      '${AppSettings.formatTimeLabel(b.slotTime)} · ${l10n.rehearsalBookedTitle}',
+                                      style: TextStyle(
+                                        color: _kTertiary.withValues(alpha: 0.9),
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     _TimeSlotGrid(
                       slots: _slotsForDate(_selectedDate!),
                       selectedIds: _selectedSlotIds,
                       bookedSlotIds: _alreadyBookedSlotIds,
+                      lockedSlotIds: _isChangingBooking ? _lockedPastBookedIds : const {},
                       selectionLimit: _maxMainRehearsals,
                       editableBooked: _isChangingBooking,
                       onToggle: (id) {
                         setState(() {
+                          if (_isChangingBooking &&
+                              _lockedPastBookedIds.contains(id)) {
+                            return;
+                          }
                           if (_selectedSlotIds.contains(id)) {
                             _selectedSlotIds.remove(id);
                             return;
@@ -745,10 +870,181 @@ class _ClientRehearsalSheetBodyState extends State<_ClientRehearsalSheetBody> {
                     ),
                   ),
                 ],
+                if (_assignment != null && !_loading) ...[
+                  const SizedBox(height: 24),
+                  _RehearsalSheetBrandRehearsalsSection(
+                    l10n: l10n,
+                    stages: _brandRehearsalStages,
+                    locale: scheduleLocale,
+                  ),
+                ],
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+String? _rehearsalSheetFormatBrandRehearsalWhen(
+  PreparatoryStageInfo p,
+  String locale,
+) {
+  final w = parseScheduleWallToDateTime(p.scheduledAtWall);
+  if (w != null) {
+    final d = DateFormat.yMMMMd(locale).format(w);
+    final t = AppSettings.formatTime(w.hour, w.minute);
+    return '$d · $t';
+  }
+  final s = p.scheduledAt;
+  if (s != null) {
+    final loc = s.toLocal();
+    final d = DateFormat.yMMMMd(locale).format(loc);
+    final t = AppSettings.formatTime(loc.hour, loc.minute);
+    return '$d · $t';
+  }
+  return null;
+}
+
+class _RehearsalSheetBrandRehearsalsSection extends StatelessWidget {
+  const _RehearsalSheetBrandRehearsalsSection({
+    required this.l10n,
+    required this.stages,
+    required this.locale,
+  });
+
+  final AppLocalizations l10n;
+  final List<PreparatoryStageInfo> stages;
+  final String locale;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          l10n.eventSettingsBrandRehearsalsHeading,
+          style: const TextStyle(
+            fontFamily: 'HelveticaNeueCyr',
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            height: 1.2,
+            color: _kOnSurface,
+          ),
+        ),
+        if (stages.isNotEmpty) const SizedBox(height: 10),
+        for (var i = 0; i < stages.length; i++) ...[
+          if (i > 0) const SizedBox(height: 8),
+          _RehearsalSheetBrandRehearsalCard(
+            prep: stages[i],
+            l10n: l10n,
+            locale: locale,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _RehearsalSheetBrandRehearsalCard extends StatelessWidget {
+  const _RehearsalSheetBrandRehearsalCard({
+    required this.prep,
+    required this.l10n,
+    required this.locale,
+  });
+
+  final PreparatoryStageInfo prep;
+  final AppLocalizations l10n;
+  final String locale;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = prep.displayTitle(l10n);
+    final when = _rehearsalSheetFormatBrandRehearsalWhen(prep, locale);
+    final addr = prep.address?.trim();
+    final desc = prep.description?.trim();
+    return Semantics(
+      readOnly: true,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: _kSurfaceHigh.withValues(alpha: 0.55),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: _kTertiary.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'HelveticaNeueCyr',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: _kOnSurface,
+                      height: 1.25,
+                    ),
+                  ),
+                ),
+                if (prep.isCompleted) ...[
+                  const SizedBox(width: 6),
+                  ExcludeSemantics(
+                    child: Icon(
+                      Icons.check_circle_rounded,
+                      size: 20,
+                      color: _kPrimary.withValues(alpha: 0.95),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            if (when != null && when.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                when,
+                style: TextStyle(
+                  fontFamily: 'HelveticaNeueCyr',
+                  fontSize: 13,
+                  color: _kTertiary.withValues(alpha: 0.95),
+                  height: 1.25,
+                ),
+              ),
+            ],
+            if (addr != null && addr.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                addr,
+                style: TextStyle(
+                  fontFamily: 'HelveticaNeueCyr',
+                  fontSize: 12,
+                  color: _kTertiary.withValues(alpha: 0.88),
+                  height: 1.3,
+                ),
+              ),
+            ],
+            if (desc != null && desc.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                desc,
+                style: TextStyle(
+                  fontFamily: 'HelveticaNeueCyr',
+                  fontSize: 12,
+                  color: _kTertiary.withValues(alpha: 0.9),
+                  height: 1.35,
+                ),
+                maxLines: 6,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -891,6 +1187,7 @@ class _TimeSlotGrid extends StatelessWidget {
     required this.slots,
     required this.selectedIds,
     required this.bookedSlotIds,
+    this.lockedSlotIds = const {},
     required this.selectionLimit,
     required this.editableBooked,
     required this.onToggle,
@@ -900,6 +1197,7 @@ class _TimeSlotGrid extends StatelessWidget {
   final List<RehearsalSlotOption> slots;
   final Set<int> selectedIds;
   final Set<int> bookedSlotIds;
+  final Set<int> lockedSlotIds;
   final int selectionLimit;
   final bool editableBooked;
   final void Function(int id) onToggle;
@@ -919,6 +1217,7 @@ class _TimeSlotGrid extends StatelessWidget {
       itemCount: slots.length,
       itemBuilder: (context, i) {
         final s = slots[i];
+        final locked = lockedSlotIds.contains(s.id);
         final booked = bookedSlotIds.contains(s.id);
         final full = s.freeSpots <= 0 && !booked;
         final sel = selectedIds.contains(s.id);
@@ -928,7 +1227,10 @@ class _TimeSlotGrid extends StatelessWidget {
         return Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: (full || disableBookedTap || disabledByLimit)
+            onTap: (full ||
+                    disableBookedTap ||
+                    disabledByLimit ||
+                    locked)
                 ? null
                 : () => onToggle(s.id),
             borderRadius: BorderRadius.circular(12),
@@ -961,7 +1263,7 @@ class _TimeSlotGrid extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      booked
+                      (locked || booked)
                           ? l10n.rehearsalBookedTitle.toUpperCase()
                           : full
                           ? l10n.rehearsalFull.toUpperCase()

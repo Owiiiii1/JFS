@@ -415,6 +415,25 @@ class AppLocalizationsEs extends AppLocalizations {
   String get eventSettingsMealCta => 'GESTIONAR MENГљ';
 
   @override
+  String eventSettingsMealOrderedPcs(int count) {
+    return 'Pedido: $count ud.';
+  }
+
+  @override
+  String get eventSettingsMealPurchasesListHeading => 'Pedidos realizados';
+
+  @override
+  String eventSettingsMealPurchaseChildLine(String name) {
+    return 'Niño/a: $name';
+  }
+
+  @override
+  String get mealPurchaseIssued => 'Entregado';
+
+  @override
+  String get mealPurchaseNotIssued => 'Aún no entregado';
+
+  @override
   String get eventSettingsRehearsalTitle => 'Reserva de ensayo';
 
   @override
@@ -423,6 +442,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get eventSettingsRehearsalCta => 'RESERVAR';
+
+  @override
+  String get eventSettingsBrandRehearsalsHeading => 'Tus ensayos de marca';
 
   @override
   String get rehearsalModalTitle => 'Reserva de ensayo';
@@ -1283,6 +1305,33 @@ class AppLocalizationsEs extends AppLocalizations {
       'TOCA PARA ESCANEAR QR DE CHECK-IN DE ENSAYO';
 
   @override
+  String get staffMealHandoutButton => 'COMIDAS';
+
+  @override
+  String get staffTapToScanMealBadge =>
+      'TOCA PARA ESCANEAR BRAZALETE (NIÑO O PADRE)';
+
+  @override
+  String get staffMealIssueTitle => 'Entrega de almuerzos';
+
+  @override
+  String get staffMealIssueNoMeals => 'No hay almuerzos pedidos con este pase.';
+
+  @override
+  String get staffMealIssueHandOut => 'Entregar';
+
+  @override
+  String get staffMealIssueSuccess => 'Marcado como entregado.';
+
+  @override
+  String staffMealIssueFailure(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get staffMealIssueAlreadyIssued => 'ya entregado';
+
+  @override
   String get staffTapToScanQrCheck =>
       'TOCA PARA ESCANEAR BRAZALETE — ETAPA Y FICHA';
 
@@ -2100,6 +2149,25 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get eventSettingsMealCta => 'GESTIONAR MENГљ';
 
   @override
+  String eventSettingsMealOrderedPcs(int count) {
+    return 'Pedido: $count ud.';
+  }
+
+  @override
+  String get eventSettingsMealPurchasesListHeading => 'Pedidos realizados';
+
+  @override
+  String eventSettingsMealPurchaseChildLine(String name) {
+    return 'Niño/a: $name';
+  }
+
+  @override
+  String get mealPurchaseIssued => 'Entregado';
+
+  @override
+  String get mealPurchaseNotIssued => 'Aún no entregado';
+
+  @override
   String get eventSettingsRehearsalTitle => 'Reserva de ensayo';
 
   @override
@@ -2108,6 +2176,9 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get eventSettingsRehearsalCta => 'RESERVAR';
+
+  @override
+  String get eventSettingsBrandRehearsalsHeading => 'Tus ensayos de marca';
 
   @override
   String get rehearsalModalTitle => 'Reserva de ensayo';
@@ -2966,6 +3037,33 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   @override
   String get staffTapToScanRehearsalCheckinQr =>
       'TOCA PARA ESCANEAR QR DE CHECK-IN DE ENSAYO';
+
+  @override
+  String get staffMealHandoutButton => 'COMIDAS';
+
+  @override
+  String get staffTapToScanMealBadge =>
+      'TOCA PARA ESCANEAR BRAZALETE (NIÑO O PADRE)';
+
+  @override
+  String get staffMealIssueTitle => 'Entrega de almuerzos';
+
+  @override
+  String get staffMealIssueNoMeals => 'No hay almuerzos pedidos con este pase.';
+
+  @override
+  String get staffMealIssueHandOut => 'Entregar';
+
+  @override
+  String get staffMealIssueSuccess => 'Marcado como entregado.';
+
+  @override
+  String staffMealIssueFailure(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get staffMealIssueAlreadyIssued => 'ya entregado';
 
   @override
   String get staffTapToScanQrCheck =>

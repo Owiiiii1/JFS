@@ -412,6 +412,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventSettingsMealCta => 'MANAGE MENU';
 
   @override
+  String eventSettingsMealOrderedPcs(int count) {
+    return 'Ordered: $count pc';
+  }
+
+  @override
+  String get eventSettingsMealPurchasesListHeading => 'Placed orders';
+
+  @override
+  String eventSettingsMealPurchaseChildLine(String name) {
+    return 'Child: $name';
+  }
+
+  @override
+  String get mealPurchaseIssued => 'Issued';
+
+  @override
+  String get mealPurchaseNotIssued => 'Not handed out yet';
+
+  @override
   String get eventSettingsRehearsalTitle => 'Rehearsal Booking';
 
   @override
@@ -419,6 +438,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventSettingsRehearsalCta => 'BOOK NOW';
+
+  @override
+  String get eventSettingsBrandRehearsalsHeading => 'Your brand rehearsals';
 
   @override
   String get rehearsalModalTitle => 'Rehearsal booking';
@@ -1259,6 +1281,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get staffTapToScanRehearsalCheckinQr =>
       'TAP TO SCAN REHEARSAL CHECK-IN QR';
+
+  @override
+  String get staffMealHandoutButton => 'LUNCH';
+
+  @override
+  String get staffTapToScanMealBadge => 'TAP TO SCAN A CHILD OR PARENT BADGE';
+
+  @override
+  String get staffMealIssueTitle => 'Lunch handout';
+
+  @override
+  String get staffMealIssueNoMeals => 'No lunch orders for this pass.';
+
+  @override
+  String get staffMealIssueHandOut => 'Hand out';
+
+  @override
+  String get staffMealIssueSuccess => 'Marked as handed out.';
+
+  @override
+  String staffMealIssueFailure(String error) {
+    return 'Could not update: $error';
+  }
+
+  @override
+  String get staffMealIssueAlreadyIssued => 'already handed out';
 
   @override
   String get staffTapToScanQrCheck => 'TAP TO SCAN BADGE — STAGE & CHILD CARD';

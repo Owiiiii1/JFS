@@ -412,6 +412,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get eventSettingsMealCta => 'МЕНЮ';
 
   @override
+  String eventSettingsMealOrderedPcs(int count) {
+    return 'Заказано: $count шт.';
+  }
+
+  @override
+  String get eventSettingsMealPurchasesListHeading => 'Оформленные заказы';
+
+  @override
+  String eventSettingsMealPurchaseChildLine(String name) {
+    return 'Ребёнок: $name';
+  }
+
+  @override
+  String get mealPurchaseIssued => 'Выдано';
+
+  @override
+  String get mealPurchaseNotIssued => 'Не выдан';
+
+  @override
   String get eventSettingsRehearsalTitle => 'Запись на репетицию';
 
   @override
@@ -420,6 +439,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get eventSettingsRehearsalCta => 'ЗАПИСАТЬСЯ';
+
+  @override
+  String get eventSettingsBrandRehearsalsHeading => 'Ваши репетиции брендов';
 
   @override
   String get rehearsalModalTitle => 'Запись на репетицию';
@@ -1272,6 +1294,32 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get staffTapToScanRehearsalCheckinQr =>
       'НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR ЧЕК-ИНА РЕПЕТИЦИЙ';
+
+  @override
+  String get staffMealHandoutButton => 'ОБЕД';
+
+  @override
+  String get staffTapToScanMealBadge => 'СКАН БЕЙДЖА РЕБЁНКА ИЛИ РОДИТЕЛЯ';
+
+  @override
+  String get staffMealIssueTitle => 'Выдача обедов';
+
+  @override
+  String get staffMealIssueNoMeals => 'По этому бейджу нет заказанных обедов.';
+
+  @override
+  String get staffMealIssueHandOut => 'Выдать';
+
+  @override
+  String get staffMealIssueSuccess => 'Отмечено как выдано.';
+
+  @override
+  String staffMealIssueFailure(String error) {
+    return 'Не удалось: $error';
+  }
+
+  @override
+  String get staffMealIssueAlreadyIssued => 'уже выдано';
 
   @override
   String get staffTapToScanQrCheck =>

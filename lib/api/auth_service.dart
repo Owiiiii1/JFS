@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
-import 'dart:ui' show Locale, PlatformDispatcher;
+import 'dart:ui' show Locale;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -496,6 +496,84 @@ class AuthService {
     throw Exception(
       _tryMessage(res.body) ??
           (map['message'] as String? ?? 'Could not resolve QR code'),
+    );
+  }
+
+  /// POST /api/app/worker/meal-issue-lookup — обеды по бейджу для выдачи.
+  Future<WorkerMealIssueLookupResult> workerMealIssueLookup({
+    required String badgeCode,
+    int? contextEventId,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final uri = Uri.parse('$baseUrl/api/app/worker/meal-issue-lookup');
+    final body = <String, dynamic>{'badge_code': badgeCode};
+    if (contextEventId != null && contextEventId > 0) {
+      body['context_event_id'] = contextEventId;
+    }
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'Accept-Language':
+            apiContentLanguageForLocale(AppSettings.contentLocaleForApi()),
+      },
+      body: jsonEncode(body),
+    );
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode == 403) {
+      throw Exception(_tryMessage(res.body) ?? 'Forbidden');
+    }
+    if (res.statusCode == 200 && map['ok'] == true) {
+      return WorkerMealIssueLookupResult.fromJson(map);
+    }
+    throw Exception(
+      _tryMessage(res.body) ??
+          (map['message'] as String? ?? 'Meal issue lookup failed'),
+    );
+  }
+
+  /// POST /api/app/worker/meal-issue-confirm — отметить выбранные обеды выданными.
+  Future<WorkerMealIssueConfirmResult> workerMealIssueConfirm({
+    required List<int> purchaseIds,
+    required int staffRoleId,
+    int? contextEventId,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final uri = Uri.parse('$baseUrl/api/app/worker/meal-issue-confirm');
+    final body = <String, dynamic>{
+      'purchase_ids': purchaseIds,
+      'staff_role_id': staffRoleId,
+    };
+    if (contextEventId != null && contextEventId > 0) {
+      body['context_event_id'] = contextEventId;
+    }
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'Accept-Language':
+            apiContentLanguageForLocale(AppSettings.contentLocaleForApi()),
+      },
+      body: jsonEncode(body),
+    );
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode == 403) {
+      throw Exception(_tryMessage(res.body) ?? 'Forbidden');
+    }
+    if (res.statusCode == 200 && map['ok'] == true) {
+      return WorkerMealIssueConfirmResult(
+        updated: _jsonInt(map['updated'], 0),
+      );
+    }
+    throw Exception(
+      _tryMessage(res.body) ??
+          (map['message'] as String? ?? 'Meal issue confirm failed'),
     );
   }
 
@@ -1397,14 +1475,14 @@ class AuthService {
   }
 
   /// [contentLocale] — локаль UI приложения; влияет на язык названий/описаний этапов (Accept-Language).
-  /// Если null, используется системная локаль устройства.
+  /// Если null, используется язык из настроек приложения (включая режим "System").
   Future<ClientDashboard> getClientDashboard({Locale? contentLocale}) async {
     final token = await getToken();
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
     }
     final lang = apiContentLanguageForLocale(
-      contentLocale ?? PlatformDispatcher.instance.locale,
+      contentLocale ?? AppSettings.contentLocaleForApi(),
     );
     final uri = Uri.parse('$baseUrl/api/app/client/dashboard');
     final res = await http.get(
@@ -3316,6 +3394,80 @@ class BackstageTicketsPayload {
   }
 }
 
+/// Одна покупка обеда (строка `child_event_meal_purchases`) в дашборде.
+class EventMealPurchaseLine {
+  EventMealPurchaseLine({
+    required this.id,
+    required this.eventMealId,
+    this.purchasedAt,
+    this.isIssued = false,
+    this.nameEn,
+    this.nameRu,
+    this.nameUk,
+    this.nameEs,
+  });
+
+  final int id;
+  final int eventMealId;
+  final DateTime? purchasedAt;
+
+  /// API `is_issued` — блюдо выдали на ивенте.
+  final bool isIssued;
+  final String? nameEn;
+  final String? nameRu;
+  final String? nameUk;
+  final String? nameEs;
+
+  String labelForLanguageCode(String languageCode) {
+    String? pick(String code) {
+      switch (code) {
+        case 'ru':
+          return nameRu;
+        case 'uk':
+          return nameUk;
+        case 'es':
+          return nameEs;
+        default:
+          return nameEn;
+      }
+    }
+
+    final primary = pick(languageCode);
+    if (primary != null && primary.trim().isNotEmpty) {
+      return primary.trim();
+    }
+    for (final s in [nameEn, nameRu, nameUk, nameEs]) {
+      if (s != null && s.trim().isNotEmpty) {
+        return s.trim();
+      }
+    }
+    return '#$eventMealId';
+  }
+
+  factory EventMealPurchaseLine.fromJson(Map<String, dynamic> json) {
+    return EventMealPurchaseLine(
+      id: _jsonInt(json['id']),
+      eventMealId: _jsonInt(json['event_meal_id']),
+      purchasedAt: _jsonDateTimeNullable(json['purchased_at']),
+      isIssued: _jsonBool(json['is_issued'], false),
+      nameEn: json['name_en'] as String?,
+      nameRu: json['name_ru'] as String?,
+      nameUk: json['name_uk'] as String?,
+      nameEs: json['name_es'] as String?,
+    );
+  }
+}
+
+List<EventMealPurchaseLine> _parseEventMealPurchasesList(Object? raw) {
+  if (raw is! List) {
+    return const <EventMealPurchaseLine>[];
+  }
+  return raw
+      .whereType<Map<String, dynamic>>()
+      .map(EventMealPurchaseLine.fromJson)
+      .toList();
+}
+
 class ActiveAssignment {
   ActiveAssignment({
     required this.id,
@@ -3344,6 +3496,8 @@ class ActiveAssignment {
     this.eventMealPaidAt,
     this.checkinCode,
     this.mealFulfillmentStatus,
+    this.eventMealFulfilledOrdersCount = 0,
+    this.eventMealPurchases = const [],
     this.rehearsalBookings = const [],
     this.maxMainRehearsals = 1,
     this.extraMainRehearsals = 0,
@@ -3386,6 +3540,12 @@ class ActiveAssignment {
   /// Server: `none` | `awaiting_payment` | `fulfilled` (see ChildEventAssignment::getMealFulfillmentStatus).
   final String? mealFulfillmentStatus;
 
+  /// Успешно оформленные заказы обеда (см. event_meal_fulfilled_orders_count в API).
+  final int eventMealFulfilledOrdersCount;
+
+  /// Строки из `child_event_meal_purchases` (API `event_meal_purchases`) для списка в приложении.
+  final List<EventMealPurchaseLine> eventMealPurchases;
+
   final List<RehearsalBookingInfo> rehearsalBookings;
   final int maxMainRehearsals;
   final int extraMainRehearsals;
@@ -3402,8 +3562,10 @@ class ActiveAssignment {
   bool get isMealOrderLocked {
     switch (mealFulfillmentStatus) {
       case 'awaiting_payment':
-      case 'fulfilled':
         return true;
+      case 'fulfilled':
+        // Можно оформить ещё заказы; блок только во время сессии оплаты.
+        return false;
       case 'none':
         return false;
       default:
@@ -3501,6 +3663,11 @@ class ActiveAssignment {
       eventMealPaidAt: _jsonDateTimeNullable(json['event_meal_paid_at']),
       checkinCode: (json['checkin_code'] as String?)?.trim(),
       mealFulfillmentStatus: json['meal_fulfillment_status'] as String?,
+      eventMealFulfilledOrdersCount: _jsonInt(
+        json['event_meal_fulfilled_orders_count'],
+        0,
+      ),
+      eventMealPurchases: _parseEventMealPurchasesList(json['event_meal_purchases']),
       rehearsalBookings: rbs is List
           ? rbs
                 .whereType<Map<String, dynamic>>()
@@ -3652,13 +3819,16 @@ class EventMealOption {
 }
 
 class MainStageInfo {
-  MainStageInfo({required this.id, required this.name, this.description});
+  MainStageInfo({required this.id, required this.name, this.description, this.brandName});
 
   final int id;
   final String name;
 
   /// Локализованное описание этапа (из API), для деталей в таймлайне.
   final String? description;
+
+  /// Под подписью этапа: бренд (для этапов сегмента brand в пакете); с API `brand_name`.
+  final String? brandName;
 
   factory MainStageInfo.fromJson(Map<String, dynamic> json) {
     final rawDesc = json['description'];
@@ -3668,6 +3838,7 @@ class MainStageInfo {
       description: rawDesc is String && rawDesc.trim().isNotEmpty
           ? rawDesc.trim()
           : null,
+      brandName: _optionalTrimmedApiString(json['brand_name']),
     );
   }
 }
@@ -4310,6 +4481,10 @@ class SupervisorChildDetail {
     this.supervisorName,
     this.supervisorPhone,
     this.supervisorPhotoUrl,
+    this.scannedParticipantType,
+    this.scannedParticipantSlot,
+    this.scanCodeType,
+    this.preferredProgressTabKey,
     required this.progressPercent,
     this.currentStageName,
     required this.completedStages,
@@ -4337,6 +4512,10 @@ class SupervisorChildDetail {
   final String? supervisorName;
   final String? supervisorPhone;
   final String? supervisorPhotoUrl;
+  final String? scannedParticipantType;
+  final int? scannedParticipantSlot;
+  final String? scanCodeType;
+  final String? preferredProgressTabKey;
   final int progressPercent;
   final String? currentStageName;
   final int completedStages;
@@ -4344,7 +4523,18 @@ class SupervisorChildDetail {
   final List<StaffMainProgressStage> mainProgressStages;
   final List<StaffProgressTabData> progressTabs;
 
-  String get fullName => firstName;
+  bool get isParentScan => scannedParticipantType == 'parent';
+
+  String get fullName {
+    if (!isParentScan) {
+      return firstName;
+    }
+    final n = (parentName ?? '').trim();
+    if (n.isNotEmpty) {
+      return n;
+    }
+    return firstName;
+  }
 
   factory SupervisorChildDetail.fromJson(Map<String, dynamic> json) {
     final mps = json['main_progress_stages'];
@@ -4370,6 +4560,10 @@ class SupervisorChildDetail {
       supervisorName: json['supervisor_name'] as String?,
       supervisorPhone: json['supervisor_phone'] as String?,
       supervisorPhotoUrl: json['supervisor_photo_url'] as String?,
+      scannedParticipantType: json['scanned_participant_type'] as String?,
+      scannedParticipantSlot: _jsonIntNullable(json['scanned_participant_slot']),
+      scanCodeType: json['scan_code_type'] as String?,
+      preferredProgressTabKey: json['preferred_progress_tab_key'] as String?,
       progressPercent: json['progress_percent'] as int? ?? 0,
       currentStageName: json['current_stage_name'] as String?,
       completedStages: json['completed_stages'] as int? ?? 0,
@@ -4528,6 +4722,100 @@ class ScanStageResult {
       attemptId: json['attempt_id'] as int?,
     );
   }
+}
+
+/// Строка обеда для сценария «выдача» в staff app.
+class WorkerMealIssueLine {
+  WorkerMealIssueLine({
+    required this.id,
+    this.isIssued = false,
+    this.purchasedAt,
+    this.nameEn,
+    this.nameRu,
+    this.nameUk,
+    this.nameEs,
+  });
+
+  final int id;
+  final bool isIssued;
+  final DateTime? purchasedAt;
+  final String? nameEn;
+  final String? nameRu;
+  final String? nameUk;
+  final String? nameEs;
+
+  String labelForLanguageCode(String languageCode) {
+    String? pick(String code) {
+      switch (code) {
+        case 'ru':
+          return nameRu;
+        case 'uk':
+          return nameUk;
+        case 'es':
+          return nameEs;
+        default:
+          return nameEn;
+      }
+    }
+
+    final primary = pick(languageCode);
+    if (primary != null && primary.trim().isNotEmpty) {
+      return primary.trim();
+    }
+    for (final s in [nameEn, nameRu, nameUk, nameEs]) {
+      if (s != null && s.trim().isNotEmpty) {
+        return s.trim();
+      }
+    }
+    return '#$id';
+  }
+
+  factory WorkerMealIssueLine.fromJson(Map<String, dynamic> json) {
+    return WorkerMealIssueLine(
+      id: _jsonInt(json['id']),
+      isIssued: _jsonBool(json['is_issued'], false),
+      purchasedAt: _jsonDateTimeNullable(json['purchased_at']),
+      nameEn: json['name_en'] as String?,
+      nameRu: json['name_ru'] as String?,
+      nameUk: json['name_uk'] as String?,
+      nameEs: json['name_es'] as String?,
+    );
+  }
+}
+
+class WorkerMealIssueLookupResult {
+  WorkerMealIssueLookupResult({
+    required this.assignmentId,
+    this.childId,
+    required this.badgeOwnerName,
+    this.mealPurchases = const [],
+  });
+
+  final int assignmentId;
+  final int? childId;
+  final String badgeOwnerName;
+  final List<WorkerMealIssueLine> mealPurchases;
+
+  factory WorkerMealIssueLookupResult.fromJson(Map<String, dynamic> json) {
+    final raw = json['meal_purchases'];
+    final list = raw is List
+        ? raw
+              .whereType<Map<String, dynamic>>()
+              .map(WorkerMealIssueLine.fromJson)
+              .toList()
+        : const <WorkerMealIssueLine>[];
+    return WorkerMealIssueLookupResult(
+      assignmentId: _jsonInt(json['assignment_id']),
+      childId: _jsonIntNullable(json['child_id']),
+      badgeOwnerName: (json['badge_owner_name'] as String? ?? '').trim(),
+      mealPurchases: list,
+    );
+  }
+}
+
+class WorkerMealIssueConfirmResult {
+  WorkerMealIssueConfirmResult({required this.updated});
+  final int updated;
 }
 
 class ParkingScanLookupResult {

@@ -186,9 +186,25 @@
   "eventSettingsMealTitle": "SelecciГіn de comidas",
   "eventSettingsMealSubtitle": "Elige un plato para el evento actual",
   "eventSettingsMealCta": "GESTIONAR MENГљ",
+  "eventSettingsMealOrderedPcs": "Pedido: {count} ud.",
+  "@eventSettingsMealOrderedPcs": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "eventSettingsMealPurchasesListHeading": "Pedidos realizados",
+  "eventSettingsMealPurchaseChildLine": "Niño/a: {name}",
+  "@eventSettingsMealPurchaseChildLine": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "mealPurchaseIssued": "Entregado",
+  "mealPurchaseNotIssued": "Aún no entregado",
   "eventSettingsRehearsalTitle": "Reserva de ensayo",
   "eventSettingsRehearsalSubtitle": "Reserva tu plaza para el ensayo",
   "eventSettingsRehearsalCta": "RESERVAR",
+  "eventSettingsBrandRehearsalsHeading": "Tus ensayos de marca",
   "rehearsalModalTitle": "Reserva de ensayo",
   "rehearsalSelectDate": "Elige fecha",
   "rehearsalAvailableSlots": "Horarios disponibles",
@@ -551,6 +567,19 @@
   "staffTapToScanExtraZoneQr": "TOCA PARA ESCANEAR QR DE BEVERAGE PACKAGE",
   "staffTapToScanBackstageQr": "TOCA PARA ESCANEAR QR DE BACKSTAGE PASS",
   "staffTapToScanRehearsalCheckinQr": "TOCA PARA ESCANEAR QR DE CHECK-IN DE ENSAYO",
+  "staffMealHandoutButton": "COMIDAS",
+  "staffTapToScanMealBadge": "TOCA PARA ESCANEAR BRAZALETE (NIÑO O PADRE)",
+  "staffMealIssueTitle": "Entrega de almuerzos",
+  "staffMealIssueNoMeals": "No hay almuerzos pedidos con este pase.",
+  "staffMealIssueHandOut": "Entregar",
+  "staffMealIssueSuccess": "Marcado como entregado.",
+  "staffMealIssueFailure": "Error: {error}",
+  "@staffMealIssueFailure": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "staffMealIssueAlreadyIssued": "ya entregado",
   "staffTapToScanQrCheck": "TOCA PARA ESCANEAR BRAZALETE — ETAPA Y FICHA",
   "staffCurrentTask": "Tarea actual",
   "staffUtilitiesAndTools": "UTILIDADES Y HERRAMIENTAS",

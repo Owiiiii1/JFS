@@ -1,3 +1,5 @@
+import 'dart:async' show unawaited;
+
 import 'package:flutter/material.dart';
 
 import 'api/auth_service.dart';
@@ -7,6 +9,21 @@ import 'client_event_packing_page.dart';
 import 'client_event_meal_sheet.dart';
 import 'client_rehearsal_sheet.dart';
 import 'gen_l10n/app_localizations.dart';
+
+/// Сколько заказов обеда показать на карточке; при старом API или без счётчика, но с выполненным заказом — ≥1.
+int _eventMealOrdersDisplayCount(ActiveAssignment? a) {
+  if (a == null) {
+    return 0;
+  }
+  final n = a.eventMealFulfilledOrdersCount;
+  if (n > 0) {
+    return n;
+  }
+  if (a.mealPaid || a.mealFulfillmentStatus == 'fulfilled') {
+    return 1;
+  }
+  return 0;
+}
 
 /// Цвета «Midnight Runway» / Stitch-референс.
 const Color _kSurface = Color(0xFF131313);
@@ -127,6 +144,13 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
     super.initState();
     _childrenInEvent = List<ChildWithAssignment>.from(widget.childrenInEvent);
     WidgetsBinding.instance.addObserver(this);
+    // Сразу тянем дашборд, иначе после правок в админке (например, бесплатный обед) пока
+    // нет смены фокуса / открытия листа останутся старые counts из parent.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        unawaited(_refreshChildrenFromServer());
+      }
+    });
   }
 
   @override
@@ -142,6 +166,14 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
     }
   }
 
+  int _totalEventMealFulfilledOrdersInEvent() {
+    var n = 0;
+    for (final c in _childrenInEvent) {
+      n += _eventMealOrdersDisplayCount(c.activeAssignment);
+    }
+    return n;
+  }
+
   Future<void> _refreshChildrenFromServer() async {
     try {
       final dash = await widget.auth.getClientDashboard();
@@ -149,11 +181,9 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
       final filtered = dash.children
           .where((c) => c.activeAssignment?.event.id == widget.eventId)
           .toList();
-      if (filtered.isNotEmpty) {
-        setState(() {
-          _childrenInEvent = filtered;
-        });
-      }
+      setState(() {
+        _childrenInEvent = filtered;
+      });
     } catch (_) {
       // Тихо при фоновом обновлении (сеть / таймаут).
     }
@@ -402,6 +432,7 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
                                 flex: 2,
                                 child: _MealCard(
                                   l10n: l10n,
+                                  orderedPcs: _totalEventMealFulfilledOrdersInEvent(),
                                   onOpenMealChoice: widget.eventId > 0
                                       ? () {
                                           _openMealSheet();
@@ -457,6 +488,7 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
                     children: [
                       _MealCard(
                         l10n: l10n,
+                        orderedPcs: _totalEventMealFulfilledOrdersInEvent(),
                         onOpenMealChoice: widget.eventId > 0
                             ? () {
                                 _openMealSheet();
@@ -552,9 +584,14 @@ class _CtaRow extends StatelessWidget {
 }
 
 class _MealCard extends StatelessWidget {
-  const _MealCard({required this.l10n, this.onOpenMealChoice});
+  const _MealCard({
+    required this.l10n,
+    this.orderedPcs = 0,
+    this.onOpenMealChoice,
+  });
 
   final AppLocalizations l10n;
+  final int orderedPcs;
   final VoidCallback? onOpenMealChoice;
 
   @override
@@ -606,6 +643,17 @@ class _MealCard extends StatelessWidget {
                   ),
                 ],
                 SizedBox(height: _kBeforeCtaGap),
+                Text(
+                  l10n.eventSettingsMealOrderedPcs(orderedPcs),
+                  style: const TextStyle(
+                    fontFamily: ClientEventSettingsPage._fontFamily,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
+                    color: _kTertiary,
+                  ),
+                ),
+                const SizedBox(height: 6),
                 _CtaRow(label: l10n.eventSettingsMealCta),
               ],
             ),

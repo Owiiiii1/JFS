@@ -594,10 +594,11 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           ? (stage.id > 0 ? 'Stage #${stage.id}' : 'Stage')
           : stage.name.trim();
       final mainDesc = stage.description?.trim();
+      final brandLine = stage.brandName?.trim() ?? '';
       items.add(
         _JourneyMilestone(
           title: title,
-          subtitle: '',
+          subtitle: brandLine,
           rawDate: null,
           address: null,
           detailDescription: mainDesc != null && mainDesc.isNotEmpty
@@ -713,10 +714,11 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           ? (stage.id > 0 ? 'Stage #${stage.id}' : 'Stage')
           : stage.name.trim();
       final mainDesc = stage.description?.trim();
+      final brandLine = stage.brandName?.trim() ?? '';
       items.add(
         _JourneyMilestone(
           title: title,
-          subtitle: '',
+          subtitle: brandLine,
           rawDate: null,
           address: null,
           detailDescription: mainDesc != null && mainDesc.isNotEmpty

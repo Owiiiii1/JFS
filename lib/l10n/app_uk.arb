@@ -148,9 +148,25 @@
   "eventSettingsMealTitle": "Вибір харчування",
   "eventSettingsMealSubtitle": "Оберіть страву на поточний івент",
   "eventSettingsMealCta": "МЕНЮ",
+  "eventSettingsMealOrderedPcs": "Замовлено: {count} шт.",
+  "@eventSettingsMealOrderedPcs": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "eventSettingsMealPurchasesListHeading": "Оформлені замовлення",
+  "eventSettingsMealPurchaseChildLine": "Дитина: {name}",
+  "@eventSettingsMealPurchaseChildLine": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "mealPurchaseIssued": "Видано",
+  "mealPurchaseNotIssued": "Ще не видано",
   "eventSettingsRehearsalTitle": "Запис на репетицію",
   "eventSettingsRehearsalSubtitle": "Забронюйте місце на репетицію",
   "eventSettingsRehearsalCta": "ЗАПИСАТИСЯ",
+  "eventSettingsBrandRehearsalsHeading": "Ваші репетиції брендів",
   "rehearsalModalTitle": "Запис на репетицію",
   "rehearsalSelectDate": "Оберіть дату",
   "rehearsalAvailableSlots": "Доступні слоти",
@@ -473,6 +489,19 @@
   "staffTapToScanExtraZoneQr": "НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR BEVERAGE PACKAGE",
   "staffTapToScanBackstageQr": "НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR BACKSTAGE PASS",
   "staffTapToScanRehearsalCheckinQr": "НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ЧЕК-ІНУ РЕПЕТИЦІЙ",
+  "staffMealHandoutButton": "ОБІД",
+  "staffTapToScanMealBadge": "СКАН БЕЙДЖА ДИТИНИ АБО БАТЬКА",
+  "staffMealIssueTitle": "Видача обідів",
+  "staffMealIssueNoMeals": "Для цього бейджа немає замовлених обідів.",
+  "staffMealIssueHandOut": "Видати",
+  "staffMealIssueSuccess": "Позначено як видане.",
+  "staffMealIssueFailure": "Помилка: {error}",
+  "@staffMealIssueFailure": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "staffMealIssueAlreadyIssued": "уже видано",
   "staffTapToScanQrCheck": "НАТИСНІТЬ ДЛЯ СКАНУ БЕЙДЖА — ЕТАП І КАРТКА",
   "staffCurrentTask": "Поточне завдання",
   "staffUtilitiesAndTools": "ІНСТРУМЕНТИ",

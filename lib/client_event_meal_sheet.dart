@@ -204,6 +204,62 @@ class _ClientEventMealSheetBodyState extends State<_ClientEventMealSheetBody> {
     }
   }
 
+  List<({ChildWithAssignment child, EventMealPurchaseLine purchase})>
+  _purchasedMealRows() {
+    final out =
+        <({ChildWithAssignment child, EventMealPurchaseLine purchase})>[];
+    for (final c in widget.children) {
+      final a = c.activeAssignment;
+      if (a == null) {
+        continue;
+      }
+      for (final p in a.eventMealPurchases) {
+        out.add((child: c, purchase: p));
+      }
+    }
+    return out;
+  }
+
+  Widget _purchasedMealsFooter(AppLocalizations l10n, Locale locale) {
+    final rows = _purchasedMealRows();
+    if (rows.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final showChild = widget.children.length > 1;
+    final lang = locale.languageCode;
+    final loc = locale.toString();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 28),
+        Divider(height: 1, color: _kTertiary.withValues(alpha: 0.2)),
+        const SizedBox(height: 20),
+        Text(
+          l10n.eventSettingsMealPurchasesListHeading,
+          style: const TextStyle(
+            color: _kTertiary,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.6,
+          ),
+        ),
+        const SizedBox(height: 10),
+        for (var i = 0; i < rows.length; i++) ...[
+          if (i > 0) const SizedBox(height: 8),
+          _MealSheetPlacedLineCard(
+            l10n: l10n,
+            child: rows[i].child,
+            purchase: rows[i].purchase,
+            showChildName: showChild,
+            languageCode: lang,
+            dateLocale: loc,
+          ),
+        ],
+      ],
+    );
+  }
+
   Widget _selectableRow({
     required bool selected,
     required String label,
@@ -552,7 +608,7 @@ class _ClientEventMealSheetBodyState extends State<_ClientEventMealSheetBody> {
         assignmentId: a.id,
         eventMealId: _mealId,
       );
-      final needsStripe = meal.price != null && meal.price! > 0 && !a.mealPaid;
+      final needsStripe = meal.price != null && meal.price! > 0;
       if (needsStripe) {
         final url = await widget.auth.createMealCheckoutSession(
           assignmentId: a.id,
@@ -598,11 +654,9 @@ class _ClientEventMealSheetBodyState extends State<_ClientEventMealSheetBody> {
     final meals = _meals;
     final a = _current.activeAssignment;
     final ordersOpen = a?.mealOrdersAccepting ?? true;
-    final mealPaid = a?.mealPaid ?? false;
     final mealLocked = a?.isMealOrderLocked ?? false;
     final selectedFromServer = a?.selectedEventMealId;
     final mealAwaitingPayment = a != null && _assignmentLooksAwaitingPayment(a);
-    final mealDone = a?.mealFulfillmentStatus == 'fulfilled' || mealPaid;
     final canSelectMeals = ordersOpen && !mealLocked;
     final canSubmitOrder =
         a != null &&
@@ -650,18 +704,7 @@ class _ClientEventMealSheetBodyState extends State<_ClientEventMealSheetBody> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (mealDone) ...[
-                  const SizedBox(height: 14),
-                  Text(
-                    l10n.mealPaid,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Color(0xFF81C784),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ] else if (mealAwaitingPayment) ...[
+                if (mealAwaitingPayment) ...[
                   const SizedBox(height: 14),
                   Text(
                     l10n.mealAwaitingPayment,
@@ -736,13 +779,7 @@ class _ClientEventMealSheetBodyState extends State<_ClientEventMealSheetBody> {
                           : () => setState(() => _mealId = m.id),
                     ),
                 const SizedBox(height: 20),
-                if (mealDone)
-                  Text(
-                    l10n.mealPaidDetail,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: _kTertiary, fontSize: 14),
-                  )
-                else if (mealAwaitingPayment)
+                if (mealAwaitingPayment)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -856,11 +893,118 @@ class _ClientEventMealSheetBodyState extends State<_ClientEventMealSheetBody> {
                             ),
                     ),
                   ),
+                _purchasedMealsFooter(l10n, locale),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _MealSheetPlacedLineCard extends StatelessWidget {
+  const _MealSheetPlacedLineCard({
+    required this.l10n,
+    required this.child,
+    required this.purchase,
+    required this.showChildName,
+    required this.languageCode,
+    required this.dateLocale,
+  });
+
+  final AppLocalizations l10n;
+  final ChildWithAssignment child;
+  final EventMealPurchaseLine purchase;
+  final bool showChildName;
+  final String languageCode;
+  final String dateLocale;
+
+  @override
+  Widget build(BuildContext context) {
+    final issued = purchase.isIssued;
+    final name = child.firstName.trim();
+    final title = purchase.labelForLanguageCode(languageCode);
+    String? dateLine;
+    final at = purchase.purchasedAt;
+    if (at != null) {
+      dateLine = DateFormat.yMMMd(dateLocale).add_Hm().format(at.toLocal());
+    }
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (showChildName && name.isNotEmpty) ...[
+          Text(
+            l10n.eventSettingsMealPurchaseChildLine(name),
+            style: const TextStyle(
+              color: _kTertiary,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+            ),
+          ),
+          const SizedBox(height: 6),
+        ],
+        Text(
+          title,
+          style: const TextStyle(
+            color: _kOnSurface,
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+            height: 1.25,
+          ),
+        ),
+        if (dateLine != null) ...[
+          const SizedBox(height: 6),
+          Text(
+            dateLine,
+            style: const TextStyle(
+              color: _kTertiary,
+              fontSize: 11,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ],
+    );
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2A2A),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _kTertiary.withValues(alpha: 0.2)),
+      ),
+      child: issued
+          ? Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Opacity(
+                  opacity: 0.38,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 72),
+                    child: body,
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Text(
+                    l10n.mealPurchaseIssued,
+                    style: const TextStyle(
+                      color: _kGold,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.3,
+                      height: 1,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : body,
     );
   }
 }

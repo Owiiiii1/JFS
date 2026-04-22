@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'api/auth_service.dart';
 import 'app_settings.dart';
+import 'staff_meal_issue_page.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'staff_info_child_profile_page.dart';
 
@@ -20,6 +21,8 @@ class StaffScanPage extends StatefulWidget {
     this.rehearsalCheckinScan = false,
     this.rehearsalSlotId,
     this.qrCheck = false,
+    this.mealHandoutScan = false,
+    this.staffRoleId,
   });
 
   final AuthService auth;
@@ -44,6 +47,12 @@ class StaffScanPage extends StatefulWidget {
 
   /// Режим «QR check»: как универсальный скан (этап из настроек), после успеха — модалка, затем карточка ребёнка как Scan for Info.
   final bool qrCheck;
+
+  /// Режим выдачи обедов: скан бейджа → список заказов, подтверждение is_issued.
+  final bool mealHandoutScan;
+
+  /// [mealHandoutScan]: id роли воркера (связь этапов в staff_role_stages).
+  final int? staffRoleId;
 
   @override
   State<StaffScanPage> createState() => _StaffScanPageState();
@@ -161,6 +170,59 @@ class _StaffScanPageState extends State<StaffScanPage> {
           setState(() => _processing = false);
           await _controller.start();
         }
+      }
+      return;
+    }
+
+    if (widget.mealHandoutScan) {
+      final rid = widget.staffRoleId;
+      if (rid == null || rid <= 0) {
+        if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.noRolesAssigned),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+      setState(() => _processing = true);
+      await _controller.stop();
+      try {
+        final ctx = AppSettings.staffActiveEventId;
+        final payload = await widget.auth.workerMealIssueLookup(
+          badgeCode: code,
+          contextEventId: ctx,
+        );
+        if (!mounted) {
+          return;
+        }
+        await Navigator.of(context).pushReplacement(
+          MaterialPageRoute<void>(
+            builder: (_) => StaffMealIssuePage(
+              auth: widget.auth,
+              payload: payload,
+              staffRoleId: rid,
+              accent: widget.accent,
+              backgroundColor: widget.backgroundColor,
+            ),
+          ),
+        );
+      } catch (e) {
+        if (!mounted) {
+          return;
+        }
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.staffScanFailed(e.toString())),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        setState(() => _processing = false);
+        await _controller.start();
       }
       return;
     }

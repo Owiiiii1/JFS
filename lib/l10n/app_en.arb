@@ -186,9 +186,25 @@
   "eventSettingsMealTitle": "Meal Selection",
   "eventSettingsMealSubtitle": "Choose a meal for the current event",
   "eventSettingsMealCta": "MANAGE MENU",
+  "eventSettingsMealOrderedPcs": "Ordered: {count} pc",
+  "@eventSettingsMealOrderedPcs": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "eventSettingsMealPurchasesListHeading": "Placed orders",
+  "eventSettingsMealPurchaseChildLine": "Child: {name}",
+  "@eventSettingsMealPurchaseChildLine": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "mealPurchaseIssued": "Issued",
+  "mealPurchaseNotIssued": "Not handed out yet",
   "eventSettingsRehearsalTitle": "Rehearsal Booking",
   "eventSettingsRehearsalSubtitle": "Book your spot for rehearsal",
   "eventSettingsRehearsalCta": "BOOK NOW",
+  "eventSettingsBrandRehearsalsHeading": "Your brand rehearsals",
   "rehearsalModalTitle": "Rehearsal booking",
   "rehearsalSelectDate": "Select date",
   "rehearsalAvailableSlots": "Available slots",
@@ -533,6 +549,19 @@
   "staffTapToScanExtraZoneQr": "TAP TO SCAN BEVERAGE PACKAGE QR",
   "staffTapToScanBackstageQr": "TAP TO SCAN BACKSTAGE PASS QR",
   "staffTapToScanRehearsalCheckinQr": "TAP TO SCAN REHEARSAL CHECK-IN QR",
+  "staffMealHandoutButton": "LUNCH",
+  "staffTapToScanMealBadge": "TAP TO SCAN A CHILD OR PARENT BADGE",
+  "staffMealIssueTitle": "Lunch handout",
+  "staffMealIssueNoMeals": "No lunch orders for this pass.",
+  "staffMealIssueHandOut": "Hand out",
+  "staffMealIssueSuccess": "Marked as handed out.",
+  "staffMealIssueFailure": "Could not update: {error}",
+  "@staffMealIssueFailure": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "staffMealIssueAlreadyIssued": "already handed out",
   "staffTapToScanQrCheck": "TAP TO SCAN BADGE — STAGE & CHILD CARD",
   "staffCurrentTask": "Current Task",
   "staffUtilitiesAndTools": "UTILITIES & TOOLS",

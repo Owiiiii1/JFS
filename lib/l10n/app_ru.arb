@@ -148,9 +148,25 @@
   "eventSettingsMealTitle": "Выбор питания",
   "eventSettingsMealSubtitle": "Выберите блюдо на текущий ивент",
   "eventSettingsMealCta": "МЕНЮ",
+  "eventSettingsMealOrderedPcs": "Заказано: {count} шт.",
+  "@eventSettingsMealOrderedPcs": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "eventSettingsMealPurchasesListHeading": "Оформленные заказы",
+  "eventSettingsMealPurchaseChildLine": "Ребёнок: {name}",
+  "@eventSettingsMealPurchaseChildLine": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "mealPurchaseIssued": "Выдано",
+  "mealPurchaseNotIssued": "Не выдан",
   "eventSettingsRehearsalTitle": "Запись на репетицию",
   "eventSettingsRehearsalSubtitle": "Забронируйте место на репетицию",
   "eventSettingsRehearsalCta": "ЗАПИСАТЬСЯ",
+  "eventSettingsBrandRehearsalsHeading": "Ваши репетиции брендов",
   "rehearsalModalTitle": "Запись на репетицию",
   "rehearsalSelectDate": "Выберите дату",
   "rehearsalAvailableSlots": "Доступные слоты",
@@ -473,6 +489,19 @@
   "staffTapToScanExtraZoneQr": "НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR BEVERAGE PACKAGE",
   "staffTapToScanBackstageQr": "НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR BACKSTAGE PASS",
   "staffTapToScanRehearsalCheckinQr": "НАЖМИТЕ, ЧТОБЫ СКАНИРОВАТЬ QR ЧЕК-ИНА РЕПЕТИЦИЙ",
+  "staffMealHandoutButton": "ОБЕД",
+  "staffTapToScanMealBadge": "СКАН БЕЙДЖА РЕБЁНКА ИЛИ РОДИТЕЛЯ",
+  "staffMealIssueTitle": "Выдача обедов",
+  "staffMealIssueNoMeals": "По этому бейджу нет заказанных обедов.",
+  "staffMealIssueHandOut": "Выдать",
+  "staffMealIssueSuccess": "Отмечено как выдано.",
+  "staffMealIssueFailure": "Не удалось: {error}",
+  "@staffMealIssueFailure": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "staffMealIssueAlreadyIssued": "уже выдано",
   "staffTapToScanQrCheck": "НАЖМИТЕ ДЛЯ СКАНА БЕЙДЖА — ЭТАП И КАРТОЧКА",
   "staffCurrentTask": "Текущая задача",
   "staffUtilitiesAndTools": "ИНСТРУМЕНТЫ",
