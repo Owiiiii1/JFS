@@ -18,6 +18,13 @@ import 'about_app_page.dart';
 const _kBgDark = Color(0xFF000000);
 const _kPrimary = Color(0xFFec5b13);
 
+class _SectionStageSelection {
+  _SectionStageSelection({this.stageId, this.stageType});
+
+  int? stageId;
+  String? stageType;
+}
+
 /// Портальная оболочка для сотрудников: фиксированные шапка и нижняя навигация, контент переключается по вкладкам.
 class StaffPortalPage extends StatefulWidget {
   const StaffPortalPage({
@@ -44,10 +51,20 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   int? _selectedSupervisorStageId;
   bool _showAllSupervisorChildren = false;
   bool _showSupervisorRoleCard = true;
+  List<String> _supervisorBrandNames = [];
   List<SupervisorChildItem>? _supervisorChildren;
   bool _supervisorChildrenLoading = false;
   String? _supervisorChildrenError;
   int? _supervisorChildrenEventId;
+  List<SuperadminBrandItem> _superadminBrands = [];
+  List<SupervisorStageItem> _superadminStages = [];
+  int? _selectedSuperadminBrandId;
+  int? _selectedSuperadminStageId;
+  List<SupervisorChildItem>? _superadminChildren;
+  bool _superadminChildrenLoading = false;
+  String? _superadminChildrenError;
+  int? _superadminChildrenEventId;
+  bool _showSuperadminRoleCard = true;
   List<RehearsalAdminSlotItem> _rehearsalAdminSlots = [];
   int? _selectedRehearsalAdminSlotId;
   List<RehearsalAdminChildItem>? _rehearsalAdminChildren;
@@ -61,11 +78,18 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   bool _giftControlLoading = false;
   String? _giftControlError;
   int? _giftControlEventId;
+  List<GiftControlChildItem>? _interviewChildren;
+  bool _interviewLoading = false;
+  String? _interviewError;
+  int? _interviewEventId;
+  int? _interviewStageId;
   Timer? _supervisorAutoRefreshTimer;
   // ignore: unused_field
   int _unreadNotifications = 0;
   List<WorkerEventStage> _homeVisibleStages = [];
   bool _homeStagesLoading = false;
+  bool _hostessExitMode = false;
+  final Map<String, _SectionStageSelection> _stageSelectionBySection = {};
 
   @override
   void initState() {
@@ -98,7 +122,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
       if (!mounted) return;
       if (!_isSupervisorHomeActive()) return;
       if (_supervisorChildrenLoading) return;
-      unawaited(_loadSupervisorChildren());
+      unawaited(_loadSupervisorChildren(silent: true));
     });
   }
 
@@ -178,6 +202,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   Future<void> _loadHomeTabStages() async {
     final eventId = AppSettings.staffActiveEventId;
     final role = _selectedRole;
+    final sectionKey = _currentHomeSectionKey();
     if (eventId == null || eventId <= 0 || role == null) {
       if (mounted) {
         setState(() {
@@ -196,7 +221,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
         _homeVisibleStages = visible;
         _homeStagesLoading = false;
       });
-      await _ensureHomeStagePrefsValid(visible);
+      await _ensureHomeStageSelectionValid(sectionKey, visible);
       if (mounted) setState(() {});
     } catch (_) {
       if (!mounted) return;
@@ -207,11 +232,32 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     }
   }
 
-  Future<void> _ensureHomeStagePrefsValid(
+  String _currentHomeSectionKey() {
+    final roleCode = (_selectedRole?.code ?? '').trim().toLowerCase();
+    final homeType = _resolvedHomeScreenType(_selectedRole);
+    return '$roleCode::$homeType';
+  }
+
+  _SectionStageSelection _selectionForSection(String sectionKey) {
+    final existing = _stageSelectionBySection[sectionKey];
+    if (existing != null) {
+      return existing;
+    }
+    final created = _SectionStageSelection(
+      stageId: AppSettings.staffActiveStageId,
+      stageType: AppSettings.staffActiveStageType,
+    );
+    _stageSelectionBySection[sectionKey] = created;
+    return created;
+  }
+
+  Future<void> _ensureHomeStageSelectionValid(
+    String sectionKey,
     List<WorkerEventStage> visible,
   ) async {
-    final sid = AppSettings.staffActiveStageId;
-    final stype = AppSettings.staffActiveStageType;
+    final sel = _selectionForSection(sectionKey);
+    final sid = sel.stageId;
+    final stype = sel.stageType;
     final ok =
         sid != null &&
         visible.any((s) => s.id == sid && (stype == null || s.type == stype));
@@ -219,17 +265,18 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
       return;
     }
     if (visible.isNotEmpty) {
-      await AppSettings.setStaffActiveStageId(visible.first.id);
-      await AppSettings.setStaffActiveStageType(visible.first.type);
+      sel.stageId = visible.first.id;
+      sel.stageType = visible.first.type;
     } else {
-      await AppSettings.setStaffActiveStageId(null);
-      await AppSettings.setStaffActiveStageType(null);
+      sel.stageId = null;
+      sel.stageType = null;
     }
   }
 
-  int? _homeEffectiveStageDropdownValue() {
-    final current = AppSettings.staffActiveStageId;
-    final currentType = AppSettings.staffActiveStageType;
+  int? _homeEffectiveStageDropdownValue(String sectionKey) {
+    final sel = _selectionForSection(sectionKey);
+    final current = sel.stageId;
+    final currentType = sel.stageType;
     if (current == null) return null;
     final exists = _homeVisibleStages.any(
       (e) => e.id == current && e.type == (currentType ?? 'main'),
@@ -237,13 +284,86 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     return exists ? current : null;
   }
 
-  Future<void> _loadSupervisorChildren() async {
+  WorkerEventStage? _hostessStageForMode(bool exitMode) {
+    if (_homeVisibleStages.isEmpty) return null;
+    if (!exitMode) return _homeVisibleStages.first;
+    if (_homeVisibleStages.length < 2) return null;
+    return _homeVisibleStages[1];
+  }
+
+  String _hostessStageLabel(WorkerEventStage stage, AppLocalizations l10n) {
+    if (stage.type == 'preparatory') {
+      return l10n.staffPreparatoryStageLabel(stage.name);
+    }
+    return stage.name.trim().isEmpty ? '—' : stage.name;
+  }
+
+  bool _sameSupervisorStages(
+    List<SupervisorStageItem> a,
+    List<SupervisorStageItem> b,
+  ) {
+    if (identical(a, b)) return true;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      final left = a[i];
+      final right = b[i];
+      if (left.id != right.id || left.name != right.name) return false;
+    }
+    return true;
+  }
+
+  List<SupervisorStageItem> _normalizedSupervisorStages(
+    List<SupervisorStageItem> stages,
+  ) {
+    final copy = List<SupervisorStageItem>.from(stages);
+    copy.sort((left, right) {
+      final byId = left.id.compareTo(right.id);
+      if (byId != 0) return byId;
+      return left.name.compareTo(right.name);
+    });
+    return copy;
+  }
+
+  bool _sameSupervisorChildren(
+    List<SupervisorChildItem> a,
+    List<SupervisorChildItem> b,
+  ) {
+    if (identical(a, b)) return true;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      final left = a[i];
+      final right = b[i];
+      if (left.assignmentId != right.assignmentId ||
+          left.childId != right.childId ||
+          left.firstName != right.firstName ||
+          left.photoUrl != right.photoUrl ||
+          left.status != right.status) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  List<SupervisorChildItem> _normalizedSupervisorChildren(
+    List<SupervisorChildItem> children,
+  ) {
+    final copy = List<SupervisorChildItem>.from(children);
+    copy.sort((left, right) {
+      final byAssignment = left.assignmentId.compareTo(right.assignmentId);
+      if (byAssignment != 0) return byAssignment;
+      return left.childId.compareTo(right.childId);
+    });
+    return copy;
+  }
+
+  Future<void> _loadSupervisorChildren({bool silent = false}) async {
     final eventId = AppSettings.staffActiveEventId;
     if (eventId == null || eventId <= 0) {
       setState(() {
         _supervisorStages = [];
         _selectedSupervisorStageId = null;
         _showAllSupervisorChildren = false;
+        _supervisorBrandNames = [];
         _supervisorChildren = [];
         _supervisorChildrenLoading = false;
         _supervisorChildrenError = null;
@@ -251,10 +371,17 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
       });
       return;
     }
-    setState(() {
-      _supervisorChildrenLoading = true;
-      _supervisorChildrenError = null;
-    });
+    final canRefreshSilently = silent && _supervisorChildren != null;
+    if (!canRefreshSilently) {
+      setState(() {
+        _supervisorChildrenLoading = true;
+        _supervisorChildrenError = null;
+      });
+    } else if (_supervisorChildrenError != null) {
+      setState(() {
+        _supervisorChildrenError = null;
+      });
+    }
     try {
       final data = await widget.auth.getSupervisorChildren(
         eventId,
@@ -262,20 +389,98 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
         showAll: _showAllSupervisorChildren,
       );
       if (!mounted) return;
+      final nextStages = _normalizedSupervisorStages(data.stages);
+      final nextChildren = _normalizedSupervisorChildren(data.children);
+      final nextBrandNames = data.brandNames;
+      final nextSelectedStageId =
+          data.currentStageId ?? _selectedSupervisorStageId;
+      final sameStages = _sameSupervisorStages(_supervisorStages, nextStages);
+      final currentChildren = _supervisorChildren;
+      final sameChildren =
+          currentChildren != null &&
+          _sameSupervisorChildren(currentChildren, nextChildren);
+      final sameBrands =
+          _supervisorBrandNames.length == nextBrandNames.length &&
+          _supervisorBrandNames.asMap().entries.every(
+            (entry) => entry.value == nextBrandNames[entry.key],
+          );
+      final noVisualChanges =
+          sameStages &&
+          sameChildren &&
+          sameBrands &&
+          _selectedSupervisorStageId == nextSelectedStageId &&
+          _supervisorChildrenEventId == eventId &&
+          !_supervisorChildrenLoading &&
+          _supervisorChildrenError == null;
+      if (noVisualChanges) {
+        return;
+      }
       setState(() {
-        _supervisorStages = data.stages;
-        _selectedSupervisorStageId =
-            data.currentStageId ?? _selectedSupervisorStageId;
-        _supervisorChildren = data.children;
+        _supervisorStages = nextStages;
+        _selectedSupervisorStageId = nextSelectedStageId;
+        _supervisorBrandNames = nextBrandNames;
+        _supervisorChildren = nextChildren;
         _supervisorChildrenLoading = false;
         _supervisorChildrenEventId = eventId;
+        _supervisorChildrenError = null;
       });
     } catch (e) {
       if (!mounted) return;
+      if (canRefreshSilently && _supervisorChildren != null) {
+        return;
+      }
       setState(() {
         _supervisorChildrenError = e.toString();
         _supervisorChildrenLoading = false;
         _supervisorChildren = null;
+      });
+    }
+  }
+
+  Future<void> _loadSuperadminChildren() async {
+    final eventId = AppSettings.staffActiveEventId;
+    if (eventId == null || eventId <= 0) {
+      setState(() {
+        _superadminBrands = [];
+        _superadminStages = [];
+        _selectedSuperadminBrandId = null;
+        _selectedSuperadminStageId = null;
+        _superadminChildren = [];
+        _superadminChildrenLoading = false;
+        _superadminChildrenError = null;
+        _superadminChildrenEventId = eventId;
+      });
+      return;
+    }
+
+    setState(() {
+      _superadminChildrenLoading = true;
+      _superadminChildrenError = null;
+    });
+    try {
+      final data = await widget.auth.getSuperadminChildren(
+        eventId,
+        stageId: _selectedSuperadminStageId,
+        brandId: _selectedSuperadminBrandId,
+        staffRoleId: _selectedRole?.id,
+      );
+      if (!mounted) return;
+      setState(() {
+        _superadminBrands = data.brands;
+        _superadminStages = _normalizedSupervisorStages(data.stages);
+        _selectedSuperadminBrandId = data.currentBrandId;
+        _selectedSuperadminStageId = data.currentStageId;
+        _superadminChildren = _normalizedSupervisorChildren(data.children);
+        _superadminChildrenLoading = false;
+        _superadminChildrenError = null;
+        _superadminChildrenEventId = eventId;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _superadminChildrenError = e.toString();
+        _superadminChildrenLoading = false;
+        _superadminChildren = null;
       });
     }
   }
@@ -439,6 +644,13 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     if (_matchesAnyToken(role, const ['hostess', 'hs', 'хостесс'])) {
       return 'hostess';
     }
+    if (_matchesAnyToken(role, const [
+      'superadmin',
+      'super admin',
+      'суперадмин',
+    ])) {
+      return 'superadmin';
+    }
     if (_matchesAnyToken(role, const ['supervisor', 'sv', 'супервайзер'])) {
       return 'supervisor';
     }
@@ -446,33 +658,60 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   }
 
   Widget _buildHomeTabForSelectedRole(Color accent) {
-    switch (_resolvedHomeScreenType(_selectedRole)) {
+    final homeType = _resolvedHomeScreenType(_selectedRole);
+    switch (homeType) {
       case 'supervisor':
         return _buildSupervisorHomeTab(accent);
       case 'hostess':
-        return _buildHostessStub();
+        return _buildHostessHomeTab(accent);
       case 'parking':
-        return _buildHomeTab(accent, parkingMode: true);
+        return _buildHomeTab(
+          accent,
+          sectionKey: _currentHomeSectionKey(),
+          parkingMode: true,
+        );
       case 'extra_zone':
-        return _buildHomeTab(accent, extraZoneMode: true);
+        return _buildHomeTab(
+          accent,
+          sectionKey: _currentHomeSectionKey(),
+          extraZoneMode: true,
+        );
       case 'backstage':
-        return _buildHomeTab(accent, backstageMode: true);
+        return _buildHomeTab(
+          accent,
+          sectionKey: _currentHomeSectionKey(),
+          backstageMode: true,
+        );
       case 'rehearsal_admin':
         return _buildRehearsalAdminHomeTab(accent);
       case 'rehearsal_checkin':
         return _buildRehearsalCheckinHomeTab(accent);
       case 'qr_check':
-        return _buildHomeTab(accent, qrCheckMode: true);
+        return _buildHomeTab(
+          accent,
+          sectionKey: _currentHomeSectionKey(),
+          qrCheckMode: true,
+        );
       case 'gift_issue':
-        return _buildGiftIssueHomeTab(accent);
+        return _buildGiftIssueHomeTab(
+          accent,
+          sectionKey: _currentHomeSectionKey(),
+        );
       case 'interview':
-        return _buildInterviewStub();
+        return _buildInterviewHomeTab(
+          accent,
+          sectionKey: _currentHomeSectionKey(),
+        );
       case 'lunches':
-        return _buildHomeTab(accent, mealHandoutMode: true);
+        return _buildHomeTab(
+          accent,
+          sectionKey: _currentHomeSectionKey(),
+          mealHandoutMode: true,
+        );
       case 'superadmin':
-        return _buildSuperadminStub();
+        return _buildSuperadminHomeTab(accent);
       default:
-        return _buildHomeTab(accent);
+        return _buildHomeTab(accent, sectionKey: _currentHomeSectionKey());
     }
   }
 
@@ -668,6 +907,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   /// Универсальное сканирование: этап синхронизирован с настройками, описание роли из админки.
   Widget _buildHomeTab(
     Color accent, {
+    required String sectionKey,
     bool parkingMode = false,
     bool extraZoneMode = false,
     bool backstageMode = false,
@@ -677,21 +917,25 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     final l10n = AppLocalizations.of(context)!;
     final roleDesc = (_selectedRole?.description ?? '').trim();
     final eventId = AppSettings.staffActiveEventId;
+    final selectedStageId = _selectionForSection(sectionKey).stageId;
     final roleActive = _selectedRole?.isActive ?? false;
     final scanEnabled = (parkingMode || extraZoneMode || backstageMode)
         ? roleActive
         : (mealHandoutMode
-            ? (roleActive && eventId != null && eventId > 0)
-            : (!_homeStagesLoading &&
-                  roleActive &&
-                  eventId != null &&
-                  eventId > 0 &&
-                  AppSettings.staffActiveStageId != null));
+              ? (roleActive && eventId != null && eventId > 0)
+              : (!_homeStagesLoading &&
+                    roleActive &&
+                    eventId != null &&
+                    eventId > 0 &&
+                    selectedStageId != null));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (!parkingMode && !extraZoneMode && !backstageMode && !mealHandoutMode)
+        if (!parkingMode &&
+            !extraZoneMode &&
+            !backstageMode &&
+            !mealHandoutMode)
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
             child: Column(
@@ -742,7 +986,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<int?>(
-                        value: _homeEffectiveStageDropdownValue(),
+                        value: _homeEffectiveStageDropdownValue(sectionKey),
                         isExpanded: true,
                         dropdownColor: const Color(0xFF2a1a14),
                         icon: Icon(
@@ -776,9 +1020,10 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                           ),
                         ],
                         onChanged: (int? value) async {
+                          final sel = _selectionForSection(sectionKey);
                           if (value == null) {
-                            await AppSettings.setStaffActiveStageId(null);
-                            await AppSettings.setStaffActiveStageType(null);
+                            sel.stageId = null;
+                            sel.stageType = null;
                           } else {
                             WorkerEventStage? stage;
                             for (final s in _homeVisibleStages) {
@@ -787,10 +1032,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                                 break;
                               }
                             }
-                            await AppSettings.setStaffActiveStageId(value);
-                            await AppSettings.setStaffActiveStageType(
-                              stage?.type ?? 'main',
-                            );
+                            sel.stageId = value;
+                            sel.stageType = stage?.type ?? 'main';
                           }
                           if (mounted) setState(() {});
                         },
@@ -818,6 +1061,12 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                               backstageScan: backstageMode,
                               qrCheck: qrCheckMode,
                               mealHandoutScan: mealHandoutMode,
+                              contextEventId: eventId,
+                              contextStageId: selectedStageId,
+                              contextStageType:
+                                  _selectionForSection(sectionKey).stageType ??
+                                  'main',
+                              contextRoleCode: _selectedRole?.code,
                             ),
                           )
                         : null,
@@ -1000,6 +1249,266 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     );
   }
 
+  Future<void> _openHostessScanner({
+    required bool exitMode,
+  }) async {
+    final ok = await _refreshLiveWorkerStatus(showError: true);
+    if (!ok || !mounted) return;
+    final role = _selectedRole;
+    if (role != null && !role.isActive) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.staffScanRoleInactive),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+    final eventId = AppSettings.staffActiveEventId;
+    final selectedStage = _hostessStageForMode(exitMode);
+    final stageId = selectedStage?.id;
+    final stageType = selectedStage?.type ?? 'main';
+    if (eventId == null || stageId == null) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.staffScanSelectEventStageFirst),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => StaffScanPage(
+          auth: widget.auth,
+          accent: _kPrimary,
+          backgroundColor: _kBgDark,
+          hostessMode: true,
+          hostessExitMode: exitMode,
+          hostessEventId: eventId,
+          hostessStageId: stageId,
+          hostessStageType: stageType,
+          hostessRoleCode: _selectedRole?.code,
+          contextEventId: eventId,
+          contextStageId: stageId,
+          contextStageType: stageType,
+          contextRoleCode: _selectedRole?.code,
+          staffRoleId: _selectedRole?.id,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHostessHomeTab(Color accent) {
+    final l10n = AppLocalizations.of(context)!;
+    final roleDesc = (_selectedRole?.description ?? '').trim();
+    final eventId = AppSettings.staffActiveEventId;
+    final selectedStage = _hostessStageForMode(_hostessExitMode);
+    final selectedStageId = selectedStage?.id;
+    final roleActive = _selectedRole?.isActive ?? false;
+    final scanEnabled =
+        !_homeStagesLoading &&
+        roleActive &&
+        eventId != null &&
+        eventId > 0 &&
+        selectedStageId != null;
+    final isExit = _hostessExitMode;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+          child: Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () => setState(() => _hostessExitMode = false),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: !isExit ? accent : Colors.white12,
+                      foregroundColor: !isExit ? Colors.white : Colors.white70,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'CheckIn',
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: SizedBox(
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () => setState(() => _hostessExitMode = true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isExit ? accent : Colors.white12,
+                      foregroundColor: isExit ? Colors.white : Colors.white70,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'CheckOut',
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 18, 24, 8),
+          child: Text(
+            _homeStagesLoading
+                ? 'Этап для окна: ...'
+                : (eventId == null || eventId <= 0)
+                ? 'Этап для окна: —'
+                : selectedStage == null
+                ? 'Этап для окна: —'
+                : 'Этап для окна: ${_hostessStageLabel(selectedStage, l10n)}',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.72),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: scanEnabled
+                        ? () => unawaited(
+                            _openHostessScanner(
+                              exitMode: _hostessExitMode,
+                            ),
+                          )
+                        : null,
+                    borderRadius: BorderRadius.circular(96),
+                    child: Container(
+                      width: 192,
+                      height: 192,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: scanEnabled
+                            ? LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [accent, accent.withOpacity(0.8)],
+                              )
+                            : null,
+                        color: scanEnabled ? null : const Color(0xFF3D3D3D),
+                        boxShadow: scanEnabled
+                            ? [
+                                BoxShadow(
+                                  color: accent.withOpacity(0.3),
+                                  blurRadius: 40,
+                                ),
+                              ]
+                            : const [],
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.qr_code_scanner,
+                              color: scanEnabled
+                                  ? Colors.white
+                                  : Colors.white38,
+                              size: 56,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              l10n.staffScanButton,
+                              style: TextStyle(
+                                color: scanEnabled
+                                    ? Colors.white
+                                    : Colors.white38,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  _hostessExitMode
+                      ? l10n.staffHostessExitHint
+                      : l10n.staffHostessEntryHint,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: scanEnabled
+                        ? Colors.white.withOpacity(0.4)
+                        : Colors.white.withOpacity(0.22),
+                    fontSize: 11,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border(
+                left: BorderSide(
+                  color: roleActive ? accent : Colors.white24,
+                  width: 4,
+                ),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.staffCurrentTask,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  roleDesc.isEmpty ? '—' : roleDesc,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   /// Вкладка «Прочее»: утилиты (Scan, Toilet, Staff Settings) + смена.
   Widget _buildMoreTab(Color accent) {
     return SingleChildScrollView(
@@ -1027,28 +1536,12 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
             onTap: () => unawaited(_openScanner(context, scanForInfo: true)),
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _MoreCard(
-                  icon: Icons.child_care,
-                  title: AppLocalizations.of(context)!.staffToiletRequest,
-                  subtitle: AppLocalizations.of(context)!.staffRestroomLog,
-                  accent: accent,
-                  onTap: () {},
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _MoreCard(
-                  icon: Icons.settings,
-                  title: AppLocalizations.of(context)!.staffSettingsCardTitle,
-                  subtitle: AppLocalizations.of(context)!.staffPreferences,
-                  accent: accent,
-                  onTap: () => _openStaffSettings(context, accent),
-                ),
-              ),
-            ],
+          _MoreCard(
+            icon: Icons.settings,
+            title: AppLocalizations.of(context)!.staffSettingsCardTitle,
+            subtitle: AppLocalizations.of(context)!.staffPreferences,
+            accent: accent,
+            onTap: () => _openStaffSettings(context, accent),
           ),
         ],
       ),
@@ -1065,6 +1558,10 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     int? rehearsalSlotId,
     bool qrCheck = false,
     bool mealHandoutScan = false,
+    int? contextEventId,
+    int? contextStageId,
+    String? contextStageType,
+    String? contextRoleCode,
   }) async {
     final ok = await _refreshLiveWorkerStatus(showError: true);
     if (!ok || !mounted || !context.mounted) return;
@@ -1096,8 +1593,12 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
           rehearsalSlotId: rehearsalSlotId,
           qrCheck: qrCheck,
           mealHandoutScan: mealHandoutScan,
+          contextEventId: contextEventId,
+          contextStageId: contextStageId,
+          contextStageType: contextStageType,
+          contextRoleCode: contextRoleCode,
           staffRoleId: _selectedRole?.id,
-          ),
+        ),
       ),
     );
   }
@@ -1371,6 +1872,9 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
   Widget _buildSupervisorHomeTab(Color accent) {
     final l10n = AppLocalizations.of(context)!;
     final eventId = AppSettings.staffActiveEventId;
+    final supervisorBrandLine = _supervisorBrandNames.isEmpty
+        ? '${l10n.staffAssignedBrand}: —'
+        : '${l10n.staffAssignedBrand}: ${_supervisorBrandNames.join(', ')}';
     if (eventId != _supervisorChildrenEventId && !_supervisorChildrenLoading) {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => _loadSupervisorChildren(),
@@ -1382,6 +1886,15 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Text(
+            supervisorBrandLine,
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.85),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 12),
           // Supervisor Role card (shown by default on app start, can be closed for current session)
           if (_showSupervisorRoleCard) ...[
             Container(
@@ -1600,13 +2113,19 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
         Row(
           children: [
             SizedBox(
-              width: 48,
-              child: Text(
-                AppLocalizations.of(context)!.staffTableProfile,
-                style: TextStyle(
-                  color: accent,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
+              width: 56,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  AppLocalizations.of(context)!.staffTableProfile,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    color: accent,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -1633,13 +2152,19 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
               ),
             ),
             SizedBox(
-              width: 80,
-              child: Text(
-                AppLocalizations.of(context)!.staffTableAction,
-                style: TextStyle(
-                  color: accent,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
+              width: 88,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  AppLocalizations.of(context)!.staffTableAction,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    color: accent,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -1653,93 +2178,112 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
 
   Widget _buildSupervisorChildRow(Color accent, SupervisorChildItem c) {
     final statusInfo = _supervisorStatusInfo(c.status);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 48,
-            child: CircleAvatar(
-              radius: 22,
-              backgroundColor: Colors.white12,
-              backgroundImage: c.photoUrl != null && c.photoUrl!.isNotEmpty
-                  ? NetworkImage(c.photoUrl!)
-                  : null,
-              child: c.photoUrl == null || c.photoUrl!.isEmpty
-                  ? Text(
-                      (c.firstName.isNotEmpty ? c.firstName[0] : '?')
-                          .toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 18,
-                      ),
-                    )
-                  : null,
-            ),
+    final hasDoubleBorder = c.familyLook && c.hasSecondBrand;
+    final outerBorderColor = c.familyLook
+        ? const Color(0xFF4CAF50)
+        : (c.hasSecondBrand ? const Color(0xFFFBC02D) : null);
+    final innerBorderColor = hasDoubleBorder ? const Color(0xFFFBC02D) : null;
+    final rowContent = Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 48,
+          child: CircleAvatar(
+            radius: 22,
+            backgroundColor: Colors.white12,
+            backgroundImage: c.photoUrl != null && c.photoUrl!.isNotEmpty
+                ? NetworkImage(c.photoUrl!)
+                : null,
+            child: c.photoUrl == null || c.photoUrl!.isEmpty
+                ? Text(
+                    (c.firstName.isNotEmpty ? c.firstName[0] : '?')
+                        .toUpperCase(),
+                    style: const TextStyle(color: Colors.white70, fontSize: 18),
+                  )
+                : null,
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            flex: 2,
-            child: Text(
-              c.firstName,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-              overflow: TextOverflow.ellipsis,
-            ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          flex: 2,
+          child: Text(
+            c.firstName,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+            overflow: TextOverflow.ellipsis,
           ),
-          Expanded(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: statusInfo.color,
-                    shape: BoxShape.circle,
-                  ),
+        ),
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: statusInfo.color,
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    statusInfo.label,
-                    style: TextStyle(color: Colors.white, fontSize: 13),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            width: 80,
-            child: TextButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => StaffChildDetailPage(
-                      auth: widget.auth,
-                      assignmentId: c.assignmentId,
-                    ),
-                  ),
-                );
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: accent,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: 88,
+          child: TextButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => StaffChildDetailPage(
+                    auth: widget.auth,
+                    assignmentId: c.assignmentId,
+                  ),
+                ),
+              );
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: accent,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
               child: Text(
                 AppLocalizations.of(context)!.details,
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                maxLines: 1,
+                softWrap: false,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
-        ],
+        ),
+      ],
+    );
+    return Padding(
+      key: ValueKey<int>(c.assignmentId),
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: outerBorderColor == null
+              ? null
+              : Border.all(color: outerBorderColor, width: 1.5),
+        ),
+        child: innerBorderColor == null
+            ? rowContent
+            : Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: innerBorderColor, width: 1.5),
+                ),
+                child: rowContent,
+              ),
       ),
     );
   }
@@ -1759,62 +2303,552 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     }
   }
 
-  Widget _buildPlaceholderHomeTab({
-    required IconData icon,
-    required String title,
-    required String message,
-  }) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 64, color: Colors.white38),
-            const SizedBox(height: 24),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+  Future<void> _loadInterviewChildren({required String sectionKey}) async {
+    final eventId = AppSettings.staffActiveEventId;
+    final selectedStageId = _selectionForSection(sectionKey).stageId;
+    if (eventId == null || eventId <= 0 || selectedStageId == null) {
+      if (!mounted) return;
+      setState(() {
+        _interviewChildren = [];
+        _interviewLoading = false;
+        _interviewError = null;
+        _interviewEventId = eventId;
+        _interviewStageId = selectedStageId;
+      });
+      return;
+    }
+    setState(() {
+      _interviewLoading = true;
+      _interviewError = null;
+    });
+    try {
+      final data = await widget.auth.getWorkerGiftControlReport(
+        eventId,
+        stageId: selectedStageId,
+        staffRoleId: _selectedRole?.id,
+        statusFilter: 'all',
+      );
+      if (!mounted) return;
+      setState(() {
+        _interviewChildren = data.children;
+        _interviewLoading = false;
+        _interviewEventId = eventId;
+        _interviewStageId = selectedStageId;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _interviewError = e.toString();
+        _interviewLoading = false;
+        _interviewChildren = null;
+      });
+    }
+  }
+
+  Widget _buildInterviewHomeTab(Color accent, {required String sectionKey}) {
+    final l10n = AppLocalizations.of(context)!;
+    final roleDesc = (_selectedRole?.description ?? '').trim();
+    final eventId = AppSettings.staffActiveEventId;
+    final selectedStageId = _selectionForSection(sectionKey).stageId;
+    final roleActive = _selectedRole?.isActive ?? false;
+    final scanEnabled =
+        !_homeStagesLoading &&
+        roleActive &&
+        eventId != null &&
+        eventId > 0 &&
+        selectedStageId != null;
+
+    if (!_interviewLoading &&
+        (eventId != _interviewEventId ||
+            selectedStageId != _interviewStageId)) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _loadInterviewChildren(sectionKey: sectionKey),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (_homeStagesLoading)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: _kPrimary,
+                      ),
+                    ),
+                  ),
+                )
+              else if (eventId == null || eventId <= 0)
+                Text(
+                  l10n.staffSelectEventInSettings,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.6),
+                    fontSize: 14,
+                  ),
+                ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border(
+                    left: BorderSide(
+                      color: roleActive ? accent : Colors.white24,
+                      width: 4,
+                    ),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.staffCurrentTask,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      roleDesc.isEmpty
+                          ? l10n.staffRoleSubtitleInterview
+                          : roleDesc,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.85),
+                        fontSize: 14,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              SizedBox(
+                height: 64,
+                child: ElevatedButton(
+                  onPressed: scanEnabled
+                      ? () => unawaited(
+                          _openScanner(
+                            context,
+                            contextEventId: eventId,
+                            contextStageId: selectedStageId,
+                            contextStageType:
+                                _selectionForSection(sectionKey).stageType ??
+                                'main',
+                            contextRoleCode: _selectedRole?.code,
+                          ),
+                        )
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accent,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: Colors.white12,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: const Icon(Icons.qr_code_scanner, size: 32),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 6, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        l10n.staffTableName,
+                        style: TextStyle(
+                          color: accent,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        l10n.staffAssignedBrand,
+                        style: TextStyle(
+                          color: accent,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          l10n.staffTableStatus,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: accent,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: _interviewLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(color: _kPrimary),
+                        )
+                      : _interviewError != null
+                      ? Center(
+                          child: Text(
+                            _interviewError!,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.red.shade300),
+                          ),
+                        )
+                      : (_interviewChildren == null ||
+                            _interviewChildren!.isEmpty)
+                      ? Center(
+                          child: Text(
+                            l10n.staffGiftControlNoChildren,
+                            style: const TextStyle(color: Colors.white54),
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: _interviewChildren!.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 10),
+                          itemBuilder: (_, index) => _buildInterviewChildRow(
+                            _interviewChildren![index],
+                            accent,
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInterviewChildRow(GiftControlChildItem child, Color accent) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              child.firstName,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              _interviewBrandMultiline(child.brandName),
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: child.isPassed ? Colors.green : Colors.white54,
+                  shape: BoxShape.circle,
+                ),
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white54, fontSize: 14),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildHostessStub() {
-    return _buildPlaceholderHomeTab(
-      icon: Icons.badge_outlined,
-      title: AppLocalizations.of(context)!.staffRoleHostessTitle,
-      message: AppLocalizations.of(context)!.staffRoleHostessPlaceholder,
+  Widget _buildSuperadminHomeTab(Color accent) {
+    final l10n = AppLocalizations.of(context)!;
+    final eventId = AppSettings.staffActiveEventId;
+    if (eventId != _superadminChildrenEventId && !_superadminChildrenLoading) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _loadSuperadminChildren(),
+      );
+    }
+
+    final roleDesc = _selectedRole?.description.trim() ?? '';
+    final selectedBrandValue =
+        _selectedSuperadminBrandId != null &&
+            _superadminBrands.any((b) => b.id == _selectedSuperadminBrandId)
+        ? _selectedSuperadminBrandId
+        : null;
+    final selectedStageValue =
+        _selectedSuperadminStageId != null &&
+            _superadminStages.any((s) => s.id == _selectedSuperadminStageId)
+        ? _selectedSuperadminStageId
+        : null;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_showSuperadminRoleCard) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.06),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.1)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l10n.staffRoleSuperadminTitle,
+                          style: TextStyle(
+                            color: accent,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        iconSize: 18,
+                        splashRadius: 18,
+                        tooltip: MaterialLocalizations.of(
+                          context,
+                        ).closeButtonTooltip,
+                        onPressed: () {
+                          setState(() => _showSuperadminRoleCard = false);
+                        },
+                        icon: Icon(
+                          Icons.close,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    roleDesc.isEmpty
+                        ? l10n.staffRoleSuperadminPlaceholder
+                        : roleDesc,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white.withOpacity(0.15)),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int?>(
+                value: selectedBrandValue,
+                isExpanded: true,
+                dropdownColor: const Color(0xFF2a1a14),
+                icon: Icon(Icons.keyboard_arrow_down, color: accent),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+                hint: Text(
+                  l10n.staffAssignedBrand,
+                  style: const TextStyle(color: Colors.white54),
+                ),
+                items: <DropdownMenuItem<int?>>[
+                  DropdownMenuItem<int?>(
+                    value: null,
+                    child: Text(l10n.showAll),
+                  ),
+                  ..._superadminBrands.map(
+                    (b) => DropdownMenuItem<int?>(
+                      value: b.id,
+                      child: Text(b.name, overflow: TextOverflow.ellipsis),
+                    ),
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    _selectedSuperadminBrandId = value;
+                    _selectedSuperadminStageId = null;
+                  });
+                  _loadSuperadminChildren();
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white.withOpacity(0.15)),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int?>(
+                value: selectedStageValue,
+                isExpanded: true,
+                dropdownColor: const Color(0xFF2a1a14),
+                icon: Icon(Icons.keyboard_arrow_down, color: accent),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+                hint: Text(
+                  l10n.staffCurrentStageLabel,
+                  style: const TextStyle(color: Colors.white54),
+                ),
+                items: _superadminStages
+                    .map(
+                      (s) => DropdownMenuItem<int?>(
+                        value: s.id,
+                        child: Text(s.name, overflow: TextOverflow.ellipsis),
+                      ),
+                    )
+                    .toList(),
+                onChanged: _superadminStages.isEmpty
+                    ? null
+                    : (value) {
+                        if (value == null) return;
+                        setState(() => _selectedSuperadminStageId = value);
+                        _loadSuperadminChildren();
+                      },
+              ),
+            ),
+          ),
+          if (_superadminStages.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                l10n.staffNoMainStagesAvailable,
+                style: const TextStyle(color: Colors.white54, fontSize: 12),
+              ),
+            ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Icon(Icons.people_outline, color: accent, size: 22),
+              const SizedBox(width: 8),
+              Text(
+                l10n.staffChildRegistry,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              if (_superadminChildren != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: accent,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    l10n.staffChildrenListed(_superadminChildren!.length),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (eventId == null || eventId <= 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                l10n.staffSelectActiveEventForRegistry,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white54, fontSize: 14),
+              ),
+            )
+          else if (_superadminChildrenLoading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: Center(child: CircularProgressIndicator(color: _kPrimary)),
+            )
+          else if (_superadminChildrenError != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                _superadminChildrenError!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.red.shade300, fontSize: 14),
+              ),
+            )
+          else if (_superadminChildren == null || _superadminChildren!.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Text(
+                l10n.staffNoChildrenAssigned,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white54, fontSize: 14),
+              ),
+            )
+          else
+            _buildSupervisorChildrenTable(accent, _superadminChildren!),
+        ],
+      ),
     );
   }
 
-  Widget _buildInterviewStub() {
-    return _buildPlaceholderHomeTab(
-      icon: Icons.mic_outlined,
-      title: AppLocalizations.of(context)!.staffRoleInterviewTitle,
-      message: AppLocalizations.of(context)!.staffRoleInterviewPlaceholder,
-    );
-  }
-
-  Widget _buildSuperadminStub() {
-    return _buildPlaceholderHomeTab(
-      icon: Icons.admin_panel_settings_outlined,
-      title: AppLocalizations.of(context)!.staffRoleSuperadminTitle,
-      message: AppLocalizations.of(context)!.staffRoleSuperadminPlaceholder,
-    );
+  String _interviewBrandMultiline(String? brandName) {
+    final raw = (brandName ?? '').trim();
+    if (raw.isEmpty) return '—';
+    return raw
+        .split(',')
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .join('\n');
   }
 
   Widget _buildRehearsalAdminHomeTab(Color accent) {
@@ -2028,7 +3062,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     );
   }
 
-  Widget _buildGiftIssueHomeTab(Color accent) {
+  Widget _buildGiftIssueHomeTab(Color accent, {required String sectionKey}) {
     final l10n = AppLocalizations.of(context)!;
     final eventId = AppSettings.staffActiveEventId;
     if (eventId != _giftControlEventId && !_giftControlLoading) {
@@ -2038,12 +3072,13 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
     }
     final roleDesc = (_selectedRole?.description ?? '').trim();
     final roleActive = _selectedRole?.isActive ?? false;
+    final selectedStageId = _selectionForSection(sectionKey).stageId;
     final scanEnabled =
         !_homeStagesLoading &&
         roleActive &&
         eventId != null &&
         eventId > 0 &&
-        AppSettings.staffActiveStageId != null;
+        selectedStageId != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2098,7 +3133,7 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<int?>(
-                      value: _homeEffectiveStageDropdownValue(),
+                      value: _homeEffectiveStageDropdownValue(sectionKey),
                       isExpanded: true,
                       dropdownColor: const Color(0xFF2a1a14),
                       icon: Icon(
@@ -2129,9 +3164,10 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                         ),
                       ],
                       onChanged: (int? value) async {
+                        final sel = _selectionForSection(sectionKey);
                         if (value == null) {
-                          await AppSettings.setStaffActiveStageId(null);
-                          await AppSettings.setStaffActiveStageType(null);
+                          sel.stageId = null;
+                          sel.stageType = null;
                         } else {
                           WorkerEventStage? stage;
                           for (final s in _homeVisibleStages) {
@@ -2140,10 +3176,8 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                               break;
                             }
                           }
-                          await AppSettings.setStaffActiveStageId(value);
-                          await AppSettings.setStaffActiveStageType(
-                            stage?.type ?? 'main',
-                          );
+                          sel.stageId = value;
+                          sel.stageType = stage?.type ?? 'main';
                         }
                         if (mounted) setState(() {});
                       },
@@ -2163,7 +3197,17 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: scanEnabled
-                        ? () => unawaited(_openScanner(context))
+                        ? () => unawaited(
+                            _openScanner(
+                              context,
+                              contextEventId: eventId,
+                              contextStageId: selectedStageId,
+                              contextStageType:
+                                  _selectionForSection(sectionKey).stageType ??
+                                  'main',
+                              contextRoleCode: _selectedRole?.code,
+                            ),
+                          )
                         : null,
                     borderRadius: BorderRadius.circular(96),
                     child: Container(

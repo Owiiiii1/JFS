@@ -359,6 +359,46 @@ class AppLocalizationsUk extends AppLocalizations {
   String get active => 'АКТИВНО';
 
   @override
+  String get familyLabel => 'FAMILY';
+
+  @override
+  String get familyJoinButton => 'ПРИЄДНАТИСЯ ДО СІМʼЇ';
+
+  @override
+  String get familyJoinDialogHint => 'Введіть 6-значний сімейний код.';
+
+  @override
+  String get familyJoinAction => 'Підключитися';
+
+  @override
+  String get familyJoinInvalidCode => 'Введіть коректний 6-значний код.';
+
+  @override
+  String get familyJoinSuccess => 'Сімейну підписку підключено.';
+
+  @override
+  String get contractWarningTitle => 'Попередження';
+
+  @override
+  String get contractWarningFallbackText =>
+      'Перед купівлею квитків ознайомтесь і підпишіть договір.';
+
+  @override
+  String get contractViewButton => 'Переглянути';
+
+  @override
+  String get contractPreviewTitle => 'Текст договору';
+
+  @override
+  String get contractSignButton => 'Підписати';
+
+  @override
+  String get contractSignatureTitle => 'Поставте підпис';
+
+  @override
+  String get contractSignedSuccess => 'Договір успішно підписано.';
+
+  @override
   String get journeyProgress => 'ПРОГРЕС';
 
   @override
@@ -401,6 +441,46 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get eventSettingsMainHeadline => 'Налаштування івенту';
+
+  @override
+  String get eventSettingsFamilyButton => 'Сімʼя';
+
+  @override
+  String get familyManageTitle => 'Сімʼя';
+
+  @override
+  String get familyManageEnabled => 'Активувати сімейні підключення';
+
+  @override
+  String get familyManageCodeLabel => 'Сімейний код';
+
+  @override
+  String get familyManageRegenerateCode => 'Змінити код';
+
+  @override
+  String get familyManageConnectionsTitle => 'Активні сімейні підключення';
+
+  @override
+  String get familyManageNoConnections =>
+      'Активних сімейних підключень поки немає.';
+
+  @override
+  String get familyManageUnknownUser => 'Невідомий користувач';
+
+  @override
+  String get eventSettingsLeaveFamilyButton => 'Відключитися від сімʼї';
+
+  @override
+  String get eventSettingsLeaveFamilyConfirmTitle =>
+      'Відключити сімейний доступ?';
+
+  @override
+  String get eventSettingsLeaveFamilyConfirmText =>
+      'Ви втратите сімейний доступ до івенту, доки не підключитесь знову за кодом.';
+
+  @override
+  String get eventSettingsLeaveFamilySuccess =>
+      'Сімейне підключення відключено.';
 
   @override
   String get eventSettingsMealTitle => 'Вибір харчування';
@@ -1022,7 +1102,11 @@ class AppLocalizationsUk extends AppLocalizations {
   String get ticketsBuySubtitle => 'Доступні VIP і стандартні місця';
 
   @override
-  String get extraTicketButton => 'BEVERAGE PACKAGE';
+  String get ticketsBuyEmailHint =>
+      'Ваші квитки прийдуть на електронну пошту, вказану під час покупки квитка.';
+
+  @override
+  String get extraTicketButton => 'OPEN BAR';
 
   @override
   String get extraTicketSelectEventFirst => 'Спочатку оберіть івент.';
@@ -1153,6 +1237,24 @@ class AppLocalizationsUk extends AppLocalizations {
   String get staffChildProfileTitle => 'Профіль дитини';
 
   @override
+  String get staffEventTimelineButton => 'ТАЙМЛАЙН';
+
+  @override
+  String get staffEventTimelineTitle => 'Таймлайн події';
+
+  @override
+  String get staffParentTimelineButton1 => 'ТАЙМЛАЙН БАТЬКІВ 1';
+
+  @override
+  String get staffParentTimelineButton2 => 'ТАЙМЛАЙН БАТЬКІВ 2';
+
+  @override
+  String get staffParentTimelineTitle1 => 'Таймлайн батьків 1';
+
+  @override
+  String get staffParentTimelineTitle2 => 'Таймлайн батьків 2';
+
+  @override
   String get staffCurrentStage => 'ПОТОЧНИЙ ЕТАП';
 
   @override
@@ -1171,6 +1273,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffAssignedBrand => 'ПРИЗНАЧЕНИЙ БРЕНД';
+
+  @override
+  String get staffAssignedPackage => 'ПАКЕТ';
 
   @override
   String get staffSupervisor => 'СУПЕРВАЙЗЕР';
@@ -1714,4 +1819,54 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleStylist => 'Гардероб та макіяж';
+
+  @override
+  String get staffHostessEntryMode => 'ВХІД';
+
+  @override
+  String get staffHostessExitMode => 'ВИХІД';
+
+  @override
+  String get staffHostessEntryHint =>
+      'Скануйте бейдж дитини, щоб закрити вибраний етап і синхронізувати батьків Family Look';
+
+  @override
+  String get staffHostessExitHint =>
+      'Скануйте бейдж дитини або батьків, перевірте прогрес і закрийте етап виходу';
+
+  @override
+  String get staffHostessEntryResultTitle => 'Результат сканування входу';
+
+  @override
+  String get staffHostessExitResultTitle => 'Результат сканування виходу';
+
+  @override
+  String get staffHostessFieldChildName => 'Ім\'я';
+
+  @override
+  String get staffHostessFieldParent => 'Батьки';
+
+  @override
+  String get staffHostessFieldBrandsAndSupervisors => 'Бренди та супервайзери';
+
+  @override
+  String get staffHostessFieldFamilyLook => 'Family Look';
+
+  @override
+  String get staffHostessFamilyLookEnabled => 'Family Look активовано';
+
+  @override
+  String get staffHostessFieldStages => 'Етапи';
+
+  @override
+  String get staffHostessCloseEventAction => 'Закрити івент';
+
+  @override
+  String get staffHostessStageAlreadySelectedOtherMode =>
+      'Цей етап уже обрано для іншого режиму хостес.';
+
+  @override
+  String staffHostessRequiredProgress(int completed, int total) {
+    return 'Обов\'язкові етапи: $completed/$total';
+  }
 }

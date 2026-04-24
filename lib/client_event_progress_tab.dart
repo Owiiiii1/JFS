@@ -667,27 +667,53 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
       prepSlot++;
     }
 
-    final prepDone = a.preparatoryStages.where((p) => p.isCompleted).length;
-    var mainCompleted = a.completedStages - prepDone;
-    if (mainCompleted < 0) {
-      mainCompleted = 0;
-    }
-    if (mainCompleted > a.totalMainStages) {
-      mainCompleted = a.totalMainStages;
-    }
-
-    for (var j = 0; j < items.length; j++) {
-      final m = items[j];
-      if (!m.isMainStage || m.mainSequenceIndex == null) {
-        continue;
+    final hasMainPerStageStatuses = a.mainStages.any(
+      (s) => (s.status ?? '').trim().isNotEmpty,
+    );
+    if (hasMainPerStageStatuses) {
+      var firstPendingSeen = false;
+      for (var j = 0; j < items.length; j++) {
+        final m = items[j];
+        if (!m.isMainStage || m.mainSequenceIndex == null) {
+          continue;
+        }
+        final idx = m.mainSequenceIndex!;
+        final raw = idx < a.mainStages.length
+            ? (a.mainStages[idx].status ?? '').trim().toLowerCase()
+            : '';
+        final status = raw == 'completed'
+            ? _MilestoneStatus.completed
+            : (!firstPendingSeen
+                  ? _MilestoneStatus.current
+                  : _MilestoneStatus.upcoming);
+        if (raw != 'completed' && !firstPendingSeen) {
+          firstPendingSeen = true;
+        }
+        items[j] = m.copyWith(status: status);
       }
-      final idx = m.mainSequenceIndex!;
-      final status = idx < mainCompleted
-          ? _MilestoneStatus.completed
-          : (idx == mainCompleted
-                ? _MilestoneStatus.current
-                : _MilestoneStatus.upcoming);
-      items[j] = m.copyWith(status: status);
+    } else {
+      final prepDone = a.preparatoryStages.where((p) => p.isCompleted).length;
+      var mainCompleted = a.completedStages - prepDone;
+      if (mainCompleted < 0) {
+        mainCompleted = 0;
+      }
+      if (mainCompleted > a.totalMainStages) {
+        mainCompleted = a.totalMainStages;
+      }
+
+      for (var j = 0; j < items.length; j++) {
+        final m = items[j];
+        if (!m.isMainStage || m.mainSequenceIndex == null) {
+          continue;
+        }
+        final idx = m.mainSequenceIndex!;
+        final status = idx < mainCompleted
+            ? _MilestoneStatus.completed
+            : (idx == mainCompleted
+                  ? _MilestoneStatus.current
+                  : _MilestoneStatus.upcoming);
+        items[j] = m.copyWith(status: status);
+      }
     }
 
     return items;
@@ -731,13 +757,32 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
         ),
       );
     }
-    final total = t.totalStages > 0 ? t.totalStages : t.mainStages.length;
-    var done = t.completedStages.clamp(0, total);
-    for (var i = 0; i < items.length; i++) {
-      final status = i < done
-          ? _MilestoneStatus.completed
-          : (i == done ? _MilestoneStatus.current : _MilestoneStatus.upcoming);
-      items[i] = items[i].copyWith(status: status);
+    final hasPerStageStatuses = t.mainStages.any(
+      (s) => (s.status ?? '').trim().isNotEmpty,
+    );
+    if (hasPerStageStatuses) {
+      var firstPendingSeen = false;
+      for (var i = 0; i < items.length; i++) {
+        final raw = (t.mainStages[i].status ?? '').trim().toLowerCase();
+        final status = raw == 'completed'
+            ? _MilestoneStatus.completed
+            : (!firstPendingSeen
+                  ? _MilestoneStatus.current
+                  : _MilestoneStatus.upcoming);
+        if (raw != 'completed' && !firstPendingSeen) {
+          firstPendingSeen = true;
+        }
+        items[i] = items[i].copyWith(status: status);
+      }
+    } else {
+      final total = t.totalStages > 0 ? t.totalStages : t.mainStages.length;
+      final done = t.completedStages.clamp(0, total);
+      for (var i = 0; i < items.length; i++) {
+        final status = i < done
+            ? _MilestoneStatus.completed
+            : (i == done ? _MilestoneStatus.current : _MilestoneStatus.upcoming);
+        items[i] = items[i].copyWith(status: status);
+      }
     }
     return items;
   }
@@ -1475,49 +1520,6 @@ class _MilestoneButton extends StatelessWidget {
                         )
                       : Icon(icon, color: fgColor, size: 20),
                 ),
-                if (milestone.parentDots > 0 && milestone.isMainStage)
-                  Positioned(
-                    right: -12,
-                    top: -12,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (var i = 0; i < milestone.parentDots; i++)
-                          Container(
-                            margin: EdgeInsets.only(left: i == 0 ? 0 : 4),
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color: i < milestone.parentDotsCompleted
-                                  ? Colors.white
-                                  : Colors.black.withOpacity(0.62),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: i < milestone.parentDotsCompleted
-                                    ? _kLuxuryBlack
-                                    : Colors.white30,
-                                width: 2,
-                              ),
-                              boxShadow: [
-                                if (i < milestone.parentDotsCompleted)
-                                  BoxShadow(
-                                    color: Colors.white.withOpacity(0.35),
-                                    blurRadius: 16,
-                                    spreadRadius: 1,
-                                  ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.person,
-                              size: 13,
-                              color: i < milestone.parentDotsCompleted
-                                  ? Colors.black
-                                  : Colors.white60,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
               ],
             ),
             const SizedBox(height: 8),

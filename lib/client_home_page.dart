@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,12 +12,15 @@ import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
 import 'about_page.dart';
 import 'client_event_checkin_page.dart';
+import 'client_event_backstage_ticket_flow.dart';
 import 'client_event_description_page.dart';
+import 'client_event_extra_ticket_flow.dart';
 import 'client_event_parking_flow.dart';
 import 'client_event_progress_tab.dart';
 import 'contact_manager_page.dart';
 import 'client_event_settings_page.dart';
 import 'client_ticket_service_ui.dart';
+import 'client_contract_flow.dart';
 import 'faq_sections_page.dart';
 import 'news_detail_page.dart';
 import 'about_app_page.dart';
@@ -345,7 +349,7 @@ class _ClientHomePageState extends State<ClientHomePage>
     );
   }
 
-  void _openEventSettingsPage(ChildWithAssignment child) {
+  Future<void> _openEventSettingsPage(ChildWithAssignment child) async {
     final a = child.activeAssignment;
     final eventId = a?.event.id ?? 0;
     final name = a?.event.name ?? '';
@@ -354,8 +358,8 @@ class _ClientHomePageState extends State<ClientHomePage>
             .where((c) => c.activeAssignment?.event.id == eventId)
             .toList() ??
         [child];
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
         builder: (_) => ClientEventSettingsPage(
           auth: widget.auth,
           eventName: name,
@@ -363,6 +367,9 @@ class _ClientHomePageState extends State<ClientHomePage>
           eventId: eventId,
           childrenInEvent: childrenInEvent,
           contextChildId: _selectedDashboardChild?.id ?? child.id,
+          contextAssignmentId: a?.id,
+          canManageFamily: (a?.accessMode ?? 'parent') != 'family',
+          canDisconnectFromFamily: (a?.accessMode ?? 'parent') == 'family',
           onMealChoiceSaved: () {
             if (mounted) {
               _refreshDashboardSilently();
@@ -371,18 +378,22 @@ class _ClientHomePageState extends State<ClientHomePage>
         ),
       ),
     );
+    if (result == true && mounted) {
+      _refreshDashboardSilently();
+    }
   }
 
-  Future<void> _openParkingFlowFromAssignment(
-    ActiveAssignment assignment,
-  ) async {
+  Future<void> _openParkingFlow({
+    required int eventId,
+    required String eventName,
+    required bool serviceEnabled,
+    required bool? userHasParkingTicket,
+  }) async {
     final l10n = AppLocalizations.of(context)!;
-    final eventId = assignment.event.id;
     if (eventId <= 0) return;
-    final ev = assignment.event;
     if (shouldBlockClientTicketPrefetch(
-      serviceEnabled: ev.clientParkingServiceEnabled,
-      userHasTicket: ev.userHasParkingTicket,
+      serviceEnabled: serviceEnabled,
+      userHasTicket: userHasParkingTicket,
     )) {
       await showClientTicketServiceUnavailableDialog(context, l10n);
       return;
@@ -393,7 +404,7 @@ class _ClientHomePageState extends State<ClientHomePage>
 
       final page = payload.hasActiveTickets
           ? ClientParkingActiveScreen(
-              eventName: assignment.event.name,
+              eventName: eventName,
               accountName: (widget.user['name'] as String? ?? '').trim(),
               l10n: l10n,
               auth: widget.auth,
@@ -410,7 +421,7 @@ class _ClientHomePageState extends State<ClientHomePage>
             )
           : ClientParkingInactiveScreen(
               l10n: l10n,
-              eventName: assignment.event.name,
+              eventName: eventName,
               accountName: (widget.user['name'] as String? ?? '').trim(),
               auth: widget.auth,
               eventId: eventId,
@@ -439,6 +450,450 @@ class _ClientHomePageState extends State<ClientHomePage>
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.parkingCheckoutError)));
     }
+  }
+
+  Future<void> _openParkingFlowFromAssignment(ActiveAssignment assignment) {
+    final ev = assignment.event;
+    return _openParkingFlow(
+      eventId: ev.id,
+      eventName: ev.name,
+      serviceEnabled: ev.clientParkingServiceEnabled,
+      userHasParkingTicket: ev.userHasParkingTicket,
+    );
+  }
+
+  Future<void> _openExtraTicketFlowFromAssignment(
+    ActiveAssignment assignment,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final ev = assignment.event;
+    if (ev.id <= 0) return;
+    if (shouldBlockClientTicketPrefetch(
+      serviceEnabled: ev.clientExtraTicketsServiceEnabled,
+      userHasTicket: ev.userHasExtraTicket,
+    )) {
+      await showClientTicketServiceUnavailableDialog(context, l10n);
+      return;
+    }
+    try {
+      final payload = await widget.auth.getEventExtraTickets(ev.id);
+      if (!mounted) return;
+      final page = payload.hasActiveTickets
+          ? ClientExtraTicketActiveScreen(
+              eventName: ev.name,
+              l10n: l10n,
+              auth: widget.auth,
+              eventId: ev.id,
+              canBuy: payload.canBuy,
+              tickets: payload.tickets,
+            )
+          : ClientExtraTicketInactiveScreen(
+              l10n: l10n,
+              eventName: ev.name,
+              auth: widget.auth,
+              eventId: ev.id,
+              canBuy: payload.canBuy,
+            );
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute<void>(builder: (_) => page));
+      _refreshDashboardSilently();
+    } on ApiServiceDisabledException catch (e) {
+      if (!mounted) return;
+      await showClientTicketServiceUnavailableDialog(
+        context,
+        l10n,
+        message: e.message,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.extraTicketCheckoutError)));
+    }
+  }
+
+  Future<void> _openBackstageTicketFlowFromAssignment(
+    ActiveAssignment assignment,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final ev = assignment.event;
+    if (ev.id <= 0) return;
+    if (shouldBlockClientTicketPrefetch(
+      serviceEnabled: ev.clientBackstageTicketsServiceEnabled,
+      userHasTicket: ev.userHasBackstageTicket,
+    )) {
+      await showClientTicketServiceUnavailableDialog(context, l10n);
+      return;
+    }
+    try {
+      final payload = await widget.auth.getEventBackstageTickets(ev.id);
+      if (!mounted) return;
+      final page = payload.hasActiveTickets
+          ? ClientBackstageTicketActiveScreen(
+              eventName: ev.name,
+              l10n: l10n,
+              auth: widget.auth,
+              eventId: ev.id,
+              canBuy: payload.canBuy,
+              tickets: payload.tickets,
+            )
+          : ClientBackstageTicketInactiveScreen(
+              l10n: l10n,
+              eventName: ev.name,
+              auth: widget.auth,
+              eventId: ev.id,
+              canBuy: payload.canBuy,
+            );
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute<void>(builder: (_) => page));
+      _refreshDashboardSilently();
+    } on ApiServiceDisabledException catch (e) {
+      if (!mounted) return;
+      await showClientTicketServiceUnavailableDialog(
+        context,
+        l10n,
+        message: e.message,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.backstageTicketCheckoutError)),
+      );
+    }
+  }
+
+  Future<List<UpcomingEvent>> _ensureUpcomingEventsLoaded() async {
+    if (_upcomingEvents != null) {
+      return _upcomingEvents!;
+    }
+    final list = await widget.auth.getClientUpcomingEvents();
+    if (!mounted) return list;
+    setState(() {
+      _upcomingEvents = list;
+      _upcomingLoading = false;
+      _upcomingError = null;
+    });
+    return list;
+  }
+
+  Future<void> _openBuyTicketForNoActive() async {
+    final l10n = AppLocalizations.of(context)!;
+    final allowed = await ensureContractSignedBeforeTicketPurchase(
+      context,
+      auth: widget.auth,
+    );
+    if (!allowed) {
+      return;
+    }
+    List<UpcomingEvent> source;
+    try {
+      source = await _ensureUpcomingEventsLoaded();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      return;
+    }
+    if (!mounted) return;
+    final events = source
+        .where((e) => (e.ticketStoreUrl ?? '').trim().isNotEmpty)
+        .toList();
+    if (events.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyNoLink)));
+      return;
+    }
+
+    int? selectedEventId;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) {
+          UpcomingEvent? selected;
+          for (final event in events) {
+            if (event.id == selectedEventId) {
+              selected = event;
+              break;
+            }
+          }
+          return SafeArea(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: _kBgDark,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    l10n.ticketsBuy,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    l10n.selectEventForTickets,
+                    style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: _kCardBg,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white12),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: selectedEventId,
+                        isExpanded: true,
+                        dropdownColor: _kCardBg,
+                        icon: const Icon(Icons.expand_more, color: _kGold),
+                        hint: Text(
+                          l10n.selectEventForTickets,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                        items: events
+                            .map(
+                              (e) => DropdownMenuItem<int>(
+                                value: e.id,
+                                child: Text(
+                                  e.name,
+                                  style: const TextStyle(color: Colors.white),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (id) {
+                          setModalState(() => selectedEventId = id);
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.ticketsBuyEmailHint,
+                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
+                  if (selected != null) ...[
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final normalized = _normalizeHttpUrl(
+                            selected!.ticketStoreUrl ?? '',
+                          );
+                          if (normalized == null) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(l10n.ticketsBuyNoLink)),
+                              );
+                            }
+                            return;
+                          }
+                          final uri = Uri.tryParse(normalized);
+                          if (uri == null || !uri.hasScheme) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(l10n.ticketsBuyCouldNotOpen),
+                                ),
+                              );
+                            }
+                            return;
+                          }
+                          final ok = await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                          if (!ctx.mounted) return;
+                          Navigator.of(ctx).pop();
+                          if (!ok && mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(l10n.ticketsBuyCouldNotOpen),
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _kGold,
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(l10n.ticketsBuy),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> _openParkingForNoActive() async {
+    final l10n = AppLocalizations.of(context)!;
+    List<UpcomingEvent> events;
+    try {
+      events = await _ensureUpcomingEventsLoaded();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      return;
+    }
+    if (!mounted) return;
+    if (events.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.ticketsNoEvents)));
+      return;
+    }
+
+    int? selectedEventId;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) {
+          UpcomingEvent? selected;
+          for (final event in events) {
+            if (event.id == selectedEventId) {
+              selected = event;
+              break;
+            }
+          }
+          return SafeArea(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: _kBgDark,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    l10n.eventSettingsParkingTitle,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    l10n.selectEventForTickets,
+                    style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: _kCardBg,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white12),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: selectedEventId,
+                        isExpanded: true,
+                        dropdownColor: _kCardBg,
+                        icon: const Icon(Icons.expand_more, color: _kGold),
+                        hint: Text(
+                          l10n.selectEventForTickets,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                        items: events
+                            .map(
+                              (e) => DropdownMenuItem<int>(
+                                value: e.id,
+                                child: Text(
+                                  e.name,
+                                  style: const TextStyle(color: Colors.white),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (id) {
+                          setModalState(() => selectedEventId = id);
+                        },
+                      ),
+                    ),
+                  ),
+                  if (selected != null) ...[
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () async {
+                          final selectedEvent = selected;
+                          if (selectedEvent == null) {
+                            return;
+                          }
+                          Navigator.of(ctx).pop();
+                          await _openParkingFlow(
+                            eventId: selectedEvent.id,
+                            eventName: selectedEvent.name,
+                            serviceEnabled:
+                                selectedEvent.clientParkingServiceEnabled,
+                            userHasParkingTicket:
+                                selectedEvent.userHasParkingTicket,
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          side: const BorderSide(color: _kGold),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          l10n.eventSettingsParkingTitle,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Future<void> _signOut() async {
@@ -859,6 +1314,122 @@ class _ClientHomePageState extends State<ClientHomePage>
     }
   }
 
+  Future<void> _openJoinFamilyDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = TextEditingController();
+    var submitting = false;
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setModalState) {
+            Future<void> submit() async {
+              if (submitting) {
+                return;
+              }
+              final code = controller.text.trim();
+              if (!RegExp(r'^\d{6}$').hasMatch(code)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.familyJoinInvalidCode)),
+                );
+                return;
+              }
+              setModalState(() => submitting = true);
+              try {
+                await widget.auth.joinFamilyByCode(code);
+                if (!mounted || !ctx.mounted) {
+                  return;
+                }
+                Navigator.of(ctx).pop();
+                await _loadDashboard();
+                if (!mounted) {
+                  return;
+                }
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(l10n.familyJoinSuccess)));
+              } catch (e) {
+                if (!mounted) {
+                  return;
+                }
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(e.toString())));
+              } finally {
+                if (mounted) {
+                  setModalState(() => submitting = false);
+                }
+              }
+            }
+
+            return AlertDialog(
+              backgroundColor: _kCardBg,
+              title: Text(
+                l10n.familyJoinButton,
+                style: const TextStyle(color: Colors.white),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.familyJoinDialogHint,
+                    style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: controller,
+                    autofocus: true,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: Colors.white),
+                    maxLength: 6,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: InputDecoration(
+                      counterText: '',
+                      hintText: '000000',
+                      hintStyle: const TextStyle(color: Colors.white38),
+                      filled: true,
+                      fillColor: Colors.black45,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: Colors.white24),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: _kGold),
+                      ),
+                    ),
+                    onSubmitted: (_) => submit(),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: submitting ? null : () => Navigator.of(ctx).pop(),
+                  child: Text(l10n.cancel),
+                ),
+                ElevatedButton(
+                  onPressed: submitting ? null : submit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _kGold,
+                    foregroundColor: Colors.black,
+                  ),
+                  child: submitting
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(l10n.familyJoinAction),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   // ---------------------------------------------------------------------------
   // Events tab
   // ---------------------------------------------------------------------------
@@ -1145,7 +1716,7 @@ class _ClientHomePageState extends State<ClientHomePage>
       quickActions = _buildEventActionsCard(selectedChild);
     } else {
       content = _buildBecomeModelButton();
-      quickActions = null;
+      quickActions = _buildNoActiveActionsCard();
     }
 
     return Column(
@@ -1193,17 +1764,150 @@ class _ClientHomePageState extends State<ClientHomePage>
         color: _kCardBg,
       ),
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    showMyTicketsSheet(
+                      context,
+                      auth: widget.auth,
+                      canPurchaseTickets: _canPurchaseTickets,
+                      requireContractGate:
+                          (assignment?.accessMode ?? 'parent') == 'family',
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _kGold,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    l10n.myTicketsButton,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      letterSpacing: 1.4,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: assignment == null
+                      ? null
+                      : () => _openParkingFlowFromAssignment(assignment),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: _kGold),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.eventSettingsParkingTitle,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      letterSpacing: 1.4,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: assignment == null
+                      ? null
+                      : () => _openExtraTicketFlowFromAssignment(assignment),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: _kGold),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.extraTicketButton,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      letterSpacing: 1.1,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: assignment == null
+                      ? null
+                      : () =>
+                            _openBackstageTicketFlowFromAssignment(assignment),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: _kGold),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.backstageTicketButton,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      letterSpacing: 1.1,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoActiveActionsCard() {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white10),
+        color: _kCardBg,
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
       child: Row(
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: () {
-                showMyTicketsSheet(
-                  context,
-                  auth: widget.auth,
-                  canPurchaseTickets: _canPurchaseTickets,
-                );
-              },
+              onPressed: _openBuyTicketForNoActive,
               style: ElevatedButton.styleFrom(
                 backgroundColor: _kGold,
                 foregroundColor: Colors.black,
@@ -1214,11 +1918,11 @@ class _ClientHomePageState extends State<ClientHomePage>
                 elevation: 0,
               ),
               child: Text(
-                l10n.myTicketsButton,
+                l10n.ticketsBuy,
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
-                  letterSpacing: 1.4,
+                  letterSpacing: 1.2,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -1229,9 +1933,7 @@ class _ClientHomePageState extends State<ClientHomePage>
           const SizedBox(width: 12),
           Expanded(
             child: OutlinedButton(
-              onPressed: assignment == null
-                  ? null
-                  : () => _openParkingFlowFromAssignment(assignment),
+              onPressed: _openParkingForNoActive,
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
                 side: const BorderSide(color: _kGold),
@@ -1245,7 +1947,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
-                  letterSpacing: 1.4,
+                  letterSpacing: 1.2,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -1388,6 +2090,7 @@ class _ClientHomePageState extends State<ClientHomePage>
 
   Widget _buildEventCard(ChildWithAssignment child) {
     final a = child.activeAssignment!;
+    final isFamilyAccess = a.accessMode == 'family';
     final totalStages = a.totalMainStages + a.totalPreparatoryStages;
     final completed = a.completedStages;
     final progress = totalStages > 0 ? completed / totalStages : 0.0;
@@ -1395,6 +2098,7 @@ class _ClientHomePageState extends State<ClientHomePage>
 
     final l10nCard = AppLocalizations.of(context)!;
     final brandsLine = _childSubscribedBrandsLine(a, l10nCard);
+    final eventArrivalTime = (a.eventArrivalTime ?? '').trim();
     final nextStageText = _nextPreparatoryHint(a, l10nCard);
     final dateText = a.event.startsAt != null
         ? (a.event.endsAt != null && a.event.endsAt != a.event.startsAt
@@ -1452,7 +2156,9 @@ class _ClientHomePageState extends State<ClientHomePage>
                   border: Border.all(color: _kGold.withOpacity(0.25)),
                 ),
                 child: Text(
-                  AppLocalizations.of(context)!.active,
+                  isFamilyAccess
+                      ? AppLocalizations.of(context)!.familyLabel
+                      : AppLocalizations.of(context)!.active,
                   style: TextStyle(
                     fontSize: 10,
                     color: _kGold,
@@ -1501,6 +2207,19 @@ class _ClientHomePageState extends State<ClientHomePage>
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               softWrap: true,
+            ),
+          ],
+          if (eventArrivalTime.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              'Старт для вас: $eventArrivalTime',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[300],
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
 
@@ -1673,12 +2392,14 @@ class _ClientHomePageState extends State<ClientHomePage>
   /// Карточка текущего участия в стиле референса: фото фона, градиент, ACTIVE справа сверху, название и дата поверх фото, прогресс и кнопка снизу.
   Widget _buildCurrentParticipationEventCard(ChildWithAssignment child) {
     final a = child.activeAssignment!;
+    final isFamilyAccess = a.accessMode == 'family';
     final totalStages = a.totalMainStages + a.totalPreparatoryStages;
     final completed = a.completedStages;
     final progress = totalStages > 0 ? completed / totalStages : 0.0;
     final parentProgress = a.parentProgress;
     final l10n = AppLocalizations.of(context)!;
     final brandsLine = _childSubscribedBrandsLine(a, l10n);
+    final eventArrivalTime = (a.eventArrivalTime ?? '').trim();
 
     final eventImageUrl =
         a.event.imageUrl != null && !a.event.imageUrl!.startsWith('http')
@@ -1759,7 +2480,8 @@ class _ClientHomePageState extends State<ClientHomePage>
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        l10n.active.toUpperCase(),
+                        (isFamilyAccess ? l10n.familyLabel : l10n.active)
+                            .toUpperCase(),
                         style: const TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
@@ -1827,6 +2549,19 @@ class _ClientHomePageState extends State<ClientHomePage>
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                             softWrap: true,
+                          ),
+                        ],
+                        if (eventArrivalTime.isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            'Старт для вас: $eventArrivalTime',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white.withOpacity(0.86),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ],
@@ -1983,6 +2718,32 @@ class _ClientHomePageState extends State<ClientHomePage>
                   fontWeight: FontWeight.w800,
                   fontSize: 14,
                   letterSpacing: 2,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: _openJoinFamilyDialog,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: const BorderSide(color: _kGold),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.familyJoinButton,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  letterSpacing: 1.2,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -2181,7 +2942,8 @@ class _ClientHomePageState extends State<ClientHomePage>
       return null;
     }
     final p = a.preparatoryStages[idx];
-    final scheduleHint = parseScheduleWallToDateTime(p.scheduledAtWall) ?? p.scheduledAt;
+    final scheduleHint =
+        parseScheduleWallToDateTime(p.scheduledAtWall) ?? p.scheduledAt;
     if (p.isRehearsalMilestone && scheduleHint == null) {
       return l10n.rehearsalNextBookHint;
     }

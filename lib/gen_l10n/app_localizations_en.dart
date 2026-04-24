@@ -359,6 +359,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get active => 'ACTIVE';
 
   @override
+  String get familyLabel => 'FAMILY';
+
+  @override
+  String get familyJoinButton => 'JOIN FAMILY';
+
+  @override
+  String get familyJoinDialogHint => 'Enter the 6-digit family code.';
+
+  @override
+  String get familyJoinAction => 'Join';
+
+  @override
+  String get familyJoinInvalidCode => 'Enter a valid 6-digit code.';
+
+  @override
+  String get familyJoinSuccess => 'Family subscription connected.';
+
+  @override
+  String get contractWarningTitle => 'Warning';
+
+  @override
+  String get contractWarningFallbackText =>
+      'Before purchasing tickets, please review and sign the contract.';
+
+  @override
+  String get contractViewButton => 'View';
+
+  @override
+  String get contractPreviewTitle => 'Contract text';
+
+  @override
+  String get contractSignButton => 'Sign';
+
+  @override
+  String get contractSignatureTitle => 'Add signature';
+
+  @override
+  String get contractSignedSuccess => 'Contract signed successfully.';
+
+  @override
   String get journeyProgress => 'JOURNEY PROGRESS';
 
   @override
@@ -401,6 +441,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventSettingsMainHeadline => 'Event Settings';
+
+  @override
+  String get eventSettingsFamilyButton => 'Family';
+
+  @override
+  String get familyManageTitle => 'Family';
+
+  @override
+  String get familyManageEnabled => 'Enable family connections';
+
+  @override
+  String get familyManageCodeLabel => 'Family code';
+
+  @override
+  String get familyManageRegenerateCode => 'Regenerate code';
+
+  @override
+  String get familyManageConnectionsTitle => 'Active family connections';
+
+  @override
+  String get familyManageNoConnections => 'No active family connections yet.';
+
+  @override
+  String get familyManageUnknownUser => 'Unknown user';
+
+  @override
+  String get eventSettingsLeaveFamilyButton => 'Disconnect from family';
+
+  @override
+  String get eventSettingsLeaveFamilyConfirmTitle =>
+      'Disconnect family access?';
+
+  @override
+  String get eventSettingsLeaveFamilyConfirmText =>
+      'You will lose family event access until you join again by code.';
+
+  @override
+  String get eventSettingsLeaveFamilySuccess =>
+      'Family access has been disconnected.';
 
   @override
   String get eventSettingsMealTitle => 'Meal Selection';
@@ -1018,7 +1097,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ticketsBuySubtitle => 'VIP and standard seats available';
 
   @override
-  String get extraTicketButton => 'BEVERAGE PACKAGE';
+  String get ticketsBuyEmailHint =>
+      'Your tickets will be sent to the email address provided during purchase.';
+
+  @override
+  String get extraTicketButton => 'OPEN BAR';
 
   @override
   String get extraTicketSelectEventFirst => 'Select an event first.';
@@ -1151,6 +1234,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get staffChildProfileTitle => 'Child Profile';
 
   @override
+  String get staffEventTimelineButton => 'TIMELINE';
+
+  @override
+  String get staffEventTimelineTitle => 'Event timeline';
+
+  @override
+  String get staffParentTimelineButton1 => 'PARENT 1 TIMELINE';
+
+  @override
+  String get staffParentTimelineButton2 => 'PARENT 2 TIMELINE';
+
+  @override
+  String get staffParentTimelineTitle1 => 'Parent 1 timeline';
+
+  @override
+  String get staffParentTimelineTitle2 => 'Parent 2 timeline';
+
+  @override
   String get staffCurrentStage => 'CURRENT STAGE';
 
   @override
@@ -1169,6 +1270,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffAssignedBrand => 'ASSIGNED BRAND';
+
+  @override
+  String get staffAssignedPackage => 'PACKAGE';
 
   @override
   String get staffSupervisor => 'SUPERVISOR';
@@ -1704,4 +1808,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get staffRoleSubtitleStylist => 'Wardrobe & makeup logs';
+
+  @override
+  String get staffHostessEntryMode => 'ENTRY';
+
+  @override
+  String get staffHostessExitMode => 'EXIT';
+
+  @override
+  String get staffHostessEntryHint =>
+      'Scan child badge to close selected stage and sync Family Look parents';
+
+  @override
+  String get staffHostessExitHint =>
+      'Scan child or parent badge, review progress and close event stage';
+
+  @override
+  String get staffHostessEntryResultTitle => 'Entry scan result';
+
+  @override
+  String get staffHostessExitResultTitle => 'Exit scan result';
+
+  @override
+  String get staffHostessFieldChildName => 'Name';
+
+  @override
+  String get staffHostessFieldParent => 'Parent';
+
+  @override
+  String get staffHostessFieldBrandsAndSupervisors => 'Brands and supervisors';
+
+  @override
+  String get staffHostessFieldFamilyLook => 'Family Look';
+
+  @override
+  String get staffHostessFamilyLookEnabled => 'Family Look is enabled';
+
+  @override
+  String get staffHostessFieldStages => 'Stages';
+
+  @override
+  String get staffHostessCloseEventAction => 'Close Event';
+
+  @override
+  String get staffHostessStageAlreadySelectedOtherMode =>
+      'This stage is already selected for the other hostess mode.';
+
+  @override
+  String staffHostessRequiredProgress(int completed, int total) {
+    return 'Required stages completed: $completed/$total';
+  }
 }

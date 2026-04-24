@@ -117,6 +117,9 @@ class ClientEventSettingsPage extends StatefulWidget {
 
     /// Ребёнок, выбранный на главной (над карточкой ивента); для требований брендов.
     this.contextChildId,
+    this.contextAssignmentId,
+    this.canManageFamily = false,
+    this.canDisconnectFromFamily = false,
     this.onMealChoiceSaved,
   });
 
@@ -126,6 +129,9 @@ class ClientEventSettingsPage extends StatefulWidget {
   final int eventId;
   final List<ChildWithAssignment> childrenInEvent;
   final int? contextChildId;
+  final int? contextAssignmentId;
+  final bool canManageFamily;
+  final bool canDisconnectFromFamily;
   final VoidCallback? onMealChoiceSaved;
 
   static const String _fontFamily = 'HelveticaNeueCyr';
@@ -381,6 +387,274 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
     }
   }
 
+  Future<void> _openFamilyManagementDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    final assignmentId = widget.contextAssignmentId ?? 0;
+    if (assignmentId <= 0) {
+      return;
+    }
+
+    FamilySubscriptionSettings settings;
+    try {
+      settings = await widget.auth.getAssignmentFamilySubscriptionSettings(
+        assignmentId,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      return;
+    }
+    if (!mounted) return;
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        final messenger = ScaffoldMessenger.of(context);
+        var state = settings;
+        var loading = false;
+
+        Future<void> refreshState(
+          StateSetter setModalState,
+          Future<FamilySubscriptionSettings> Function() loader,
+        ) async {
+          if (loading) return;
+          setModalState(() => loading = true);
+          try {
+            final next = await loader();
+            if (!ctx.mounted) return;
+            setModalState(() => state = next);
+          } catch (e) {
+            if (!ctx.mounted) return;
+            messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+          } finally {
+            if (ctx.mounted) {
+              setModalState(() => loading = false);
+            }
+          }
+        }
+
+        Widget connectionRow(FamilySubscriptionConnection c) {
+          final subtitle = [
+            if (c.userEmail.isNotEmpty) c.userEmail,
+            if (c.userPhone.isNotEmpty) c.userPhone,
+          ].join(' · ');
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.black45,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white10),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: _kPrimary.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${c.slot}',
+                    style: const TextStyle(
+                      color: _kPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        c.userName.isNotEmpty
+                            ? c.userName
+                            : l10n.familyManageUnknownUser,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      if (subtitle.isNotEmpty)
+                        Text(
+                          subtitle,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return StatefulBuilder(
+          builder: (ctx, setModalState) {
+            return AlertDialog(
+              backgroundColor: _kSurface,
+              title: Text(
+                l10n.familyManageTitle,
+                style: const TextStyle(color: Colors.white),
+              ),
+              content: SizedBox(
+                width: 500,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SwitchListTile.adaptive(
+                        value: state.enabled,
+                        activeThumbColor: _kPrimary,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          l10n.familyManageEnabled,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        onChanged: loading
+                            ? null
+                            : (value) {
+                                refreshState(
+                                  setModalState,
+                                  () => widget.auth
+                                      .setAssignmentFamilySubscriptionEnabled(
+                                        assignmentId,
+                                        enabled: value,
+                                      ),
+                                );
+                              },
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        l10n.familyManageCodeLabel,
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black45,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: Colors.white10),
+                              ),
+                              child: Text(
+                                state.familyCode.isNotEmpty
+                                    ? state.familyCode
+                                    : '------',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          OutlinedButton(
+                            onPressed: loading
+                                ? null
+                                : () {
+                                    refreshState(
+                                      setModalState,
+                                      () => widget.auth
+                                          .regenerateAssignmentFamilyCode(
+                                            assignmentId,
+                                          ),
+                                    );
+                                  },
+                            child: Text(l10n.familyManageRegenerateCode),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        l10n.familyManageConnectionsTitle,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      const SizedBox(height: 8),
+                      if (state.connections.isEmpty)
+                        Text(
+                          l10n.familyManageNoConnections,
+                          style: const TextStyle(color: Colors.white70),
+                        )
+                      else
+                        ...state.connections.map(connectionRow),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text(l10n.close),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _disconnectFromFamily() async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _kSurface,
+        title: Text(
+          l10n.eventSettingsLeaveFamilyConfirmTitle,
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: Text(
+          l10n.eventSettingsLeaveFamilyConfirmText,
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(l10n.eventSettingsLeaveFamilyButton),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) {
+      return;
+    }
+
+    try {
+      await widget.auth.disconnectFromFamily();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.eventSettingsLeaveFamilySuccess)),
+      );
+      Navigator.of(context).pop(true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -432,7 +706,8 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
                                 flex: 2,
                                 child: _MealCard(
                                   l10n: l10n,
-                                  orderedPcs: _totalEventMealFulfilledOrdersInEvent(),
+                                  orderedPcs:
+                                      _totalEventMealFulfilledOrdersInEvent(),
                                   onOpenMealChoice: widget.eventId > 0
                                       ? () {
                                           _openMealSheet();
@@ -521,6 +796,57 @@ class _ClientEventSettingsPageState extends State<ClientEventSettingsPage>
                 l10n: l10n,
                 onOpen: widget.eventId > 0 ? _openChatRoomsPage : null,
               ),
+              if (widget.canDisconnectFromFamily) ...[
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: _disconnectFromFamily,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.redAccent,
+                      side: const BorderSide(color: Colors.redAccent),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 12,
+                      ),
+                    ),
+                    child: Text(
+                      l10n.eventSettingsLeaveFamilyButton,
+                      style: const TextStyle(
+                        fontFamily: ClientEventSettingsPage._fontFamily,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              if (widget.canManageFamily &&
+                  (widget.contextAssignmentId ?? 0) > 0) ...[
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: _openFamilyManagementDialog,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: _kPrimary,
+                      side: const BorderSide(color: _kPrimary),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 12,
+                      ),
+                    ),
+                    child: Text(
+                      l10n.eventSettingsFamilyButton,
+                      style: const TextStyle(
+                        fontFamily: ClientEventSettingsPage._fontFamily,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

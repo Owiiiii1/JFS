@@ -333,6 +333,9 @@ class AuthService {
     required String stageType,
     String? roleCode,
     String? photoPath,
+    int? stagePlanId,
+    int? selectedBrandSlot,
+    bool resolveDuplicates = false,
   }) async {
     final token = await getToken();
     if (token == null || token.isEmpty) throw Exception('Not authenticated');
@@ -349,6 +352,15 @@ class AuthService {
       request.fields['stage_type'] = stageType;
       if (roleCode != null && roleCode.isNotEmpty) {
         request.fields['role_code'] = roleCode;
+      }
+      if (stagePlanId != null && stagePlanId > 0) {
+        request.fields['stage_plan_id'] = stagePlanId.toString();
+      }
+      if (selectedBrandSlot != null && selectedBrandSlot >= 0) {
+        request.fields['selected_brand_slot'] = selectedBrandSlot.toString();
+      }
+      if (resolveDuplicates) {
+        request.fields['resolve_duplicates'] = '1';
       }
       request.files.add(await http.MultipartFile.fromPath('photo', photoPath));
       final streamed = await request.send();
@@ -367,6 +379,10 @@ class AuthService {
           'stage_id': stageId,
           'stage_type': stageType,
           if (roleCode != null && roleCode.isNotEmpty) 'role_code': roleCode,
+          if (stagePlanId != null && stagePlanId > 0) 'stage_plan_id': stagePlanId,
+          if (selectedBrandSlot != null && selectedBrandSlot >= 0)
+            'selected_brand_slot': selectedBrandSlot,
+          if (resolveDuplicates) 'resolve_duplicates': true,
         }),
       );
     }
@@ -409,6 +425,38 @@ class AuthService {
     }
     final json = jsonDecode(res.body) as Map<String, dynamic>;
     return SupervisorChildrenResponse.fromJson(json);
+  }
+
+  /// GET /api/app/worker/superadmin-children?event_id=&brand_id=&stage_id=&staff_role_id=
+  Future<SuperadminChildrenResponse> getSuperadminChildren(
+    int eventId, {
+    int? stageId,
+    int? brandId,
+    int? staffRoleId,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final query = <String, String>{'event_id': eventId.toString()};
+    if (stageId != null && stageId > 0) query['stage_id'] = stageId.toString();
+    if (brandId != null && brandId > 0) query['brand_id'] = brandId.toString();
+    if (staffRoleId != null && staffRoleId > 0) {
+      query['staff_role_id'] = staffRoleId.toString();
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/worker/superadmin-children',
+    ).replace(queryParameters: query);
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load superadmin children (${res.statusCode})',
+      );
+    }
+    final json = jsonDecode(res.body) as Map<String, dynamic>;
+    return SuperadminChildrenResponse.fromJson(json);
   }
 
   /// GET /api/app/worker/rehearsal-admin/roster?event_id=&slot_id=
@@ -499,6 +547,111 @@ class AuthService {
     );
   }
 
+  /// POST /api/app/worker/hostess/entry-scan
+  Future<HostessEntryScanResult> hostessEntryScan({
+    required String badgeCode,
+    required int eventId,
+    required int stageId,
+    required String stageType,
+    String? roleCode,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final uri = Uri.parse('$baseUrl/api/app/worker/hostess/entry-scan');
+    final body = <String, dynamic>{
+      'badge_code': badgeCode,
+      'event_id': eventId,
+      'stage_id': stageId,
+      'stage_type': stageType,
+      if (roleCode != null && roleCode.trim().isNotEmpty) 'role_code': roleCode,
+    };
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            (map['message'] as String? ?? 'Hostess entry scan failed'),
+      );
+    }
+    return HostessEntryScanResult.fromJson(map);
+  }
+
+  /// POST /api/app/worker/hostess/exit-lookup
+  Future<SupervisorChildDetail> hostessExitLookup({
+    required String badgeCode,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final uri = Uri.parse('$baseUrl/api/app/worker/hostess/exit-lookup');
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'badge_code': badgeCode}),
+    );
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode != 200 || map['ok'] != true) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            (map['message'] as String? ?? 'Hostess exit lookup failed'),
+      );
+    }
+    final detail = map['detail'];
+    if (detail is! Map<String, dynamic>) {
+      throw Exception('Invalid hostess exit lookup payload');
+    }
+
+    return SupervisorChildDetail.fromJson(detail);
+  }
+
+  /// POST /api/app/worker/hostess/exit-complete
+  Future<HostessExitCompleteResult> hostessExitComplete({
+    required String badgeCode,
+    required int eventId,
+    required int stageId,
+    required String stageType,
+    String? roleCode,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) throw Exception('Not authenticated');
+    final uri = Uri.parse('$baseUrl/api/app/worker/hostess/exit-complete');
+    final body = <String, dynamic>{
+      'badge_code': badgeCode,
+      'event_id': eventId,
+      'stage_id': stageId,
+      'stage_type': stageType,
+      if (roleCode != null && roleCode.trim().isNotEmpty) 'role_code': roleCode,
+    };
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            (map['message'] as String? ?? 'Hostess exit completion failed'),
+      );
+    }
+    return HostessExitCompleteResult.fromJson(map);
+  }
+
   /// POST /api/app/worker/meal-issue-lookup — обеды по бейджу для выдачи.
   Future<WorkerMealIssueLookupResult> workerMealIssueLookup({
     required String badgeCode,
@@ -517,8 +670,9 @@ class AuthService {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
-        'Accept-Language':
-            apiContentLanguageForLocale(AppSettings.contentLocaleForApi()),
+        'Accept-Language': apiContentLanguageForLocale(
+          AppSettings.contentLocaleForApi(),
+        ),
       },
       body: jsonEncode(body),
     );
@@ -557,8 +711,9 @@ class AuthService {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
-        'Accept-Language':
-            apiContentLanguageForLocale(AppSettings.contentLocaleForApi()),
+        'Accept-Language': apiContentLanguageForLocale(
+          AppSettings.contentLocaleForApi(),
+        ),
       },
       body: jsonEncode(body),
     );
@@ -567,9 +722,7 @@ class AuthService {
       throw Exception(_tryMessage(res.body) ?? 'Forbidden');
     }
     if (res.statusCode == 200 && map['ok'] == true) {
-      return WorkerMealIssueConfirmResult(
-        updated: _jsonInt(map['updated'], 0),
-      );
+      return WorkerMealIssueConfirmResult(updated: _jsonInt(map['updated'], 0));
     }
     throw Exception(
       _tryMessage(res.body) ??
@@ -1120,9 +1273,7 @@ class AuthService {
     }
   }
 
-  Future<MealPaymentStatusPayload> getEventParkingPaymentStatus(
-    int eventId,
-  ) =>
+  Future<MealPaymentStatusPayload> getEventParkingPaymentStatus(int eventId) =>
       _getEventTicketStripePaymentStatus(eventId, 'parking-payment');
 
   Future<String> resumeEventParkingPayment(int eventId) =>
@@ -1133,8 +1284,7 @@ class AuthService {
 
   Future<MealPaymentStatusPayload> getEventExtraTicketPaymentStatus(
     int eventId,
-  ) =>
-      _getEventTicketStripePaymentStatus(eventId, 'extra-ticket-payment');
+  ) => _getEventTicketStripePaymentStatus(eventId, 'extra-ticket-payment');
 
   Future<String> resumeEventExtraTicketPayment(int eventId) =>
       _resumeEventTicketStripePayment(eventId, 'extra-ticket-payment');
@@ -1144,11 +1294,7 @@ class AuthService {
 
   Future<MealPaymentStatusPayload> getEventBackstageTicketPaymentStatus(
     int eventId,
-  ) =>
-      _getEventTicketStripePaymentStatus(
-        eventId,
-        'backstage-ticket-payment',
-      );
+  ) => _getEventTicketStripePaymentStatus(eventId, 'backstage-ticket-payment');
 
   Future<String> resumeEventBackstageTicketPayment(int eventId) =>
       _resumeEventTicketStripePayment(eventId, 'backstage-ticket-payment');
@@ -1500,6 +1646,178 @@ class AuthService {
     }
     final json = jsonDecode(res.body) as Map<String, dynamic>;
     return ClientDashboard.fromJson(json);
+  }
+
+  /// POST /api/app/client/family/join-by-code
+  Future<void> joinFamilyByCode(String familyCode) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final normalized = familyCode.trim();
+    if (!RegExp(r'^\d{6}$').hasMatch(normalized)) {
+      throw Exception('Family code must contain exactly 6 digits');
+    }
+    final uri = Uri.parse('$baseUrl/api/app/client/family/join-by-code');
+    final res = await http.post(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'family_code': normalized}),
+    );
+    if (res.statusCode < 200 || res.statusCode >= 300) {
+      throw Exception(
+        _tryMessage(res.body) ?? 'Failed to join family (${res.statusCode})',
+      );
+    }
+  }
+
+  /// POST /api/app/client/family/disconnect
+  Future<void> disconnectFromFamily() async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse('$baseUrl/api/app/client/family/disconnect');
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode < 200 || res.statusCode >= 300) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to disconnect family subscription (${res.statusCode})',
+      );
+    }
+  }
+
+  /// GET /api/app/client/contract/status
+  Future<ClientContractStatus> getClientContractStatus() async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse('$baseUrl/api/app/client/contract/status');
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load contract status (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return ClientContractStatus.fromJson(map);
+  }
+
+  /// POST /api/app/client/contract/sign
+  Future<ClientContractSignResult> signClientContract({
+    required String signatureDataUrl,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse('$baseUrl/api/app/client/contract/sign');
+    final res = await http.post(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'signature_data_url': signatureDataUrl}),
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ?? 'Failed to sign contract (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return ClientContractSignResult.fromJson(map);
+  }
+
+  Future<FamilySubscriptionSettings> getAssignmentFamilySubscriptionSettings(
+    int assignmentId,
+  ) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/assignments/$assignmentId/family-subscription',
+    );
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load family settings (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return FamilySubscriptionSettings.fromJson(map);
+  }
+
+  Future<FamilySubscriptionSettings> setAssignmentFamilySubscriptionEnabled(
+    int assignmentId, {
+    required bool enabled,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/assignments/$assignmentId/family-subscription',
+    );
+    final res = await http.patch(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'enabled': enabled}),
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to update family settings (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return FamilySubscriptionSettings.fromJson(map);
+  }
+
+  Future<FamilySubscriptionSettings> regenerateAssignmentFamilyCode(
+    int assignmentId,
+  ) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/assignments/$assignmentId/family-subscription/regenerate-code',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to regenerate family code (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return FamilySubscriptionSettings.fromJson(map);
   }
 
   /// GET /api/app/client/events/{event}/rehearsal-slots
@@ -3475,6 +3793,7 @@ class ActiveAssignment {
     this.brandName,
     this.secondBrandId,
     this.secondBrandName,
+    this.eventArrivalTime,
     required this.event,
     required this.status,
     required this.totalMainStages,
@@ -3483,6 +3802,7 @@ class ActiveAssignment {
     this.requiredTotalStages,
     this.requiredCompletedStages,
     this.familyLook = false,
+    this.accessMode = 'parent',
     this.familyLookBrandId,
     this.familyLookBrandName,
     this.parentParticipantsCount,
@@ -3510,6 +3830,7 @@ class ActiveAssignment {
   final String? brandName;
   final int? secondBrandId;
   final String? secondBrandName;
+  final String? eventArrivalTime;
   final EventSummary event;
   final String status;
   final int totalMainStages;
@@ -3518,6 +3839,7 @@ class ActiveAssignment {
   final int? requiredTotalStages;
   final int? requiredCompletedStages;
   final bool familyLook;
+  final String accessMode;
   final int? familyLookBrandId;
   final String? familyLookBrandName;
   final int? parentParticipantsCount;
@@ -3618,6 +3940,7 @@ class ActiveAssignment {
       brandName: _optionalTrimmedApiString(json['brand_name']),
       secondBrandId: _jsonIntNullable(json['second_brand_id']),
       secondBrandName: _optionalTrimmedApiString(json['second_brand_name']),
+      eventArrivalTime: _optionalTrimmedApiString(json['event_arrival_time']),
       event: EventSummary.fromJson(ev),
       status: (json['status'] as String? ?? ''),
       totalMainStages: _jsonInt(json['total_main_stages']),
@@ -3628,6 +3951,9 @@ class ActiveAssignment {
         json['required_completed_stages'],
       ),
       familyLook: json['family_look'] == true,
+      accessMode: (json['access_mode'] as String? ?? 'parent').trim().isEmpty
+          ? 'parent'
+          : (json['access_mode'] as String? ?? 'parent').trim(),
       familyLookBrandId: _jsonIntNullable(json['family_look_brand_id']),
       familyLookBrandName: _optionalTrimmedApiString(
         json['family_look_brand_name'],
@@ -3667,7 +3993,9 @@ class ActiveAssignment {
         json['event_meal_fulfilled_orders_count'],
         0,
       ),
-      eventMealPurchases: _parseEventMealPurchasesList(json['event_meal_purchases']),
+      eventMealPurchases: _parseEventMealPurchasesList(
+        json['event_meal_purchases'],
+      ),
       rehearsalBookings: rbs is List
           ? rbs
                 .whereType<Map<String, dynamic>>()
@@ -3682,6 +4010,132 @@ class ActiveAssignment {
         json['effective_max_main_rehearsals'],
         _jsonInt(json['max_main_rehearsals'], 1),
       ),
+    );
+  }
+}
+
+class FamilySubscriptionSettings {
+  FamilySubscriptionSettings({
+    required this.enabled,
+    required this.familyCode,
+    required this.slot1Active,
+    required this.slot2Active,
+    required this.connections,
+  });
+
+  final bool enabled;
+  final String familyCode;
+  final bool slot1Active;
+  final bool slot2Active;
+  final List<FamilySubscriptionConnection> connections;
+
+  factory FamilySubscriptionSettings.fromJson(Map<String, dynamic> json) {
+    final raw = json['connections'];
+    return FamilySubscriptionSettings(
+      enabled: _jsonBool(json['enabled'], true),
+      familyCode: (json['family_code'] as String? ?? '').trim(),
+      slot1Active: _jsonBool(json['slot_1_active'], false),
+      slot2Active: _jsonBool(json['slot_2_active'], false),
+      connections: raw is List
+          ? raw
+                .whereType<Map<String, dynamic>>()
+                .map(FamilySubscriptionConnection.fromJson)
+                .toList()
+          : const [],
+    );
+  }
+}
+
+class ClientContractStatus {
+  ClientContractStatus({
+    required this.hasContract,
+    required this.warningText,
+    required this.templateBody,
+    required this.displayName,
+    required this.displayDate,
+    required this.placeholders,
+    this.signedAt,
+  });
+
+  final bool hasContract;
+  final String warningText;
+  final String templateBody;
+  final String displayName;
+  final String displayDate;
+  final List<String> placeholders;
+  final DateTime? signedAt;
+
+  factory ClientContractStatus.fromJson(Map<String, dynamic> json) {
+    final rows = json['placeholders'];
+    return ClientContractStatus(
+      hasContract: _jsonBool(json['has_contract'], false),
+      warningText: (json['warning_text'] as String? ?? '').trim(),
+      templateBody: (json['template_body'] as String? ?? '').trim(),
+      displayName: (json['display_name'] as String? ?? '').trim(),
+      displayDate: (json['display_date'] as String? ?? '').trim(),
+      placeholders: rows is List
+          ? rows
+                .map((e) => (e as String? ?? '').trim())
+                .where((e) => e.isNotEmpty)
+                .toList()
+          : const <String>[],
+      signedAt: _jsonDateTimeNullable(json['signed_at']),
+    );
+  }
+}
+
+class ClientContractSignResult {
+  ClientContractSignResult({
+    required this.ok,
+    required this.alreadySigned,
+    required this.hasContract,
+    this.signedAt,
+  });
+
+  final bool ok;
+  final bool alreadySigned;
+  final bool hasContract;
+  final DateTime? signedAt;
+
+  factory ClientContractSignResult.fromJson(Map<String, dynamic> json) {
+    return ClientContractSignResult(
+      ok: _jsonBool(json['ok'], false),
+      alreadySigned: _jsonBool(json['already_signed'], false),
+      hasContract: _jsonBool(json['has_contract'], false),
+      signedAt: _jsonDateTimeNullable(json['signed_at']),
+    );
+  }
+}
+
+class FamilySubscriptionConnection {
+  FamilySubscriptionConnection({
+    required this.id,
+    required this.slot,
+    this.joinedAt,
+    required this.userId,
+    required this.userName,
+    required this.userEmail,
+    required this.userPhone,
+  });
+
+  final int id;
+  final int slot;
+  final DateTime? joinedAt;
+  final int userId;
+  final String userName;
+  final String userEmail;
+  final String userPhone;
+
+  factory FamilySubscriptionConnection.fromJson(Map<String, dynamic> json) {
+    final user = json['user'] as Map<String, dynamic>? ?? const {};
+    return FamilySubscriptionConnection(
+      id: _jsonInt(json['id']),
+      slot: _jsonInt(json['slot']),
+      joinedAt: _jsonDateTimeNullable(json['joined_at']),
+      userId: _jsonInt(user['id']),
+      userName: (user['name'] as String? ?? '').trim(),
+      userEmail: (user['email'] as String? ?? '').trim(),
+      userPhone: (user['phone'] as String? ?? '').trim(),
     );
   }
 }
@@ -3819,7 +4273,13 @@ class EventMealOption {
 }
 
 class MainStageInfo {
-  MainStageInfo({required this.id, required this.name, this.description, this.brandName});
+  MainStageInfo({
+    required this.id,
+    required this.name,
+    this.description,
+    this.brandName,
+    this.status,
+  });
 
   final int id;
   final String name;
@@ -3830,6 +4290,9 @@ class MainStageInfo {
   /// Под подписью этапа: бренд (для этапов сегмента brand в пакете); с API `brand_name`.
   final String? brandName;
 
+  /// Optional per-stage status from API (`pending` / `completed`).
+  final String? status;
+
   factory MainStageInfo.fromJson(Map<String, dynamic> json) {
     final rawDesc = json['description'];
     return MainStageInfo(
@@ -3839,6 +4302,7 @@ class MainStageInfo {
           ? rawDesc.trim()
           : null,
       brandName: _optionalTrimmedApiString(json['brand_name']),
+      status: _optionalTrimmedApiString(json['status']),
     );
   }
 }
@@ -4034,6 +4498,9 @@ class UpcomingEvent {
     this.startsAt,
     this.endsAt,
     this.imageUrl,
+    this.ticketStoreUrl,
+    this.clientParkingServiceEnabled = true,
+    this.userHasParkingTicket,
     this.youtubeLiveActive = false,
     this.youtubeLiveUrl,
   });
@@ -4046,11 +4513,19 @@ class UpcomingEvent {
 
   /// URL фото ивента (из настроек ивента), может быть относительным.
   final String? imageUrl;
+  final String? ticketStoreUrl;
+  final bool clientParkingServiceEnabled;
+  final bool? userHasParkingTicket;
 
   final bool youtubeLiveActive;
   final String? youtubeLiveUrl;
 
   factory UpcomingEvent.fromJson(Map<String, dynamic> json) {
+    bool? readBoolKey(String k) {
+      final v = json[k];
+      return v is bool ? v : null;
+    }
+
     return UpcomingEvent(
       id: json['id'] as int? ?? 0,
       name: (json['name'] as String? ?? ''),
@@ -4063,6 +4538,10 @@ class UpcomingEvent {
           ? DateTime.tryParse(json['ends_at'] as String)
           : null,
       imageUrl: json['image_url'] as String?,
+      ticketStoreUrl: _optionalTrimmedApiString(json['ticket_store_url']),
+      clientParkingServiceEnabled:
+          json['client_parking_service_enabled'] != false,
+      userHasParkingTicket: readBoolKey('user_has_parking_ticket'),
       youtubeLiveActive: json['youtube_live_active'] == true,
       youtubeLiveUrl: _optionalTrimmedApiString(json['youtube_live_url']),
     );
@@ -4160,6 +4639,8 @@ class SupervisorChildItem {
     required this.firstName,
     this.photoUrl,
     required this.status,
+    this.familyLook = false,
+    this.hasSecondBrand = false,
   });
   final int assignmentId;
   final int childId;
@@ -4168,6 +4649,8 @@ class SupervisorChildItem {
 
   /// given | not_given
   final String status;
+  final bool familyLook;
+  final bool hasSecondBrand;
 
   factory SupervisorChildItem.fromJson(Map<String, dynamic> json) {
     return SupervisorChildItem(
@@ -4176,6 +4659,8 @@ class SupervisorChildItem {
       firstName: (json['first_name'] as String? ?? '').toString(),
       photoUrl: json['photo_url'] as String?,
       status: (json['status'] as String? ?? 'not_given').toString(),
+      familyLook: json['family_look'] as bool? ?? false,
+      hasSecondBrand: json['has_second_brand'] as bool? ?? false,
     );
   }
 }
@@ -4197,15 +4682,18 @@ class SupervisorChildrenResponse {
   SupervisorChildrenResponse({
     required this.stages,
     required this.children,
+    this.brandNames = const [],
     this.currentStageId,
   });
   final List<SupervisorStageItem> stages;
   final List<SupervisorChildItem> children;
+  final List<String> brandNames;
   final int? currentStageId;
 
   factory SupervisorChildrenResponse.fromJson(Map<String, dynamic> json) {
     final stageList = json['stages'];
     final childList = json['children'];
+    final brandList = json['brand_names'];
     return SupervisorChildrenResponse(
       stages: stageList is List
           ? stageList
@@ -4223,7 +4711,77 @@ class SupervisorChildrenResponse {
                 )
                 .toList()
           : const [],
+      brandNames: brandList is List
+          ? brandList
+                .map((e) => (e as String? ?? '').trim())
+                .where((e) => e.isNotEmpty)
+                .toList()
+          : const [],
       currentStageId: json['current_stage_id'] as int?,
+    );
+  }
+}
+
+class SuperadminBrandItem {
+  SuperadminBrandItem({required this.id, required this.name});
+  final int id;
+  final String name;
+
+  factory SuperadminBrandItem.fromJson(Map<String, dynamic> json) {
+    return SuperadminBrandItem(
+      id: json['id'] as int? ?? 0,
+      name: (json['name'] as String? ?? '').toString(),
+    );
+  }
+}
+
+class SuperadminChildrenResponse {
+  SuperadminChildrenResponse({
+    required this.stages,
+    required this.children,
+    required this.brands,
+    this.currentStageId,
+    this.currentBrandId,
+  });
+
+  final List<SupervisorStageItem> stages;
+  final List<SupervisorChildItem> children;
+  final List<SuperadminBrandItem> brands;
+  final int? currentStageId;
+  final int? currentBrandId;
+
+  factory SuperadminChildrenResponse.fromJson(Map<String, dynamic> json) {
+    final stageList = json['stages'];
+    final childList = json['children'];
+    final brandList = json['brands'];
+    return SuperadminChildrenResponse(
+      stages: stageList is List
+          ? stageList
+                .map(
+                  (e) =>
+                      SupervisorStageItem.fromJson(e as Map<String, dynamic>),
+                )
+                .toList()
+          : const [],
+      children: childList is List
+          ? childList
+                .map(
+                  (e) =>
+                      SupervisorChildItem.fromJson(e as Map<String, dynamic>),
+                )
+                .toList()
+          : const [],
+      brands: brandList is List
+          ? brandList
+                .map(
+                  (e) =>
+                      SuperadminBrandItem.fromJson(e as Map<String, dynamic>),
+                )
+                .where((e) => e.id > 0 && e.name.trim().isNotEmpty)
+                .toList()
+          : const [],
+      currentStageId: json['current_stage_id'] as int?,
+      currentBrandId: json['current_brand_id'] as int?,
     );
   }
 }
@@ -4332,6 +4890,7 @@ class GiftControlChildItem {
     required this.assignmentId,
     required this.childId,
     required this.firstName,
+    this.brandName,
     this.photoUrl,
     required this.isPassed,
   });
@@ -4339,6 +4898,7 @@ class GiftControlChildItem {
   final int assignmentId;
   final int childId;
   final String firstName;
+  final String? brandName;
   final String? photoUrl;
   final bool isPassed;
 
@@ -4347,6 +4907,7 @@ class GiftControlChildItem {
       assignmentId: _jsonInt(json['assignment_id']),
       childId: _jsonInt(json['child_id']),
       firstName: (json['first_name'] as String? ?? '').toString(),
+      brandName: (json['brand_name'] as String?)?.trim(),
       photoUrl: json['photo_url'] as String?,
       isPassed: json['is_passed'] == true,
     );
@@ -4401,12 +4962,16 @@ class StaffMainProgressStage {
     required this.name,
     required this.status,
     required this.subtitle,
+    this.brandSlot,
+    this.isService = false,
   });
 
   final int stageId;
   final String name;
   final String status;
   final String subtitle;
+  final int? brandSlot;
+  final bool isService;
 
   factory StaffMainProgressStage.fromJson(Map<String, dynamic> json) {
     return StaffMainProgressStage(
@@ -4414,6 +4979,8 @@ class StaffMainProgressStage {
       name: (json['name'] as String? ?? '').toString(),
       status: (json['status'] as String? ?? 'pending').toString(),
       subtitle: (json['subtitle'] as String? ?? '').toString(),
+      brandSlot: _jsonIntNullable(json['brand_slot']),
+      isService: json['is_service'] as bool? ?? false,
     );
   }
 }
@@ -4478,6 +5045,8 @@ class SupervisorChildDetail {
     this.parentPhone,
     this.parentEmail,
     this.brandName,
+    this.assignedBrandNames = const [],
+    this.packageName,
     this.supervisorName,
     this.supervisorPhone,
     this.supervisorPhotoUrl,
@@ -4491,6 +5060,13 @@ class SupervisorChildDetail {
     required this.totalStages,
     this.mainProgressStages = const [],
     this.progressTabs = const [],
+    this.brands = const [],
+    this.familyLookEnabled = false,
+    this.familyLookParentsCount = 0,
+    this.parentTimelineBrandName1,
+    this.parentTimelineBrandName2,
+    this.familyLookLinks = const [],
+    this.requiredProgress,
   });
 
   final int assignmentId;
@@ -4509,6 +5085,8 @@ class SupervisorChildDetail {
   final String? parentPhone;
   final String? parentEmail;
   final String? brandName;
+  final List<String> assignedBrandNames;
+  final String? packageName;
   final String? supervisorName;
   final String? supervisorPhone;
   final String? supervisorPhotoUrl;
@@ -4522,6 +5100,13 @@ class SupervisorChildDetail {
   final int totalStages;
   final List<StaffMainProgressStage> mainProgressStages;
   final List<StaffProgressTabData> progressTabs;
+  final List<StaffHostessBrandInfo> brands;
+  final bool familyLookEnabled;
+  final int familyLookParentsCount;
+  final String? parentTimelineBrandName1;
+  final String? parentTimelineBrandName2;
+  final List<StaffHostessFamilyLookLink> familyLookLinks;
+  final StaffHostessRequiredProgress? requiredProgress;
 
   bool get isParentScan => scannedParticipantType == 'parent';
 
@@ -4557,11 +5142,24 @@ class SupervisorChildDetail {
       parentPhone: json['parent_phone'] as String?,
       parentEmail: json['parent_email'] as String?,
       brandName: json['brand_name'] as String?,
+      packageName: _optionalTrimmedApiString(json['package_name']),
+      assignedBrandNames: () {
+        final rows = json['assigned_brand_names'];
+        if (rows is! List) {
+          return const <String>[];
+        }
+        return rows
+            .map((e) => (e as String? ?? '').trim())
+            .where((e) => e.isNotEmpty)
+            .toList();
+      }(),
       supervisorName: json['supervisor_name'] as String?,
       supervisorPhone: json['supervisor_phone'] as String?,
       supervisorPhotoUrl: json['supervisor_photo_url'] as String?,
       scannedParticipantType: json['scanned_participant_type'] as String?,
-      scannedParticipantSlot: _jsonIntNullable(json['scanned_participant_slot']),
+      scannedParticipantSlot: _jsonIntNullable(
+        json['scanned_participant_slot'],
+      ),
       scanCodeType: json['scan_code_type'] as String?,
       preferredProgressTabKey: json['preferred_progress_tab_key'] as String?,
       progressPercent: json['progress_percent'] as int? ?? 0,
@@ -4588,6 +5186,162 @@ class SupervisorChildDetail {
             )
             .toList();
       }(),
+      brands: () {
+        final rows = json['brands'];
+        if (rows is! List) {
+          return const <StaffHostessBrandInfo>[];
+        }
+        return rows
+            .whereType<Map<String, dynamic>>()
+            .map(StaffHostessBrandInfo.fromJson)
+            .toList();
+      }(),
+      familyLookEnabled: json['family_look_enabled'] == true,
+      familyLookParentsCount: json['family_look_parents_count'] as int? ?? 0,
+      parentTimelineBrandName1:
+          (json['parent_timeline_brand_name_1'] as String?)?.trim(),
+      parentTimelineBrandName2:
+          (json['parent_timeline_brand_name_2'] as String?)?.trim(),
+      familyLookLinks: () {
+        final rows = json['family_look_links'];
+        if (rows is! List) {
+          return const <StaffHostessFamilyLookLink>[];
+        }
+        return rows
+            .whereType<Map<String, dynamic>>()
+            .map(StaffHostessFamilyLookLink.fromJson)
+            .toList();
+      }(),
+      requiredProgress: () {
+        final v = json['required_progress'];
+        if (v is! Map<String, dynamic>) {
+          return null;
+        }
+        return StaffHostessRequiredProgress.fromJson(v);
+      }(),
+    );
+  }
+}
+
+class StaffHostessBrandSupervisor {
+  StaffHostessBrandSupervisor({
+    required this.appUserId,
+    required this.name,
+    this.phone,
+  });
+
+  final int appUserId;
+  final String name;
+  final String? phone;
+
+  factory StaffHostessBrandSupervisor.fromJson(Map<String, dynamic> json) {
+    return StaffHostessBrandSupervisor(
+      appUserId: _jsonInt(json['app_user_id']),
+      name: (json['name'] as String? ?? '').trim(),
+      phone: _optionalTrimmedApiString(json['phone']),
+    );
+  }
+}
+
+class StaffHostessBrandInfo {
+  StaffHostessBrandInfo({
+    required this.slotKey,
+    required this.brandName,
+    this.brandId,
+    this.supervisors = const [],
+  });
+
+  final String slotKey;
+  final int? brandId;
+  final String brandName;
+  final List<StaffHostessBrandSupervisor> supervisors;
+
+  factory StaffHostessBrandInfo.fromJson(Map<String, dynamic> json) {
+    final rows = json['supervisors'];
+    return StaffHostessBrandInfo(
+      slotKey: (json['slot_key'] as String? ?? '').trim(),
+      brandId: _jsonIntNullable(json['brand_id']),
+      brandName: (json['brand_name'] as String? ?? '').trim(),
+      supervisors: rows is List
+          ? rows
+                .whereType<Map<String, dynamic>>()
+                .map(StaffHostessBrandSupervisor.fromJson)
+                .toList()
+          : const [],
+    );
+  }
+}
+
+class StaffHostessFamilyLookLink {
+  StaffHostessFamilyLookLink({
+    required this.slot,
+    required this.label,
+    this.brandName,
+  });
+
+  final int slot;
+  final String label;
+  final String? brandName;
+
+  factory StaffHostessFamilyLookLink.fromJson(Map<String, dynamic> json) {
+    return StaffHostessFamilyLookLink(
+      slot: _jsonInt(json['slot']),
+      label: (json['label'] as String? ?? '').trim(),
+      brandName: _optionalTrimmedApiString(json['brand_name']),
+    );
+  }
+}
+
+class StaffHostessRequiredProgress {
+  StaffHostessRequiredProgress({
+    required this.requiredTotal,
+    required this.requiredCompleted,
+    required this.canCloseEvent,
+  });
+
+  final int requiredTotal;
+  final int requiredCompleted;
+  final bool canCloseEvent;
+
+  factory StaffHostessRequiredProgress.fromJson(Map<String, dynamic> json) {
+    return StaffHostessRequiredProgress(
+      requiredTotal: _jsonInt(json['required_total']),
+      requiredCompleted: _jsonInt(json['required_completed']),
+      canCloseEvent: json['can_close_event'] == true,
+    );
+  }
+}
+
+class HostessEntryScanResult {
+  HostessEntryScanResult({required this.message, this.detail});
+
+  final String message;
+  final SupervisorChildDetail? detail;
+
+  factory HostessEntryScanResult.fromJson(Map<String, dynamic> json) {
+    final d = json['detail'];
+    return HostessEntryScanResult(
+      message: (json['message'] as String? ?? '').trim(),
+      detail: d is Map<String, dynamic>
+          ? SupervisorChildDetail.fromJson(d)
+          : null,
+    );
+  }
+}
+
+class HostessExitCompleteResult {
+  HostessExitCompleteResult({required this.message, this.detail});
+
+  final String message;
+  final SupervisorChildDetail? detail;
+
+  factory HostessExitCompleteResult.fromJson(Map<String, dynamic> json) {
+    final d = json['detail'];
+    return HostessExitCompleteResult(
+      message: (json['message'] as String? ?? '').trim(),
+      detail: d is Map<String, dynamic>
+          ? SupervisorChildDetail.fromJson(d)
+          : null,
     );
   }
 }
@@ -4703,6 +5457,7 @@ class ScanStageResult {
     required this.resultCode,
     required this.message,
     this.attemptId,
+    this.candidates = const <ScanStageCandidate>[],
   });
 
   final bool ok;
@@ -4710,16 +5465,54 @@ class ScanStageResult {
   final String resultCode;
   final String message;
   final int? attemptId;
+  final List<ScanStageCandidate> candidates;
 
   bool get isSuccess => ok && resultCode == 'success';
+  bool get hasMultipleCandidates =>
+      resultCode == 'multiple_candidates' && candidates.isNotEmpty;
 
   factory ScanStageResult.fromJson(Map<String, dynamic> json) {
+    final data = json['data'];
+    final rawCandidates = data is Map<String, dynamic> ? data['candidates'] : null;
+    final candidates = rawCandidates is List
+        ? rawCandidates
+              .whereType<Map<String, dynamic>>()
+              .map(ScanStageCandidate.fromJson)
+              .toList()
+        : const <ScanStageCandidate>[];
     return ScanStageResult(
       ok: json['ok'] == true,
       resultStatus: (json['result_status'] as String? ?? '').toString(),
       resultCode: (json['result_code'] as String? ?? '').toString(),
       message: (json['message'] as String? ?? '').toString(),
       attemptId: json['attempt_id'] as int?,
+      candidates: candidates,
+    );
+  }
+}
+
+class ScanStageCandidate {
+  const ScanStageCandidate({
+    required this.stagePlanId,
+    required this.brandSlot,
+    required this.position,
+    required this.canComplete,
+    this.brandName,
+  });
+
+  final int stagePlanId;
+  final int brandSlot;
+  final int position;
+  final bool canComplete;
+  final String? brandName;
+
+  factory ScanStageCandidate.fromJson(Map<String, dynamic> json) {
+    return ScanStageCandidate(
+      stagePlanId: _jsonInt(json['stage_plan_id']),
+      brandSlot: _jsonInt(json['brand_slot']),
+      position: _jsonInt(json['position']),
+      canComplete: _jsonBool(json['can_complete'], false),
+      brandName: (json['brand_name'] as String?)?.trim(),
     );
   }
 }

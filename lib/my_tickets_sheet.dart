@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'api/auth_service.dart';
-import 'client_ticket_service_ui.dart';
-import 'client_event_backstage_ticket_flow.dart';
-import 'client_event_extra_ticket_flow.dart';
+import 'client_contract_flow.dart';
 import 'client_ticket_pdf_page.dart';
 import 'gen_l10n/app_localizations.dart';
 
@@ -19,21 +17,30 @@ Future<void> showMyTicketsSheet(
 
   /// Покупка билета только если клиент записан хотя бы на один активный ивент.
   required bool canPurchaseTickets,
+  required bool requireContractGate,
 }) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (ctx) =>
-        _MyTicketsSheet(auth: auth, canPurchaseTickets: canPurchaseTickets),
+    builder: (ctx) => _MyTicketsSheet(
+      auth: auth,
+      canPurchaseTickets: canPurchaseTickets,
+      requireContractGate: requireContractGate,
+    ),
   );
 }
 
 class _MyTicketsSheet extends StatefulWidget {
-  const _MyTicketsSheet({required this.auth, required this.canPurchaseTickets});
+  const _MyTicketsSheet({
+    required this.auth,
+    required this.canPurchaseTickets,
+    required this.requireContractGate,
+  });
 
   final AuthService auth;
   final bool canPurchaseTickets;
+  final bool requireContractGate;
 
   @override
   State<_MyTicketsSheet> createState() => _MyTicketsSheetState();
@@ -78,28 +85,6 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
     }
     final f = _buyUrlFromSettings;
     if (f != null && f.isNotEmpty) return f;
-    return null;
-  }
-
-  String? get _selectedEventName {
-    final sel = _selectedEventId;
-    if (sel == null || _events == null) return null;
-    for (final e in _events!) {
-      if (e.id == sel) {
-        final name = e.name.trim();
-        return name.isEmpty ? null : name;
-      }
-    }
-    return null;
-  }
-
-  ClientTicketEventRef? _selectedEventRef() {
-    final sel = _selectedEventId;
-    final evs = _events;
-    if (sel == null || evs == null) return null;
-    for (final e in evs) {
-      if (e.id == sel) return e;
-    }
     return null;
   }
 
@@ -176,6 +161,15 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
 
   Future<void> _openBuyUrl() async {
     final l10n = AppLocalizations.of(context)!;
+    if (widget.requireContractGate) {
+      final allowed = await ensureContractSignedBeforeTicketPurchase(
+        context,
+        auth: widget.auth,
+      );
+      if (!allowed) {
+        return;
+      }
+    }
     final raw = _effectiveBuyUrl;
     if (raw == null || raw.isEmpty) {
       if (!mounted) return;
@@ -213,116 +207,6 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
           context,
         ).showSnackBar(SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)));
       }
-    }
-  }
-
-  Future<void> _openExtraTicketFlow() async {
-    final l10n = AppLocalizations.of(context)!;
-    final eventId = _selectedEventId;
-    if (eventId == null || eventId <= 0) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.extraTicketSelectEventFirst)));
-      return;
-    }
-
-    final eventName = _selectedEventName ?? '—';
-    final evRef = _selectedEventRef();
-    if (evRef != null &&
-        shouldBlockClientTicketPrefetch(
-          serviceEnabled: evRef.clientExtraTicketsServiceEnabled,
-          userHasTicket: evRef.userHasExtraTicket,
-        )) {
-      await showClientTicketServiceUnavailableDialog(context, l10n);
-      return;
-    }
-    try {
-      final payload = await widget.auth.getEventExtraTickets(eventId);
-      if (!mounted) return;
-      final page = payload.hasActiveTickets
-          ? ClientExtraTicketActiveScreen(
-              eventName: eventName,
-              l10n: l10n,
-              auth: widget.auth,
-              eventId: eventId,
-              canBuy: payload.canBuy,
-              tickets: payload.tickets,
-            )
-          : ClientExtraTicketInactiveScreen(
-              l10n: l10n,
-              eventName: eventName,
-              auth: widget.auth,
-              eventId: eventId,
-              canBuy: payload.canBuy,
-            );
-
-      await Navigator.of(
-        context,
-      ).push(MaterialPageRoute<void>(builder: (_) => page));
-    } on ApiServiceDisabledException catch (e) {
-      if (!mounted) return;
-      await showClientTicketServiceUnavailableDialog(context, l10n, message: e.message);
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.extraTicketCheckoutError)));
-    }
-  }
-
-  Future<void> _openBackstageTicketFlow() async {
-    final l10n = AppLocalizations.of(context)!;
-    final eventId = _selectedEventId;
-    if (eventId == null || eventId <= 0) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.backstageTicketSelectEventFirst)),
-      );
-      return;
-    }
-
-    final eventName = _selectedEventName ?? '—';
-    final evRef = _selectedEventRef();
-    if (evRef != null &&
-        shouldBlockClientTicketPrefetch(
-          serviceEnabled: evRef.clientBackstageTicketsServiceEnabled,
-          userHasTicket: evRef.userHasBackstageTicket,
-        )) {
-      await showClientTicketServiceUnavailableDialog(context, l10n);
-      return;
-    }
-    try {
-      final payload = await widget.auth.getEventBackstageTickets(eventId);
-      if (!mounted) return;
-      final page = payload.hasActiveTickets
-          ? ClientBackstageTicketActiveScreen(
-              eventName: eventName,
-              l10n: l10n,
-              auth: widget.auth,
-              eventId: eventId,
-              canBuy: payload.canBuy,
-              tickets: payload.tickets,
-            )
-          : ClientBackstageTicketInactiveScreen(
-              l10n: l10n,
-              eventName: eventName,
-              auth: widget.auth,
-              eventId: eventId,
-              canBuy: payload.canBuy,
-            );
-
-      await Navigator.of(
-        context,
-      ).push(MaterialPageRoute<void>(builder: (_) => page));
-    } on ApiServiceDisabledException catch (e) {
-      if (!mounted) return;
-      await showClientTicketServiceUnavailableDialog(context, l10n, message: e.message);
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.backstageTicketCheckoutError)),
-      );
     }
   }
 
@@ -562,64 +446,6 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
                                 ),
                               ],
                             ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: _openExtraTicketFlow,
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: _kGold,
-                          side: const BorderSide(color: _kGold),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        icon: const Icon(
-                          Icons.add_circle_outline,
-                          color: _kGold,
-                          size: 20,
-                        ),
-                        label: Text(
-                          l10n.extraTicketButton,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: _openBackstageTicketFlow,
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: _kGold,
-                          side: const BorderSide(color: _kGold),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        icon: const Icon(
-                          Icons.workspace_premium_outlined,
-                          color: _kGold,
-                          size: 20,
-                        ),
-                        label: Text(
-                          l10n.backstageTicketButton,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.5,
                           ),
                         ),
                       ),

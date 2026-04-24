@@ -769,6 +769,84 @@ abstract class AppLocalizations {
   /// **'ACTIVE'**
   String get active;
 
+  /// No description provided for @familyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'FAMILY'**
+  String get familyLabel;
+
+  /// No description provided for @familyJoinButton.
+  ///
+  /// In en, this message translates to:
+  /// **'JOIN FAMILY'**
+  String get familyJoinButton;
+
+  /// No description provided for @familyJoinDialogHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit family code.'**
+  String get familyJoinDialogHint;
+
+  /// No description provided for @familyJoinAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get familyJoinAction;
+
+  /// No description provided for @familyJoinInvalidCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 6-digit code.'**
+  String get familyJoinInvalidCode;
+
+  /// No description provided for @familyJoinSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Family subscription connected.'**
+  String get familyJoinSuccess;
+
+  /// No description provided for @contractWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get contractWarningTitle;
+
+  /// No description provided for @contractWarningFallbackText.
+  ///
+  /// In en, this message translates to:
+  /// **'Before purchasing tickets, please review and sign the contract.'**
+  String get contractWarningFallbackText;
+
+  /// No description provided for @contractViewButton.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get contractViewButton;
+
+  /// No description provided for @contractPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract text'**
+  String get contractPreviewTitle;
+
+  /// No description provided for @contractSignButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign'**
+  String get contractSignButton;
+
+  /// No description provided for @contractSignatureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add signature'**
+  String get contractSignatureTitle;
+
+  /// No description provided for @contractSignedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract signed successfully.'**
+  String get contractSignedSuccess;
+
   /// No description provided for @journeyProgress.
   ///
   /// In en, this message translates to:
@@ -846,6 +924,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Event Settings'**
   String get eventSettingsMainHeadline;
+
+  /// No description provided for @eventSettingsFamilyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get eventSettingsFamilyButton;
+
+  /// No description provided for @familyManageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get familyManageTitle;
+
+  /// No description provided for @familyManageEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable family connections'**
+  String get familyManageEnabled;
+
+  /// No description provided for @familyManageCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Family code'**
+  String get familyManageCodeLabel;
+
+  /// No description provided for @familyManageRegenerateCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate code'**
+  String get familyManageRegenerateCode;
+
+  /// No description provided for @familyManageConnectionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Active family connections'**
+  String get familyManageConnectionsTitle;
+
+  /// No description provided for @familyManageNoConnections.
+  ///
+  /// In en, this message translates to:
+  /// **'No active family connections yet.'**
+  String get familyManageNoConnections;
+
+  /// No description provided for @familyManageUnknownUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown user'**
+  String get familyManageUnknownUser;
+
+  /// No description provided for @eventSettingsLeaveFamilyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect from family'**
+  String get eventSettingsLeaveFamilyButton;
+
+  /// No description provided for @eventSettingsLeaveFamilyConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect family access?'**
+  String get eventSettingsLeaveFamilyConfirmTitle;
+
+  /// No description provided for @eventSettingsLeaveFamilyConfirmText.
+  ///
+  /// In en, this message translates to:
+  /// **'You will lose family event access until you join again by code.'**
+  String get eventSettingsLeaveFamilyConfirmText;
+
+  /// No description provided for @eventSettingsLeaveFamilySuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Family access has been disconnected.'**
+  String get eventSettingsLeaveFamilySuccess;
 
   /// No description provided for @eventSettingsMealTitle.
   ///
@@ -1975,10 +2125,16 @@ abstract class AppLocalizations {
   /// **'VIP and standard seats available'**
   String get ticketsBuySubtitle;
 
+  /// No description provided for @ticketsBuyEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tickets will be sent to the email address provided during purchase.'**
+  String get ticketsBuyEmailHint;
+
   /// No description provided for @extraTicketButton.
   ///
   /// In en, this message translates to:
-  /// **'BEVERAGE PACKAGE'**
+  /// **'OPEN BAR'**
   String get extraTicketButton;
 
   /// No description provided for @extraTicketSelectEventFirst.
@@ -2215,6 +2371,42 @@ abstract class AppLocalizations {
   /// **'Child Profile'**
   String get staffChildProfileTitle;
 
+  /// No description provided for @staffEventTimelineButton.
+  ///
+  /// In en, this message translates to:
+  /// **'TIMELINE'**
+  String get staffEventTimelineButton;
+
+  /// No description provided for @staffEventTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event timeline'**
+  String get staffEventTimelineTitle;
+
+  /// No description provided for @staffParentTimelineButton1.
+  ///
+  /// In en, this message translates to:
+  /// **'PARENT 1 TIMELINE'**
+  String get staffParentTimelineButton1;
+
+  /// No description provided for @staffParentTimelineButton2.
+  ///
+  /// In en, this message translates to:
+  /// **'PARENT 2 TIMELINE'**
+  String get staffParentTimelineButton2;
+
+  /// No description provided for @staffParentTimelineTitle1.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent 1 timeline'**
+  String get staffParentTimelineTitle1;
+
+  /// No description provided for @staffParentTimelineTitle2.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent 2 timeline'**
+  String get staffParentTimelineTitle2;
+
   /// No description provided for @staffCurrentStage.
   ///
   /// In en, this message translates to:
@@ -2250,6 +2442,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ASSIGNED BRAND'**
   String get staffAssignedBrand;
+
+  /// No description provided for @staffAssignedPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'PACKAGE'**
+  String get staffAssignedPackage;
 
   /// No description provided for @staffSupervisor.
   ///
@@ -3234,6 +3432,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wardrobe & makeup logs'**
   String get staffRoleSubtitleStylist;
+
+  /// No description provided for @staffHostessEntryMode.
+  ///
+  /// In en, this message translates to:
+  /// **'ENTRY'**
+  String get staffHostessEntryMode;
+
+  /// No description provided for @staffHostessExitMode.
+  ///
+  /// In en, this message translates to:
+  /// **'EXIT'**
+  String get staffHostessExitMode;
+
+  /// No description provided for @staffHostessEntryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan child badge to close selected stage and sync Family Look parents'**
+  String get staffHostessEntryHint;
+
+  /// No description provided for @staffHostessExitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan child or parent badge, review progress and close event stage'**
+  String get staffHostessExitHint;
+
+  /// No description provided for @staffHostessEntryResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry scan result'**
+  String get staffHostessEntryResultTitle;
+
+  /// No description provided for @staffHostessExitResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit scan result'**
+  String get staffHostessExitResultTitle;
+
+  /// No description provided for @staffHostessFieldChildName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get staffHostessFieldChildName;
+
+  /// No description provided for @staffHostessFieldParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent'**
+  String get staffHostessFieldParent;
+
+  /// No description provided for @staffHostessFieldBrandsAndSupervisors.
+  ///
+  /// In en, this message translates to:
+  /// **'Brands and supervisors'**
+  String get staffHostessFieldBrandsAndSupervisors;
+
+  /// No description provided for @staffHostessFieldFamilyLook.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Look'**
+  String get staffHostessFieldFamilyLook;
+
+  /// No description provided for @staffHostessFamilyLookEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Look is enabled'**
+  String get staffHostessFamilyLookEnabled;
+
+  /// No description provided for @staffHostessFieldStages.
+  ///
+  /// In en, this message translates to:
+  /// **'Stages'**
+  String get staffHostessFieldStages;
+
+  /// No description provided for @staffHostessCloseEventAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Close Event'**
+  String get staffHostessCloseEventAction;
+
+  /// No description provided for @staffHostessStageAlreadySelectedOtherMode.
+  ///
+  /// In en, this message translates to:
+  /// **'This stage is already selected for the other hostess mode.'**
+  String get staffHostessStageAlreadySelectedOtherMode;
+
+  /// No description provided for @staffHostessRequiredProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Required stages completed: {completed}/{total}'**
+  String staffHostessRequiredProgress(int completed, int total);
 }
 
 class _AppLocalizationsDelegate
