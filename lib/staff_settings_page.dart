@@ -40,7 +40,6 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
   /// Этапы, доступные для [_selectedRole] (пересечение с назначением роли в админке).
   List<WorkerEventStage> _eventStages = [];
   bool _eventsLoading = true;
-  bool _stagesLoading = false;
 
   @override
   void initState() {
@@ -74,25 +73,20 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
       setState(() {
         _allStagesForEvent = [];
         _eventStages = [];
-        _stagesLoading = false;
       });
       return;
     }
 
-    setState(() => _stagesLoading = true);
     try {
       final list = await widget.auth.getWorkerEventStages(eventId);
       if (!mounted) return;
       _allStagesForEvent = list;
       await _rebuildVisibleStagesAndPersist();
-      if (!mounted) return;
-      setState(() => _stagesLoading = false);
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _allStagesForEvent = [];
         _eventStages = [];
-        _stagesLoading = false;
       });
     }
   }
@@ -150,12 +144,6 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.person_outline, color: _kPrimary),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
@@ -165,24 +153,12 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
             _buildProfile(l10n),
             const SizedBox(height: 24),
             _buildActiveEventSection(),
-            const SizedBox(height: 20),
-            if (_shouldShowActiveStageSection()) _buildActiveStageSection(),
             const SizedBox(height: 24),
             _buildSwitchRole(l10n),
-            const SizedBox(height: 24),
-            _buildLanguageSection(l10n),
           ],
         ),
       ),
     );
-  }
-
-  bool _shouldShowActiveStageSection() {
-    final type = _selectedRole?.homeScreenType.trim().toLowerCase() ?? '';
-    return type != 'extra_zone' &&
-        type != 'backstage' &&
-        type != 'rehearsal_admin' &&
-        type != 'rehearsal_checkin';
   }
 
   Widget _buildActiveEventSection() {
@@ -259,113 +235,10 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
     );
   }
 
-  Widget _buildActiveStageSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.staffActiveStage,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 12),
-        if (_stagesLoading)
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: _kPrimary,
-                ),
-              ),
-            ),
-          )
-        else
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.15)),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<int?>(
-                value: _effectiveActiveStageId(),
-                isExpanded: true,
-                dropdownColor: const Color(0xFF2a1a14),
-                icon: Icon(Icons.keyboard_arrow_down, color: _kPrimary),
-                style: const TextStyle(color: Colors.white, fontSize: 16),
-                hint: Text(
-                  AppLocalizations.of(context)!.staffSelectStage,
-                  style: TextStyle(color: Colors.white54),
-                ),
-                items: [
-                  DropdownMenuItem<int?>(
-                    value: null,
-                    child: Text(
-                      AppLocalizations.of(context)!.staffNoneSelected,
-                    ),
-                  ),
-                  ..._eventStages.map(
-                    (s) => DropdownMenuItem<int?>(
-                      value: s.id,
-                      child: Text(
-                        s.type == 'preparatory'
-                            ? AppLocalizations.of(
-                                context,
-                              )!.staffPreparatoryStageLabel(s.name)
-                            : s.name,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                ],
-                onChanged: (int? value) async {
-                  if (value == null) {
-                    await AppSettings.setStaffActiveStageId(null);
-                    await AppSettings.setStaffActiveStageType(null);
-                  } else {
-                    WorkerEventStage? stage;
-                    for (final s in _eventStages) {
-                      if (s.id == value) {
-                        stage = s;
-                        break;
-                      }
-                    }
-                    await AppSettings.setStaffActiveStageId(value);
-                    await AppSettings.setStaffActiveStageType(
-                      stage?.type ?? 'main',
-                    );
-                  }
-                  if (mounted) setState(() {});
-                },
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
   int? _effectiveActiveEventId() {
     final current = AppSettings.staffActiveEventId;
     if (current == null) return null;
     final exists = _upcomingEvents.any((e) => e.id == current);
-    return exists ? current : null;
-  }
-
-  int? _effectiveActiveStageId() {
-    final current = AppSettings.staffActiveStageId;
-    final currentType = AppSettings.staffActiveStageType;
-    if (current == null) return null;
-    final exists = _eventStages.any(
-      (e) => e.id == current && e.type == (currentType ?? 'main'),
-    );
     return exists ? current : null;
   }
 
@@ -479,67 +352,6 @@ class _StaffSettingsPageState extends State<StaffSettingsPage> {
     );
   }
 
-  Widget _buildLanguageSection(AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.appLanguage,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.15)),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<AppLanguage>(
-              value: AppSettings.language,
-              isExpanded: true,
-              dropdownColor: const Color(0xFF2a1a14),
-              icon: Icon(Icons.keyboard_arrow_down, color: _kPrimary),
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-              items: [
-                DropdownMenuItem(
-                  value: AppLanguage.system,
-                  child: Text(l10n.systemLanguage),
-                ),
-                DropdownMenuItem(
-                  value: AppLanguage.en,
-                  child: Text(l10n.languageEnglish),
-                ),
-                DropdownMenuItem(
-                  value: AppLanguage.ru,
-                  child: Text(l10n.languageRussian),
-                ),
-                DropdownMenuItem(
-                  value: AppLanguage.uk,
-                  child: Text(l10n.languageUkrainian),
-                ),
-                DropdownMenuItem(
-                  value: AppLanguage.esUs,
-                  child: Text(l10n.languageSpanishUS),
-                ),
-              ],
-              onChanged: (AppLanguage? value) async {
-                if (value == null) return;
-                await AppSettings.setLanguage(value);
-                AppSettings.onLocaleChanged?.call();
-                if (mounted) setState(() {});
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 class _RoleCard extends StatelessWidget {

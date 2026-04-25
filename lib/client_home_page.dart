@@ -1661,6 +1661,17 @@ class _ClientHomePageState extends State<ClientHomePage>
     return DateFormat.yMMMd(loc).format(d);
   }
 
+  String _eventArrivalLine(String hhmm) {
+    final lang = Localizations.localeOf(context).languageCode.toLowerCase();
+    final prefix = switch (lang) {
+      'ru' => 'Старт для вас',
+      'uk' => 'Старт для вас',
+      'es' => 'Inicio para ti',
+      _ => 'Start for you',
+    };
+    return '$prefix: $hhmm';
+  }
+
   Widget _buildHomeContent() {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -1770,13 +1781,25 @@ class _ClientHomePageState extends State<ClientHomePage>
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    final requireContractGate =
+                        (assignment?.accessMode ?? 'parent') == 'family';
+                    if (requireContractGate) {
+                      final allowed = await ensureContractSignedBeforeTicketPurchase(
+                        context,
+                        auth: widget.auth,
+                      );
+                      if (!allowed) {
+                        return;
+                      }
+                    }
                     showMyTicketsSheet(
                       context,
                       auth: widget.auth,
                       canPurchaseTickets: _canPurchaseTickets,
-                      requireContractGate:
-                          (assignment?.accessMode ?? 'parent') == 'family',
+                      // Contract flow for family access is now started
+                      // before opening "My tickets" modal.
+                      requireContractGate: false,
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -2212,7 +2235,7 @@ class _ClientHomePageState extends State<ClientHomePage>
           if (eventArrivalTime.isNotEmpty) ...[
             const SizedBox(height: 6),
             Text(
-              'Старт для вас: $eventArrivalTime',
+              _eventArrivalLine(eventArrivalTime),
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -2554,7 +2577,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                         if (eventArrivalTime.isNotEmpty) ...[
                           const SizedBox(height: 6),
                           Text(
-                            'Старт для вас: $eventArrivalTime',
+                            _eventArrivalLine(eventArrivalTime),
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,

@@ -377,10 +377,6 @@ class _MyTicketsSheetState extends State<_MyTicketsSheet> {
                           child: _TicketCard(
                             dateLabel: l10n.ticketsEventDate,
                             dateText: _formatDate(t.eventStartsAt),
-                            parentLabel: l10n.ticketsMomName,
-                            parentName: t.parentName.isEmpty
-                                ? '—'
-                                : t.parentName,
                             openLabel: t.pdfAvailable
                                 ? l10n.ticketsOpenPdf
                                 : l10n.ticketsPdfUnavailable,
@@ -464,8 +460,6 @@ class _TicketCard extends StatelessWidget {
   const _TicketCard({
     required this.dateLabel,
     required this.dateText,
-    required this.parentLabel,
-    required this.parentName,
     required this.openLabel,
     required this.openEnabled,
     this.onOpen,
@@ -473,8 +467,6 @@ class _TicketCard extends StatelessWidget {
 
   final String dateLabel;
   final String dateText;
-  final String parentLabel;
-  final String parentName;
   final String openLabel;
   final bool openEnabled;
   final VoidCallback? onOpen;
@@ -523,24 +515,6 @@ class _TicketCard extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 14),
-          Text(
-            parentLabel.toUpperCase(),
-            style: TextStyle(
-              fontSize: 9,
-              letterSpacing: 1.5,
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            parentName,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-            ),
           ),
           const SizedBox(height: 16),
           SizedBox(

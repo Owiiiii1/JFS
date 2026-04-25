@@ -803,62 +803,94 @@ class _StaffPortalPageState extends State<StaffPortalPage> {
 
   void _showMenu(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    showModalBottomSheet<void>(
+    showGeneralDialog<void>(
       context: context,
-      backgroundColor: const Color(0xFF121212),
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.language, color: Colors.white70),
-              title: Text(
-                l10n.appLanguage,
-                style: const TextStyle(color: Colors.white),
+      barrierLabel: 'staff-menu',
+      barrierDismissible: true,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 220),
+      pageBuilder: (ctx, animation, secondaryAnimation) {
+        return SafeArea(
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Material(
+              color: const Color(0xFF121212),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(16),
               ),
-              onTap: () async {
-                Navigator.pop(ctx);
-                await _showLanguageDialog();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline, color: Colors.white70),
-              title: Text(
-                l10n.aboutTheApp,
-                style: const TextStyle(color: Colors.white),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 320),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.language, color: Colors.white70),
+                      title: Text(
+                        l10n.appLanguage,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      onTap: () async {
+                        Navigator.pop(ctx);
+                        await _showLanguageDialog();
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.info_outline, color: Colors.white70),
+                      title: Text(
+                        l10n.aboutTheApp,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const AboutAppPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.logout, color: Colors.white70),
+                      title: Text(
+                        AppLocalizations.of(context)!.signOut,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      onTap: () async {
+                        Navigator.pop(ctx);
+                        try {
+                          await PushTokenServiceHolder.instance
+                              ?.deactivateCurrentOnBackend();
+                        } catch (_) {}
+                        await widget.auth.clearToken();
+                        if (!context.mounted) return;
+                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                          MaterialPageRoute<void>(
+                            builder: (_) => LoginPage(auth: widget.auth),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-              onTap: () {
-                Navigator.pop(ctx);
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (_) => const AboutAppPage()),
-                );
-              },
             ),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.white70),
-              title: Text(
-                AppLocalizations.of(context)!.signOut,
-                style: const TextStyle(color: Colors.white),
-              ),
-              onTap: () async {
-                Navigator.pop(ctx);
-                try {
-                  await PushTokenServiceHolder.instance
-                      ?.deactivateCurrentOnBackend();
-                } catch (_) {}
-                await widget.auth.clearToken();
-                if (!context.mounted) return;
-                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-                  MaterialPageRoute<void>(
-                    builder: (_) => LoginPage(auth: widget.auth),
-                  ),
-                  (route) => false,
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+      transitionBuilder: (ctx, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(curved),
+          child: FadeTransition(
+            opacity: curved,
+            child: child,
+          ),
+        );
+      },
     );
   }
 
