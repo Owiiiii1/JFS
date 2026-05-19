@@ -1,740 +1,532 @@
-{
-  "@@locale": "es",
-  "signIn": "Iniciar sesiГіn",
-  "signUp": "Registrarse",
-  "email": "Correo electrГіnico",
-  "password": "ContraseГ±a",
-  "emailRequired": "Ingresa tu correo electrГіnico",
-  "enterValidEmail": "Ingresa un correo electrГіnico vГЎlido",
-  "passwordRequired": "Ingresa tu contraseГ±a",
-  "hidePassword": "Ocultar contraseГ±a",
-  "showPassword": "Mostrar contraseГ±a",
-  "signInFailed": "Error al iniciar sesiГіn: {error}",
-  "apiEndpointNotFoundHint": "El servidor no encontrГі la API (404). Usa la raГ­z del sitio sin В«/apiВ» al final; la app llama a /api/app/login sola. Si Laravel estГЎ en una subcarpeta, incluye la ruta hasta public (p. ej. https://example.com/myapp/public).",
-  "notificationsTitle": "Notificaciones",
-  "notificationsLoadFailed": "No se pudieron cargar las notificaciones. IntГ©ntalo de nuevo.",
-  "notificationsEmpty": "AГєn no hay notificaciones.",
-  "notificationsNewMark": "Nuevo",
-  "notificationDetailsTitle": "NotificaciГіn",
-  "@signInFailed": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "createAccount": "Crear cuenta",
-  "name": "Nombre",
-  "registerNameLabel": "Ingrese nombre y apellido",
-  "nameRequired": "Ingresa tu nombre",
-  "phone": "TelГ©fono",
-  "phoneRequired": "Ingresa tu telГ©fono",
-  "phoneMustStartWithPlus": "El telГ©fono debe comenzar con +",
-  "enterValidPhone": "Ingresa un nГєmero de telГ©fono vГЎlido",
-  "confirmPassword": "Confirmar contraseГ±a",
-  "passwordsDoNotMatch": "Las contraseГ±as no coinciden",
-  "passwordMinLength": "La contraseГ±a debe tener al menos 8 caracteres",
-  "atLeast8Chars": "Al menos 8 caracteres",
-  "backToSignIn": "Volver a iniciar sesiГіn",
-  "registrationFailed": "Error al registrarse: {error}",
-  "@registrationFailed": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "loginPasswordOptionalHint": "Si tu perfil fue creado por admin/importación, deja la contraseña vacía y continúa.",
-  "setPasswordTitle": "Crear contraseña",
-  "setPasswordSubtitle": "Crea una contraseña para {email}",
-  "@setPasswordSubtitle": {
-    "placeholders": {
-      "email": { "type": "String" }
-    }
-  },
-  "passwordSetupMinLength": "La contraseña debe tener al menos 6 caracteres",
-  "savePasswordAndContinue": "Guardar contraseña y continuar",
-  "passwordSetupFailed": "No se pudo crear la contraseña: {error}",
-  "@passwordSetupFailed": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "account": "Cuenta",
-  "editInfo": "EDITAR INFORMACIГ“N",
-  "fullName": "Nombre",
-  "retry": "Reintentar",
-  "accountSettings": "ConfiguraciГіn de la cuenta",
-  "editProfile": "Editar perfil",
-  "deleteAccount": "Eliminar cuenta",
-  "deleteAccountConfirmTitle": "ВїEliminar cuenta?",
-  "deleteAccountConfirmMessage": "ВїSeguro que quieres eliminar tu cuenta de forma permanente? Esta acciГіn no se puede deshacer.",
-  "deleteAccountSecondTitle": "QuГ© se eliminarГЎ",
-  "deleteAccountSecondMessage": "Se eliminarГЎ de forma permanente de nuestros sistemas:\n\nвЂў Tu cuenta y perfil\nвЂў Todos los niГ±os vinculados a tu cuenta\nвЂў Todas las asignaciones a eventos, progreso en etapas, entradas y comidas\nвЂў Fotos y demГЎs datos de los niГ±os\nвЂў Tu acceso a chats de eventos y notificaciones en la app\n\nAlgunos registros de pago o contables pueden conservarse cuando lo exija la ley.",
-  "deleteAccountContinue": "Continuar",
-  "deleteAccountConfirmAction": "Eliminar para siempre",
-  "deleteAccountWorking": "Eliminando cuentaвЂ¦",
-  "save": "Guardar",
-  "edit": "Editar",
-  "role": "Rol",
-  "myChildren": "Mis hijos",
-  "addChild": "Agregar hijo",
-  "noChildrenAddedYet": "AГєn no has agregado hijos",
-  "ageLabel": "Edad",
-  "settings": "ConfiguraciГіn",
-  "aboutTheApp": "Acerca de la app",
-  "aboutAppDisplayName": "YoungFashionShow",
-  "aboutPublisherLine": "YOUNGFASHIONSHOW",
-  "aboutVersionLabel": "VERSIГ“N",
-  "aboutReleaseDateLabel": "FECHA DE LANZAMIENTO",
-  "aboutDevelopedByPrefix": "Desarrollado por:",
-  "aboutDeveloperBrand": "OWLSOLUTIONS",
-  "aboutLinkCouldNotOpen": "No se pudo abrir el enlace.",
-  "appLanguage": "Idioma de la app",
-  "unitsOfMeasurement": "Unidades de medida",
-  "timeDisplayFormat": "Formato de hora",
-  "timeFormat24Hour": "24 horas",
-  "timeFormat12Hour": "12 horas (AM/PM)",
-  "metricUnits": "MГ©trico (cm, kg)",
-  "imperialUnits": "Americano (in, lb)",
-  "systemLanguage": "Sistema",
-  "languageRussian": "Ruso",
-  "languageEnglish": "InglГ©s",
-  "languageUkrainian": "Ucraniano",
-  "languageSpanishUS": "EspaГ±ol (EE. UU.)",
-  "addChildTitle": "Agregar hijo",
-  "firstName": "Nombre",
-  "gender": "GГ©nero",
-  "genderBoy": "NiГ±o",
-  "genderGirl": "NiГ±a",
-  "lastName": "Apellido",
-  "birthdate": "Fecha de nacimiento",
-  "chooseDate": "Elige la fecha",
-  "create": "Crear",
-  "enterFirstName": "Ingresa el nombre",
-  "mainPhoto": "Foto principal",
-  "changePhoto": "Cambiar",
-  "deletePhoto": "Eliminar",
-  "addPhoto": "Agregar foto",
-  "photoSaved": "Foto guardada",
-  "photoDeleted": "Foto eliminada",
-  "photoAdded": "Foto agregada",
-  "extraPhotos": "Fotos adicionales",
-  "cancel": "Cancelar",
-  "clear": "Limpiar",
-  "height": "Estatura",
-  "weight": "Peso",
-  "shoulders": "Hombros",
-  "chest": "Pecho",
-  "waist": "Cintura",
-  "hips": "Caderas",
-  "measurementLengthUnitCm": "cm",
-  "measurementLengthUnitIn": "in",
-  "currentParticipation": "ParticipaciГіn actual",
-  "childSubscribedBrands": "Marcas: {brands}",
-  "@childSubscribedBrands": {
-    "placeholders": {
-      "brands": {
-        "type": "String"
-      }
-    }
-  },
-  "unknownError": "Error desconocido",
-  "model": "Modelo: {name}",
-  "@model": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
-  "active": "ACTIVO",
-  "familyLabel": "FAMILY",
-  "familyJoinButton": "UNIRSE A FAMILIA",
-  "familyJoinDialogHint": "Ingresa el código familiar de 6 dígitos.",
-  "familyJoinAction": "Unirse",
-  "familyJoinInvalidCode": "Ingresa un código válido de 6 dígitos.",
-  "familyJoinSuccess": "Suscripción familiar conectada.",
-  "contractWarningTitle": "Aviso",
-  "contractWarningFallbackText": "Antes de comprar boletos, revisa y firma el contrato.",
-  "contractViewButton": "Ver",
-  "contractPreviewTitle": "Texto del contrato",
-  "contractSignButton": "Firmar",
-  "contractSignatureTitle": "Añade la firma",
-  "contractSignedSuccess": "Contrato firmado correctamente.",
-  "journeyProgress": "PROGRESO",
-  "journeyPreparationPhase": "FASE DE PREPARACIГ“N",
-  "journeyMainEventTitle": "EVENTO PRINCIPAL",
-  "journeyMainEventSubtitle": "EXCLUSIVO PASARELA",
-  "stepOf": "Paso {completed} de {total}",
-  "@stepOf": {
-    "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
-    }
-  },
-  "next": "Siguiente: {text}",
-  "@next": {
-    "placeholders": {
-      "text": { "type": "String" }
-    }
-  },
-  "viewProgress": "VER PROGRESO",
-  "eventSettings": "AJUSTES DEL EVENTO",
-  "homeEventCardMyEvent": "MI EVENTO",
-  "homeEventCardRunwayJourney": "RECORRIDO DE PASARELA",
-  "eventSettingsPlaceholder": "Pronto verГЎs aquГ­ los ajustes del evento.",
-  "eventSettingsConfigurationPortal": "PORTAL DE CONFIGURACIГ“N",
-  "eventSettingsMainHeadline": "Ajustes del evento",
-  "eventSettingsFamilyButton": "Familia",
-  "familyManageTitle": "Familia",
-  "familyManageEnabled": "Activar conexiones familiares",
-  "familyManageCodeLabel": "Código familiar",
-  "familyManageRegenerateCode": "Cambiar código",
-  "familyManageConnectionsTitle": "Conexiones familiares activas",
-  "familyManageNoConnections": "Aún no hay conexiones familiares activas.",
-  "familyManageUnknownUser": "Usuario desconocido",
-  "eventSettingsLeaveFamilyButton": "Desconectarse de la familia",
-  "eventSettingsLeaveFamilyConfirmTitle": "¿Desconectar acceso familiar?",
-  "eventSettingsLeaveFamilyConfirmText": "Perderás el acceso familiar al evento hasta volver a unirte con código.",
-  "eventSettingsLeaveFamilySuccess": "El acceso familiar se ha desconectado.",
-  "eventSettingsMealTitle": "SelecciГіn de comidas",
-  "eventSettingsMealSubtitle": "Elige un plato para el evento actual",
-  "eventSettingsMealCta": "GESTIONAR MENГљ",
-  "eventSettingsMealOrderedPcs": "Pedido: {count} ud.",
-  "@eventSettingsMealOrderedPcs": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "eventSettingsMealPurchasesListHeading": "Pedidos realizados",
-  "eventSettingsMealPurchaseChildLine": "Niño/a: {name}",
-  "@eventSettingsMealPurchaseChildLine": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
-  "mealPurchaseIssued": "Entregado",
-  "mealPurchaseNotIssued": "Aún no entregado",
-  "eventSettingsRehearsalTitle": "Reserva de ensayo",
-  "eventSettingsRehearsalSubtitle": "Reserva tu plaza para el ensayo",
-  "eventSettingsRehearsalCta": "RESERVAR",
-  "eventSettingsBrandRehearsalsHeading": "Tus ensayos de marca",
-  "rehearsalModalTitle": "Reserva de ensayo",
-  "rehearsalSelectDate": "Elige fecha",
-  "rehearsalAvailableSlots": "Horarios disponibles",
-  "rehearsalFreeLabel": "Libres:",
-  "rehearsalNoSlotsConfigured": "AГєn no hay franjas de ensayo para este evento.",
-  "rehearsalLoadError": "No se pudieron cargar las franjas. IntГ©ntalo de nuevo.",
-  "rehearsalBrandNotAssigned": "No hay marca asignada para este niГ±o. La reserva de ensayos no estГЎ disponible.",
-  "rehearsalFull": "Completo",
-  "rehearsalConfirmBooking": "Confirmar reserva",
-  "rehearsalBookingFooterNote": "Si es posible, cambia con 24 h de antelaciГіn.",
-  "rehearsalBookedTitle": "Ensayo reservado",
-  "rehearsalChangeBooking": "Cambiar reserva",
-  "rehearsalProgramLabel": "DescripciГіn",
-  "rehearsalArriveEarly": "Llega 15 minutos antes.",
-  "rehearsalBookingSaved": "Reserva guardada",
-  "rehearsalBookingError": "No se pudo completar la reserva.",
-  "rehearsalSelectChild": "NiГ±o/a",
-  "rehearsalUpdateBooking": "Añadir y actualizar reserva",
-  "rehearsalCancelChange": "Cancelar",
-  "rehearsalChangeBookingLockedHint": "El organizador cerrГі los cambios de reserva. Contacta soporte si necesitas ayuda.",
-  "rehearsalMilestoneTitle": "Ensayo general",
-  "rehearsalBrandMilestoneTitle": "Ensayo de marca: {brandName}",
-  "@rehearsalBrandMilestoneTitle": {
-    "placeholders": {
-      "brandName": {
-        "type": "String"
-      }
-    }
-  },
-  "rehearsalBrandMilestoneShort": "Ensayo de marca",
-  "rehearsalNextBookHint": "Reserva tu ensayo en Ajustes del evento.",
-  "eventSettingsPackingTitle": "Lista В«No olvidesВ»",
-  "eventSettingsPackingSubtitle": "",
-  "eventSettingsPackingCta": "VER LISTA",
-  "eventPackingLoadFailed": "No se pudo cargar la informaciГіn. IntГ©ntalo de nuevo.",
-  "eventPackingEmpty": "AГєn no se aГ±adiГі informaciГіn para este evento.",
-  "eventDescriptionTitle": "InformaciГіn del evento",
-  "eventProgressShowGallery": "GalerГ­a",
-  "eventProgressCheckin": "Check-in",
-  "eventProgressCheckinPrompt": "Escanea para iniciar el evento",
-  "eventProgressCheckinUnavailable": "El cГіdigo de check-in aГєn no estГЎ disponible.",
-  "eventDescriptionLoadFailed": "No se pudo cargar la descripciГіn. IntГ©ntalo de nuevo.",
-  "eventDescriptionEmpty": "AГєn no hay descripciГіn de texto para este evento.",
-  "eventSettingsBrandTitle": "Zapatos y calcetines",
-  "eventSettingsBrandSubtitle": "Consulta las recomendaciones de la marca para participar en el evento",
-  "eventSettingsBrandCta": "VER GUГЌAS",
-  "brandRequirementsLoadFailed": "No se pudieron cargar los requisitos de marca. IntГ©ntalo de nuevo.",
-  "brandRequirementsEmpty": "AГєn no se aГ±adieron requisitos de marca para este evento.",
-  "brandRequirementsEmptyItem": "AГєn no se aГ±adiГі texto de requisitos para esta marca.",
-  "brandRequirementsPickBrandTitle": "Elige una marca",
-  "brandRequirementsBrandNumber": "Marca {brandId}",
-  "@brandRequirementsBrandNumber": {
-    "placeholders": {
-      "brandId": { "type": "int" }
-    }
-  },
-  "eventSettingsParkingTitle": "Valet parking",
-  "eventSettingsParkingSubtitle": "Abre tu pase de valet parking y el estado de llegada",
-  "eventSettingsParkingCta": "ABRIR VALET PARKING",
-  "parkingChooseModeTitle": "Modo valet parking",
-  "parkingChooseModeHint": "Elige el estado de pantalla para probar el visual.",
-  "parkingModeInactive": "INACTIVO",
-  "parkingModeActive": "ACTIVO",
-  "parkingInactiveHeadline": "VALET PARKING NO ACTIVO",
-  "parkingInactiveBody": "EL VALET PARKING APARECERA AQUI DESPUES DE COMPRAR EL TICKET.",
-  "parkingInactiveBuyCta": "COMPRAR",
-  "parkingInactiveVipBody": "PARA VIP VALET PARKING — RESERVA UNA PLAZA PARA TU VEHICULO.",
-  "parkingInactiveVipBookCta": "RESERVAR VALET PARKING",
-  "parkingPayForParkingCta": "PAGAR VALET PARKING",
-  "parkingVipQuotaNextPaymentBody": "YA HAS USADO LOS VALETS DE CORTESIA PARA ESTE EVENTO. AUN PUEDES ANADIR UNA PLAZA AL PRECIO REGULAR.",
-  "parkingFreeTicketsQuotaLine": "Valet de cortesia: {used} de {quota} usados (quedan {remaining})",
-  "@parkingFreeTicketsQuotaLine": {
-    "placeholders": {
-      "used": { "type": "int" },
-      "quota": { "type": "int" },
-      "remaining": { "type": "int" }
-    }
-  },
-  "parkingActiveTicketLabel": "TICKET",
-  "parkingTicketMock1": "TICKET A1 · MODELO",
-  "parkingTicketMock2": "TICKET B7 · INVITADO",
-  "parkingActiveValetLabel": "VALET SERVICE",
-  "parkingActiveStatusLine": "VALET PARKING ACTIVO",
-  "parkingActiveShowEntryPointCta": "MOSTRAR PUNTO DE ENTRADA",
-  "parkingActiveCarLabel": "AUTOMOVIL",
-  "parkingActiveRegistrationNumberLabel": "NUMERO DE PLACA",
-  "parkingCreateTicketTitle": "Crear ticket",
-  "parkingCreateEventLabel": "Evento",
-  "parkingCreateAccountNameLabel": "Nombre",
-  "parkingCreateCarModelLabel": "MARCA Y MODELO",
-  "parkingCreateCarModelHint": "Por ejemplo: Ford Mustang",
-  "parkingCreatePlateNumberLabel": "NUMERO DE PLACA",
-  "parkingCreatePlateNumberHint": "Por ejemplo: CA 7JXK921",
-  "parkingCreateRepeatPlateNumberLabel": "REPITE EL NUMERO DE PLACA",
-  "parkingCreateRepeatPlateNumberHint": "Vuelve a escribir el numero de placa",
-  "parkingCreatePlateNumberMismatch": "Los numeros de placa no coinciden",
-  "parkingCreateBuyCta": "COMPRAR",
-  "parkingCreateBookCta": "RESERVAR VALET PARKING",
-  "parkingCheckoutInBrowser": "Completa el pago en tu navegador.",
-  "parkingPurchasedWithoutPayment": "Ticket comprado con exito.",
-  "parkingVipBooked": "Valet parking VIP reservado con exito.",
-  "parkingCheckoutError": "No se pudo iniciar el pago de valet parking. Intentalo de nuevo.",
-  "clientTicketServiceUnavailableTitle": "Servicio no disponible",
-  "clientTicketServiceUnavailableBody": "Este servicio de entradas no está activo ahora.",
-  "parkingActivePassLabel": "CODIGO",
-  "eventSettingsChatTitle": "Chat grupal",
-  "eventSettingsChatSubtitle": "Chat grupal con participantes del grupo y managers",
-  "eventSettingsChatCta": "ABRIR CHAT",
-  "chatRoomsLoadFailed": "No se pudieron cargar las salas de chat. IntГ©ntalo de nuevo.",
-  "chatNoRooms": "AГєn no hay salas de chat para tus marcas en este evento.",
-  "chatNoMessagesYet": "Sin mensajes todavГ­a",
-  "chatLoadFailed": "No se pudieron cargar los mensajes. IntГ©ntalo de nuevo.",
-  "chatSendFailed": "No se pudo enviar el mensaje. IntГ©ntalo de nuevo.",
-  "chatMessagePlaceholder": "Mensaje al grupo...",
-  "chatReply": "Responder",
-  "chatReplyCancel": "Cancelar",
-  "chatReplyingTo": "Respondiendo a {name}",
-  "@chatReplyingTo": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "chatReplyPreviewPhoto": "Foto",
-  "chatEdit": "Editar",
-  "chatDelete": "Eliminar",
-  "chatDeleteTitle": "¿Eliminar mensaje?",
-  "chatDeleteMessageConfirm": "Esta acción no se puede deshacer.",
-  "chatDeleteFailed": "No se pudo eliminar el mensaje. Inténtalo de nuevo.",
-  "chatEditFailed": "No se pudo editar el mensaje. Inténtalo de nuevo.",
-  "chatEditingLabel": "Editando mensaje",
-  "chatCancelEdit": "Cancelar edición",
-  "eventSettingsChatMoreParticipants": "+{count}",
-  "@eventSettingsChatMoreParticipants": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "mealChoiceTitle": "Elegir comida",
-  "mealSelectChildLabel": "NiГ±o/a",
-  "mealSelectDishLabel": "Plato",
-  "mealSave": "PEDIR",
-  "mealNoMealsConfigured": "AГєn no hay platos para este evento.",
-  "mealSaved": "Guardado",
-  "mealSaveError": "No se pudo guardar. IntГ©ntalo de nuevo.",
-  "mealOrdersClosed": "El plazo para elegir el menГє estГЎ cerrado",
-  "mealPaid": "Pagado",
-  "mealPaidDetail": "El menГє de este evento estГЎ pagado.",
-  "mealPayInBrowser": "Completa el pago en el navegador y vuelve a la app.",
-  "mealCheckoutError": "No se pudo iniciar el pago. IntГ©ntalo de nuevo.",
-  "mealAwaitingPayment": "Pedido registrado — pendiente de pago",
-  "mealAwaitingPaymentDetail": "Tu plato está guardado. Termina el pago en el navegador; el estado se actualizará cuando Stripe lo confirme.",
-  "mealPaymentContinue": "Continuar pago",
-  "mealPaymentCancel": "Cancelar pago",
-  "mealPaymentStartAgain": "Iniciar pago de nuevo",
-  "mealPaymentCanceled": "Pago cancelado. Puedes empezar de nuevo cuando quieras.",
-  "mealPaymentStatusLoadError": "No se pudo cargar el estado del pago. Inténtalo de nuevo.",
-  "noActiveEvents": "No hay eventos activos",
-  "becomeModelTitle": "Comienza la carrera de modelo de tu hijo hoy",
-  "becomeAModel": "SER MODELO",
-  "latestHighlights": "Гљltimos destacados",
-  "viewAll": "VER TODO",
-  "quickActions": "Acciones rГЎpidas",
-  "fillOutApplication": "Completar\nsolicitud",
-  "upcomingShows": "PrГіximos\nshows",
-  "manageKids": "Mis\nhijos",
-  "navHome": "Inicio",
-  "navEvents": "Eventos",
-  "eventsYoutubeLiveButton": "YouTube en directo",
-  "eventsYoutubeLiveInvalidUrl": "No se pudo abrir este enlace de YouTube.",
-  "eventsYoutubeLiveOpenExternally": "Abrir en YouTube",
-  "navProfile": "Perfil",
-  "navInfo": "InformaciГіn",
-  "continueButton": "Continuar",
-  "loading": "Cargando...",
-  "signOut": "Cerrar sesiГіn",
-  "tokenValidNext": "SesiГіn vГЎlida. Siguiente: Inicio.",
-  "homePageTitle": "Inicio",
-  "youAreSignedIn": "Has iniciado sesiГіn{name}.",
-  "@youAreSignedIn": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
-  "yourRole": "Tu rol: {role}",
-  "@yourRole": {
-    "placeholders": {
-      "role": { "type": "String" }
-    }
-  },
-  "phoneHint": "+1234567890",
-  "enterValidEmailShort": "Ingresa un correo vГЎlido",
-  "phoneMustStartWithPlusShort": "El telГ©fono debe comenzar con +",
-  "comingSoon": "PrГіximamente",
-  "hello": "Hola",
-  "helloName": "Hola, {name}",
-  "@helloName": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
-  "noRolesAssigned": "AГєn no tienes roles asignados. Contacta a la administraciГіn.",
-  "signedInAs": "SesiГіn iniciada como {name}",
-  "@signedInAs": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
-  "staff": "Personal",
-  "birthdateDialogTitle": "Fecha de nacimiento",
-  "nextShowsTitle": "PrГіximos shows",
-  "nextShowsSeason": "Temporada 2026",
-  "details": "Detalles",
-  "contact": "Contacto",
-  "registrationOpen": "Registro abierto",
-  "myTicketsButton": "MIS ENTRADAS",
-  "myTicketsTitle": "Mis entradas",
-  "selectEventForTickets": "Selecciona el evento",
-  "ticketsMomName": "Nombre del padre/madre",
-  "ticketsEventDate": "Fecha",
-  "ticketsOpenPdf": "ABRIR",
-  "ticketsPdfUnavailable": "PDF aГєn no disponible",
-  "ticketsBuy": "COMPRAR ENTRADA",
-  "ticketsBuyNoLink": "No hay enlace de compra. AГ±ade la URL de la tienda de entradas para este evento en el admin o en la web en Info.",
-  "ticketsBuyCouldNotOpen": "No se pudo abrir el enlace.",
-  "ticketsBuySubtitle": "Asientos VIP y estГЎndar disponibles",
-  "ticketsBuyEmailHint": "Tus entradas llegarГЎn al correo electrГіnico indicado al comprar el billete.",
-  "extraTicketButton": "OPEN BAR",
-  "extraTicketSelectEventFirst": "Selecciona primero un evento.",
-  "extraTicketNoActiveHeadline": "NO HAY BEVERAGE PACKAGE ACTIVOS",
-  "extraTicketBuyCta": "COMPRAR",
-  "extraTicketAccessOpen": "ACCESO A BEVERAGE PACKAGE ABIERTO",
-  "extraTicketCheckoutInBrowser": "Completa el pago en tu navegador.",
-  "extraTicketCheckoutError": "No se pudo iniciar el pago de BEVERAGE PACKAGE. Intentalo de nuevo.",
-  "backstageTicketButton": "BACKSTAGE PASS",
-  "backstageTicketSelectEventFirst": "Selecciona primero un evento.",
-  "backstageTicketNoActiveHeadline": "NO HAY BACKSTAGE PASS ACTIVOS",
-  "backstageTicketBuyCta": "COMPRAR",
-  "backstageTicketAccessOpen": "ACCESO A BACKSTAGE PASS ABIERTO",
-  "backstageTicketCheckoutInBrowser": "Completa el pago en tu navegador.",
-  "backstageTicketCheckoutError": "No se pudo iniciar el pago de BACKSTAGE PASS. Intentalo de nuevo.",
-  "ticketsNoEvents": "AГєn no hay eventos con entradas",
-  "ticketsNoneForEvent": "No hay entradas para este evento",
-  "ticketsLoadError": "No se pudieron cargar las entradas",
-  "ticketsEventsLoadError": "No se pudieron cargar los eventos",
-  "faqBrandCatalogTitle": "Marcas de ropa",
-  "pdfViewerTitle": "Entrada",
-  "contactFormLinkMissing": "No hay enlace al formulario. AГ±ade la URL en Ajustes generales de la app en el panel.",
-  "infoHubTitle": "Centro de informaciГіn",
-  "infoMenuAboutYfs": "Acerca de YFS",
-  "infoMenuGeneralFaq": "FAQ general",
-  "infoMenuContactManager": "Contactar al gestor",
-  "infoFooterBrand": "YFS",
-  "infoFooterCopyright": "В© 2024 Young Fashion Series. Todos los derechos reservados.",
-  "parentProgressLabel": "Progreso del padre/madre: {completed}/{total}",
-  "@parentProgressLabel": {
-    "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
-    }
-  },
-  "appUpdateRequiredMessage": "Actualiza la aplicaciГіn para continuar.",
-  "appUpdateButton": "Actualizar aplicaciГіn",
-  "showAll": "Ver todo",
-  "staffNoneSelected": "-- Ninguno --",
-  "staffRoleInactive": "INACTIVA",
-  "staffWorkerStatusRefreshFailed": "No se pudo actualizar el estado del rol. Comprueba la conexiГіn.",
-  "staffScanRoleInactive": "Este rol fue desactivado en el panel. El escaneo no estГЎ disponible.",
-  "staffScanFailed": "Error al escanear: {error}",
-  "@staffScanFailed": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "staffScanSelectEventStageFirst": "Selecciona el evento y la etapa activos en Ajustes del personal antes de escanear.",
-  "staffScanProcessed": "Escaneo procesado",
-  "chatCouldNotPickPhoto": "No se pudo elegir la foto",
-  "staffChildProfileTitle": "Perfil del niГ±o",
-  "staffEventTimelineButton": "TIMELINE",
-  "staffEventTimelineTitle": "Timeline del evento",
-  "staffParentTimelineButton1": "TIMELINE DEL PADRE 1",
-  "staffParentTimelineButton2": "TIMELINE DEL PADRE 2",
-  "staffParentTimelineTitle1": "Timeline del padre 1",
-  "staffParentTimelineTitle2": "Timeline del padre 2",
-  "staffCurrentStage": "ETAPA ACTUAL",
-  "staffProgressPercentComplete": "{percent}% completado",
-  "@staffProgressPercentComplete": {
-    "placeholders": {
-      "percent": { "type": "int" }
-    }
-  },
-  "staffChildDetailEmpty": "No hay datos del niГ±o en la base de datos",
-  "staffLoadFailed": "Error al cargar",
-  "staffGuardianLiaison": "ENLACE CON TUTORES",
-  "staffAssignedBrand": "MARCA ASIGNADA",
-  "staffAssignedPackage": "PAQUETE",
-  "staffSupervisor": "SUPERVISOR",
-  "staffSectionCoreDetails": "Datos principales",
-  "staffSectionParentContact": "Contacto del padre/madre",
-  "staffPhaseWithName": "Fase: {stageName}",
-  "@staffPhaseWithName": {
-    "placeholders": {
-      "stageName": { "type": "String" }
-    }
-  },
-  "staffNoCurrentStage": "Sin etapa actual",
-  "staffAgeYearsOld": "{age} aГ±os",
-  "@staffAgeYearsOld": {
-    "placeholders": {
-      "age": { "type": "int" }
-    }
-  },
-  "staffNotesLabel": "Notas",
-  "staffParentRoleDefault": "Padre/madre",
-  "contactManagerIntro": "Puedes dejar un mensaje sobre cualquier consulta; nos pondremos en contacto contigo lo antes posible.",
-  "contactManagerMessageLabel": "Tu mensaje",
-  "contactManagerMessageRequired": "Escribe tu mensaje",
-  "contactManagerSend": "Enviar",
-  "contactManagerSent": "Tu mensaje se ha enviado. Nos pondremos en contacto contigo pronto.",
-  "contactManagerSendFailed": "No se pudo enviar. IntГ©ntalo mГЎs tarde.",
-  "contactManagerServiceUnavailable": "El contacto no estГЎ disponible temporalmente. IntГ©ntalo mГЎs tarde.",
-  "close": "Cerrar",
-  "staffPortalTitle": "Portal del personal",
-  "staffActiveEvent": "Evento activo",
-  "staffActiveStage": "Etapa activa",
-  "staffSelectEvent": "Selecciona evento",
-  "staffSelectEventInSettings": "Selecciona un evento en Ajustes del personal",
-  "staffSelectStage": "Selecciona etapa",
-  "staffPreparatoryStageLabel": "Prep: {stageName}",
-  "@staffPreparatoryStageLabel": {
-    "placeholders": {
-      "stageName": { "type": "String" }
-    }
-  },
-  "staffScanButton": "ESCANEAR",
-  "staffQrCheckButton": "QR CHECK",
-  "staffParkingButton": "VALET PARKING",
-  "staffExtraZoneButton": "BEVERAGE PACKAGE",
-  "staffBackstageButton": "BACKSTAGE PASS",
-  "staffRehearsalCheckinButton": "CHECK-IN ENSAYO",
-  "staffTapToScanModelLanyard": "TOCA PARA ESCANEAR EL GAFETE DE LA MODELO",
-  "staffTapToScanParkingQr": "TOCA PARA ESCANEAR QR DE VALET PARKING",
-  "staffTapToScanExtraZoneQr": "TOCA PARA ESCANEAR QR DE BEVERAGE PACKAGE",
-  "staffTapToScanBackstageQr": "TOCA PARA ESCANEAR QR DE BACKSTAGE PASS",
-  "staffTapToScanRehearsalCheckinQr": "TOCA PARA ESCANEAR QR DE CHECK-IN DE ENSAYO",
-  "staffMealHandoutButton": "COMIDAS",
-  "staffTapToScanMealBadge": "TOCA PARA ESCANEAR BRAZALETE (NIÑO O PADRE)",
-  "staffMealIssueTitle": "Entrega de almuerzos",
-  "staffMealIssueNoMeals": "No hay almuerzos pedidos con este pase.",
-  "staffMealIssueHandOut": "Entregar",
-  "staffMealIssueSuccess": "Marcado como entregado.",
-  "staffMealIssueFailure": "Error: {error}",
-  "@staffMealIssueFailure": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "staffMealIssueAlreadyIssued": "ya entregado",
-  "staffTapToScanQrCheck": "TOCA PARA ESCANEAR BRAZALETE — ETAPA Y FICHA",
-  "staffCurrentTask": "Tarea actual",
-  "staffUtilitiesAndTools": "UTILIDADES Y HERRAMIENTAS",
-  "staffScanForInfoTitle": "Escanear para info",
-  "staffScanForInfoSubtitle": "Escáner general de activos e ID",
-  "staffToiletRequest": "Solicitud de baño",
-  "staffRestroomLog": "REGISTRO DE BAÑO",
-  "staffSettingsCardTitle": "Ajustes del personal",
-  "staffPreferences": "PREFERENCIAS",
-  "staffSupervisorRoleTitle": "Rol de supervisor",
-  "staffSupervisorRoleDescription": "Gestiona el flujo del evento, supervisa a los fotógrafos y asegura que todos los niños sean registrados. Sigue el progreso en tiempo real.",
-  "staffCurrentStageLabel": "Etapa actual",
-  "staffNoMainStagesAvailable": "No hay etapas principales disponibles para este evento.",
-  "staffChildRegistry": "Registro de niños",
-  "staffChildrenListed": "{count} niños en lista",
-  "@staffChildrenListed": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "staffSelectActiveEventForRegistry": "Selecciona un evento activo en Ajustes para ver el registro de niños.",
-  "staffNoChildrenAssigned": "No hay niños asignados para este evento.",
-  "staffRehearsalAdminSlotsTitle": "Slots de ensayo",
-  "staffRehearsalCheckinActiveSlot": "Slot de ensayo activo",
-  "staffRehearsalAdminSelectSlot": "Selecciona un slot de ensayo",
-  "staffRehearsalCheckinSelectSlotFirst": "Primero selecciona un slot de ensayo",
-  "staffRehearsalAdminBookedChildrenTitle": "Niños inscritos",
-  "staffRehearsalAdminNoSlots": "No hay slots de ensayo creados para este evento.",
-  "staffRehearsalAdminNoChildrenForSlot": "No hay niños inscritos en este slot.",
-  "staffGiftControlButton": "CONTROL",
-  "staffGiftControlTitle": "Control de entrega de regalos",
-  "staffGiftControlSelectStage": "Selecciona la etapa del reporte",
-  "staffGiftControlFilterAll": "Todos",
-  "staffGiftControlFilterPassed": "Completado",
-  "staffGiftControlFilterNotPassed": "No completado",
-  "staffGiftControlNoChildren": "No hay niños para los filtros seleccionados.",
-  "staffTableProfile": "PERFIL",
-  "staffTableName": "NOMBRE",
-  "staffTableStatus": "ESTADO",
-  "staffTableAction": "ACCIÓN",
-  "staffYes": "Sí",
-  "staffNo": "No",
-  "staffRoleHostessTitle": "Rol: hostess",
-  "staffRoleHostessPlaceholder": "La pantalla del rol hostess se añadirá más tarde.",
-  "staffRoleInterviewTitle": "Rol: entrevista",
-  "staffRoleInterviewPlaceholder": "La pantalla del rol entrevista se añadirá más tarde.",
-  "staffRoleLunchesTitle": "Rol: almuerzos",
-  "staffRoleLunchesPlaceholder": "La pantalla del rol almuerzos se añadirá más tarde.",
-  "staffRoleSuperadminTitle": "Rol: superadmin",
-  "staffRoleSuperadminPlaceholder": "La pantalla del rol superadmin se añadirá más tarde.",
-  "staffRoleRehearsalAdminTitle": "Rol: admin de ensayos",
-  "staffRoleRehearsalAdminPlaceholder": "La pantalla del rol admin de ensayos se añadirá más tarde.",
-  "staffNavHome": "Inicio",
-  "staffNavEvent": "Evento",
-  "staffNavMore": "Más",
-  "staffAccessBadge": "ACCESO DE PERSONAL",
-  "staffVenueAndContact": "Sede y contacto",
-  "staffMainOffice": "Oficina principal",
-  "staffSecurity": "Seguridad",
-  "staffScanHeaderParking": "Escaneo de valet parking",
-  "staffScanHeaderExtraZone": "Entrada a BEVERAGE PACKAGE",
-  "staffScanHeaderBackstage": "Entrada a BACKSTAGE PASS",
-  "staffScanHeaderRehearsalCheckin": "Check-in de ensayo",
-  "staffScanHeaderInfo": "Escanear para info",
-  "staffScanHeaderQr": "Escanear código QR",
-  "staffScanHintParking": "Escanea el QR de valet parking para mostrar datos del ticket",
-  "staffScanHintExtraZone": "Escanea el QR de BEVERAGE PACKAGE para permitir entrada",
-  "staffScanHintBackstage": "Escanea el QR de BACKSTAGE PASS para permitir entrada",
-  "staffScanHintRehearsalCheckin": "Escanea QR de check-in del niño para cerrar el paso de ensayo",
-  "staffScanHintInfo": "Escanea gafete de niño o padre para ver el perfil",
-  "staffScanHintQr": "Alinea el código QR dentro del marco",
-  "staffScanHeaderQrCheck": "Verificación QR",
-  "staffScanHintQrCheck": "Escanea el brazalete del niño para marcar la etapa y abrir la ficha",
-  "staffQrCheckSuccessTitle": "Etapa marcada",
-  "staffQrCheckSuccessContinue": "Continuar",
-  "staffScanErrorTitle": "Error de escaneo",
-  "staffScanErrorUnknown": "Error de escaneo desconocido.",
-  "staffParkingTicketTitle": "Ticket de valet parking",
-  "staffExtraZonePassTitle": "Pase de BEVERAGE PACKAGE",
-  "staffExtraZoneScanResultTitle": "Resultado del escaneo",
-  "staffExtraZoneResultNotFound": "CODIGO NO ENCONTRADO EN LA BASE DE DATOS",
-  "staffExtraZoneResultAccessGranted": "CODIGO ACEPTADO, ACCESO PERMITIDO",
-  "staffExtraZoneResultAccessClosed": "CODIGO ACEPTADO, PERO ACCESO CERRADO",
-  "staffBackstageScanResultTitle": "Resultado del escaneo",
-  "staffBackstageResultNotFound": "CODIGO NO ENCONTRADO EN LA BASE DE DATOS",
-  "staffBackstageResultAccessGranted": "CODIGO ACEPTADO, ACCESO PERMITIDO",
-  "staffBackstageResultAccessClosed": "CODIGO ACEPTADO, PERO ACCESO CERRADO",
-  "staffRehearsalCheckinScanResultTitle": "Resultado del escaneo",
-  "staffRehearsalCheckinResultNotFound": "CODIGO DE CHECK-IN NO ENCONTRADO",
-  "staffRehearsalCheckinResultWrongSlot": "EL NIÑO NO ESTÁ INSCRITO EN ESTE SLOT",
-  "staffRehearsalCheckinResultAlreadyClosed": "EL CHECK-IN DE ENSAYO YA ESTÁ CERRADO",
-  "staffRehearsalCheckinResultClosedNow": "CHECK-IN DE ENSAYO CERRADO",
-  "staffRehearsalCheckinFieldChild": "Niño",
-  "staffRehearsalCheckinFieldSlot": "Slot",
-  "staffParkingFieldEvent": "Evento",
-  "staffParkingFieldClient": "Cliente",
-  "staffParkingFieldCar": "Auto",
-  "staffParkingFieldPlateNumber": "Placa",
-  "staffParkingFieldVipClient": "Cliente VIP",
-  "staffShowProgressTitle": "Progreso del show",
-  "staffCouldNotOpenDialer": "No se pudo abrir el marcador telefónico",
-  "staffRealtimeTracking": "SEGUIMIENTO EN TIEMPO REAL",
-  "staffEstimatedCompletion": "COMPLETADO ESTIMADO",
-  "staffNoMainStagesInPlan": "Aún no hay etapas principales en el plan.",
-  "staffStatusDone": "HECHO",
-  "staffStatusInProgress": "EN PROCESO",
-  "staffStatusPending": "PENDIENTE",
-  "staffContactDetails": "Datos de contacto",
-  "staffPrimaryParent": "PADRE/MADRE PRINCIPAL",
-  "staffIdLabel": "ID de personal: {id}",
-  "@staffIdLabel": {
-    "placeholders": {
-      "id": { "type": "String" }
-    }
-  },
-  "staffSwitchRole": "Cambiar rol",
-  "staffCurrentRoleLabel": "ACTUAL: {role}",
-  "@staffCurrentRoleLabel": {
-    "placeholders": {
-      "role": { "type": "String" }
-    }
-  },
-  "staffRoleSubtitleScan": "Escaneo QR y flujo de etapas",
-  "staffRoleSubtitleQrCheck": "Marca etapa con brazalete y ficha del niño",
-  "staffRoleSubtitleSupervisor": "Acceso completo y gestión",
-  "staffRoleSubtitleHostess": "Soporte de invitados y zonas",
-  "staffRoleSubtitleParking": "Valet parking: flujo y acceso",
-  "staffRoleSubtitleExtraZone": "Acceso a BEVERAGE PACKAGE",
-  "staffRoleSubtitleBackstage": "Acceso a BACKSTAGE PASS",
-  "staffRoleSubtitleRehearsalAdmin": "Administración de ensayos",
-  "staffRoleSubtitleRehearsalCheckin": "Escaneo check-in por slots de ensayo",
-  "staffRoleSubtitleGiftIssue": "Control de entrega de regalos",
-  "staffRoleSubtitleInterview": "Flujo de entrevistas",
-  "staffRoleSubtitleLunches": "Comidas y almuerzos",
-  "staffRoleSubtitleSuperadmin": "Herramientas de superadmin",
-  "staffRoleSubtitlePhotographer": "Captura y carga de medios",
-  "staffRoleSubtitleStylist": "Vestuario y maquillaje",
-  "staffHostessEntryMode": "ENTRADA",
-  "staffHostessExitMode": "SALIDA",
-  "staffHostessEntryHint": "Escanea el badge del niño para cerrar la etapa seleccionada y sincronizar Family Look",
-  "staffHostessExitHint": "Escanea badge de niño o padre, revisa el progreso y cierra la etapa de salida",
-  "staffHostessEntryResultTitle": "Resultado de escaneo de entrada",
-  "staffHostessExitResultTitle": "Resultado de escaneo de salida",
-  "staffHostessFieldChildName": "Nombre",
-  "staffHostessFieldParent": "Padre/Madre",
-  "staffHostessFieldBrandsAndSupervisors": "Marcas y supervisores",
-  "staffHostessFieldFamilyLook": "Family Look",
-  "staffHostessFamilyLookEnabled": "Family Look activado",
-  "staffHostessFieldStages": "Etapas",
-  "staffHostessCloseEventAction": "Cerrar evento",
-  "staffHostessStageAlreadySelectedOtherMode": "Esta etapa ya esta seleccionada para el otro modo de hostess.",
-  "staffHostessRequiredProgress": "Etapas obligatorias: {completed}/{total}",
-  "@staffHostessRequiredProgress": {
-    "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
-    }
-  }
+﻿{
+    "@@locale":  "es",
+    "signIn":  "Iniciar sesiР“С–n",
+    "signUp":  "Registrarse",
+    "email":  "Correo electrР“С–nico",
+    "password":  "ContraseР“В±a",
+    "emailRequired":  "Ingresa tu correo electrР“С–nico",
+    "enterValidEmail":  "Ingresa un correo electrР“С–nico vР“РЋlido",
+    "passwordRequired":  "Ingresa tu contraseР“В±a",
+    "hidePassword":  "Ocultar contraseР“В±a",
+    "showPassword":  "Mostrar contraseР“В±a",
+    "signInFailed":  "Error al iniciar sesiР“С–n: {error}",
+    "apiEndpointNotFoundHint":  "El servidor no encontrР“С– la API (404). Usa la raР“В­z del sitio sin Р’В«/apiР’В» al final; la app llama a /api/app/login sola. Si Laravel estР“РЋ en una subcarpeta, incluye la ruta hasta public (p. ej. https://example.com/myapp/public).",
+    "notificationsTitle":  "Notificaciones",
+    "notificationsLoadFailed":  "No se pudieron cargar las notificaciones. IntР“В©ntalo de nuevo.",
+    "notificationsEmpty":  "AР“С”n no hay notificaciones.",
+    "notificationsNewMark":  "Nuevo",
+    "notificationDetailsTitle":  "NotificaciР“С–n",
+    "@signInFailed":  {
+                          "placeholders":  {
+                                               "error":  {
+                                                             "type":  "String"
+                                                         }
+                                           }
+                      },
+    "createAccount":  "Crear cuenta",
+    "name":  "Nombre",
+    "registerNameLabel":  "Ingrese nombre y apellido",
+    "nameRequired":  "Ingresa tu nombre",
+    "phone":  "TelР“В©fono",
+    "phoneRequired":  "Ingresa tu telР“В©fono",
+    "phoneMustStartWithPlus":  "El telР“В©fono debe comenzar con +",
+    "enterValidPhone":  "Ingresa un nР“С”mero de telР“В©fono vР“РЋlido",
+    "confirmPassword":  "Confirmar contraseР“В±a",
+    "passwordsDoNotMatch":  "Las contraseР“В±as no coinciden",
+    "passwordMinLength":  "La contraseР“В±a debe tener al menos 8 caracteres",
+    "atLeast8Chars":  "Al menos 8 caracteres",
+    "backToSignIn":  "Volver a iniciar sesiР“С–n",
+    "registrationFailed":  "Error al registrarse: {error}",
+    "@registrationFailed":  {
+                                "placeholders":  {
+                                                     "error":  {
+                                                                   "type":  "String"
+                                                               }
+                                                 }
+                            },
+    "loginPasswordOptionalHint":  "Si tu perfil fue creado por admin/importaciГіn, deja la contraseГ±a vacГ­a y continГєa.",
+    "setPasswordTitle":  "Crear contraseГ±a",
+    "setPasswordSubtitle":  "Crea una contraseГ±a para {email}",
+    "@setPasswordSubtitle":  {
+                                 "placeholders":  {
+                                                      "email":  {
+                                                                    "type":  "String"
+                                                                }
+                                                  }
+                             },
+    "passwordSetupMinLength":  "La contraseГ±a debe tener al menos 6 caracteres",
+    "savePasswordAndContinue":  "Guardar contraseГ±a y continuar",
+    "passwordSetupFailed":  "No se pudo crear la contraseГ±a: {error}",
+    "@passwordSetupFailed":  {
+                                 "placeholders":  {
+                                                      "error":  {
+                                                                    "type":  "String"
+                                                                }
+                                                  }
+                             },
+    "account":  "Cuenta",
+    "editInfo":  "EDITAR INFORMACIР“вЂњN",
+    "fullName":  "Nombre",
+    "retry":  "Reintentar",
+    "accountSettings":  "ConfiguraciР“С–n de la cuenta",
+    "editProfile":  "Editar perfil",
+    "deleteAccount":  "Eliminar cuenta",
+    "deleteAccountConfirmTitle":  "Р’С—Eliminar cuenta?",
+    "deleteAccountConfirmMessage":  "Р’С—Seguro que quieres eliminar tu cuenta de forma permanente? Esta acciР“С–n no se puede deshacer.",
+    "deleteAccountSecondTitle":  "QuР“В© se eliminarР“РЋ",
+    "deleteAccountSecondMessage":  "Se eliminarР“РЋ de forma permanente de nuestros sistemas:\n\nРІР‚Сћ Tu cuenta y perfil\nРІР‚Сћ Todos los niР“В±os vinculados a tu cuenta\nРІР‚Сћ Todas las asignaciones a eventos, progreso en etapas, entradas y comidas\nРІР‚Сћ Fotos y demР“РЋs datos de los niР“В±os\nРІР‚Сћ Tu acceso a chats de eventos y notificaciones en la app\n\nAlgunos registros de pago o contables pueden conservarse cuando lo exija la ley.",
+    "deleteAccountContinue":  "Continuar",
+    "deleteAccountConfirmAction":  "Eliminar para siempre",
+    "deleteAccountWorking":  "Eliminando cuentaРІР‚В¦",
+    "save":  "Guardar",
+    "edit":  "Editar",
+    "role":  "Rol",
+    "myChildren":  "Mis hijos",
+    "addChild":  "Agregar hijo",
+    "noChildrenAddedYet":  "AР“С”n no has agregado hijos",
+    "ageLabel":  "Edad",
+    "settings":  "ConfiguraciР“С–n",
+    "aboutTheApp":  "Acerca de la app",
+    "aboutAppDisplayName":  "YoungFashionShow",
+    "aboutPublisherLine":  "YOUNGFASHIONSHOW",
+    "aboutVersionLabel":  "VERSIР“вЂњN",
+    "aboutReleaseDateLabel":  "FECHA DE LANZAMIENTO",
+    "aboutDevelopedByPrefix":  "Desarrollado por:",
+    "aboutDeveloperBrand":  "OWLSOLUTIONS",
+    "aboutLinkCouldNotOpen":  "No se pudo abrir el enlace.",
+    "appLanguage":  "Idioma de la app",
+    "unitsOfMeasurement":  "Unidades de medida",
+    "timeDisplayFormat":  "Formato de hora",
+    "timeFormat24Hour":  "24 horas",
+    "timeFormat12Hour":  "12 horas (AM/PM)",
+    "metricUnits":  "MР“В©trico (cm, kg)",
+    "imperialUnits":  "Americano (in, lb)",
+    "systemLanguage":  "Sistema",
+    "languageRussian":  "Ruso",
+    "languageEnglish":  "InglР“В©s",
+    "languageUkrainian":  "Ucraniano",
+    "languageSpanishUS":  "EspaР“В±ol (EE. UU.)",
+    "addChildTitle":  "Agregar hijo",
+    "firstName":  "Nombre",
+    "gender":  "GР“В©nero",
+    "genderBoy":  "NiР“В±o",
+    "genderGirl":  "NiР“В±a",
+    "lastName":  "Apellido",
+    "birthdate":  "Fecha de nacimiento",
+    "chooseDate":  "Elige la fecha",
+    "create":  "Crear",
+    "enterFirstName":  "Ingresa el nombre",
+    "mainPhoto":  "Foto principal",
+    "changePhoto":  "Cambiar",
+    "deletePhoto":  "Eliminar",
+    "addPhoto":  "Agregar foto",
+    "photoSaved":  "Foto guardada",
+    "photoDeleted":  "Foto eliminada",
+    "photoAdded":  "Foto agregada",
+    "extraPhotos":  "Fotos adicionales",
+    "cancel":  "Cancelar",
+    "clear":  "Limpiar",
+    "height":  "Estatura",
+    "weight":  "Peso",
+    "shoulders":  "Hombros",
+    "chest":  "Pecho",
+    "waist":  "Cintura",
+    "hips":  "Caderas",
+    "measurementLengthUnitCm":  "cm",
+    "measurementLengthUnitIn":  "in",
+    "currentParticipation":  "ParticipaciР“С–n actual",
+    "childSubscribedBrands":  "Marcas: {brands}",
+    "@childSubscribedBrands":  {
+                                   "placeholders":  {
+                                                        "brands":  {
+                                                                       "type":  "String"
+                                                                   }
+                                                    }
+                               },
+    "unknownError":  "Error desconocido",
+    "model":  "Modelo: {name}",
+    "@model":  {
+                   "placeholders":  {
+                                        "name":  {
+                                                     "type":  "String"
+                                                 }
+                                    }
+               },
+    "active":  "ACTIVO",
+    "familyLabel":  "FAMILY",
+    "familyJoinButton":  "UNIRSE A FAMILIA",
+    "familyJoinDialogHint":  "Ingresa el cГіdigo familiar de 6 dГ­gitos.",
+    "familyJoinAction":  "Unirse",
+    "familyJoinInvalidCode":  "Ingresa un cГіdigo vГЎlido de 6 dГ­gitos.",
+    "familyJoinSuccess":  "SuscripciГіn familiar conectada.",
+    "contractWarningTitle":  "Aviso",
+    "contractWarningFallbackText":  "Antes de comprar boletos, revisa y firma el contrato.",
+    "contractViewButton":  "Ver",
+    "contractPreviewTitle":  "Texto del contrato",
+    "contractSignButton":  "Firmar",
+    "contractSignatureTitle":  "AГ±ade la firma",
+    "contractSignedSuccess":  "Contrato firmado correctamente.",
+    "journeyProgress":  "PROGRESO",
+    "journeyPreparationPhase":  "FASE DE PREPARACIР“вЂњN",
+    "journeyMainEventTitle":  "EVENTO PRINCIPAL",
+    "journeyMainEventSubtitle":  "EXCLUSIVO PASARELA",
+    "stepOf":  "Paso {completed} de {total}",
+    "@stepOf":  {
+                    "placeholders":  {
+                                         "completed":  {
+                                                           "type":  "int"
+                                                       },
+                                         "total":  {
+                                                       "type":  "int"
+                                                   }
+                                     }
+                },
+    "next":  "Siguiente: {text}",
+    "@next":  {
+                  "placeholders":  {
+                                       "text":  {
+                                                    "type":  "String"
+                                                }
+                                   }
+              },
+    "viewProgress":  "VER PROGRESO",
+    "eventSettings":  "AJUSTES DEL EVENTO",
+    "homeEventCardMyEvent":  "MI EVENTO",
+    "homeEventCardRunwayJourney":  "RECORRIDO DE PASARELA",
+    "eventSettingsPlaceholder":  "Pronto verР“РЋs aquР“В­ los ajustes del evento.",
+    "eventSettingsConfigurationPortal":  "PORTAL DE CONFIGURACIР“вЂњN",
+    "eventSettingsMainHeadline":  "Ajustes del evento",
+    "eventSettingsFamilyButton":  "Familia",
+    "familyManageTitle":  "Familia",
+    "familyManageEnabled":  "Activar conexiones familiares",
+    "familyManageCodeLabel":  "CГіdigo familiar",
+    "familyManageRegenerateCode":  "Cambiar cГіdigo",
+    "familyManageConnectionsTitle":  "Conexiones familiares activas",
+    "familyManageNoConnections":  "AГєn no hay conexiones familiares activas.",
+    "familyManageUnknownUser":  "Usuario desconocido",
+    "eventSettingsLeaveFamilyButton":  "Desconectarse de la familia",
+    "eventSettingsLeaveFamilyConfirmTitle":  "ВїDesconectar acceso familiar?",
+    "eventSettingsLeaveFamilyConfirmText":  "PerderГЎs el acceso familiar al evento hasta volver a unirte con cГіdigo.",
+    "eventSettingsLeaveFamilySuccess":  "El acceso familiar se ha desconectado.",
+    "eventSettingsMealTitle":  "SelecciР“С–n de comidas",
+    "eventSettingsMealSubtitle":  "Elige un plato para el evento actual",
+    "eventSettingsMealCta":  "GESTIONAR MENР“С™",
+    "eventSettingsMealOrderedPcs":  "Pedido: {count} ud.",
+    "@eventSettingsMealOrderedPcs":  {
+                                         "placeholders":  {
+                                                              "count":  {
+                                                                            "type":  "int"
+                                                                        }
+                                                          }
+                                     },
+    "eventSettingsMealPurchasesListHeading":  "Pedidos realizados",
+    "eventSettingsMealPurchaseChildLine":  "NiГ±o/a: {name}",
+    "@eventSettingsMealPurchaseChildLine":  {
+                                                "placeholders":  {
+                                                                     "name":  {
+                                                                                  "type":  "String"
+                                                                              }
+                                                                 }
+                                            },
+    "mealPurchaseIssued":  "Entregado",
+    "mealPurchaseNotIssued":  "AГєn no entregado",
+    "eventSettingsRehearsalTitle":  "Reserva de ensayo",
+    "eventSettingsRehearsalSubtitle":  "Reserva tu plaza para el ensayo",
+    "eventSettingsRehearsalCta":  "RESERVAR",
+    "eventSettingsBrandRehearsalsHeading":  "Tus ensayos de marca",
+    "rehearsalModalTitle":  "Reserva de ensayo",
+    "rehearsalSelectDate":  "Elige fecha",
+    "rehearsalAvailableSlots":  "Horarios disponibles",
+    "rehearsalFreeLabel":  "Libres:",
+    "rehearsalNoSlotsConfigured":  "AР“С”n no hay franjas de ensayo para este evento.",
+    "rehearsalLoadError":  "No se pudieron cargar las franjas. IntР“В©ntalo de nuevo.",
+    "rehearsalBrandNotAssigned":  "No hay marca asignada para este niР“В±o. La reserva de ensayos no estР“РЋ disponible.",
+    "rehearsalFull":  "Completo",
+    "rehearsalConfirmBooking":  "Confirmar reserva",
+    "rehearsalBookingFooterNote":  "Si es posible, cambia con 24 h de antelaciР“С–n.",
+    "rehearsalBookedTitle":  "Ensayo reservado",
+    "rehearsalChangeBooking":  "Cambiar reserva",
+    "rehearsalProgramLabel":  "DescripciР“С–n",
+    "rehearsalArriveEarly":  "Llega 15 minutos antes.",
+    "rehearsalBookingSaved":  "Reserva guardada",
+    "rehearsalBookingError":  "No se pudo completar la reserva.",
+    "rehearsalSelectChild":  "NiР“В±o/a",
+    "rehearsalUpdateBooking":  "AГ±adir y actualizar reserva",
+    "rehearsalCancelChange":  "Cancelar",
+    "rehearsalChangeBookingLockedHint":  "El organizador cerrР“С– los cambios de reserva. Contacta soporte si necesitas ayuda.",
+    "rehearsalMilestoneTitle":  "Ensayo general",
+    "rehearsalBrandMilestoneTitle":  "Ensayo de marca: {brandName}",
+    "@rehearsalBrandMilestoneTitle":  {
+                                          "placeholders":  {
+                                                               "brandName":  {
+                                                                                 "type":  "String"
+                                                                             }
+                                                           }
+                                      },
+    "rehearsalBrandMilestoneShort":  "Ensayo de marca",
+    "rehearsalNextBookHint":  "Reserva tu ensayo en Ajustes del evento.",
+    "eventSettingsPackingTitle":  "Lista Р’В«No olvidesР’В»",
+    "eventSettingsPackingSubtitle":  "",
+    "eventSettingsPackingCta":  "VER LISTA",
+    "eventPackingLoadFailed":  "No se pudo cargar la informaciР“С–n. IntР“В©ntalo de nuevo.",
+    "eventPackingEmpty":  "AР“С”n no se aР“В±adiР“С– informaciР“С–n para este evento.",
+    "eventDescriptionTitle":  "InformaciР“С–n del evento",
+    "eventProgressShowGallery":  "GalerР“В­a",
+    "eventProgressCheckin":  "Check-in",
+    "eventProgressCheckinPrompt":  "Escanea para iniciar el evento",
+    "eventProgressCheckinUnavailable":  "El cР“С–digo de check-in aР“С”n no estР“РЋ disponible.",
+    "eventDescriptionLoadFailed":  "No se pudo cargar la descripciР“С–n. IntР“В©ntalo de nuevo.",
+    "eventDescriptionEmpty":  "AР“С”n no hay descripciР“С–n de texto para este evento.",
+    "eventSettingsBrandTitle":  "Zapatos y calcetines",
+    "eventSettingsBrandSubtitle":  "Consulta las recomendaciones de la marca para participar en el evento",
+    "eventSettingsBrandCta":  "VER GUР“РЊAS",
+    "brandRequirementsLoadFailed":  "No se pudieron cargar los requisitos de marca. IntР“В©ntalo de nuevo.",
+    "brandRequirementsEmpty":  "AР“С”n no se aР“В±adieron requisitos de marca para este evento.",
+    "brandRequirementsEmptyItem":  "AР“С”n no se aР“В±adiР“С– texto de requisitos para esta marca.",
+    "brandRequirementsPickBrandTitle":  "Elige una marca",
+    "brandRequirementsBrandNumber":  "Marca {brandId}",
+    "@brandRequirementsBrandNumber":  {
+                                          "placeholders":  {
+                                                               "brandId":  {
+                                                                               "type":  "int"
+                                                                           }
+                                                           }
+                                      },
+    "eventSettingsParkingTitle":  "Valet parking",
+    "eventSettingsParkingSubtitle":  "Abre tu pase de valet parking y el estado de llegada",
+    "eventSettingsParkingCta":  "ABRIR VALET PARKING",
+    "parkingChooseModeTitle":  "Modo valet parking",
+    "parkingChooseModeHint":  "Elige el estado de pantalla para probar el visual.",
+    "parkingModeInactive":  "INACTIVO",
+    "parkingModeActive":  "ACTIVO",
+    "parkingInactiveHeadline":  "VALET PARKING NO ACTIVO",
+    "parkingInactiveBody":  "EL VALET PARKING APARECERA AQUI DESPUES DE COMPRAR EL TICKET.",
+    "parkingInactiveBuyCta":  "COMPRAR",
+    "parkingInactiveVipBody":  "PARA VIP VALET PARKING вЂ” RESERVA UNA PLAZA PARA TU VEHICULO.",
+    "parkingInactiveVipBookCta":  "RESERVAR VALET PARKING",
+    "parkingPayForParkingCta":  "PAGAR VALET PARKING",
+    "parkingVipQuotaNextPaymentBody":  "YA HAS USADO LOS VALETS DE CORTESIA PARA ESTE EVENTO. AUN PUEDES ANADIR UNA PLAZA AL PRECIO REGULAR.",
+    "parkingFreeTicketsQuotaLine":  "Valet de cortesia: {used} de {quota} usados (quedan {remaining})",
+    "@parkingFreeTicketsQuotaLine":  {
+                                         "placeholders":  {
+                                                              "used":  {
+                                                                           "type":  "int"
+                                                                       },
+                                                              "quota":  {
+                                                                            "type":  "int"
+                                                                        },
+                                                              "remaining":  {
+                                                                                "type":  "int"
+                                                                            }
+                                                          }
+                                     },
+    "parkingActiveTicketLabel":  "TICKET",
+    "parkingTicketMock1":  "TICKET A1 В· MODELO",
+    "parkingTicketMock2":  "TICKET B7 В· INVITADO",
+    "parkingActiveValetLabel":  "VALET SERVICE",
+    "parkingActiveStatusLine":  "VALET PARKING ACTIVO",
+    "parkingActiveShowEntryPointCta":  "MOSTRAR PUNTO DE ENTRADA",
+    "parkingActiveCarLabel":  "AUTOMOVIL",
+    "parkingActiveRegistrationNumberLabel":  "NUMERO DE PLACA",
+    "parkingCreateTicketTitle":  "Crear ticket",
+    "parkingCreateEventLabel":  "Evento",
+    "parkingCreateAccountNameLabel":  "Nombre",
+    "parkingCreateCarModelLabel":  "MARCA Y MODELO",
+    "parkingCreateCarModelHint":  "Por ejemplo: Ford Mustang",
+    "parkingCreatePlateNumberLabel":  "NUMERO DE PLACA",
+    "parkingCreatePlateNumberHint":  "Por ejemplo: CA 7JXK921",
+    "parkingCreateRepeatPlateNumberLabel":  "REPITE EL NUMERO DE PLACA",
+    "parkingCreateRepeatPlateNumberHint":  "Vuelve a escribir el numero de placa",
+    "parkingCreatePlateNumberMismatch":  "Los numeros de placa no coinciden",
+    "parkingCreateBuyCta":  "COMPRAR",
+    "parkingCreateBookCta":  "RESERVAR VALET PARKING",
+    "parkingCheckoutInBrowser":  "Completa el pago en tu navegador.",
+    "parkingPurchasedWithoutPayment":  "Ticket comprado con exito.",
+    "parkingVipBooked":  "Valet parking VIP reservado con exito.",
+    "parkingCheckoutError":  "No se pudo iniciar el pago de valet parking. Intentalo de nuevo.",
+    "clientTicketServiceUnavailableTitle":  "Servicio no disponible",
+    "clientTicketServiceUnavailableBody":  "Este servicio de entradas no estГЎ activo ahora.",
+    "parkingActivePassLabel":  "CODIGO",
+    "eventSettingsChatTitle":  "Chat grupal",
+    "eventSettingsChatSubtitle":  "Chat grupal con participantes del grupo y managers",
+    "eventSettingsChatCta":  "ABRIR CHAT",
+    "chatRoomsLoadFailed":  "No se pudieron cargar las salas de chat. IntР“В©ntalo de nuevo.",
+    "chatNoRooms":  "AР“С”n no hay salas de chat para tus marcas en este evento.",
+    "chatNoMessagesYet":  "Sin mensajes todavР“В­a",
+    "chatLoadFailed":  "No se pudieron cargar los mensajes. IntР“В©ntalo de nuevo.",
+    "chatSendFailed":  "No se pudo enviar el mensaje. IntР“В©ntalo de nuevo.",
+    "chatMessagePlaceholder":  "Mensaje al grupo...",
+    "chatReply":  "Responder",
+    "chatReplyCancel":  "Cancelar",
+    "chatReplyingTo":  "Respondiendo a {name}",
+    "@chatReplyingTo":  {
+                            "placeholders":  {
+                                                 "name":  {
+                                                              "type":  "String"
+                                                          }
+                                             }
+                        },
+    "chatReplyPreviewPhoto":  "Foto",
+    "chatEdit":  "Editar",
+    "chatDelete":  "Eliminar",
+    "chatDeleteTitle":  "ВїEliminar mensaje?",
+    "chatDeleteMessageConfirm":  "Esta acciГіn no se puede deshacer.",
+    "chatDeleteFailed":  "No se pudo eliminar el mensaje. IntГ©ntalo de nuevo.",
+    "chatEditFailed":  "No se pudo editar el mensaje. IntГ©ntalo de nuevo.",
+    "chatEditingLabel":  "Editando mensaje",
+    "chatCancelEdit":  "Cancelar ediciГіn",
+    "eventSettingsChatMoreParticipants":  "+{count}",
+    "@eventSettingsChatMoreParticipants":  {
+                                               "placeholders":  {
+                                                                    "count":  {
+                                                                                  "type":  "int"
+                                                                              }
+                                                                }
+                                           },
+    "mealChoiceTitle":  "Elegir comida",
+    "mealSelectChildLabel":  "NiР“В±o/a",
+    "mealSelectDishLabel":  "Plato",
+    "mealSave":  "PEDIR",
+    "mealNoMealsConfigured":  "AР“С”n no hay platos para este evento.",
+    "mealSaved":  "Guardado",
+    "mealSaveError":  "No se pudo guardar. IntР“В©ntalo de nuevo.",
+    "mealOrdersClosed":  "El plazo para elegir el menР“С” estР“РЋ cerrado",
+    "mealPaid":  "Pagado",
+    "mealPaidDetail":  "El menР“С” de este evento estР“РЋ pagado.",
+    "mealPayInBrowser":  "Completa el pago en el navegador y vuelve a la app.",
+    "mealCheckoutError":  "No se pudo iniciar el pago. IntР“В©ntalo de nuevo.",
+    "mealAwaitingPayment":  "Pedido registrado вЂ” pendiente de pago",
+    "mealAwaitingPaymentDetail":  "Tu plato estГЎ guardado. Termina el pago en el navegador; el estado se actualizarГЎ cuando Stripe lo confirme.",
+    "mealPaymentContinue":  "Continuar pago",
+    "mealPaymentCancel":  "Cancelar pago",
+    "mealPaymentStartAgain":  "Iniciar pago de nuevo",
+    "mealPaymentCanceled":  "Pago cancelado. Puedes empezar de nuevo cuando quieras.",
+    "mealPaymentStatusLoadError":  "No se pudo cargar el estado del pago. IntГ©ntalo de nuevo.",
+    "noActiveEvents":  "No hay eventos activos",
+    "becomeModelTitle":  "Comienza la carrera de modelo de tu hijo hoy",
+    "becomeAModel":  "SER MODELO",
+    "latestHighlights":  "Р“С™ltimos destacados",
+    "viewAll":  "VER TODO",
+    "quickActions":  "Acciones rР“РЋpidas",
+    "fillOutApplication":  "Completar\nsolicitud",
+    "upcomingShows":  "PrР“С–ximos\nshows",
+    "manageKids":  "Mis\nhijos",
+    "navHome":  "Inicio",
+    "navEvents":  "Eventos",
+    "eventsYoutubeLiveButton":  "YouTube en directo",
+    "eventsYoutubeLiveInvalidUrl":  "No se pudo abrir este enlace de YouTube.",
+    "eventsYoutubeLiveOpenExternally":  "Abrir en YouTube",
+    "navProfile":  "Perfil",
+    "navInfo":  "InformaciР“С–n",
+    "continueButton":  "Continuar",
+    "loading":  "Cargando...",
+    "signOut":  "Cerrar sesiР“С–n",
+    "tokenValidNext":  "SesiР“С–n vР“РЋlida. Siguiente: Inicio.",
+    "homePageTitle":  "Inicio",
+    "youAreSignedIn":  "Has iniciado sesiР“С–n{name}.",
+    "@youAreSignedIn":  {
+                            "placeholders":  {
+                                                 "name":  {
+                                                              "type":  "String"
+                                                          }
+                                             }
+                        },
+    "yourRole":  "Tu rol: {role}",
+    "@yourRole":  {
+                      "placeholders":  {
+                                           "role":  {
+                                                        "type":  "String"
+                                                    }
+                                       }
+                  },
+    "phoneHint":  "+1234567890",
+    "enterValidEmailShort":  "Ingresa un correo vР“РЋlido",
+    "phoneMustStartWithPlusShort":  "El telР“В©fono debe comenzar con +",
+    "comingSoon":  "PrР“С–ximamente",
+    "hello":  "Hola",
+    "helloName":  "Hola, {name}",
+    "@helloName":  {
+                       "placeholders":  {
+                                            "name":  {
+                                                         "type":  "String"
+                                                     }
+                                        }
+                   },
+    "noRolesAssigned":  "AР“С”n no tienes roles asignados. Contacta a la administraciР“С–n.",
+    "signedInAs":  "SesiР“С–n iniciada como {name}",
+    "@signedInAs":  {
+                        "placeholders":  {
+                                             "name":  {
+                                                          "type":  "String"
+                                                      }
+                                         }
+                    },
+    "birthdateDialogTitle":  "Fecha de nacimiento",
+    "nextShowsTitle":  "PrР“С–ximos shows",
+    "nextShowsSeason":  "Temporada 2026",
+    "details":  "Detalles",
+    "contact":  "Contacto",
+    "registrationOpen":  "Registro abierto",
+    "myTicketsButton":  "MIS ENTRADAS",
+    "myTicketsTitle":  "Mis entradas",
+    "selectEventForTickets":  "Selecciona el evento",
+    "ticketsMomName":  "Nombre del padre/madre",
+    "ticketsEventDate":  "Fecha",
+    "ticketsOpenPdf":  "ABRIR",
+    "ticketsPdfUnavailable":  "PDF aР“С”n no disponible",
+    "ticketsBuy":  "COMPRAR ENTRADA",
+    "ticketsBuyNoLink":  "No hay enlace de compra. AР“В±ade la URL de la tienda de entradas para este evento en el admin o en la web en Info.",
+    "ticketsBuyCouldNotOpen":  "No se pudo abrir el enlace.",
+    "ticketsBuySubtitle":  "Asientos VIP y estР“РЋndar disponibles",
+    "ticketsBuyEmailHint":  "Tus entradas llegarР“РЋn al correo electrР“С–nico indicado al comprar el billete.",
+    "extraTicketButton":  "OPEN BAR",
+    "extraTicketSelectEventFirst":  "Selecciona primero un evento.",
+    "extraTicketNoActiveHeadline":  "NO HAY BEVERAGE PACKAGE ACTIVOS",
+    "extraTicketBuyCta":  "COMPRAR",
+    "extraTicketAccessOpen":  "ACCESO A BEVERAGE PACKAGE ABIERTO",
+    "extraTicketCheckoutInBrowser":  "Completa el pago en tu navegador.",
+    "extraTicketCheckoutError":  "No se pudo iniciar el pago de BEVERAGE PACKAGE. Intentalo de nuevo.",
+    "backstageTicketButton":  "BACKSTAGE PASS",
+    "backstageTicketSelectEventFirst":  "Selecciona primero un evento.",
+    "backstageTicketNoActiveHeadline":  "NO HAY BACKSTAGE PASS ACTIVOS",
+    "backstageTicketBuyCta":  "COMPRAR",
+    "backstageTicketAccessOpen":  "ACCESO A BACKSTAGE PASS ABIERTO",
+    "backstageTicketCheckoutInBrowser":  "Completa el pago en tu navegador.",
+    "backstageTicketCheckoutError":  "No se pudo iniciar el pago de BACKSTAGE PASS. Intentalo de nuevo.",
+    "ticketsNoEvents":  "AР“С”n no hay eventos con entradas",
+    "ticketsNoneForEvent":  "No hay entradas para este evento",
+    "ticketsLoadError":  "No se pudieron cargar las entradas",
+    "ticketsEventsLoadError":  "No se pudieron cargar los eventos",
+    "faqBrandCatalogTitle":  "Marcas de ropa",
+    "pdfViewerTitle":  "Entrada",
+    "contactFormLinkMissing":  "No hay enlace al formulario. AР“В±ade la URL en Ajustes generales de la app en el panel.",
+    "infoHubTitle":  "Centro de informaciР“С–n",
+    "infoMenuAboutYfs":  "Acerca de YFS",
+    "infoMenuGeneralFaq":  "FAQ general",
+    "infoMenuContactManager":  "Contactar al gestor",
+    "infoFooterBrand":  "YFS",
+    "infoFooterCopyright":  "Р’В© 2024 Young Fashion Series. Todos los derechos reservados.",
+    "parentProgressLabel":  "Progreso del padre/madre: {completed}/{total}",
+    "@parentProgressLabel":  {
+                                 "placeholders":  {
+                                                      "completed":  {
+                                                                        "type":  "int"
+                                                                    },
+                                                      "total":  {
+                                                                    "type":  "int"
+                                                                }
+                                                  }
+                             },
+    "appUpdateRequiredMessage":  "Actualiza la aplicaciР“С–n para continuar.",
+    "appUpdateButton":  "Actualizar aplicaciР“С–n",
+    "showAll":  "Ver todo",
+    "chatCouldNotPickPhoto":  "No se pudo elegir la foto",
+    "contactManagerIntro":  "Puedes dejar un mensaje sobre cualquier consulta; nos pondremos en contacto contigo lo antes posible.",
+    "contactManagerMessageLabel":  "Tu mensaje",
+    "contactManagerMessageRequired":  "Escribe tu mensaje",
+    "contactManagerSend":  "Enviar",
+    "contactManagerSent":  "Tu mensaje se ha enviado. Nos pondremos en contacto contigo pronto.",
+    "contactManagerSendFailed":  "No se pudo enviar. IntР“В©ntalo mР“РЋs tarde.",
+    "contactManagerServiceUnavailable":  "El contacto no estР“РЋ disponible temporalmente. IntР“В©ntalo mР“РЋs tarde.",
+    "close":  "Cerrar"
 }
-
-
-
-

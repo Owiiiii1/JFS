@@ -18,10 +18,6 @@ class AppSettings {
   static const _keyUnit = 'measurement_unit';
   static const _keyLanguage = 'app_language';
   static const _keyTimeDisplayFormat = 'time_display_format';
-  static const _keyStaffActiveEventId = 'staff_active_event_id';
-  static const _keyStaffActiveStageId = 'staff_active_stage_id';
-  static const _keyStaffActiveStageType = 'staff_active_stage_type';
-  static const _keyStaffSelectedRoleCode = 'staff_selected_role_code';
 
   /// Вызывается после смены языка, чтобы приложение перестроилось с новой локалью.
   static void Function()? onLocaleChanged;
@@ -29,10 +25,6 @@ class AppSettings {
   static MeasurementUnit _unit = MeasurementUnit.metric;
   static AppLanguage _language = AppLanguage.system;
   static TimeDisplayFormat _timeDisplayFormat = TimeDisplayFormat.h12;
-  static int? _staffActiveEventId;
-  static int? _staffActiveStageId;
-  static String? _staffActiveStageType;
-  static String? _staffSelectedRoleCode;
   static bool _loaded = false;
 
   static Future<void> load() async {
@@ -50,10 +42,6 @@ class AppSettings {
       (e) => e.name == prefs.getString(_keyTimeDisplayFormat),
       orElse: () => TimeDisplayFormat.h12,
     );
-    _staffActiveEventId = prefs.getInt(_keyStaffActiveEventId);
-    _staffActiveStageId = prefs.getInt(_keyStaffActiveStageId);
-    _staffActiveStageType = prefs.getString(_keyStaffActiveStageType)?.trim();
-    _staffSelectedRoleCode = prefs.getString(_keyStaffSelectedRoleCode)?.trim();
     _loaded = true;
   }
 
@@ -74,58 +62,6 @@ class AppSettings {
         return const Locale('es', 'US');
       case AppLanguage.system:
         return PlatformDispatcher.instance.locale;
-    }
-  }
-
-  /// ID выбранного активного ивента для сотрудника (null — не выбран).
-  static int? get staffActiveEventId => _staffActiveEventId;
-  static int? get staffActiveStageId => _staffActiveStageId;
-  static String? get staffActiveStageType => _staffActiveStageType;
-  static String? get staffSelectedRoleCode => _staffSelectedRoleCode;
-
-  static Future<void> setStaffActiveEventId(int? value) async {
-    if (_staffActiveEventId == value) return;
-    _staffActiveEventId = value;
-    final prefs = await SharedPreferences.getInstance();
-    if (value == null) {
-      await prefs.remove(_keyStaffActiveEventId);
-    } else {
-      await prefs.setInt(_keyStaffActiveEventId, value);
-    }
-  }
-
-  static Future<void> setStaffActiveStageId(int? value) async {
-    if (_staffActiveStageId == value) return;
-    _staffActiveStageId = value;
-    final prefs = await SharedPreferences.getInstance();
-    if (value == null) {
-      await prefs.remove(_keyStaffActiveStageId);
-    } else {
-      await prefs.setInt(_keyStaffActiveStageId, value);
-    }
-  }
-
-  static Future<void> setStaffActiveStageType(String? value) async {
-    final normalized = value?.trim();
-    if (_staffActiveStageType == normalized) return;
-    _staffActiveStageType = normalized;
-    final prefs = await SharedPreferences.getInstance();
-    if (normalized == null || normalized.isEmpty) {
-      await prefs.remove(_keyStaffActiveStageType);
-    } else {
-      await prefs.setString(_keyStaffActiveStageType, normalized);
-    }
-  }
-
-  static Future<void> setStaffSelectedRoleCode(String? value) async {
-    final normalized = value?.trim();
-    if (_staffSelectedRoleCode == normalized) return;
-    _staffSelectedRoleCode = normalized;
-    final prefs = await SharedPreferences.getInstance();
-    if (normalized == null || normalized.isEmpty) {
-      await prefs.remove(_keyStaffSelectedRoleCode);
-    } else {
-      await prefs.setString(_keyStaffSelectedRoleCode, normalized);
     }
   }
 

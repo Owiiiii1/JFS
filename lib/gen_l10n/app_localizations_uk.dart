@@ -9,194 +9,201 @@ class AppLocalizationsUk extends AppLocalizations {
   AppLocalizationsUk([String locale = 'uk']) : super(locale);
 
   @override
-  String get signIn => 'Увійти';
+  String get signIn => 'РЈРІС–Р№С‚Рё';
 
   @override
-  String get signUp => 'Реєстрація';
+  String get signUp => 'Р РµС”СЃС‚СЂР°С†С–СЏ';
 
   @override
-  String get email => 'Електронна пошта';
+  String get email => 'Р•Р»РµРєС‚СЂРѕРЅРЅР° РїРѕС€С‚Р°';
 
   @override
-  String get password => 'Пароль';
+  String get password => 'РџР°СЂРѕР»СЊ';
 
   @override
-  String get emailRequired => 'Введіть email';
+  String get emailRequired => 'Р’РІРµРґС–С‚СЊ email';
 
   @override
-  String get enterValidEmail => 'Введіть коректний email';
+  String get enterValidEmail => 'Р’РІРµРґС–С‚СЊ РєРѕСЂРµРєС‚РЅРёР№ email';
 
   @override
-  String get passwordRequired => 'Введіть пароль';
+  String get passwordRequired => 'Р’РІРµРґС–С‚СЊ РїР°СЂРѕР»СЊ';
 
   @override
-  String get hidePassword => 'Приховати пароль';
+  String get hidePassword => 'РџСЂРёС…РѕРІР°С‚Рё РїР°СЂРѕР»СЊ';
 
   @override
-  String get showPassword => 'Показати пароль';
+  String get showPassword => 'РџРѕРєР°Р·Р°С‚Рё РїР°СЂРѕР»СЊ';
 
   @override
   String signInFailed(String error) {
-    return 'Помилка входу: $error';
+    return 'РџРѕРјРёР»РєР° РІС…РѕРґСѓ: $error';
   }
 
   @override
   String get apiEndpointNotFoundHint =>
-      'Сервер не знайшов API (404). У збірці вкажіть корінь сайту без «/api» в кінці — застосунок сам звертається до /api/app/login. Якщо Laravel у підпапці, додайте шлях до каталогу public (наприклад https://example.com/myapp/public).';
+      'РЎРµСЂРІРµСЂ РЅРµ Р·РЅР°Р№С€РѕРІ API (404). РЈ Р·Р±С–СЂС†С– РІРєР°Р¶С–С‚СЊ РєРѕСЂС–РЅСЊ СЃР°Р№С‚Сѓ Р±РµР· В«/apiВ» РІ РєС–РЅС†С– вЂ” Р·Р°СЃС‚РѕСЃСѓРЅРѕРє СЃР°Рј Р·РІРµСЂС‚Р°С”С‚СЊСЃСЏ РґРѕ /api/app/login. РЇРєС‰Рѕ Laravel Сѓ РїС–РґРїР°РїС†С–, РґРѕРґР°Р№С‚Рµ С€Р»СЏС… РґРѕ РєР°С‚Р°Р»РѕРіСѓ public (РЅР°РїСЂРёРєР»Р°Рґ https://example.com/myapp/public).';
 
   @override
-  String get notificationsTitle => 'Сповіщення';
+  String get notificationsTitle => 'РЎРїРѕРІС–С‰РµРЅРЅСЏ';
 
   @override
   String get notificationsLoadFailed =>
-      'Не вдалося завантажити сповіщення. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё СЃРїРѕРІС–С‰РµРЅРЅСЏ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
-  String get notificationsEmpty => 'Поки немає сповіщень.';
+  String get notificationsEmpty => 'РџРѕРєРё РЅРµРјР°С” СЃРїРѕРІС–С‰РµРЅСЊ.';
 
   @override
-  String get notificationsNewMark => 'Нове';
+  String get notificationsNewMark => 'РќРѕРІРµ';
 
   @override
-  String get notificationDetailsTitle => 'Сповіщення';
+  String get notificationDetailsTitle => 'РЎРїРѕРІС–С‰РµРЅРЅСЏ';
 
   @override
-  String get createAccount => 'Створити обліковий запис';
+  String get createAccount => 'РЎС‚РІРѕСЂРёС‚Рё РѕР±Р»С–РєРѕРІРёР№ Р·Р°РїРёСЃ';
 
   @override
-  String get name => 'Ім\'я';
+  String get name => 'Р†Рј\'СЏ';
 
   @override
-  String get registerNameLabel => 'Введіть ім\'я та прізвище';
+  String get registerNameLabel =>
+      'Р’РІРµРґС–С‚СЊ С–Рј\'СЏ С‚Р° РїСЂС–Р·РІРёС‰Рµ';
 
   @override
-  String get nameRequired => 'Введіть ім\'я';
+  String get nameRequired => 'Р’РІРµРґС–С‚СЊ С–Рј\'СЏ';
 
   @override
-  String get phone => 'Телефон';
+  String get phone => 'РўРµР»РµС„РѕРЅ';
 
   @override
-  String get phoneRequired => 'Введіть телефон';
+  String get phoneRequired => 'Р’РІРµРґС–С‚СЊ С‚РµР»РµС„РѕРЅ';
 
   @override
-  String get phoneMustStartWithPlus => 'Телефон повинен починатися з +';
+  String get phoneMustStartWithPlus =>
+      'РўРµР»РµС„РѕРЅ РїРѕРІРёРЅРµРЅ РїРѕС‡РёРЅР°С‚РёСЃСЏ Р· +';
 
   @override
-  String get enterValidPhone => 'Введіть коректний номер телефону';
+  String get enterValidPhone =>
+      'Р’РІРµРґС–С‚СЊ РєРѕСЂРµРєС‚РЅРёР№ РЅРѕРјРµСЂ С‚РµР»РµС„РѕРЅСѓ';
 
   @override
-  String get confirmPassword => 'Підтвердіть пароль';
+  String get confirmPassword => 'РџС–РґС‚РІРµСЂРґС–С‚СЊ РїР°СЂРѕР»СЊ';
 
   @override
-  String get passwordsDoNotMatch => 'Паролі не збігаються';
+  String get passwordsDoNotMatch => 'РџР°СЂРѕР»С– РЅРµ Р·Р±С–РіР°СЋС‚СЊСЃСЏ';
 
   @override
-  String get passwordMinLength => 'Пароль не менше 8 символів';
+  String get passwordMinLength =>
+      'РџР°СЂРѕР»СЊ РЅРµ РјРµРЅС€Рµ 8 СЃРёРјРІРѕР»С–РІ';
 
   @override
-  String get atLeast8Chars => 'Не менше 8 символів';
+  String get atLeast8Chars => 'РќРµ РјРµРЅС€Рµ 8 СЃРёРјРІРѕР»С–РІ';
 
   @override
-  String get backToSignIn => 'Повернутися до входу';
+  String get backToSignIn => 'РџРѕРІРµСЂРЅСѓС‚РёСЃСЏ РґРѕ РІС…РѕРґСѓ';
 
   @override
   String registrationFailed(String error) {
-    return 'Помилка реєстрації: $error';
+    return 'РџРѕРјРёР»РєР° СЂРµС”СЃС‚СЂР°С†С–С—: $error';
   }
 
   @override
   String get loginPasswordOptionalHint =>
-      'Якщо профіль створив адмін або імпорт, залиште пароль порожнім і продовжуйте.';
+      'РЇРєС‰Рѕ РїСЂРѕС„С–Р»СЊ СЃС‚РІРѕСЂРёРІ Р°РґРјС–РЅ Р°Р±Рѕ С–РјРїРѕСЂС‚, Р·Р°Р»РёС€С‚Рµ РїР°СЂРѕР»СЊ РїРѕСЂРѕР¶РЅС–Рј С– РїСЂРѕРґРѕРІР¶СѓР№С‚Рµ.';
 
   @override
-  String get setPasswordTitle => 'Створення пароля';
+  String get setPasswordTitle => 'РЎС‚РІРѕСЂРµРЅРЅСЏ РїР°СЂРѕР»СЏ';
 
   @override
   String setPasswordSubtitle(String email) {
-    return 'Створіть пароль для $email';
+    return 'РЎС‚РІРѕСЂС–С‚СЊ РїР°СЂРѕР»СЊ РґР»СЏ $email';
   }
 
   @override
-  String get passwordSetupMinLength => 'Пароль має бути не менше 6 символів';
+  String get passwordSetupMinLength =>
+      'РџР°СЂРѕР»СЊ РјР°С” Р±СѓС‚Рё РЅРµ РјРµРЅС€Рµ 6 СЃРёРјРІРѕР»С–РІ';
 
   @override
-  String get savePasswordAndContinue => 'Зберегти пароль і продовжити';
+  String get savePasswordAndContinue =>
+      'Р—Р±РµСЂРµРіС‚Рё РїР°СЂРѕР»СЊ С– РїСЂРѕРґРѕРІР¶РёС‚Рё';
 
   @override
   String passwordSetupFailed(String error) {
-    return 'Не вдалося створити пароль: $error';
+    return 'РќРµ РІРґР°Р»РѕСЃСЏ СЃС‚РІРѕСЂРёС‚Рё РїР°СЂРѕР»СЊ: $error';
   }
 
   @override
-  String get account => 'Обліковий запис';
+  String get account => 'РћР±Р»С–РєРѕРІРёР№ Р·Р°РїРёСЃ';
 
   @override
-  String get editInfo => 'РЕДАГУВАТИ';
+  String get editInfo => 'Р Р•Р”РђР“РЈР’РђРўР';
 
   @override
-  String get fullName => 'Ім\'я';
+  String get fullName => 'Р†Рј\'СЏ';
 
   @override
-  String get retry => 'Повторити';
+  String get retry => 'РџРѕРІС‚РѕСЂРёС‚Рё';
 
   @override
-  String get accountSettings => 'Налаштування облікового запису';
+  String get accountSettings =>
+      'РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РѕР±Р»С–РєРѕРІРѕРіРѕ Р·Р°РїРёСЃСѓ';
 
   @override
-  String get editProfile => 'Редагувати профіль';
+  String get editProfile => 'Р РµРґР°РіСѓРІР°С‚Рё РїСЂРѕС„С–Р»СЊ';
 
   @override
-  String get deleteAccount => 'Видалити акаунт';
+  String get deleteAccount => 'Р’РёРґР°Р»РёС‚Рё Р°РєР°СѓРЅС‚';
 
   @override
-  String get deleteAccountConfirmTitle => 'Видалити акаунт?';
+  String get deleteAccountConfirmTitle => 'Р’РёРґР°Р»РёС‚Рё Р°РєР°СѓРЅС‚?';
 
   @override
   String get deleteAccountConfirmMessage =>
-      'Ви впевнені, що хочете назавжди видалити акаунт? Цю дію неможливо скасувати.';
+      'Р’Рё РІРїРµРІРЅРµРЅС–, С‰Рѕ С…РѕС‡РµС‚Рµ РЅР°Р·Р°РІР¶РґРё РІРёРґР°Р»РёС‚Рё Р°РєР°СѓРЅС‚? Р¦СЋ РґС–СЋ РЅРµРјРѕР¶Р»РёРІРѕ СЃРєР°СЃСѓРІР°С‚Рё.';
 
   @override
-  String get deleteAccountSecondTitle => 'Що буде видалено';
+  String get deleteAccountSecondTitle => 'Р©Рѕ Р±СѓРґРµ РІРёРґР°Р»РµРЅРѕ';
 
   @override
   String get deleteAccountSecondMessage =>
-      'Буде безповоротно видалено з наших систем:\n\n• ваш акаунт і профіль;\n• усі діти, прив’язані до акаунту;\n• усі призначення на заходи, прогрес по етапах, квитки та вибір обідів;\n• фотографії та інші дані дітей;\n• участь у чатах заходів і сповіщення в застосунку.\n\nДеякі платіжні або бухгалтерські записи можуть зберігатися, якщо цього вимагає закон.';
+      'Р‘СѓРґРµ Р±РµР·РїРѕРІРѕСЂРѕС‚РЅРѕ РІРёРґР°Р»РµРЅРѕ Р· РЅР°С€РёС… СЃРёСЃС‚РµРј:\n\nвЂў РІР°С€ Р°РєР°СѓРЅС‚ С– РїСЂРѕС„С–Р»СЊ;\nвЂў СѓСЃС– РґС–С‚Рё, РїСЂРёРІвЂ™СЏР·Р°РЅС– РґРѕ Р°РєР°СѓРЅС‚Сѓ;\nвЂў СѓСЃС– РїСЂРёР·РЅР°С‡РµРЅРЅСЏ РЅР° Р·Р°С…РѕРґРё, РїСЂРѕРіСЂРµСЃ РїРѕ РµС‚Р°РїР°С…, РєРІРёС‚РєРё С‚Р° РІРёР±С–СЂ РѕР±С–РґС–РІ;\nвЂў С„РѕС‚РѕРіСЂР°С„С–С— С‚Р° С–РЅС€С– РґР°РЅС– РґС–С‚РµР№;\nвЂў СѓС‡Р°СЃС‚СЊ Сѓ С‡Р°С‚Р°С… Р·Р°С…РѕРґС–РІ С– СЃРїРѕРІС–С‰РµРЅРЅСЏ РІ Р·Р°СЃС‚РѕСЃСѓРЅРєСѓ.\n\nР”РµСЏРєС– РїР»Р°С‚С–Р¶РЅС– Р°Р±Рѕ Р±СѓС…РіР°Р»С‚РµСЂСЃСЊРєС– Р·Р°РїРёСЃРё РјРѕР¶СѓС‚СЊ Р·Р±РµСЂС–РіР°С‚РёСЃСЏ, СЏРєС‰Рѕ С†СЊРѕРіРѕ РІРёРјР°РіР°С” Р·Р°РєРѕРЅ.';
 
   @override
-  String get deleteAccountContinue => 'Далі';
+  String get deleteAccountContinue => 'Р”Р°Р»С–';
 
   @override
-  String get deleteAccountConfirmAction => 'Видалити назавжди';
+  String get deleteAccountConfirmAction => 'Р’РёРґР°Р»РёС‚Рё РЅР°Р·Р°РІР¶РґРё';
 
   @override
-  String get deleteAccountWorking => 'Видалення акаунта…';
+  String get deleteAccountWorking => 'Р’РёРґР°Р»РµРЅРЅСЏ Р°РєР°СѓРЅС‚Р°вЂ¦';
 
   @override
-  String get save => 'Зберегти';
+  String get save => 'Р—Р±РµСЂРµРіС‚Рё';
 
   @override
-  String get edit => 'Редагувати';
+  String get edit => 'Р РµРґР°РіСѓРІР°С‚Рё';
 
   @override
-  String get role => 'Роль';
+  String get role => 'Р РѕР»СЊ';
 
   @override
-  String get myChildren => 'Мої діти';
+  String get myChildren => 'РњРѕС— РґС–С‚Рё';
 
   @override
-  String get addChild => 'Додати дитину';
+  String get addChild => 'Р”РѕРґР°С‚Рё РґРёС‚РёРЅСѓ';
 
   @override
-  String get noChildrenAddedYet => 'Дітей поки не додано';
+  String get noChildrenAddedYet => 'Р”С–С‚РµР№ РїРѕРєРё РЅРµ РґРѕРґР°РЅРѕ';
 
   @override
-  String get ageLabel => 'Вік';
+  String get ageLabel => 'Р’С–Рє';
 
   @override
-  String get settings => 'Налаштування';
+  String get settings => 'РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ';
 
   @override
-  String get aboutTheApp => 'Про застосунок';
+  String get aboutTheApp => 'РџСЂРѕ Р·Р°СЃС‚РѕСЃСѓРЅРѕРє';
 
   @override
   String get aboutAppDisplayName => 'YoungFashionShow';
@@ -205,678 +212,720 @@ class AppLocalizationsUk extends AppLocalizations {
   String get aboutPublisherLine => 'YOUNGFASHIONSHOW';
 
   @override
-  String get aboutVersionLabel => 'ВЕРСІЯ';
+  String get aboutVersionLabel => 'Р’Р•Р РЎР†РЇ';
 
   @override
-  String get aboutReleaseDateLabel => 'ДАТА ВИПУСКУ';
+  String get aboutReleaseDateLabel => 'Р”РђРўРђ Р’РРџРЈРЎРљРЈ';
 
   @override
-  String get aboutDevelopedByPrefix => 'РОЗРОБЛЕНО:';
+  String get aboutDevelopedByPrefix => 'Р РћР—Р РћР‘Р›Р•РќРћ:';
 
   @override
   String get aboutDeveloperBrand => 'OWLSOLUTIONS';
 
   @override
-  String get aboutLinkCouldNotOpen => 'Не вдалося відкрити посилання.';
+  String get aboutLinkCouldNotOpen =>
+      'РќРµ РІРґР°Р»РѕСЃСЏ РІС–РґРєСЂРёС‚Рё РїРѕСЃРёР»Р°РЅРЅСЏ.';
 
   @override
-  String get appLanguage => 'Мова застосунку';
+  String get appLanguage => 'РњРѕРІР° Р·Р°СЃС‚РѕСЃСѓРЅРєСѓ';
 
   @override
-  String get unitsOfMeasurement => 'Одиниці виміру';
+  String get unitsOfMeasurement => 'РћРґРёРЅРёС†С– РІРёРјС–СЂСѓ';
 
   @override
-  String get timeDisplayFormat => 'Формат часу';
+  String get timeDisplayFormat => 'Р¤РѕСЂРјР°С‚ С‡Р°СЃСѓ';
 
   @override
-  String get timeFormat24Hour => '24-годинний';
+  String get timeFormat24Hour => '24-РіРѕРґРёРЅРЅРёР№';
 
   @override
-  String get timeFormat12Hour => '12-годинний (AM/PM)';
+  String get timeFormat12Hour => '12-РіРѕРґРёРЅРЅРёР№ (AM/PM)';
 
   @override
-  String get metricUnits => 'Метричні (см, кг)';
+  String get metricUnits => 'РњРµС‚СЂРёС‡РЅС– (СЃРј, РєРі)';
 
   @override
-  String get imperialUnits => 'Американські (in, lb)';
+  String get imperialUnits => 'РђРјРµСЂРёРєР°РЅСЃСЊРєС– (in, lb)';
 
   @override
-  String get systemLanguage => 'Системна';
+  String get systemLanguage => 'РЎРёСЃС‚РµРјРЅР°';
 
   @override
-  String get languageRussian => 'Русский';
+  String get languageRussian => 'Р СѓСЃСЃРєРёР№';
 
   @override
-  String get languageEnglish => 'Англійська';
+  String get languageEnglish => 'РђРЅРіР»С–Р№СЃСЊРєР°';
 
   @override
-  String get languageUkrainian => 'Українська';
+  String get languageUkrainian => 'РЈРєСЂР°С—РЅСЃСЊРєР°';
 
   @override
-  String get languageSpanishUS => 'Іспанська (США)';
+  String get languageSpanishUS => 'Р†СЃРїР°РЅСЃСЊРєР° (РЎРЁРђ)';
 
   @override
-  String get addChildTitle => 'Додати дитину';
+  String get addChildTitle => 'Р”РѕРґР°С‚Рё РґРёС‚РёРЅСѓ';
 
   @override
-  String get firstName => 'Ім\'я';
+  String get firstName => 'Р†Рј\'СЏ';
 
   @override
-  String get gender => 'Стать';
+  String get gender => 'РЎС‚Р°С‚СЊ';
 
   @override
-  String get genderBoy => 'Хлопчик';
+  String get genderBoy => 'РҐР»РѕРїС‡РёРє';
 
   @override
-  String get genderGirl => 'Дівчинка';
+  String get genderGirl => 'Р”С–РІС‡РёРЅРєР°';
 
   @override
-  String get lastName => 'Прізвище';
+  String get lastName => 'РџСЂС–Р·РІРёС‰Рµ';
 
   @override
-  String get birthdate => 'Дата народження';
+  String get birthdate => 'Р”Р°С‚Р° РЅР°СЂРѕРґР¶РµРЅРЅСЏ';
 
   @override
-  String get chooseDate => 'Оберіть дату';
+  String get chooseDate => 'РћР±РµСЂС–С‚СЊ РґР°С‚Сѓ';
 
   @override
-  String get create => 'Створити';
+  String get create => 'РЎС‚РІРѕСЂРёС‚Рё';
 
   @override
-  String get enterFirstName => 'Введіть ім\'я';
+  String get enterFirstName => 'Р’РІРµРґС–С‚СЊ С–Рј\'СЏ';
 
   @override
-  String get mainPhoto => 'Основне фото';
+  String get mainPhoto => 'РћСЃРЅРѕРІРЅРµ С„РѕС‚Рѕ';
 
   @override
-  String get changePhoto => 'Змінити';
+  String get changePhoto => 'Р—РјС–РЅРёС‚Рё';
 
   @override
-  String get deletePhoto => 'Видалити';
+  String get deletePhoto => 'Р’РёРґР°Р»РёС‚Рё';
 
   @override
-  String get addPhoto => 'Додати фото';
+  String get addPhoto => 'Р”РѕРґР°С‚Рё С„РѕС‚Рѕ';
 
   @override
-  String get photoSaved => 'Фото збережено';
+  String get photoSaved => 'Р¤РѕС‚Рѕ Р·Р±РµСЂРµР¶РµРЅРѕ';
 
   @override
-  String get photoDeleted => 'Фото видалено';
+  String get photoDeleted => 'Р¤РѕС‚Рѕ РІРёРґР°Р»РµРЅРѕ';
 
   @override
-  String get photoAdded => 'Фото додано';
+  String get photoAdded => 'Р¤РѕС‚Рѕ РґРѕРґР°РЅРѕ';
 
   @override
-  String get extraPhotos => 'Додаткові фото';
+  String get extraPhotos => 'Р”РѕРґР°С‚РєРѕРІС– С„РѕС‚Рѕ';
 
   @override
-  String get cancel => 'Скасувати';
+  String get cancel => 'РЎРєР°СЃСѓРІР°С‚Рё';
 
   @override
-  String get clear => 'Очистити';
+  String get clear => 'РћС‡РёСЃС‚РёС‚Рё';
 
   @override
-  String get height => 'Зріст';
+  String get height => 'Р—СЂС–СЃС‚';
 
   @override
-  String get weight => 'Вага';
+  String get weight => 'Р’Р°РіР°';
 
   @override
-  String get shoulders => 'Плечі';
+  String get shoulders => 'РџР»РµС‡С–';
 
   @override
-  String get chest => 'Груди';
+  String get chest => 'Р“СЂСѓРґРё';
 
   @override
-  String get waist => 'Талія';
+  String get waist => 'РўР°Р»С–СЏ';
 
   @override
-  String get hips => 'Стегна';
+  String get hips => 'РЎС‚РµРіРЅР°';
 
   @override
-  String get measurementLengthUnitCm => 'см';
+  String get measurementLengthUnitCm => 'СЃРј';
 
   @override
-  String get measurementLengthUnitIn => 'дюйм';
+  String get measurementLengthUnitIn => 'РґСЋР№Рј';
 
   @override
-  String get currentParticipation => 'Поточна участь';
+  String get currentParticipation => 'РџРѕС‚РѕС‡РЅР° СѓС‡Р°СЃС‚СЊ';
 
   @override
   String childSubscribedBrands(String brands) {
-    return 'Бренди: $brands';
+    return 'Р‘СЂРµРЅРґРё: $brands';
   }
 
   @override
-  String get unknownError => 'Невідома помилка';
+  String get unknownError => 'РќРµРІС–РґРѕРјР° РїРѕРјРёР»РєР°';
 
   @override
   String model(String name) {
-    return 'Модель: $name';
+    return 'РњРѕРґРµР»СЊ: $name';
   }
 
   @override
-  String get active => 'АКТИВНО';
+  String get active => 'РђРљРўРР’РќРћ';
 
   @override
   String get familyLabel => 'FAMILY';
 
   @override
-  String get familyJoinButton => 'ПРИЄДНАТИСЯ ДО СІМʼЇ';
+  String get familyJoinButton => 'РџР РР„Р”РќРђРўРРЎРЇ Р”Рћ РЎР†РњКјР‡';
 
   @override
-  String get familyJoinDialogHint => 'Введіть 6-значний сімейний код.';
+  String get familyJoinDialogHint =>
+      'Р’РІРµРґС–С‚СЊ 6-Р·РЅР°С‡РЅРёР№ СЃС–РјРµР№РЅРёР№ РєРѕРґ.';
 
   @override
-  String get familyJoinAction => 'Підключитися';
+  String get familyJoinAction => 'РџС–РґРєР»СЋС‡РёС‚РёСЃСЏ';
 
   @override
-  String get familyJoinInvalidCode => 'Введіть коректний 6-значний код.';
+  String get familyJoinInvalidCode =>
+      'Р’РІРµРґС–С‚СЊ РєРѕСЂРµРєС‚РЅРёР№ 6-Р·РЅР°С‡РЅРёР№ РєРѕРґ.';
 
   @override
-  String get familyJoinSuccess => 'Сімейну підписку підключено.';
+  String get familyJoinSuccess =>
+      'РЎС–РјРµР№РЅСѓ РїС–РґРїРёСЃРєСѓ РїС–РґРєР»СЋС‡РµРЅРѕ.';
 
   @override
-  String get contractWarningTitle => 'Попередження';
+  String get contractWarningTitle => 'РџРѕРїРµСЂРµРґР¶РµРЅРЅСЏ';
 
   @override
   String get contractWarningFallbackText =>
-      'Перед купівлею квитків ознайомтесь і підпишіть договір.';
+      'РџРµСЂРµРґ РєСѓРїС–РІР»РµСЋ РєРІРёС‚РєС–РІ РѕР·РЅР°Р№РѕРјС‚РµСЃСЊ С– РїС–РґРїРёС€С–С‚СЊ РґРѕРіРѕРІС–СЂ.';
 
   @override
-  String get contractViewButton => 'Переглянути';
+  String get contractViewButton => 'РџРµСЂРµРіР»СЏРЅСѓС‚Рё';
 
   @override
-  String get contractPreviewTitle => 'Текст договору';
+  String get contractPreviewTitle => 'РўРµРєСЃС‚ РґРѕРіРѕРІРѕСЂСѓ';
 
   @override
-  String get contractSignButton => 'Підписати';
+  String get contractSignButton => 'РџС–РґРїРёСЃР°С‚Рё';
 
   @override
-  String get contractSignatureTitle => 'Поставте підпис';
+  String get contractSignatureTitle => 'РџРѕСЃС‚Р°РІС‚Рµ РїС–РґРїРёСЃ';
 
   @override
-  String get contractSignedSuccess => 'Договір успішно підписано.';
+  String get contractSignedSuccess =>
+      'Р”РѕРіРѕРІС–СЂ СѓСЃРїС–С€РЅРѕ РїС–РґРїРёСЃР°РЅРѕ.';
 
   @override
-  String get journeyProgress => 'ПРОГРЕС';
+  String get journeyProgress => 'РџР РћР“Р Р•РЎ';
 
   @override
-  String get journeyPreparationPhase => 'ПІДГОТОВКА';
+  String get journeyPreparationPhase => 'РџР†Р”Р“РћРўРћР’РљРђ';
 
   @override
-  String get journeyMainEventTitle => 'ОСНОВНА ПОДІЯ';
+  String get journeyMainEventTitle => 'РћРЎРќРћР’РќРђ РџРћР”Р†РЇ';
 
   @override
-  String get journeyMainEventSubtitle => 'ГОЛОВНЕ ШОУ';
+  String get journeyMainEventSubtitle => 'Р“РћР›РћР’РќР• РЁРћРЈ';
 
   @override
   String stepOf(int completed, int total) {
-    return 'Крок $completed з $total';
+    return 'РљСЂРѕРє $completed Р· $total';
   }
 
   @override
   String next(String text) {
-    return 'Далі: $text';
+    return 'Р”Р°Р»С–: $text';
   }
 
   @override
-  String get viewProgress => 'ПЕРЕГЛЯНУТИ ПРОГРЕС';
+  String get viewProgress => 'РџР•Р Р•Р“Р›РЇРќРЈРўР РџР РћР“Р Р•РЎ';
 
   @override
-  String get eventSettings => 'НАЛАШТУВАННЯ ІВЕНТУ';
+  String get eventSettings => 'РќРђР›РђРЁРўРЈР’РђРќРќРЇ Р†Р’Р•РќРўРЈ';
 
   @override
-  String get homeEventCardMyEvent => 'МІЙ ІВЕНТ';
+  String get homeEventCardMyEvent => 'РњР†Р™ Р†Р’Р•РќРў';
 
   @override
-  String get homeEventCardRunwayJourney => 'ШЛЯХ НА ПОДІУМ';
+  String get homeEventCardRunwayJourney => 'РЁР›РЇРҐ РќРђ РџРћР”Р†РЈРњ';
 
   @override
   String get eventSettingsPlaceholder =>
-      'Тут незабаром з’являться налаштування івенту.';
+      'РўСѓС‚ РЅРµР·Р°Р±Р°СЂРѕРј Р·вЂ™СЏРІР»СЏС‚СЊСЃСЏ РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ С–РІРµРЅС‚Сѓ.';
 
   @override
-  String get eventSettingsConfigurationPortal => 'ПОРТАЛ НАЛАШТУВАНЬ';
+  String get eventSettingsConfigurationPortal =>
+      'РџРћР РўРђР› РќРђР›РђРЁРўРЈР’РђРќР¬';
 
   @override
-  String get eventSettingsMainHeadline => 'Налаштування івенту';
+  String get eventSettingsMainHeadline =>
+      'РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ С–РІРµРЅС‚Сѓ';
 
   @override
-  String get eventSettingsFamilyButton => 'Сімʼя';
+  String get eventSettingsFamilyButton => 'РЎС–РјКјСЏ';
 
   @override
-  String get familyManageTitle => 'Сімʼя';
+  String get familyManageTitle => 'РЎС–РјКјСЏ';
 
   @override
-  String get familyManageEnabled => 'Активувати сімейні підключення';
+  String get familyManageEnabled =>
+      'РђРєС‚РёРІСѓРІР°С‚Рё СЃС–РјРµР№РЅС– РїС–РґРєР»СЋС‡РµРЅРЅСЏ';
 
   @override
-  String get familyManageCodeLabel => 'Сімейний код';
+  String get familyManageCodeLabel => 'РЎС–РјРµР№РЅРёР№ РєРѕРґ';
 
   @override
-  String get familyManageRegenerateCode => 'Змінити код';
+  String get familyManageRegenerateCode => 'Р—РјС–РЅРёС‚Рё РєРѕРґ';
 
   @override
-  String get familyManageConnectionsTitle => 'Активні сімейні підключення';
+  String get familyManageConnectionsTitle =>
+      'РђРєС‚РёРІРЅС– СЃС–РјРµР№РЅС– РїС–РґРєР»СЋС‡РµРЅРЅСЏ';
 
   @override
   String get familyManageNoConnections =>
-      'Активних сімейних підключень поки немає.';
+      'РђРєС‚РёРІРЅРёС… СЃС–РјРµР№РЅРёС… РїС–РґРєР»СЋС‡РµРЅСЊ РїРѕРєРё РЅРµРјР°С”.';
 
   @override
-  String get familyManageUnknownUser => 'Невідомий користувач';
+  String get familyManageUnknownUser =>
+      'РќРµРІС–РґРѕРјРёР№ РєРѕСЂРёСЃС‚СѓРІР°С‡';
 
   @override
-  String get eventSettingsLeaveFamilyButton => 'Відключитися від сімʼї';
+  String get eventSettingsLeaveFamilyButton =>
+      'Р’С–РґРєР»СЋС‡РёС‚РёСЃСЏ РІС–Рґ СЃС–РјКјС—';
 
   @override
   String get eventSettingsLeaveFamilyConfirmTitle =>
-      'Відключити сімейний доступ?';
+      'Р’С–РґРєР»СЋС‡РёС‚Рё СЃС–РјРµР№РЅРёР№ РґРѕСЃС‚СѓРї?';
 
   @override
   String get eventSettingsLeaveFamilyConfirmText =>
-      'Ви втратите сімейний доступ до івенту, доки не підключитесь знову за кодом.';
+      'Р’Рё РІС‚СЂР°С‚РёС‚Рµ СЃС–РјРµР№РЅРёР№ РґРѕСЃС‚СѓРї РґРѕ С–РІРµРЅС‚Сѓ, РґРѕРєРё РЅРµ РїС–РґРєР»СЋС‡РёС‚РµСЃСЊ Р·РЅРѕРІСѓ Р·Р° РєРѕРґРѕРј.';
 
   @override
   String get eventSettingsLeaveFamilySuccess =>
-      'Сімейне підключення відключено.';
+      'РЎС–РјРµР№РЅРµ РїС–РґРєР»СЋС‡РµРЅРЅСЏ РІС–РґРєР»СЋС‡РµРЅРѕ.';
 
   @override
-  String get eventSettingsMealTitle => 'Вибір харчування';
+  String get eventSettingsMealTitle => 'Р’РёР±С–СЂ С…Р°СЂС‡СѓРІР°РЅРЅСЏ';
 
   @override
-  String get eventSettingsMealSubtitle => 'Оберіть страву на поточний івент';
+  String get eventSettingsMealSubtitle =>
+      'РћР±РµСЂС–С‚СЊ СЃС‚СЂР°РІСѓ РЅР° РїРѕС‚РѕС‡РЅРёР№ С–РІРµРЅС‚';
 
   @override
-  String get eventSettingsMealCta => 'МЕНЮ';
+  String get eventSettingsMealCta => 'РњР•РќР®';
 
   @override
   String eventSettingsMealOrderedPcs(int count) {
-    return 'Замовлено: $count шт.';
+    return 'Р—Р°РјРѕРІР»РµРЅРѕ: $count С€С‚.';
   }
 
   @override
-  String get eventSettingsMealPurchasesListHeading => 'Оформлені замовлення';
+  String get eventSettingsMealPurchasesListHeading =>
+      'РћС„РѕСЂРјР»РµРЅС– Р·Р°РјРѕРІР»РµРЅРЅСЏ';
 
   @override
   String eventSettingsMealPurchaseChildLine(String name) {
-    return 'Дитина: $name';
+    return 'Р”РёС‚РёРЅР°: $name';
   }
 
   @override
-  String get mealPurchaseIssued => 'Видано';
+  String get mealPurchaseIssued => 'Р’РёРґР°РЅРѕ';
 
   @override
-  String get mealPurchaseNotIssued => 'Ще не видано';
+  String get mealPurchaseNotIssued => 'Р©Рµ РЅРµ РІРёРґР°РЅРѕ';
 
   @override
-  String get eventSettingsRehearsalTitle => 'Запис на репетицію';
+  String get eventSettingsRehearsalTitle =>
+      'Р—Р°РїРёСЃ РЅР° СЂРµРїРµС‚РёС†С–СЋ';
 
   @override
-  String get eventSettingsRehearsalSubtitle => 'Забронюйте місце на репетицію';
+  String get eventSettingsRehearsalSubtitle =>
+      'Р—Р°Р±СЂРѕРЅСЋР№С‚Рµ РјС–СЃС†Рµ РЅР° СЂРµРїРµС‚РёС†С–СЋ';
 
   @override
-  String get eventSettingsRehearsalCta => 'ЗАПИСАТИСЯ';
+  String get eventSettingsRehearsalCta => 'Р—РђРџРРЎРђРўРРЎРЇ';
 
   @override
-  String get eventSettingsBrandRehearsalsHeading => 'Ваші репетиції брендів';
+  String get eventSettingsBrandRehearsalsHeading =>
+      'Р’Р°С€С– СЂРµРїРµС‚РёС†С–С— Р±СЂРµРЅРґС–РІ';
 
   @override
-  String get rehearsalModalTitle => 'Запис на репетицію';
+  String get rehearsalModalTitle => 'Р—Р°РїРёСЃ РЅР° СЂРµРїРµС‚РёС†С–СЋ';
 
   @override
-  String get rehearsalSelectDate => 'Оберіть дату';
+  String get rehearsalSelectDate => 'РћР±РµСЂС–С‚СЊ РґР°С‚Сѓ';
 
   @override
-  String get rehearsalAvailableSlots => 'Доступні слоти';
+  String get rehearsalAvailableSlots => 'Р”РѕСЃС‚СѓРїРЅС– СЃР»РѕС‚Рё';
 
   @override
-  String get rehearsalFreeLabel => 'Вільно:';
+  String get rehearsalFreeLabel => 'Р’С–Р»СЊРЅРѕ:';
 
   @override
   String get rehearsalNoSlotsConfigured =>
-      'Для цього івенту ще немає слотів репетицій.';
+      'Р”Р»СЏ С†СЊРѕРіРѕ С–РІРµРЅС‚Сѓ С‰Рµ РЅРµРјР°С” СЃР»РѕС‚С–РІ СЂРµРїРµС‚РёС†С–Р№.';
 
   @override
   String get rehearsalLoadError =>
-      'Не вдалося завантажити слоти. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё СЃР»РѕС‚Рё. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
   String get rehearsalBrandNotAssigned =>
-      'Для цієї дитини не призначено бренд. Бронювання репетицій недоступне.';
+      'Р”Р»СЏ С†С–С”С— РґРёС‚РёРЅРё РЅРµ РїСЂРёР·РЅР°С‡РµРЅРѕ Р±СЂРµРЅРґ. Р‘СЂРѕРЅСЋРІР°РЅРЅСЏ СЂРµРїРµС‚РёС†С–Р№ РЅРµРґРѕСЃС‚СѓРїРЅРµ.';
 
   @override
-  String get rehearsalFull => 'Місць немає';
+  String get rehearsalFull => 'РњС–СЃС†СЊ РЅРµРјР°С”';
 
   @override
-  String get rehearsalConfirmBooking => 'Підтвердити запис';
+  String get rehearsalConfirmBooking => 'РџС–РґС‚РІРµСЂРґРёС‚Рё Р·Р°РїРёСЃ';
 
   @override
   String get rehearsalBookingFooterNote =>
-      'За можливості зміни вносьте за 24 години до слоту.';
+      'Р—Р° РјРѕР¶Р»РёРІРѕСЃС‚С– Р·РјС–РЅРё РІРЅРѕСЃСЊС‚Рµ Р·Р° 24 РіРѕРґРёРЅРё РґРѕ СЃР»РѕС‚Сѓ.';
 
   @override
-  String get rehearsalBookedTitle => 'Репетицію заброньовано';
+  String get rehearsalBookedTitle =>
+      'Р РµРїРµС‚РёС†С–СЋ Р·Р°Р±СЂРѕРЅСЊРѕРІР°РЅРѕ';
 
   @override
-  String get rehearsalChangeBooking => 'Змінити бронювання';
+  String get rehearsalChangeBooking => 'Р—РјС–РЅРёС‚Рё Р±СЂРѕРЅСЋРІР°РЅРЅСЏ';
 
   @override
-  String get rehearsalProgramLabel => 'Опис';
+  String get rehearsalProgramLabel => 'РћРїРёСЃ';
 
   @override
-  String get rehearsalArriveEarly => 'Приходьте за 15 хвилин до початку.';
+  String get rehearsalArriveEarly =>
+      'РџСЂРёС…РѕРґСЊС‚Рµ Р·Р° 15 С…РІРёР»РёРЅ РґРѕ РїРѕС‡Р°С‚РєСѓ.';
 
   @override
-  String get rehearsalBookingSaved => 'Запис збережено';
+  String get rehearsalBookingSaved => 'Р—Р°РїРёСЃ Р·Р±РµСЂРµР¶РµРЅРѕ';
 
   @override
-  String get rehearsalBookingError => 'Не вдалося завершити запис.';
+  String get rehearsalBookingError =>
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІРµСЂС€РёС‚Рё Р·Р°РїРёСЃ.';
 
   @override
-  String get rehearsalSelectChild => 'Дитина';
+  String get rehearsalSelectChild => 'Р”РёС‚РёРЅР°';
 
   @override
-  String get rehearsalUpdateBooking => 'Додати й оновити бронювання';
+  String get rehearsalUpdateBooking =>
+      'Р”РѕРґР°С‚Рё Р№ РѕРЅРѕРІРёС‚Рё Р±СЂРѕРЅСЋРІР°РЅРЅСЏ';
 
   @override
-  String get rehearsalCancelChange => 'Скасувати';
+  String get rehearsalCancelChange => 'РЎРєР°СЃСѓРІР°С‚Рё';
 
   @override
   String get rehearsalChangeBookingLockedHint =>
-      'Організатор закрив зміну запису. Зверніться в підтримку, якщо потрібна допомога.';
+      'РћСЂРіР°РЅС–Р·Р°С‚РѕСЂ Р·Р°РєСЂРёРІ Р·РјС–РЅСѓ Р·Р°РїРёСЃСѓ. Р—РІРµСЂРЅС–С‚СЊСЃСЏ РІ РїС–РґС‚СЂРёРјРєСѓ, СЏРєС‰Рѕ РїРѕС‚СЂС–Р±РЅР° РґРѕРїРѕРјРѕРіР°.';
 
   @override
-  String get rehearsalMilestoneTitle => 'Загальна репетиція';
+  String get rehearsalMilestoneTitle => 'Р—Р°РіР°Р»СЊРЅР° СЂРµРїРµС‚РёС†С–СЏ';
 
   @override
   String rehearsalBrandMilestoneTitle(String brandName) {
-    return 'Репетиція бренду: $brandName';
+    return 'Р РµРїРµС‚РёС†С–СЏ Р±СЂРµРЅРґСѓ: $brandName';
   }
 
   @override
-  String get rehearsalBrandMilestoneShort => 'Репетиція бренду';
+  String get rehearsalBrandMilestoneShort => 'Р РµРїРµС‚РёС†С–СЏ Р±СЂРµРЅРґСѓ';
 
   @override
   String get rehearsalNextBookHint =>
-      'Запишіться на репетицію в налаштуваннях івенту.';
+      'Р—Р°РїРёС€С–С‚СЊСЃСЏ РЅР° СЂРµРїРµС‚РёС†С–СЋ РІ РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏС… С–РІРµРЅС‚Сѓ.';
 
   @override
-  String get eventSettingsPackingTitle => 'Список «Не забудьте»';
+  String get eventSettingsPackingTitle =>
+      'РЎРїРёСЃРѕРє В«РќРµ Р·Р°Р±СѓРґСЊС‚РµВ»';
 
   @override
   String get eventSettingsPackingSubtitle => '';
 
   @override
-  String get eventSettingsPackingCta => 'ВІДКРИТИ СПИСОК';
+  String get eventSettingsPackingCta => 'Р’Р†Р”РљР РРўР РЎРџРРЎРћРљ';
 
   @override
   String get eventPackingLoadFailed =>
-      'Не вдалося завантажити інформацію. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё С–РЅС„РѕСЂРјР°С†С–СЋ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
-  String get eventPackingEmpty => 'Для цього івенту інформацію ще не додано.';
+  String get eventPackingEmpty =>
+      'Р”Р»СЏ С†СЊРѕРіРѕ С–РІРµРЅС‚Сѓ С–РЅС„РѕСЂРјР°С†С–СЋ С‰Рµ РЅРµ РґРѕРґР°РЅРѕ.';
 
   @override
-  String get eventDescriptionTitle => 'Опис івенту';
+  String get eventDescriptionTitle => 'РћРїРёСЃ С–РІРµРЅС‚Сѓ';
 
   @override
-  String get eventProgressShowGallery => 'Галерея';
+  String get eventProgressShowGallery => 'Р“Р°Р»РµСЂРµСЏ';
 
   @override
-  String get eventProgressCheckin => 'Чекін';
+  String get eventProgressCheckin => 'Р§РµРєС–РЅ';
 
   @override
-  String get eventProgressCheckinPrompt => 'Відскануйте для старту івенту';
+  String get eventProgressCheckinPrompt =>
+      'Р’С–РґСЃРєР°РЅСѓР№С‚Рµ РґР»СЏ СЃС‚Р°СЂС‚Сѓ С–РІРµРЅС‚Сѓ';
 
   @override
-  String get eventProgressCheckinUnavailable => 'Чекін-код поки недоступний.';
+  String get eventProgressCheckinUnavailable =>
+      'Р§РµРєС–РЅ-РєРѕРґ РїРѕРєРё РЅРµРґРѕСЃС‚СѓРїРЅРёР№.';
 
   @override
   String get eventDescriptionLoadFailed =>
-      'Не вдалося завантажити опис. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё РѕРїРёСЃ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
   String get eventDescriptionEmpty =>
-      'Для цього івенту ще не додано текстового опису.';
+      'Р”Р»СЏ С†СЊРѕРіРѕ С–РІРµРЅС‚Сѓ С‰Рµ РЅРµ РґРѕРґР°РЅРѕ С‚РµРєСЃС‚РѕРІРѕРіРѕ РѕРїРёСЃСѓ.';
 
   @override
-  String get eventSettingsBrandTitle => 'Взуття та шкарпетки';
+  String get eventSettingsBrandTitle => 'Р’Р·СѓС‚С‚СЏ С‚Р° С€РєР°СЂРїРµС‚РєРё';
 
   @override
   String get eventSettingsBrandSubtitle =>
-      'Ознайомтеся з рекомендаціями бренду для участі в івенті';
+      'РћР·РЅР°Р№РѕРјС‚РµСЃСЏ Р· СЂРµРєРѕРјРµРЅРґР°С†С–СЏРјРё Р±СЂРµРЅРґСѓ РґР»СЏ СѓС‡Р°СЃС‚С– РІ С–РІРµРЅС‚С–';
 
   @override
-  String get eventSettingsBrandCta => 'КЕРІВНИЦТВО';
+  String get eventSettingsBrandCta => 'РљР•Р Р†Р’РќРР¦РўР’Рћ';
 
   @override
   String get brandRequirementsLoadFailed =>
-      'Не вдалося завантажити вимоги бренду. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё РІРёРјРѕРіРё Р±СЂРµРЅРґСѓ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
   String get brandRequirementsEmpty =>
-      'Для цього івенту вимоги брендів ще не додані.';
+      'Р”Р»СЏ С†СЊРѕРіРѕ С–РІРµРЅС‚Сѓ РІРёРјРѕРіРё Р±СЂРµРЅРґС–РІ С‰Рµ РЅРµ РґРѕРґР°РЅС–.';
 
   @override
   String get brandRequirementsEmptyItem =>
-      'Для цього бренду вимоги ще не заповнені.';
+      'Р”Р»СЏ С†СЊРѕРіРѕ Р±СЂРµРЅРґСѓ РІРёРјРѕРіРё С‰Рµ РЅРµ Р·Р°РїРѕРІРЅРµРЅС–.';
 
   @override
-  String get brandRequirementsPickBrandTitle => 'Оберіть бренд';
+  String get brandRequirementsPickBrandTitle => 'РћР±РµСЂС–С‚СЊ Р±СЂРµРЅРґ';
 
   @override
   String brandRequirementsBrandNumber(int brandId) {
-    return 'Бренд $brandId';
+    return 'Р‘СЂРµРЅРґ $brandId';
   }
 
   @override
-  String get eventSettingsParkingTitle => 'Валет-паркування';
+  String get eventSettingsParkingTitle => 'Р’Р°Р»РµС‚-РїР°СЂРєСѓРІР°РЅРЅСЏ';
 
   @override
   String get eventSettingsParkingSubtitle =>
-      'Відкрийте пропуск на валет-паркування й статус прибуття';
+      'Р’С–РґРєСЂРёР№С‚Рµ РїСЂРѕРїСѓСЃРє РЅР° РІР°Р»РµС‚-РїР°СЂРєСѓРІР°РЅРЅСЏ Р№ СЃС‚Р°С‚СѓСЃ РїСЂРёР±СѓС‚С‚СЏ';
 
   @override
-  String get eventSettingsParkingCta => 'ВІДКРИТИ ВАЛЕТ-ПАРКУВАННЯ';
+  String get eventSettingsParkingCta =>
+      'Р’Р†Р”РљР РРўР Р’РђР›Р•Рў-РџРђР РљРЈР’РђРќРќРЇ';
 
   @override
-  String get parkingChooseModeTitle => 'Режим валет-паркування';
+  String get parkingChooseModeTitle =>
+      'Р РµР¶РёРј РІР°Р»РµС‚-РїР°СЂРєСѓРІР°РЅРЅСЏ';
 
   @override
-  String get parkingChooseModeHint => 'Оберіть стан екрана для тесту візуалу.';
+  String get parkingChooseModeHint =>
+      'РћР±РµСЂС–С‚СЊ СЃС‚Р°РЅ РµРєСЂР°РЅР° РґР»СЏ С‚РµСЃС‚Сѓ РІС–Р·СѓР°Р»Сѓ.';
 
   @override
-  String get parkingModeInactive => 'НЕ АКТИВНО';
+  String get parkingModeInactive => 'РќР• РђРљРўРР’РќРћ';
 
   @override
-  String get parkingModeActive => 'АКТИВНО';
+  String get parkingModeActive => 'РђРљРўРР’РќРћ';
 
   @override
-  String get parkingInactiveHeadline => 'ВАЛЕТ-ПАРКУВАННЯ НЕ АКТИВНЕ';
+  String get parkingInactiveHeadline =>
+      'Р’РђР›Р•Рў-РџРђР РљРЈР’РђРќРќРЇ РќР• РђРљРўРР’РќР•';
 
   @override
   String get parkingInactiveBody =>
-      'ВАЛЕТ-ПАРКУВАННЯ З\'ЯВИТЬСЯ ТУТ ПІСЛЯ КУПІВЛІ КВИТКА.';
+      'Р’РђР›Р•Рў-РџРђР РљРЈР’РђРќРќРЇ Р—\'РЇР’РРўР¬РЎРЇ РўРЈРў РџР†РЎР›РЇ РљРЈРџР†Р’Р›Р† РљР’РРўРљРђ.';
 
   @override
-  String get parkingInactiveBuyCta => 'КУПИТИ';
+  String get parkingInactiveBuyCta => 'РљРЈРџРРўР';
 
   @override
   String get parkingInactiveVipBody =>
-      'ДЛЯ VIP ВАЛЕТ-ПАРКУВАННЯ — ЗАБРОНЮЙТЕ МІСЦЕ ДЛЯ ВАШОГО АВТОМОБІЛЯ.';
+      'Р”Р›РЇ VIP Р’РђР›Р•Рў-РџРђР РљРЈР’РђРќРќРЇ вЂ” Р—РђР‘Р РћРќР®Р™РўР• РњР†РЎР¦Р• Р”Р›РЇ Р’РђРЁРћР“Рћ РђР’РўРћРњРћР‘Р†Р›РЇ.';
 
   @override
-  String get parkingInactiveVipBookCta => 'ЗАМОВИТИ ВАЛЕТ-ПАРКУВАННЯ';
+  String get parkingInactiveVipBookCta =>
+      'Р—РђРњРћР’РРўР Р’РђР›Р•Рў-РџРђР РљРЈР’РђРќРќРЇ';
 
   @override
-  String get parkingPayForParkingCta => 'СПЛАТИТИ ВАЛЕТ-ПАРКУВАННЯ';
+  String get parkingPayForParkingCta =>
+      'РЎРџР›РђРўРРўР Р’РђР›Р•Рў-РџРђР РљРЈР’РђРќРќРЇ';
 
   @override
   String get parkingVipQuotaNextPaymentBody =>
-      'БЕЗКОШТОВНІ ВАЛЕТ-КВИТКИ НА ЦЮ ПОДІЮ ВИКОРИСТАНО. МОЖНА ДОДАТИ МІСЦЕ ЗА ЗВИЧАЙНОЮ ЦІНОЮ.';
+      'Р‘Р•Р—РљРћРЁРўРћР’РќР† Р’РђР›Р•Рў-РљР’РРўРљР РќРђ Р¦Р® РџРћР”Р†Р® Р’РРљРћР РРЎРўРђРќРћ. РњРћР–РќРђ Р”РћР”РђРўР РњР†РЎР¦Р• Р—Рђ Р—Р’РР§РђР™РќРћР® Р¦Р†РќРћР®.';
 
   @override
   String parkingFreeTicketsQuotaLine(int used, int quota, int remaining) {
-    return 'Безкоштовний валет: використано $used з $quota (залишилось $remaining)';
+    return 'Р‘РµР·РєРѕС€С‚РѕРІРЅРёР№ РІР°Р»РµС‚: РІРёРєРѕСЂРёСЃС‚Р°РЅРѕ $used Р· $quota (Р·Р°Р»РёС€РёР»РѕСЃСЊ $remaining)';
   }
 
   @override
-  String get parkingActiveTicketLabel => 'КВИТОК';
+  String get parkingActiveTicketLabel => 'РљР’РРўРћРљ';
 
   @override
-  String get parkingTicketMock1 => 'КВИТОК A1 · МОДЕЛЬ';
+  String get parkingTicketMock1 => 'РљР’РРўРћРљ A1 В· РњРћР”Р•Р›Р¬';
 
   @override
-  String get parkingTicketMock2 => 'КВИТОК B7 · ГОСТЬ';
+  String get parkingTicketMock2 => 'РљР’РРўРћРљ B7 В· Р“РћРЎРўР¬';
 
   @override
   String get parkingActiveValetLabel => 'VALET SERVICE';
 
   @override
-  String get parkingActiveStatusLine => 'ВАЛЕТ-ПАРКУВАННЯ АКТИВНЕ';
+  String get parkingActiveStatusLine =>
+      'Р’РђР›Р•Рў-РџРђР РљРЈР’РђРќРќРЇ РђРљРўРР’РќР•';
 
   @override
-  String get parkingActiveShowEntryPointCta => 'ПОКАЗАТИ ТОЧКУ В\'ЇЗДУ';
+  String get parkingActiveShowEntryPointCta =>
+      'РџРћРљРђР—РђРўР РўРћР§РљРЈ Р’\'Р‡Р—Р”РЈ';
 
   @override
-  String get parkingActiveCarLabel => 'АВТОМОБІЛЬ';
+  String get parkingActiveCarLabel => 'РђР’РўРћРњРћР‘Р†Р›Р¬';
 
   @override
-  String get parkingActiveRegistrationNumberLabel => 'НОМЕРНИЙ ЗНАК';
+  String get parkingActiveRegistrationNumberLabel =>
+      'РќРћРњР•Р РќРР™ Р—РќРђРљ';
 
   @override
-  String get parkingCreateTicketTitle => 'Створити квиток';
+  String get parkingCreateTicketTitle => 'РЎС‚РІРѕСЂРёС‚Рё РєРІРёС‚РѕРє';
 
   @override
-  String get parkingCreateEventLabel => 'Івент';
+  String get parkingCreateEventLabel => 'Р†РІРµРЅС‚';
 
   @override
-  String get parkingCreateAccountNameLabel => 'Ім\'я';
+  String get parkingCreateAccountNameLabel => 'Р†Рј\'СЏ';
 
   @override
-  String get parkingCreateCarModelLabel => 'МАРКА ТА МОДЕЛЬ';
+  String get parkingCreateCarModelLabel => 'РњРђР РљРђ РўРђ РњРћР”Р•Р›Р¬';
 
   @override
-  String get parkingCreateCarModelHint => 'Наприклад: Ford Mustang';
+  String get parkingCreateCarModelHint => 'РќР°РїСЂРёРєР»Р°Рґ: Ford Mustang';
 
   @override
-  String get parkingCreatePlateNumberLabel => 'НОМЕРНИЙ ЗНАК';
+  String get parkingCreatePlateNumberLabel => 'РќРћРњР•Р РќРР™ Р—РќРђРљ';
 
   @override
-  String get parkingCreatePlateNumberHint => 'Наприклад: CA 7JXK921';
+  String get parkingCreatePlateNumberHint => 'РќР°РїСЂРёРєР»Р°Рґ: CA 7JXK921';
 
   @override
-  String get parkingCreateRepeatPlateNumberLabel => 'ПОВТОРІТЬ НОМЕРНИЙ ЗНАК';
+  String get parkingCreateRepeatPlateNumberLabel =>
+      'РџРћР’РўРћР Р†РўР¬ РќРћРњР•Р РќРР™ Р—РќРђРљ';
 
   @override
   String get parkingCreateRepeatPlateNumberHint =>
-      'Повторно введіть номерний знак';
+      'РџРѕРІС‚РѕСЂРЅРѕ РІРІРµРґС–С‚СЊ РЅРѕРјРµСЂРЅРёР№ Р·РЅР°Рє';
 
   @override
-  String get parkingCreatePlateNumberMismatch => 'Номерні знаки не збігаються';
+  String get parkingCreatePlateNumberMismatch =>
+      'РќРѕРјРµСЂРЅС– Р·РЅР°РєРё РЅРµ Р·Р±С–РіР°СЋС‚СЊСЃСЏ';
 
   @override
-  String get parkingCreateBuyCta => 'КУПИТИ';
+  String get parkingCreateBuyCta => 'РљРЈРџРРўР';
 
   @override
-  String get parkingCreateBookCta => 'ЗАМОВИТИ ВАЛЕТ-ПАРКУВАННЯ';
+  String get parkingCreateBookCta =>
+      'Р—РђРњРћР’РРўР Р’РђР›Р•Рў-РџРђР РљРЈР’РђРќРќРЇ';
 
   @override
-  String get parkingCheckoutInBrowser => 'Завершіть оплату у браузері.';
+  String get parkingCheckoutInBrowser =>
+      'Р—Р°РІРµСЂС€С–С‚СЊ РѕРїР»Р°С‚Сѓ Сѓ Р±СЂР°СѓР·РµСЂС–.';
 
   @override
-  String get parkingPurchasedWithoutPayment => 'Квиток успішно куплено.';
+  String get parkingPurchasedWithoutPayment =>
+      'РљРІРёС‚РѕРє СѓСЃРїС–С€РЅРѕ РєСѓРїР»РµРЅРѕ.';
 
   @override
-  String get parkingVipBooked => 'VIP валет-паркування успішно заброньовано.';
+  String get parkingVipBooked =>
+      'VIP РІР°Р»РµС‚-РїР°СЂРєСѓРІР°РЅРЅСЏ СѓСЃРїС–С€РЅРѕ Р·Р°Р±СЂРѕРЅСЊРѕРІР°РЅРѕ.';
 
   @override
   String get parkingCheckoutError =>
-      'Не вдалося почати оплату валет-паркування. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ РїРѕС‡Р°С‚Рё РѕРїР»Р°С‚Сѓ РІР°Р»РµС‚-РїР°СЂРєСѓРІР°РЅРЅСЏ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
-  String get clientTicketServiceUnavailableTitle => 'Сервіс недоступний';
+  String get clientTicketServiceUnavailableTitle =>
+      'РЎРµСЂРІС–СЃ РЅРµРґРѕСЃС‚СѓРїРЅРёР№';
 
   @override
   String get clientTicketServiceUnavailableBody =>
-      'Цей сервіс квитків зараз не активний.';
+      'Р¦РµР№ СЃРµСЂРІС–СЃ РєРІРёС‚РєС–РІ Р·Р°СЂР°Р· РЅРµ Р°РєС‚РёРІРЅРёР№.';
 
   @override
-  String get parkingActivePassLabel => 'КОД ПРОПУСКУ';
+  String get parkingActivePassLabel => 'РљРћР” РџР РћРџРЈРЎРљРЈ';
 
   @override
-  String get eventSettingsChatTitle => 'Спільний чат';
+  String get eventSettingsChatTitle => 'РЎРїС–Р»СЊРЅРёР№ С‡Р°С‚';
 
   @override
   String get eventSettingsChatSubtitle =>
-      'Спільний чат з учасниками групи та менеджерами';
+      'РЎРїС–Р»СЊРЅРёР№ С‡Р°С‚ Р· СѓС‡Р°СЃРЅРёРєР°РјРё РіСЂСѓРїРё С‚Р° РјРµРЅРµРґР¶РµСЂР°РјРё';
 
   @override
-  String get eventSettingsChatCta => 'ВІДКРИТИ ЧАТ';
+  String get eventSettingsChatCta => 'Р’Р†Р”РљР РРўР Р§РђРў';
 
   @override
   String get chatRoomsLoadFailed =>
-      'Не вдалося завантажити кімнати чату. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё РєС–РјРЅР°С‚Рё С‡Р°С‚Сѓ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
   String get chatNoRooms =>
-      'Для ваших брендів у цьому івенті ще немає чат-кімнат.';
+      'Р”Р»СЏ РІР°С€РёС… Р±СЂРµРЅРґС–РІ Сѓ С†СЊРѕРјСѓ С–РІРµРЅС‚С– С‰Рµ РЅРµРјР°С” С‡Р°С‚-РєС–РјРЅР°С‚.';
 
   @override
-  String get chatNoMessagesYet => 'Повідомлень ще немає';
+  String get chatNoMessagesYet => 'РџРѕРІС–РґРѕРјР»РµРЅСЊ С‰Рµ РЅРµРјР°С”';
 
   @override
   String get chatLoadFailed =>
-      'Не вдалося завантажити повідомлення. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
   String get chatSendFailed =>
-      'Не вдалося надіслати повідомлення. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ РЅР°РґС–СЃР»Р°С‚Рё РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
-  String get chatMessagePlaceholder => 'Повідомлення в чат...';
+  String get chatMessagePlaceholder => 'РџРѕРІС–РґРѕРјР»РµРЅРЅСЏ РІ С‡Р°С‚...';
 
   @override
-  String get chatReply => 'Відповісти';
+  String get chatReply => 'Р’С–РґРїРѕРІС–СЃС‚Рё';
 
   @override
-  String get chatReplyCancel => 'Скасувати';
+  String get chatReplyCancel => 'РЎРєР°СЃСѓРІР°С‚Рё';
 
   @override
   String chatReplyingTo(String name) {
-    return 'Відповідь для $name';
+    return 'Р’С–РґРїРѕРІС–РґСЊ РґР»СЏ $name';
   }
 
   @override
-  String get chatReplyPreviewPhoto => 'Фото';
+  String get chatReplyPreviewPhoto => 'Р¤РѕС‚Рѕ';
 
   @override
-  String get chatEdit => 'Змінити';
+  String get chatEdit => 'Р—РјС–РЅРёС‚Рё';
 
   @override
-  String get chatDelete => 'Видалити';
+  String get chatDelete => 'Р’РёРґР°Р»РёС‚Рё';
 
   @override
-  String get chatDeleteTitle => 'Видалити повідомлення?';
+  String get chatDeleteTitle => 'Р’РёРґР°Р»РёС‚Рё РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ?';
 
   @override
-  String get chatDeleteMessageConfirm => 'Цю дію неможливо скасувати.';
+  String get chatDeleteMessageConfirm =>
+      'Р¦СЋ РґС–СЋ РЅРµРјРѕР¶Р»РёРІРѕ СЃРєР°СЃСѓРІР°С‚Рё.';
 
   @override
   String get chatDeleteFailed =>
-      'Не вдалося видалити повідомлення. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ РІРёРґР°Р»РёС‚Рё РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
   String get chatEditFailed =>
-      'Не вдалося змінити повідомлення. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·РјС–РЅРёС‚Рё РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
-  String get chatEditingLabel => 'Редагування повідомлення';
+  String get chatEditingLabel =>
+      'Р РµРґР°РіСѓРІР°РЅРЅСЏ РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ';
 
   @override
-  String get chatCancelEdit => 'Скасувати редагування';
+  String get chatCancelEdit => 'РЎРєР°СЃСѓРІР°С‚Рё СЂРµРґР°РіСѓРІР°РЅРЅСЏ';
 
   @override
   String eventSettingsChatMoreParticipants(int count) {
@@ -884,989 +933,379 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String get mealChoiceTitle => 'Вибір обіду';
+  String get mealChoiceTitle => 'Р’РёР±С–СЂ РѕР±С–РґСѓ';
 
   @override
-  String get mealSelectChildLabel => 'Дитина';
+  String get mealSelectChildLabel => 'Р”РёС‚РёРЅР°';
 
   @override
-  String get mealSelectDishLabel => 'Страва';
+  String get mealSelectDishLabel => 'РЎС‚СЂР°РІР°';
 
   @override
-  String get mealSave => 'ЗАМОВИТИ';
+  String get mealSave => 'Р—РђРњРћР’РРўР';
 
   @override
-  String get mealNoMealsConfigured => 'Для цього івенту ще не додано страв.';
+  String get mealNoMealsConfigured =>
+      'Р”Р»СЏ С†СЊРѕРіРѕ С–РІРµРЅС‚Сѓ С‰Рµ РЅРµ РґРѕРґР°РЅРѕ СЃС‚СЂР°РІ.';
 
   @override
-  String get mealSaved => 'Збережено';
+  String get mealSaved => 'Р—Р±РµСЂРµР¶РµРЅРѕ';
 
   @override
-  String get mealSaveError => 'Не вдалося зберегти. Спробуйте ще раз.';
+  String get mealSaveError =>
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р±РµСЂРµРіС‚Рё. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
-  String get mealOrdersClosed => 'Прийом замовлень закритий';
+  String get mealOrdersClosed =>
+      'РџСЂРёР№РѕРј Р·Р°РјРѕРІР»РµРЅСЊ Р·Р°РєСЂРёС‚РёР№';
 
   @override
-  String get mealPaid => 'Оплачено';
+  String get mealPaid => 'РћРїР»Р°С‡РµРЅРѕ';
 
   @override
-  String get mealPaidDetail => 'Обід для цього івенту оплачено.';
+  String get mealPaidDetail =>
+      'РћР±С–Рґ РґР»СЏ С†СЊРѕРіРѕ С–РІРµРЅС‚Сѓ РѕРїР»Р°С‡РµРЅРѕ.';
 
   @override
   String get mealPayInBrowser =>
-      'Завершіть оплату в браузері та поверніться в застосунок.';
+      'Р—Р°РІРµСЂС€С–С‚СЊ РѕРїР»Р°С‚Сѓ РІ Р±СЂР°СѓР·РµСЂС– С‚Р° РїРѕРІРµСЂРЅС–С‚СЊСЃСЏ РІ Р·Р°СЃС‚РѕСЃСѓРЅРѕРє.';
 
   @override
-  String get mealCheckoutError => 'Не вдалося почати оплату. Спробуйте ще раз.';
+  String get mealCheckoutError =>
+      'РќРµ РІРґР°Р»РѕСЃСЏ РїРѕС‡Р°С‚Рё РѕРїР»Р°С‚Сѓ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
-  String get mealAwaitingPayment => 'Замовлення оформлено — очікує оплати';
+  String get mealAwaitingPayment =>
+      'Р—Р°РјРѕРІР»РµРЅРЅСЏ РѕС„РѕСЂРјР»РµРЅРѕ вЂ” РѕС‡С–РєСѓС” РѕРїР»Р°С‚Рё';
 
   @override
   String get mealAwaitingPaymentDetail =>
-      'Страву збережено. Завершіть оплату в браузері; статус оновиться після підтвердження Stripe.';
+      'РЎС‚СЂР°РІСѓ Р·Р±РµСЂРµР¶РµРЅРѕ. Р—Р°РІРµСЂС€С–С‚СЊ РѕРїР»Р°С‚Сѓ РІ Р±СЂР°СѓР·РµСЂС–; СЃС‚Р°С‚СѓСЃ РѕРЅРѕРІРёС‚СЊСЃСЏ РїС–СЃР»СЏ РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ Stripe.';
 
   @override
-  String get mealPaymentContinue => 'Продовжити оплату';
+  String get mealPaymentContinue => 'РџСЂРѕРґРѕРІР¶РёС‚Рё РѕРїР»Р°С‚Сѓ';
 
   @override
-  String get mealPaymentCancel => 'Скасувати оплату';
+  String get mealPaymentCancel => 'РЎРєР°СЃСѓРІР°С‚Рё РѕРїР»Р°С‚Сѓ';
 
   @override
-  String get mealPaymentStartAgain => 'Почати оплату знову';
+  String get mealPaymentStartAgain => 'РџРѕС‡Р°С‚Рё РѕРїР»Р°С‚Сѓ Р·РЅРѕРІСѓ';
 
   @override
-  String get mealPaymentCanceled => 'Оплату скасовано. Можна почати знову.';
+  String get mealPaymentCanceled =>
+      'РћРїР»Р°С‚Сѓ СЃРєР°СЃРѕРІР°РЅРѕ. РњРѕР¶РЅР° РїРѕС‡Р°С‚Рё Р·РЅРѕРІСѓ.';
 
   @override
   String get mealPaymentStatusLoadError =>
-      'Не вдалося завантажити статус оплати. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё СЃС‚Р°С‚СѓСЃ РѕРїР»Р°С‚Рё. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
-  String get noActiveEvents => 'Немає активних подій';
+  String get noActiveEvents => 'РќРµРјР°С” Р°РєС‚РёРІРЅРёС… РїРѕРґС–Р№';
 
   @override
-  String get becomeModelTitle => 'Почніть модельну кар\'єру дитини сьогодні';
+  String get becomeModelTitle =>
+      'РџРѕС‡РЅС–С‚СЊ РјРѕРґРµР»СЊРЅСѓ РєР°СЂ\'С”СЂСѓ РґРёС‚РёРЅРё СЃСЊРѕРіРѕРґРЅС–';
 
   @override
-  String get becomeAModel => 'СТАТИ МОДЕЛЛЮ';
+  String get becomeAModel => 'РЎРўРђРўР РњРћР”Р•Р›Р›Р®';
 
   @override
-  String get latestHighlights => 'Останні події';
+  String get latestHighlights => 'РћСЃС‚Р°РЅРЅС– РїРѕРґС–С—';
 
   @override
-  String get viewAll => 'ВСІ';
+  String get viewAll => 'Р’РЎР†';
 
   @override
-  String get quickActions => 'Швидкі дії';
+  String get quickActions => 'РЁРІРёРґРєС– РґС–С—';
 
   @override
-  String get fillOutApplication => 'Заповнити\nзаявку';
+  String get fillOutApplication => 'Р—Р°РїРѕРІРЅРёС‚Рё\nР·Р°СЏРІРєСѓ';
 
   @override
-  String get upcomingShows => 'Найближчі\nпокази';
+  String get upcomingShows => 'РќР°Р№Р±Р»РёР¶С‡С–\nРїРѕРєР°Р·Рё';
 
   @override
-  String get manageKids => 'Мої\nдіти';
+  String get manageKids => 'РњРѕС—\nРґС–С‚Рё';
 
   @override
-  String get navHome => 'Головна';
+  String get navHome => 'Р“РѕР»РѕРІРЅР°';
 
   @override
-  String get navEvents => 'Події';
+  String get navEvents => 'РџРѕРґС–С—';
 
   @override
-  String get eventsYoutubeLiveButton => 'YouTube трансляція';
+  String get eventsYoutubeLiveButton => 'YouTube С‚СЂР°РЅСЃР»СЏС†С–СЏ';
 
   @override
   String get eventsYoutubeLiveInvalidUrl =>
-      'Не вдалося відкрити це посилання YouTube.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ РІС–РґРєСЂРёС‚Рё С†Рµ РїРѕСЃРёР»Р°РЅРЅСЏ YouTube.';
 
   @override
-  String get eventsYoutubeLiveOpenExternally => 'Відкрити в YouTube';
+  String get eventsYoutubeLiveOpenExternally => 'Р’С–РґРєСЂРёС‚Рё РІ YouTube';
 
   @override
-  String get navProfile => 'Профіль';
+  String get navProfile => 'РџСЂРѕС„С–Р»СЊ';
 
   @override
-  String get navInfo => 'Інфо';
+  String get navInfo => 'Р†РЅС„Рѕ';
 
   @override
-  String get continueButton => 'Продовжити';
+  String get continueButton => 'РџСЂРѕРґРѕРІР¶РёС‚Рё';
 
   @override
-  String get loading => 'Завантаження...';
+  String get loading => 'Р—Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ...';
 
   @override
-  String get signOut => 'Вийти';
+  String get signOut => 'Р’РёР№С‚Рё';
 
   @override
-  String get tokenValidNext => 'Токен дійсний. Далі: головна.';
+  String get tokenValidNext =>
+      'РўРѕРєРµРЅ РґС–Р№СЃРЅРёР№. Р”Р°Р»С–: РіРѕР»РѕРІРЅР°.';
 
   @override
-  String get homePageTitle => 'Головна';
+  String get homePageTitle => 'Р“РѕР»РѕРІРЅР°';
 
   @override
   String youAreSignedIn(String name) {
-    return 'Ви увійшли$name.';
+    return 'Р’Рё СѓРІС–Р№С€Р»Рё$name.';
   }
 
   @override
   String yourRole(String role) {
-    return 'Ваша роль: $role';
+    return 'Р’Р°С€Р° СЂРѕР»СЊ: $role';
   }
 
   @override
   String get phoneHint => '+380501234567';
 
   @override
-  String get enterValidEmailShort => 'Введіть коректний email';
+  String get enterValidEmailShort => 'Р’РІРµРґС–С‚СЊ РєРѕСЂРµРєС‚РЅРёР№ email';
 
   @override
-  String get phoneMustStartWithPlusShort => 'Телефон повинен починатися з +';
+  String get phoneMustStartWithPlusShort =>
+      'РўРµР»РµС„РѕРЅ РїРѕРІРёРЅРµРЅ РїРѕС‡РёРЅР°С‚РёСЃСЏ Р· +';
 
   @override
-  String get comingSoon => 'Незабаром';
+  String get comingSoon => 'РќРµР·Р°Р±Р°СЂРѕРј';
 
   @override
-  String get hello => 'Привіт';
+  String get hello => 'РџСЂРёРІС–С‚';
 
   @override
   String helloName(String name) {
-    return 'Привіт, $name';
+    return 'РџСЂРёРІС–С‚, $name';
   }
 
   @override
   String get noRolesAssigned =>
-      'Вам поки не призначено жодної ролі. Зверніться до адміністрації.';
+      'Р’Р°Рј РїРѕРєРё РЅРµ РїСЂРёР·РЅР°С‡РµРЅРѕ Р¶РѕРґРЅРѕС— СЂРѕР»С–. Р—РІРµСЂРЅС–С‚СЊСЃСЏ РґРѕ Р°РґРјС–РЅС–СЃС‚СЂР°С†С–С—.';
 
   @override
   String signedInAs(String name) {
-    return 'Ви увійшли як $name';
+    return 'Р’Рё СѓРІС–Р№С€Р»Рё СЏРє $name';
   }
 
   @override
-  String get staff => 'Співробітник';
+  String get birthdateDialogTitle => 'Р”Р°С‚Р° РЅР°СЂРѕРґР¶РµРЅРЅСЏ';
 
   @override
-  String get birthdateDialogTitle => 'Дата народження';
+  String get nextShowsTitle => 'РќР°Р№Р±Р»РёР¶С‡С– РїРѕРєР°Р·Рё';
 
   @override
-  String get nextShowsTitle => 'Найближчі покази';
+  String get nextShowsSeason => 'РЎРµР·РѕРЅ 2026';
 
   @override
-  String get nextShowsSeason => 'Сезон 2026';
+  String get details => 'Р”РµС‚Р°Р»С–';
 
   @override
-  String get details => 'Деталі';
+  String get contact => 'Р—РІ\'СЏР·Р°С‚РёСЃСЏ';
 
   @override
-  String get contact => 'Зв\'язатися';
+  String get registrationOpen => 'Р РµС”СЃС‚СЂР°С†С–СЏ РІС–РґРєСЂРёС‚Р°';
 
   @override
-  String get registrationOpen => 'Реєстрація відкрита';
+  String get myTicketsButton => 'РњРћР‡ РљР’РРўРљР';
 
   @override
-  String get myTicketsButton => 'МОЇ КВИТКИ';
+  String get myTicketsTitle => 'РњРѕС— РєРІРёС‚РєРё';
 
   @override
-  String get myTicketsTitle => 'Мої квитки';
+  String get selectEventForTickets => 'РћР±РµСЂС–С‚СЊ Р·Р°С…С–Рґ';
 
   @override
-  String get selectEventForTickets => 'Оберіть захід';
+  String get ticketsMomName => 'Р†Рј\'СЏ Р±Р°С‚СЊРєР°/РјР°С‚РµСЂС–';
 
   @override
-  String get ticketsMomName => 'Ім\'я батька/матері';
+  String get ticketsEventDate => 'Р”Р°С‚Р°';
 
   @override
-  String get ticketsEventDate => 'Дата';
+  String get ticketsOpenPdf => 'Р’Р†Р”РљР РРўР';
 
   @override
-  String get ticketsOpenPdf => 'ВІДКРИТИ';
+  String get ticketsPdfUnavailable => 'PDF С‰Рµ РЅРµРґРѕСЃС‚СѓРїРЅРёР№';
 
   @override
-  String get ticketsPdfUnavailable => 'PDF ще недоступний';
-
-  @override
-  String get ticketsBuy => 'КУПИТИ КВИТОК';
+  String get ticketsBuy => 'РљРЈРџРРўР РљР’РРўРћРљ';
 
   @override
   String get ticketsBuyNoLink =>
-      'Посилання на покупку не задане. Додайте в адмінці посилання на магазин квитків для івента або сайт у розділі Info.';
+      'РџРѕСЃРёР»Р°РЅРЅСЏ РЅР° РїРѕРєСѓРїРєСѓ РЅРµ Р·Р°РґР°РЅРµ. Р”РѕРґР°Р№С‚Рµ РІ Р°РґРјС–РЅС†С– РїРѕСЃРёР»Р°РЅРЅСЏ РЅР° РјР°РіР°Р·РёРЅ РєРІРёС‚РєС–РІ РґР»СЏ С–РІРµРЅС‚Р° Р°Р±Рѕ СЃР°Р№С‚ Сѓ СЂРѕР·РґС–Р»С– Info.';
 
   @override
-  String get ticketsBuyCouldNotOpen => 'Не вдалося відкрити посилання.';
+  String get ticketsBuyCouldNotOpen =>
+      'РќРµ РІРґР°Р»РѕСЃСЏ РІС–РґРєСЂРёС‚Рё РїРѕСЃРёР»Р°РЅРЅСЏ.';
 
   @override
-  String get ticketsBuySubtitle => 'Доступні VIP і стандартні місця';
+  String get ticketsBuySubtitle =>
+      'Р”РѕСЃС‚СѓРїРЅС– VIP С– СЃС‚Р°РЅРґР°СЂС‚РЅС– РјС–СЃС†СЏ';
 
   @override
   String get ticketsBuyEmailHint =>
-      'Ваші квитки прийдуть на електронну пошту, вказану під час покупки квитка.';
+      'Р’Р°С€С– РєРІРёС‚РєРё РїСЂРёР№РґСѓС‚СЊ РЅР° РµР»РµРєС‚СЂРѕРЅРЅСѓ РїРѕС€С‚Сѓ, РІРєР°Р·Р°РЅСѓ РїС–Рґ С‡Р°СЃ РїРѕРєСѓРїРєРё РєРІРёС‚РєР°.';
 
   @override
   String get extraTicketButton => 'OPEN BAR';
 
   @override
-  String get extraTicketSelectEventFirst => 'Спочатку оберіть івент.';
+  String get extraTicketSelectEventFirst =>
+      'РЎРїРѕС‡Р°С‚РєСѓ РѕР±РµСЂС–С‚СЊ С–РІРµРЅС‚.';
 
   @override
-  String get extraTicketNoActiveHeadline => 'НЕМАЄ АКТИВНИХ BEVERAGE PACKAGE';
+  String get extraTicketNoActiveHeadline =>
+      'РќР•РњРђР„ РђРљРўРР’РќРРҐ BEVERAGE PACKAGE';
 
   @override
-  String get extraTicketBuyCta => 'КУПИТИ';
+  String get extraTicketBuyCta => 'РљРЈРџРРўР';
 
   @override
-  String get extraTicketAccessOpen => 'ДОСТУП ДО BEVERAGE PACKAGE ВІДКРИТО';
+  String get extraTicketAccessOpen =>
+      'Р”РћРЎРўРЈРџ Р”Рћ BEVERAGE PACKAGE Р’Р†Р”РљР РРўРћ';
 
   @override
-  String get extraTicketCheckoutInBrowser => 'Завершіть оплату у браузері.';
+  String get extraTicketCheckoutInBrowser =>
+      'Р—Р°РІРµСЂС€С–С‚СЊ РѕРїР»Р°С‚Сѓ Сѓ Р±СЂР°СѓР·РµСЂС–.';
 
   @override
   String get extraTicketCheckoutError =>
-      'Не вдалося запустити оплату BEVERAGE PACKAGE. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РїСѓСЃС‚РёС‚Рё РѕРїР»Р°С‚Сѓ BEVERAGE PACKAGE. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
   String get backstageTicketButton => 'BACKSTAGE PASS';
 
   @override
-  String get backstageTicketSelectEventFirst => 'Спочатку оберіть івент.';
+  String get backstageTicketSelectEventFirst =>
+      'РЎРїРѕС‡Р°С‚РєСѓ РѕР±РµСЂС–С‚СЊ С–РІРµРЅС‚.';
 
   @override
-  String get backstageTicketNoActiveHeadline => 'НЕМАЄ АКТИВНИХ BACKSTAGE PASS';
+  String get backstageTicketNoActiveHeadline =>
+      'РќР•РњРђР„ РђРљРўРР’РќРРҐ BACKSTAGE PASS';
 
   @override
-  String get backstageTicketBuyCta => 'КУПИТИ';
+  String get backstageTicketBuyCta => 'РљРЈРџРРўР';
 
   @override
-  String get backstageTicketAccessOpen => 'ДОСТУП ДО BACKSTAGE PASS ВІДКРИТО';
+  String get backstageTicketAccessOpen =>
+      'Р”РћРЎРўРЈРџ Р”Рћ BACKSTAGE PASS Р’Р†Р”РљР РРўРћ';
 
   @override
-  String get backstageTicketCheckoutInBrowser => 'Завершіть оплату у браузері.';
+  String get backstageTicketCheckoutInBrowser =>
+      'Р—Р°РІРµСЂС€С–С‚СЊ РѕРїР»Р°С‚Сѓ Сѓ Р±СЂР°СѓР·РµСЂС–.';
 
   @override
   String get backstageTicketCheckoutError =>
-      'Не вдалося запустити оплату BACKSTAGE PASS. Спробуйте ще раз.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РїСѓСЃС‚РёС‚Рё РѕРїР»Р°С‚Сѓ BACKSTAGE PASS. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.';
 
   @override
-  String get ticketsNoEvents => 'Поки немає заходів із квитками';
+  String get ticketsNoEvents =>
+      'РџРѕРєРё РЅРµРјР°С” Р·Р°С…РѕРґС–РІ С–Р· РєРІРёС‚РєР°РјРё';
 
   @override
-  String get ticketsNoneForEvent => 'Немає квитків на цей захід';
+  String get ticketsNoneForEvent =>
+      'РќРµРјР°С” РєРІРёС‚РєС–РІ РЅР° С†РµР№ Р·Р°С…С–Рґ';
 
   @override
-  String get ticketsLoadError => 'Не вдалося завантажити квитки';
+  String get ticketsLoadError =>
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё РєРІРёС‚РєРё';
 
   @override
-  String get ticketsEventsLoadError => 'Не вдалося завантажити заходи';
+  String get ticketsEventsLoadError =>
+      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё Р·Р°С…РѕРґРё';
 
   @override
-  String get faqBrandCatalogTitle => 'Бренди одягу';
+  String get faqBrandCatalogTitle => 'Р‘СЂРµРЅРґРё РѕРґСЏРіСѓ';
 
   @override
-  String get pdfViewerTitle => 'Квиток';
+  String get pdfViewerTitle => 'РљРІРёС‚РѕРє';
 
   @override
   String get contactFormLinkMissing =>
-      'Посилання на форму не налаштовано. Додайте «Посилання на форму» у загальних налаштуваннях застосунку в адмінці.';
+      'РџРѕСЃРёР»Р°РЅРЅСЏ РЅР° С„РѕСЂРјСѓ РЅРµ РЅР°Р»Р°С€С‚РѕРІР°РЅРѕ. Р”РѕРґР°Р№С‚Рµ В«РџРѕСЃРёР»Р°РЅРЅСЏ РЅР° С„РѕСЂРјСѓВ» Сѓ Р·Р°РіР°Р»СЊРЅРёС… РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏС… Р·Р°СЃС‚РѕСЃСѓРЅРєСѓ РІ Р°РґРјС–РЅС†С–.';
 
   @override
-  String get infoHubTitle => 'Інформаційний центр';
+  String get infoHubTitle => 'Р†РЅС„РѕСЂРјР°С†С–Р№РЅРёР№ С†РµРЅС‚СЂ';
 
   @override
-  String get infoMenuAboutYfs => 'Про YFS';
+  String get infoMenuAboutYfs => 'РџСЂРѕ YFS';
 
   @override
-  String get infoMenuGeneralFaq => 'Загальні FAQ';
+  String get infoMenuGeneralFaq => 'Р—Р°РіР°Р»СЊРЅС– FAQ';
 
   @override
-  String get infoMenuContactManager => 'Зв\'язок із менеджером';
+  String get infoMenuContactManager =>
+      'Р—РІ\'СЏР·РѕРє С–Р· РјРµРЅРµРґР¶РµСЂРѕРј';
 
   @override
   String get infoFooterBrand => 'YFS';
 
   @override
   String get infoFooterCopyright =>
-      '© 2024 Young Fashion Series. Усі права захищено.';
+      'В© 2024 Young Fashion Series. РЈСЃС– РїСЂР°РІР° Р·Р°С…РёС‰РµРЅРѕ.';
 
   @override
   String parentProgressLabel(int completed, int total) {
-    return 'Прогрес батька/матері: $completed/$total';
+    return 'РџСЂРѕРіСЂРµСЃ Р±Р°С‚СЊРєР°/РјР°С‚РµСЂС–: $completed/$total';
   }
 
   @override
-  String get appUpdateRequiredMessage => 'Оновіть застосунок, щоб продовжити.';
+  String get appUpdateRequiredMessage =>
+      'РћРЅРѕРІС–С‚СЊ Р·Р°СЃС‚РѕСЃСѓРЅРѕРє, С‰РѕР± РїСЂРѕРґРѕРІР¶РёС‚Рё.';
 
   @override
-  String get appUpdateButton => 'Оновити застосунок';
+  String get appUpdateButton => 'РћРЅРѕРІРёС‚Рё Р·Р°СЃС‚РѕСЃСѓРЅРѕРє';
 
   @override
-  String get showAll => 'Показати все';
+  String get showAll => 'РџРѕРєР°Р·Р°С‚Рё РІСЃРµ';
 
   @override
-  String get staffNoneSelected => '— Немає —';
-
-  @override
-  String get staffRoleInactive => 'НЕАКТИВНА';
-
-  @override
-  String get staffWorkerStatusRefreshFailed =>
-      'Не вдалося оновити статус ролі. Перевірте з\'єднання.';
-
-  @override
-  String get staffScanRoleInactive =>
-      'Цю роль вимкнено в адмінці. Сканування недоступне.';
-
-  @override
-  String staffScanFailed(String error) {
-    return 'Помилка сканування: $error';
-  }
-
-  @override
-  String get staffScanSelectEventStageFirst =>
-      'Оберіть активну подію та етап у налаштуваннях персоналу перед скануванням.';
-
-  @override
-  String get staffScanProcessed => 'Сканування виконано';
-
-  @override
-  String get chatCouldNotPickPhoto => 'Не вдалося вибрати фото';
-
-  @override
-  String get staffChildProfileTitle => 'Профіль дитини';
-
-  @override
-  String get staffEventTimelineButton => 'ТАЙМЛАЙН';
-
-  @override
-  String get staffEventTimelineTitle => 'Таймлайн події';
-
-  @override
-  String get staffParentTimelineButton1 => 'ТАЙМЛАЙН БАТЬКІВ 1';
-
-  @override
-  String get staffParentTimelineButton2 => 'ТАЙМЛАЙН БАТЬКІВ 2';
-
-  @override
-  String get staffParentTimelineTitle1 => 'Таймлайн батьків 1';
-
-  @override
-  String get staffParentTimelineTitle2 => 'Таймлайн батьків 2';
-
-  @override
-  String get staffCurrentStage => 'ПОТОЧНИЙ ЕТАП';
-
-  @override
-  String staffProgressPercentComplete(int percent) {
-    return '$percent% завершено';
-  }
-
-  @override
-  String get staffChildDetailEmpty => 'Немає даних про дитину в БД';
-
-  @override
-  String get staffLoadFailed => 'Не вдалося завантажити';
-
-  @override
-  String get staffGuardianLiaison => 'КУРАТОР';
-
-  @override
-  String get staffAssignedBrand => 'ПРИЗНАЧЕНИЙ БРЕНД';
-
-  @override
-  String get staffAssignedPackage => 'ПАКЕТ';
-
-  @override
-  String get staffSupervisor => 'СУПЕРВАЙЗЕР';
-
-  @override
-  String get staffSectionCoreDetails => 'Основні дані';
-
-  @override
-  String get staffSectionParentContact => 'Контакт батька/матері';
-
-  @override
-  String staffPhaseWithName(String stageName) {
-    return 'Фаза: $stageName';
-  }
-
-  @override
-  String get staffNoCurrentStage => 'Немає поточного етапу';
-
-  @override
-  String staffAgeYearsOld(int age) {
-    return '$age років';
-  }
-
-  @override
-  String get staffNotesLabel => 'Нотатки';
-
-  @override
-  String get staffParentRoleDefault => 'Батько/мати';
+  String get chatCouldNotPickPhoto =>
+      'РќРµ РІРґР°Р»РѕСЃСЏ РІРёР±СЂР°С‚Рё С„РѕС‚Рѕ';
 
   @override
   String get contactManagerIntro =>
-      'Ви можете залишити повідомлення з будь-якого питання — з вами зв’яжуться найближчим часом.';
+      'Р’Рё РјРѕР¶РµС‚Рµ Р·Р°Р»РёС€РёС‚Рё РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ Р· Р±СѓРґСЊ-СЏРєРѕРіРѕ РїРёС‚Р°РЅРЅСЏ вЂ” Р· РІР°РјРё Р·РІвЂ™СЏР¶СѓС‚СЊСЃСЏ РЅР°Р№Р±Р»РёР¶С‡РёРј С‡Р°СЃРѕРј.';
 
   @override
-  String get contactManagerMessageLabel => 'Ваше повідомлення';
+  String get contactManagerMessageLabel => 'Р’Р°С€Рµ РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ';
 
   @override
-  String get contactManagerMessageRequired => 'Введіть текст повідомлення';
+  String get contactManagerMessageRequired =>
+      'Р’РІРµРґС–С‚СЊ С‚РµРєСЃС‚ РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ';
 
   @override
-  String get contactManagerSend => 'Надіслати';
+  String get contactManagerSend => 'РќР°РґС–СЃР»Р°С‚Рё';
 
   @override
   String get contactManagerSent =>
-      'Повідомлення надіслано. Ми зв’яжемося з вами найближчим часом.';
+      'РџРѕРІС–РґРѕРјР»РµРЅРЅСЏ РЅР°РґС–СЃР»Р°РЅРѕ. РњРё Р·РІвЂ™СЏР¶РµРјРѕСЃСЏ Р· РІР°РјРё РЅР°Р№Р±Р»РёР¶С‡РёРј С‡Р°СЃРѕРј.';
 
   @override
   String get contactManagerSendFailed =>
-      'Не вдалося надіслати. Спробуйте пізніше.';
+      'РќРµ РІРґР°Р»РѕСЃСЏ РЅР°РґС–СЃР»Р°С‚Рё. РЎРїСЂРѕР±СѓР№С‚Рµ РїС–Р·РЅС–С€Рµ.';
 
   @override
   String get contactManagerServiceUnavailable =>
-      'Зв’язок тимчасово недоступний. Спробуйте пізніше.';
+      'Р—РІвЂ™СЏР·РѕРє С‚РёРјС‡Р°СЃРѕРІРѕ РЅРµРґРѕСЃС‚СѓРїРЅРёР№. РЎРїСЂРѕР±СѓР№С‚Рµ РїС–Р·РЅС–С€Рµ.';
 
   @override
-  String get close => 'Закрити';
-
-  @override
-  String get staffPortalTitle => 'Портал персоналу';
-
-  @override
-  String get staffActiveEvent => 'Активна подія';
-
-  @override
-  String get staffActiveStage => 'Активний етап';
-
-  @override
-  String get staffSelectEvent => 'Оберіть подію';
-
-  @override
-  String get staffSelectEventInSettings =>
-      'Оберіть подію в налаштуваннях персоналу';
-
-  @override
-  String get staffSelectStage => 'Оберіть етап';
-
-  @override
-  String staffPreparatoryStageLabel(String stageName) {
-    return 'Підготовка: $stageName';
-  }
-
-  @override
-  String get staffScanButton => 'СКАН';
-
-  @override
-  String get staffQrCheckButton => 'QR-ПЕРЕВІРКА';
-
-  @override
-  String get staffParkingButton => 'ВАЛЕТ-ПАРКУВАННЯ';
-
-  @override
-  String get staffExtraZoneButton => 'BEVERAGE PACKAGE';
-
-  @override
-  String get staffBackstageButton => 'BACKSTAGE PASS';
-
-  @override
-  String get staffRehearsalCheckinButton => 'ЧЕК-ІН РЕПЕТИЦІЙ';
-
-  @override
-  String get staffTapToScanModelLanyard =>
-      'НАТИСНІТЬ, ЩОБ СКАНУВАТИ БЕЙДЖ МОДЕЛІ';
-
-  @override
-  String get staffTapToScanParkingQr =>
-      'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ВАЛЕТ-ПАРКУВАННЯ';
-
-  @override
-  String get staffTapToScanExtraZoneQr =>
-      'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR BEVERAGE PACKAGE';
-
-  @override
-  String get staffTapToScanBackstageQr =>
-      'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR BACKSTAGE PASS';
-
-  @override
-  String get staffTapToScanRehearsalCheckinQr =>
-      'НАТИСНІТЬ, ЩОБ СКАНУВАТИ QR ЧЕК-ІНУ РЕПЕТИЦІЙ';
-
-  @override
-  String get staffMealHandoutButton => 'ОБІД';
-
-  @override
-  String get staffTapToScanMealBadge => 'СКАН БЕЙДЖА ДИТИНИ АБО БАТЬКА';
-
-  @override
-  String get staffMealIssueTitle => 'Видача обідів';
-
-  @override
-  String get staffMealIssueNoMeals =>
-      'Для цього бейджа немає замовлених обідів.';
-
-  @override
-  String get staffMealIssueHandOut => 'Видати';
-
-  @override
-  String get staffMealIssueSuccess => 'Позначено як видане.';
-
-  @override
-  String staffMealIssueFailure(String error) {
-    return 'Помилка: $error';
-  }
-
-  @override
-  String get staffMealIssueAlreadyIssued => 'уже видано';
-
-  @override
-  String get staffTapToScanQrCheck =>
-      'НАТИСНІТЬ ДЛЯ СКАНУ БЕЙДЖА — ЕТАП І КАРТКА';
-
-  @override
-  String get staffCurrentTask => 'Поточне завдання';
-
-  @override
-  String get staffUtilitiesAndTools => 'ІНСТРУМЕНТИ';
-
-  @override
-  String get staffScanForInfoTitle => 'Скан для інформації';
-
-  @override
-  String get staffScanForInfoSubtitle => 'Сканер бейджів та службових QR';
-
-  @override
-  String get staffToiletRequest => 'Запит до туалету';
-
-  @override
-  String get staffRestroomLog => 'ЖУРНАЛ ТУАЛЕТУ';
-
-  @override
-  String get staffSettingsCardTitle => 'Налаштування персоналу';
-
-  @override
-  String get staffPreferences => 'ПАРАМЕТРИ';
-
-  @override
-  String get staffSupervisorRoleTitle => 'Роль супервайзера';
-
-  @override
-  String get staffSupervisorRoleDescription =>
-      'Керуйте потоком події, контролюйте фотографів та стежте, щоб усі діти були охоплені. Відстежуйте прогрес у реальному часі.';
-
-  @override
-  String get staffCurrentStageLabel => 'Поточний етап';
-
-  @override
-  String get staffNoMainStagesAvailable =>
-      'Для цієї події немає основних етапів.';
-
-  @override
-  String get staffChildRegistry => 'Реєстр дітей';
-
-  @override
-  String staffChildrenListed(int count) {
-    return 'Дітей у списку: $count';
-  }
-
-  @override
-  String get staffSelectActiveEventForRegistry =>
-      'Оберіть активну подію в налаштуваннях, щоб побачити реєстр дітей.';
-
-  @override
-  String get staffNoChildrenAssigned =>
-      'Для цієї події немає призначених дітей.';
-
-  @override
-  String get staffRehearsalAdminSlotsTitle => 'Слоти репетицій';
-
-  @override
-  String get staffRehearsalCheckinActiveSlot => 'Активний слот репетиції';
-
-  @override
-  String get staffRehearsalAdminSelectSlot => 'Оберіть слот репетиції';
-
-  @override
-  String get staffRehearsalCheckinSelectSlotFirst =>
-      'Спочатку оберіть слот репетиції';
-
-  @override
-  String get staffRehearsalAdminBookedChildrenTitle => 'Записані діти';
-
-  @override
-  String get staffRehearsalAdminNoSlots =>
-      'Для цієї події ще не створено слотів репетицій.';
-
-  @override
-  String get staffRehearsalAdminNoChildrenForSlot =>
-      'На цей слот поки ніхто не записаний.';
-
-  @override
-  String get staffGiftControlButton => 'КОНТРОЛЬ';
-
-  @override
-  String get staffGiftControlTitle => 'Контроль видачі подарунків';
-
-  @override
-  String get staffGiftControlSelectStage => 'Оберіть етап звіту';
-
-  @override
-  String get staffGiftControlFilterAll => 'Усі';
-
-  @override
-  String get staffGiftControlFilterPassed => 'Пройдено';
-
-  @override
-  String get staffGiftControlFilterNotPassed => 'Не пройдено';
-
-  @override
-  String get staffGiftControlNoChildren =>
-      'Немає дітей за вибраними фільтрами.';
-
-  @override
-  String get staffTableProfile => 'ПРОФІЛЬ';
-
-  @override
-  String get staffTableName => 'ІМ\'Я';
-
-  @override
-  String get staffTableStatus => 'СТАТУС';
-
-  @override
-  String get staffTableAction => 'ДІЯ';
-
-  @override
-  String get staffYes => 'Так';
-
-  @override
-  String get staffNo => 'Ні';
-
-  @override
-  String get staffRoleHostessTitle => 'Роль: хостес';
-
-  @override
-  String get staffRoleHostessPlaceholder =>
-      'Екран ролі хостес буде додано пізніше.';
-
-  @override
-  String get staffRoleInterviewTitle => 'Роль: інтерв\'ю';
-
-  @override
-  String get staffRoleInterviewPlaceholder =>
-      'Екран ролі інтерв\'ю буде додано пізніше.';
-
-  @override
-  String get staffRoleLunchesTitle => 'Роль: обіди';
-
-  @override
-  String get staffRoleLunchesPlaceholder =>
-      'Екран ролі обідів буде додано пізніше.';
-
-  @override
-  String get staffRoleSuperadminTitle => 'Роль: суперадмін';
-
-  @override
-  String get staffRoleSuperadminPlaceholder =>
-      'Екран ролі суперадміна буде додано пізніше.';
-
-  @override
-  String get staffRoleRehearsalAdminTitle => 'Роль: адмін репетицій';
-
-  @override
-  String get staffRoleRehearsalAdminPlaceholder =>
-      'Екран ролі адміна репетицій буде додано пізніше.';
-
-  @override
-  String get staffNavHome => 'Головна';
-
-  @override
-  String get staffNavEvent => 'Подія';
-
-  @override
-  String get staffNavMore => 'Ще';
-
-  @override
-  String get staffAccessBadge => 'ДОСТУП ПЕРСОНАЛУ';
-
-  @override
-  String get staffVenueAndContact => 'Локація та контакти';
-
-  @override
-  String get staffMainOffice => 'Головний офіс';
-
-  @override
-  String get staffSecurity => 'Охорона';
-
-  @override
-  String get staffScanHeaderParking => 'Скан валет-паркування';
-
-  @override
-  String get staffScanHeaderExtraZone => 'Вхід: BEVERAGE PACKAGE';
-
-  @override
-  String get staffScanHeaderBackstage => 'Вхід: BACKSTAGE PASS';
-
-  @override
-  String get staffScanHeaderRehearsalCheckin => 'Чек-ін репетицій';
-
-  @override
-  String get staffScanHeaderInfo => 'Скан для інформації';
-
-  @override
-  String get staffScanHeaderQr => 'Скан QR коду';
-
-  @override
-  String get staffScanHintParking =>
-      'Скануйте QR валет-паркування, щоб показати дані талона';
-
-  @override
-  String get staffScanHintExtraZone => 'Скануйте QR BEVERAGE PACKAGE для входу';
-
-  @override
-  String get staffScanHintBackstage => 'Скануйте QR BACKSTAGE PASS для входу';
-
-  @override
-  String get staffScanHintRehearsalCheckin =>
-      'Скануйте check-in QR дитини, щоб закрити проходження репетиції';
-
-  @override
-  String get staffScanHintInfo =>
-      'Скануйте бейдж дитини або батьків, щоб відкрити профіль';
-
-  @override
-  String get staffScanHintQr => 'Розмістіть QR-код у рамці';
-
-  @override
-  String get staffScanHeaderQrCheck => 'QR-перевірка';
-
-  @override
-  String get staffScanHintQrCheck =>
-      'Відскануйте бейдж дитини, щоб відмітити обраний етап, далі відкриється картка';
-
-  @override
-  String get staffQrCheckSuccessTitle => 'Етап відмічено';
-
-  @override
-  String get staffQrCheckSuccessContinue => 'Далі';
-
-  @override
-  String get staffScanErrorTitle => 'Помилка сканування';
-
-  @override
-  String get staffScanErrorUnknown => 'Невідома помилка сканування.';
-
-  @override
-  String get staffParkingTicketTitle => 'Талон валет-паркування';
-
-  @override
-  String get staffExtraZonePassTitle => 'Перепустка BEVERAGE PACKAGE';
-
-  @override
-  String get staffExtraZoneScanResultTitle => 'Результат сканування';
-
-  @override
-  String get staffExtraZoneResultNotFound => 'КОД ВІДСУТНІЙ У БАЗІ';
-
-  @override
-  String get staffExtraZoneResultAccessGranted =>
-      'КОД ПРИЙНЯТО, ПРОХІД ДОЗВОЛЕНО';
-
-  @override
-  String get staffExtraZoneResultAccessClosed =>
-      'КОД ПРИЙНЯТО, АЛЕ ДОСТУП ЗАКРИТО';
-
-  @override
-  String get staffBackstageScanResultTitle => 'Результат сканування';
-
-  @override
-  String get staffBackstageResultNotFound => 'КОД ВІДСУТНІЙ У БАЗІ';
-
-  @override
-  String get staffBackstageResultAccessGranted =>
-      'КОД ПРИЙНЯТО, ПРОХІД ДОЗВОЛЕНО';
-
-  @override
-  String get staffBackstageResultAccessClosed =>
-      'КОД ПРИЙНЯТО, АЛЕ ДОСТУП ЗАКРИТО';
-
-  @override
-  String get staffRehearsalCheckinScanResultTitle => 'Результат сканування';
-
-  @override
-  String get staffRehearsalCheckinResultNotFound => 'CHECK-IN КОД НЕ ЗНАЙДЕНО';
-
-  @override
-  String get staffRehearsalCheckinResultWrongSlot =>
-      'ДИТИНА НЕ ЗАПИСАНА НА ЦЕЙ СЛОТ';
-
-  @override
-  String get staffRehearsalCheckinResultAlreadyClosed =>
-      'ЧЕК-ІН РЕПЕТИЦІЇ ВЖЕ ЗАКРИТО';
-
-  @override
-  String get staffRehearsalCheckinResultClosedNow => 'ЧЕК-ІН РЕПЕТИЦІЇ ЗАКРИТО';
-
-  @override
-  String get staffRehearsalCheckinFieldChild => 'Дитина';
-
-  @override
-  String get staffRehearsalCheckinFieldSlot => 'Слот';
-
-  @override
-  String get staffParkingFieldEvent => 'Подія';
-
-  @override
-  String get staffParkingFieldClient => 'Клієнт';
-
-  @override
-  String get staffParkingFieldCar => 'Автомобіль';
-
-  @override
-  String get staffParkingFieldPlateNumber => 'Номерний знак';
-
-  @override
-  String get staffParkingFieldVipClient => 'VIP клієнт';
-
-  @override
-  String get staffShowProgressTitle => 'Прогрес шоу';
-
-  @override
-  String get staffCouldNotOpenDialer => 'Не вдалося відкрити набір номера';
-
-  @override
-  String get staffRealtimeTracking => 'ВІДСТЕЖЕННЯ В РЕАЛЬНОМУ ЧАСІ';
-
-  @override
-  String get staffEstimatedCompletion => 'ОРІЄНТОВНЕ ЗАВЕРШЕННЯ';
-
-  @override
-  String get staffNoMainStagesInPlan => 'У плані поки немає основних етапів.';
-
-  @override
-  String get staffStatusDone => 'ГОТОВО';
-
-  @override
-  String get staffStatusInProgress => 'В ПРОЦЕСІ';
-
-  @override
-  String get staffStatusPending => 'ОЧІКУВАННЯ';
-
-  @override
-  String get staffContactDetails => 'Контактні дані';
-
-  @override
-  String get staffPrimaryParent => 'ОСНОВНИЙ З БАТЬКІВ';
-
-  @override
-  String staffIdLabel(String id) {
-    return 'ID співробітника: $id';
-  }
-
-  @override
-  String get staffSwitchRole => 'Змінити роль';
-
-  @override
-  String staffCurrentRoleLabel(String role) {
-    return 'ПОТОЧНА: $role';
-  }
-
-  @override
-  String get staffRoleSubtitleScan => 'Скан QR та етапи';
-
-  @override
-  String get staffRoleSubtitleQrCheck =>
-      'Відмітка етапу за бейджем, далі картка дитини';
-
-  @override
-  String get staffRoleSubtitleSupervisor => 'Повний доступ та керування';
-
-  @override
-  String get staffRoleSubtitleHostess => 'Підтримка гостей та зон';
-
-  @override
-  String get staffRoleSubtitleParking => 'Валет-паркування та доступ';
-
-  @override
-  String get staffRoleSubtitleExtraZone => 'Доступ до BEVERAGE PACKAGE';
-
-  @override
-  String get staffRoleSubtitleBackstage => 'Доступ до BACKSTAGE PASS';
-
-  @override
-  String get staffRoleSubtitleRehearsalAdmin => 'Керування репетиціями';
-
-  @override
-  String get staffRoleSubtitleRehearsalCheckin =>
-      'Скан check-in по слотах репетицій';
-
-  @override
-  String get staffRoleSubtitleGiftIssue => 'Контроль видачі подарунків';
-
-  @override
-  String get staffRoleSubtitleInterview => 'Потік інтерв\'ю';
-
-  @override
-  String get staffRoleSubtitleLunches => 'Харчування та обіди';
-
-  @override
-  String get staffRoleSubtitleSuperadmin => 'Інструменти суперадміна';
-
-  @override
-  String get staffRoleSubtitlePhotographer => 'Зйомка та завантаження медіа';
-
-  @override
-  String get staffRoleSubtitleStylist => 'Гардероб та макіяж';
-
-  @override
-  String get staffHostessEntryMode => 'ВХІД';
-
-  @override
-  String get staffHostessExitMode => 'ВИХІД';
-
-  @override
-  String get staffHostessEntryHint =>
-      'Скануйте бейдж дитини, щоб закрити вибраний етап і синхронізувати батьків Family Look';
-
-  @override
-  String get staffHostessExitHint =>
-      'Скануйте бейдж дитини або батьків, перевірте прогрес і закрийте етап виходу';
-
-  @override
-  String get staffHostessEntryResultTitle => 'Результат сканування входу';
-
-  @override
-  String get staffHostessExitResultTitle => 'Результат сканування виходу';
-
-  @override
-  String get staffHostessFieldChildName => 'Ім\'я';
-
-  @override
-  String get staffHostessFieldParent => 'Батьки';
-
-  @override
-  String get staffHostessFieldBrandsAndSupervisors => 'Бренди та супервайзери';
-
-  @override
-  String get staffHostessFieldFamilyLook => 'Family Look';
-
-  @override
-  String get staffHostessFamilyLookEnabled => 'Family Look активовано';
-
-  @override
-  String get staffHostessFieldStages => 'Етапи';
-
-  @override
-  String get staffHostessCloseEventAction => 'Закрити івент';
-
-  @override
-  String get staffHostessStageAlreadySelectedOtherMode =>
-      'Цей етап уже обрано для іншого режиму хостес.';
-
-  @override
-  String staffHostessRequiredProgress(int completed, int total) {
-    return 'Обов\'язкові етапи: $completed/$total';
-  }
+  String get close => 'Р—Р°РєСЂРёС‚Рё';
 }

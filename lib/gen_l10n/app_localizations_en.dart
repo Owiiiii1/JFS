@@ -42,7 +42,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apiEndpointNotFoundHint =>
-      'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).';
+      'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api вЂ” the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).';
 
   @override
   String get notificationsTitle => 'Notifications';
@@ -160,7 +160,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountSecondMessage =>
-      'The following will be permanently removed from our systems:\n\n• Your account and profile\n• All children linked to your account\n• All event assignments, stage progress, tickets, and meal selections\n• Photos and other data stored for your children\n• Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.';
+      'The following will be permanently removed from our systems:\n\nвЂў Your account and profile\nвЂў All children linked to your account\nвЂў All event assignments, stage progress, tickets, and meal selections\nвЂў Photos and other data stored for your children\nвЂў Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.';
 
   @override
   String get deleteAccountContinue => 'Continue';
@@ -169,7 +169,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccountConfirmAction => 'Delete permanently';
 
   @override
-  String get deleteAccountWorking => 'Deleting account…';
+  String get deleteAccountWorking => 'Deleting accountвЂ¦';
 
   @override
   String get save => 'Save';
@@ -705,7 +705,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get parkingInactiveVipBody =>
-      'FOR VIP VALET PARKING — RESERVE A SPOT FOR YOUR CAR.';
+      'FOR VIP VALET PARKING вЂ” RESERVE A SPOT FOR YOUR CAR.';
 
   @override
   String get parkingInactiveVipBookCta => 'BOOK VALET PARKING';
@@ -726,10 +726,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get parkingActiveTicketLabel => 'TICKET';
 
   @override
-  String get parkingTicketMock1 => 'TICKET A1 · MODEL';
+  String get parkingTicketMock1 => 'TICKET A1 В· MODEL';
 
   @override
-  String get parkingTicketMock2 => 'TICKET B7 · GUEST';
+  String get parkingTicketMock2 => 'TICKET B7 В· GUEST';
 
   @override
   String get parkingActiveValetLabel => 'VALET SERVICE';
@@ -916,7 +916,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mealCheckoutError => 'Could not start payment. Try again.';
 
   @override
-  String get mealAwaitingPayment => 'Order placed — awaiting payment';
+  String get mealAwaitingPayment => 'Order placed вЂ” awaiting payment';
 
   @override
   String get mealAwaitingPaymentDetail =>
@@ -1042,9 +1042,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get staff => 'Staff';
-
-  @override
   String get birthdateDialogTitle => 'Birthdate';
 
   @override
@@ -1166,7 +1163,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contactFormLinkMissing =>
-      'No form link is set. Add В«Contact / signup form URLВ» in Application settings in the admin.';
+      'No form link is set. Add Р’В«Contact / signup form URLР’В» in Application settings in the admin.';
 
   @override
   String get infoHubTitle => 'Information Hub';
@@ -1185,7 +1182,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get infoFooterCopyright =>
-      'В© 2024 Young Fashion Series. All rights reserved.';
+      'Р’В© 2024 Young Fashion Series. All rights reserved.';
 
   @override
   String parentProgressLabel(int completed, int total) {
@@ -1202,105 +1199,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showAll => 'Show all';
 
   @override
-  String get staffNoneSelected => '-- None --';
-
-  @override
-  String get staffRoleInactive => 'INACTIVE';
-
-  @override
-  String get staffWorkerStatusRefreshFailed =>
-      'Could not update role status. Check your connection.';
-
-  @override
-  String get staffScanRoleInactive =>
-      'This role has been deactivated in the admin panel. Scanning is not available.';
-
-  @override
-  String staffScanFailed(String error) {
-    return 'Scan failed: $error';
-  }
-
-  @override
-  String get staffScanSelectEventStageFirst =>
-      'Select active event and stage in Staff Settings before scanning.';
-
-  @override
-  String get staffScanProcessed => 'Scan processed';
-
-  @override
   String get chatCouldNotPickPhoto => 'Could not pick photo';
-
-  @override
-  String get staffChildProfileTitle => 'Child Profile';
-
-  @override
-  String get staffEventTimelineButton => 'TIMELINE';
-
-  @override
-  String get staffEventTimelineTitle => 'Event timeline';
-
-  @override
-  String get staffParentTimelineButton1 => 'PARENT 1 TIMELINE';
-
-  @override
-  String get staffParentTimelineButton2 => 'PARENT 2 TIMELINE';
-
-  @override
-  String get staffParentTimelineTitle1 => 'Parent 1 timeline';
-
-  @override
-  String get staffParentTimelineTitle2 => 'Parent 2 timeline';
-
-  @override
-  String get staffCurrentStage => 'CURRENT STAGE';
-
-  @override
-  String staffProgressPercentComplete(int percent) {
-    return '$percent% Complete';
-  }
-
-  @override
-  String get staffChildDetailEmpty => 'No child details in DB';
-
-  @override
-  String get staffLoadFailed => 'Failed to load';
-
-  @override
-  String get staffGuardianLiaison => 'GUARDIAN LIAISON';
-
-  @override
-  String get staffAssignedBrand => 'ASSIGNED BRAND';
-
-  @override
-  String get staffAssignedPackage => 'PACKAGE';
-
-  @override
-  String get staffSupervisor => 'SUPERVISOR';
-
-  @override
-  String get staffSectionCoreDetails => 'Core Details';
-
-  @override
-  String get staffSectionParentContact => 'Parent Contact';
-
-  @override
-  String staffPhaseWithName(String stageName) {
-    return 'Phase: $stageName';
-  }
-
-  @override
-  String get staffNoCurrentStage => 'No current stage';
-
-  @override
-  String staffAgeYearsOld(int age) {
-    return '$age years old';
-  }
-
-  @override
-  String get staffNotesLabel => 'Notes';
-
-  @override
-  String get staffParentRoleDefault => 'Parent';
 
   @override
   String get contactManagerIntro =>
@@ -1328,534 +1227,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get close => 'Close';
-
-  @override
-  String get staffPortalTitle => 'Staff Portal';
-
-  @override
-  String get staffActiveEvent => 'Active event';
-
-  @override
-  String get staffActiveStage => 'Active stage';
-
-  @override
-  String get staffSelectEvent => 'Select event';
-
-  @override
-  String get staffSelectEventInSettings => 'Select an event in Staff Settings';
-
-  @override
-  String get staffSelectStage => 'Select stage';
-
-  @override
-  String staffPreparatoryStageLabel(String stageName) {
-    return 'Prep: $stageName';
-  }
-
-  @override
-  String get staffScanButton => 'SCAN';
-
-  @override
-  String get staffQrCheckButton => 'QR CHECK';
-
-  @override
-  String get staffParkingButton => 'VALET PARKING';
-
-  @override
-  String get staffExtraZoneButton => 'BEVERAGE PACKAGE';
-
-  @override
-  String get staffBackstageButton => 'BACKSTAGE PASS';
-
-  @override
-  String get staffRehearsalCheckinButton => 'REHEARSAL CHECK-IN';
-
-  @override
-  String get staffTapToScanModelLanyard => 'TAP TO SCAN MODEL LANYARD';
-
-  @override
-  String get staffTapToScanParkingQr => 'TAP TO SCAN VALET PARKING QR';
-
-  @override
-  String get staffTapToScanExtraZoneQr => 'TAP TO SCAN BEVERAGE PACKAGE QR';
-
-  @override
-  String get staffTapToScanBackstageQr => 'TAP TO SCAN BACKSTAGE PASS QR';
-
-  @override
-  String get staffTapToScanRehearsalCheckinQr =>
-      'TAP TO SCAN REHEARSAL CHECK-IN QR';
-
-  @override
-  String get staffMealHandoutButton => 'LUNCH';
-
-  @override
-  String get staffTapToScanMealBadge => 'TAP TO SCAN A CHILD OR PARENT BADGE';
-
-  @override
-  String get staffMealIssueTitle => 'Lunch handout';
-
-  @override
-  String get staffMealIssueNoMeals => 'No lunch orders for this pass.';
-
-  @override
-  String get staffMealIssueHandOut => 'Hand out';
-
-  @override
-  String get staffMealIssueSuccess => 'Marked as handed out.';
-
-  @override
-  String staffMealIssueFailure(String error) {
-    return 'Could not update: $error';
-  }
-
-  @override
-  String get staffMealIssueAlreadyIssued => 'already handed out';
-
-  @override
-  String get staffTapToScanQrCheck => 'TAP TO SCAN BADGE — STAGE & CHILD CARD';
-
-  @override
-  String get staffCurrentTask => 'Current Task';
-
-  @override
-  String get staffUtilitiesAndTools => 'UTILITIES & TOOLS';
-
-  @override
-  String get staffScanForInfoTitle => 'Scan for Info';
-
-  @override
-  String get staffScanForInfoSubtitle => 'General purpose assets & ID scanner';
-
-  @override
-  String get staffToiletRequest => 'Toilet Request';
-
-  @override
-  String get staffRestroomLog => 'RESTROOM LOG';
-
-  @override
-  String get staffSettingsCardTitle => 'Staff Settings';
-
-  @override
-  String get staffPreferences => 'PREFERENCES';
-
-  @override
-  String get staffSupervisorRoleTitle => 'Supervisor Role';
-
-  @override
-  String get staffSupervisorRoleDescription =>
-      'Manage event flow, oversee photographers, and ensure all children are captured effectively. Track progress in real-time.';
-
-  @override
-  String get staffCurrentStageLabel => 'Current stage';
-
-  @override
-  String get staffNoMainStagesAvailable =>
-      'No main stages available for this event.';
-
-  @override
-  String get staffChildRegistry => 'Child Registry';
-
-  @override
-  String staffChildrenListed(int count) {
-    return '$count Children Listed';
-  }
-
-  @override
-  String get staffSelectActiveEventForRegistry =>
-      'Select an active event in Settings to see the child registry.';
-
-  @override
-  String get staffNoChildrenAssigned => 'No children assigned for this event.';
-
-  @override
-  String get staffRehearsalAdminSlotsTitle => 'Rehearsal Slots';
-
-  @override
-  String get staffRehearsalCheckinActiveSlot => 'Active rehearsal slot';
-
-  @override
-  String get staffRehearsalAdminSelectSlot => 'Select rehearsal slot';
-
-  @override
-  String get staffRehearsalCheckinSelectSlotFirst =>
-      'Select rehearsal slot first';
-
-  @override
-  String get staffRehearsalAdminBookedChildrenTitle => 'Booked Children';
-
-  @override
-  String get staffRehearsalAdminNoSlots =>
-      'No rehearsal slots created for this event.';
-
-  @override
-  String get staffRehearsalAdminNoChildrenForSlot =>
-      'No children booked for this slot.';
-
-  @override
-  String get staffGiftControlButton => 'CONTROL';
-
-  @override
-  String get staffGiftControlTitle => 'Gift Issue Control';
-
-  @override
-  String get staffGiftControlSelectStage => 'Select report stage';
-
-  @override
-  String get staffGiftControlFilterAll => 'All';
-
-  @override
-  String get staffGiftControlFilterPassed => 'Passed';
-
-  @override
-  String get staffGiftControlFilterNotPassed => 'Not passed';
-
-  @override
-  String get staffGiftControlNoChildren => 'No children for selected filters.';
-
-  @override
-  String get staffTableProfile => 'PROFILE';
-
-  @override
-  String get staffTableName => 'NAME';
-
-  @override
-  String get staffTableStatus => 'STATUS';
-
-  @override
-  String get staffTableAction => 'ACTION';
-
-  @override
-  String get staffYes => 'Yes';
-
-  @override
-  String get staffNo => 'No';
-
-  @override
-  String get staffRoleHostessTitle => 'Role: hostess';
-
-  @override
-  String get staffRoleHostessPlaceholder =>
-      'The hostess role screen will be added later.';
-
-  @override
-  String get staffRoleInterviewTitle => 'Role: interview';
-
-  @override
-  String get staffRoleInterviewPlaceholder =>
-      'The interview role screen will be added later.';
-
-  @override
-  String get staffRoleLunchesTitle => 'Role: lunches';
-
-  @override
-  String get staffRoleLunchesPlaceholder =>
-      'The lunches role screen will be added later.';
-
-  @override
-  String get staffRoleSuperadminTitle => 'Role: superadmin';
-
-  @override
-  String get staffRoleSuperadminPlaceholder =>
-      'The superadmin role screen will be added later.';
-
-  @override
-  String get staffRoleRehearsalAdminTitle => 'Role: rehearsal admin';
-
-  @override
-  String get staffRoleRehearsalAdminPlaceholder =>
-      'The rehearsal admin role screen will be added later.';
-
-  @override
-  String get staffNavHome => 'Home';
-
-  @override
-  String get staffNavEvent => 'Event';
-
-  @override
-  String get staffNavMore => 'More';
-
-  @override
-  String get staffAccessBadge => 'STAFF ACCESS';
-
-  @override
-  String get staffVenueAndContact => 'Venue & Contact';
-
-  @override
-  String get staffMainOffice => 'Main Office';
-
-  @override
-  String get staffSecurity => 'Security';
-
-  @override
-  String get staffScanHeaderParking => 'Valet Parking Scan';
-
-  @override
-  String get staffScanHeaderExtraZone => 'Beverage package entry';
-
-  @override
-  String get staffScanHeaderBackstage => 'Backstage pass entry';
-
-  @override
-  String get staffScanHeaderRehearsalCheckin => 'Rehearsal Check-in';
-
-  @override
-  String get staffScanHeaderInfo => 'Scan for Info';
-
-  @override
-  String get staffScanHeaderQr => 'Scan QR Code';
-
-  @override
-  String get staffScanHintParking =>
-      'Scan valet parking QR code to show ticket details';
-
-  @override
-  String get staffScanHintExtraZone =>
-      'Scan beverage package QR code to allow entry';
-
-  @override
-  String get staffScanHintBackstage =>
-      'Scan backstage pass QR code to allow entry';
-
-  @override
-  String get staffScanHintRehearsalCheckin =>
-      'Scan child check-in QR to close rehearsal check-in';
-
-  @override
-  String get staffScanHintInfo => 'Scan child or parent badge to view profile';
-
-  @override
-  String get staffScanHintQr => 'Align QR code within the frame';
-
-  @override
-  String get staffScanHeaderQrCheck => 'QR check';
-
-  @override
-  String get staffScanHintQrCheck =>
-      'Scan the child badge to mark the selected stage complete, then open the child card';
-
-  @override
-  String get staffQrCheckSuccessTitle => 'Stage marked complete';
-
-  @override
-  String get staffQrCheckSuccessContinue => 'Continue';
-
-  @override
-  String get staffScanErrorTitle => 'Scan Error';
-
-  @override
-  String get staffScanErrorUnknown => 'Unknown scan error.';
-
-  @override
-  String get staffParkingTicketTitle => 'Valet Parking Ticket';
-
-  @override
-  String get staffExtraZonePassTitle => 'Beverage package pass';
-
-  @override
-  String get staffExtraZoneScanResultTitle => 'Scan Result';
-
-  @override
-  String get staffExtraZoneResultNotFound => 'CODE NOT FOUND IN DATABASE';
-
-  @override
-  String get staffExtraZoneResultAccessGranted =>
-      'CODE ACCEPTED, ACCESS GRANTED';
-
-  @override
-  String get staffExtraZoneResultAccessClosed =>
-      'CODE ACCEPTED, BUT ACCESS CLOSED';
-
-  @override
-  String get staffBackstageScanResultTitle => 'Scan Result';
-
-  @override
-  String get staffBackstageResultNotFound => 'CODE NOT FOUND IN DATABASE';
-
-  @override
-  String get staffBackstageResultAccessGranted =>
-      'CODE ACCEPTED, ACCESS GRANTED';
-
-  @override
-  String get staffBackstageResultAccessClosed =>
-      'CODE ACCEPTED, BUT ACCESS CLOSED';
-
-  @override
-  String get staffRehearsalCheckinScanResultTitle => 'Scan Result';
-
-  @override
-  String get staffRehearsalCheckinResultNotFound => 'CHECK-IN CODE NOT FOUND';
-
-  @override
-  String get staffRehearsalCheckinResultWrongSlot =>
-      'CHILD IS NOT IN THE SELECTED SLOT';
-
-  @override
-  String get staffRehearsalCheckinResultAlreadyClosed =>
-      'REHEARSAL CHECK-IN ALREADY CLOSED';
-
-  @override
-  String get staffRehearsalCheckinResultClosedNow =>
-      'REHEARSAL CHECK-IN CLOSED';
-
-  @override
-  String get staffRehearsalCheckinFieldChild => 'Child';
-
-  @override
-  String get staffRehearsalCheckinFieldSlot => 'Slot';
-
-  @override
-  String get staffParkingFieldEvent => 'Event';
-
-  @override
-  String get staffParkingFieldClient => 'Client';
-
-  @override
-  String get staffParkingFieldCar => 'Car';
-
-  @override
-  String get staffParkingFieldPlateNumber => 'Plate number';
-
-  @override
-  String get staffParkingFieldVipClient => 'VIP client';
-
-  @override
-  String get staffShowProgressTitle => 'Show Progress';
-
-  @override
-  String get staffCouldNotOpenDialer => 'Could not open the phone dialer';
-
-  @override
-  String get staffRealtimeTracking => 'REAL-TIME TRACKING';
-
-  @override
-  String get staffEstimatedCompletion => 'EST. COMPLETION';
-
-  @override
-  String get staffNoMainStagesInPlan => 'No main stages in plan yet.';
-
-  @override
-  String get staffStatusDone => 'DONE';
-
-  @override
-  String get staffStatusInProgress => 'IN PROGRESS';
-
-  @override
-  String get staffStatusPending => 'PENDING';
-
-  @override
-  String get staffContactDetails => 'Contact Details';
-
-  @override
-  String get staffPrimaryParent => 'PRIMARY PARENT';
-
-  @override
-  String staffIdLabel(String id) {
-    return 'Staff ID: $id';
-  }
-
-  @override
-  String get staffSwitchRole => 'Switch Role';
-
-  @override
-  String staffCurrentRoleLabel(String role) {
-    return 'CURRENT: $role';
-  }
-
-  @override
-  String get staffRoleSubtitleScan => 'QR scan & stage flow';
-
-  @override
-  String get staffRoleSubtitleQrCheck =>
-      'Mark stage by badge, then child details';
-
-  @override
-  String get staffRoleSubtitleSupervisor => 'Full access & management';
-
-  @override
-  String get staffRoleSubtitleHostess => 'Guest & zone support';
-
-  @override
-  String get staffRoleSubtitleParking => 'Valet parking flow & access';
-
-  @override
-  String get staffRoleSubtitleExtraZone => 'Beverage package access';
-
-  @override
-  String get staffRoleSubtitleBackstage => 'Backstage pass access';
-
-  @override
-  String get staffRoleSubtitleRehearsalAdmin => 'Rehearsal administration';
-
-  @override
-  String get staffRoleSubtitleRehearsalCheckin =>
-      'Rehearsal slot check-in scan';
-
-  @override
-  String get staffRoleSubtitleGiftIssue => 'Gift issue control';
-
-  @override
-  String get staffRoleSubtitleInterview => 'Interview flow';
-
-  @override
-  String get staffRoleSubtitleLunches => 'Meals & lunches';
-
-  @override
-  String get staffRoleSubtitleSuperadmin => 'Super admin tools';
-
-  @override
-  String get staffRoleSubtitlePhotographer => 'Media capture & uploads';
-
-  @override
-  String get staffRoleSubtitleStylist => 'Wardrobe & makeup logs';
-
-  @override
-  String get staffHostessEntryMode => 'ENTRY';
-
-  @override
-  String get staffHostessExitMode => 'EXIT';
-
-  @override
-  String get staffHostessEntryHint =>
-      'Scan child badge to close selected stage and sync Family Look parents';
-
-  @override
-  String get staffHostessExitHint =>
-      'Scan child or parent badge, review progress and close event stage';
-
-  @override
-  String get staffHostessEntryResultTitle => 'Entry scan result';
-
-  @override
-  String get staffHostessExitResultTitle => 'Exit scan result';
-
-  @override
-  String get staffHostessFieldChildName => 'Name';
-
-  @override
-  String get staffHostessFieldParent => 'Parent';
-
-  @override
-  String get staffHostessFieldBrandsAndSupervisors => 'Brands and supervisors';
-
-  @override
-  String get staffHostessFieldFamilyLook => 'Family Look';
-
-  @override
-  String get staffHostessFamilyLookEnabled => 'Family Look is enabled';
-
-  @override
-  String get staffHostessFieldStages => 'Stages';
-
-  @override
-  String get staffHostessCloseEventAction => 'Close Event';
-
-  @override
-  String get staffHostessStageAlreadySelectedOtherMode =>
-      'This stage is already selected for the other hostess mode.';
-
-  @override
-  String staffHostessRequiredProgress(int completed, int total) {
-    return 'Required stages completed: $completed/$total';
-  }
 }

@@ -1,21 +1,22 @@
-You are working on a full-stack project consisting of two parts:
-- jfs_application (C:\MobAPP\JFS\jfs_application) — mobile app on Flutter/Dart.
-- YFS (C:\Users\owlni\PhpstormProjects\YFS) — admin panel on Laravel (PHP). Contains the database; the mobile app communicates with it via REST API to fetch and send data.
+You are working on a full-stack project consisting of three parts:
+- jfs_application (C:\MobAPP\JFS\jfs_application) — client mobile app on Flutter/Dart.
+- yfs_app_staff (C:\MobAPP\YFS-staff\yfs_app_staff) — staff mobile app on Flutter/Dart.
+- YFS (C:\Users\owlni\PhpstormProjects\YFS) — admin panel and API on Laravel (PHP). Contains the database; both mobile apps communicate with it via REST API.
 
 Domain context:
-- The Flutter app has two user-facing parts: Client and Staff.
-- The Staff part is used to administer a children's fashion show by scanning each child's QR code at every stage checkpoint.
+- Client and Staff are now split into two independent Flutter applications.
+- The Staff application is used to administer a children's fashion show by scanning each child's QR code at every stage checkpoint.
 - The YFS admin panel is built with Laravel + Filament and is used by administrators to configure and manage the event data and workflow.
-- Flutter and Laravel/Filament parts must stay aligned through API contracts.
+- Both Flutter applications and Laravel/Filament must stay aligned through API contracts.
 
 General:
 - Prefer small, reviewable diffs.
 - Never change unrelated files.
 - Preserve existing architecture and naming unless asked.
 - If you add a dependency, update pubspec.yaml (Flutter) or composer.json (Laravel) and explain why.
-- When working on an API endpoint, keep the Flutter side and the Laravel side consistent (request/response format, route names, etc.).
+- When working on an API endpoint, keep both Flutter apps and Laravel consistent (request/response format, route names, etc.).
 
-Flutter/Dart (jfs_application):
+Flutter/Dart (jfs_application and yfs_app_staff):
 - Use null-safety.
 - Prefer const constructors where possible.
 - Use Flutter lints and keep analysis clean.

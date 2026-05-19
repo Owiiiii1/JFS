@@ -7,7 +7,6 @@ import 'client_home_page.dart';
 import 'client_password_setup_page.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'register_page.dart';
-import 'staff_home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.auth});
@@ -26,6 +25,11 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+
+  bool _isClientRole(Map<String, dynamic> user) {
+    final role = (user['role'] ?? '').toString().trim().toLowerCase();
+    return role == 'client';
+  }
 
   @override
   void dispose() {
@@ -66,16 +70,15 @@ class _LoginPageState extends State<LoginPage> {
       if (token == null || user == null) {
         throw Exception('Invalid login response');
       }
+      if (!_isClientRole(user)) {
+        throw Exception('Client access is allowed only for client accounts');
+      }
 
       // сохраняем токен (пригодится позже)
       await widget.auth.saveToken(token);
       unawaited(PushTokenServiceHolder.instance?.syncWithBackendIfLoggedIn());
 
-      final role = (user['role'] ?? '').toString().toLowerCase();
-
-      final next = (role == 'worker')
-          ? StaffHomePage(auth: widget.auth, user: user)
-          : ClientHomePage(auth: widget.auth, user: user);
+      final next = ClientHomePage(auth: widget.auth, user: user);
 
       if (!mounted) return;
       Navigator.of(

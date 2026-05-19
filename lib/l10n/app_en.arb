@@ -1,760 +1,532 @@
-{
-  "@@locale": "en",
-  "signIn": "Sign in",
-  "signUp": "Sign up",
-  "email": "Email",
-  "password": "Password",
-  "emailRequired": "Email is required",
-  "enterValidEmail": "Enter a valid email",
-  "passwordRequired": "Password is required",
-  "hidePassword": "Hide password",
-  "showPassword": "Show password",
-  "signInFailed": "Sign in failed: {error}",
-  "@signInFailed": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "apiEndpointNotFoundHint": "The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).",
-  "notificationsTitle": "Notifications",
-  "notificationsLoadFailed": "Could not load notifications. Try again.",
-  "notificationsEmpty": "No notifications yet.",
-  "notificationsNewMark": "New",
-  "notificationDetailsTitle": "Notification",
-  "createAccount": "Create account",
-  "name": "Name",
-  "registerNameLabel": "Enter first and last name",
-  "nameRequired": "Name is required",
-  "phone": "Phone",
-  "phoneRequired": "Phone is required",
-  "phoneMustStartWithPlus": "Phone must start with +",
-  "enterValidPhone": "Enter a valid phone number",
-  "confirmPassword": "Confirm password",
-  "passwordsDoNotMatch": "Passwords do not match",
-  "passwordMinLength": "Password must be at least 8 characters",
-  "atLeast8Chars": "At least 8 characters",
-  "backToSignIn": "Back to sign in",
-  "registrationFailed": "Registration failed: {error}",
-  "@registrationFailed": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "loginPasswordOptionalHint": "If your profile was created by admin/import, leave password empty and continue.",
-  "setPasswordTitle": "Set password",
-  "setPasswordSubtitle": "Create a password for {email}",
-  "@setPasswordSubtitle": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "passwordSetupMinLength": "Password must be at least 6 characters",
-  "savePasswordAndContinue": "Save password and continue",
-  "passwordSetupFailed": "Password setup failed: {error}",
-  "@passwordSetupFailed": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "account": "Account",
-  "editInfo": "EDIT INFO",
-  "fullName": "Name",
-  "retry": "Retry",
-  "accountSettings": "Account settings",
-  "editProfile": "Edit profile",
-  "deleteAccount": "Delete account",
-  "deleteAccountConfirmTitle": "Delete account?",
-  "deleteAccountConfirmMessage": "Are you sure you want to permanently delete your account? This cannot be undone.",
-  "deleteAccountSecondTitle": "What will be deleted",
-  "deleteAccountSecondMessage": "The following will be permanently removed from our systems:\n\n• Your account and profile\n• All children linked to your account\n• All event assignments, stage progress, tickets, and meal selections\n• Photos and other data stored for your children\n• Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.",
-  "deleteAccountContinue": "Continue",
-  "deleteAccountConfirmAction": "Delete permanently",
-  "deleteAccountWorking": "Deleting account…",
-  "save": "Save",
-  "edit": "Edit",
-  "role": "Role",
-  "myChildren": "My Children",
-  "addChild": "Add Child",
-  "noChildrenAddedYet": "No children added yet",
-  "ageLabel": "Age",
-  "settings": "Settings",
-  "aboutTheApp": "About the app",
-  "aboutAppDisplayName": "YoungFashionShow",
-  "aboutPublisherLine": "YOUNGFASHIONSHOW",
-  "aboutVersionLabel": "VERSION",
-  "aboutReleaseDateLabel": "RELEASE DATE",
-  "aboutDevelopedByPrefix": "Developed by:",
-  "aboutDeveloperBrand": "OWLSOLUTIONS",
-  "aboutLinkCouldNotOpen": "Could not open the link.",
-  "appLanguage": "App language",
-  "unitsOfMeasurement": "Units of measurement",
-  "timeDisplayFormat": "Time display format",
-  "timeFormat24Hour": "24-hour",
-  "timeFormat12Hour": "12-hour (AM/PM)",
-  "metricUnits": "Metric (cm, kg)",
-  "imperialUnits": "American (in, lb)",
-  "systemLanguage": "System",
-  "languageRussian": "Russian",
-  "languageEnglish": "English",
-  "languageUkrainian": "Ukrainian",
-  "languageSpanishUS": "Spanish (U.S.)",
-  "addChildTitle": "Add child",
-  "firstName": "First name",
-  "gender": "Gender",
-  "genderBoy": "Boy",
-  "genderGirl": "Girl",
-  "lastName": "Last name",
-  "birthdate": "Birthdate",
-  "chooseDate": "Choose date",
-  "create": "Create",
-  "enterFirstName": "Enter first name",
-  "mainPhoto": "Main photo",
-  "changePhoto": "Change",
-  "deletePhoto": "Delete",
-  "addPhoto": "Add photo",
-  "photoSaved": "Photo saved",
-  "photoDeleted": "Photo deleted",
-  "photoAdded": "Photo added",
-  "extraPhotos": "Extra photos",
-  "cancel": "Cancel",
-  "clear": "Clear",
-  "height": "Height",
-  "weight": "Weight",
-  "shoulders": "Shoulders",
-  "chest": "Chest",
-  "waist": "Waist",
-  "hips": "Hips",
-  "measurementLengthUnitCm": "cm",
-  "measurementLengthUnitIn": "in",
-  "currentParticipation": "Current Participation",
-  "childSubscribedBrands": "Brands: {brands}",
-  "@childSubscribedBrands": {
-    "placeholders": {
-      "brands": {
-        "type": "String"
-      }
-    }
-  },
-  "unknownError": "Unknown error",
-  "model": "Model: {name}",
-  "@model": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "active": "ACTIVE",
-  "familyLabel": "FAMILY",
-  "familyJoinButton": "JOIN FAMILY",
-  "familyJoinDialogHint": "Enter the 6-digit family code.",
-  "familyJoinAction": "Join",
-  "familyJoinInvalidCode": "Enter a valid 6-digit code.",
-  "familyJoinSuccess": "Family subscription connected.",
-  "contractWarningTitle": "Warning",
-  "contractWarningFallbackText": "Before purchasing tickets, please review and sign the contract.",
-  "contractViewButton": "View",
-  "contractPreviewTitle": "Contract text",
-  "contractSignButton": "Sign",
-  "contractSignatureTitle": "Add signature",
-  "contractSignedSuccess": "Contract signed successfully.",
-  "journeyProgress": "JOURNEY PROGRESS",
-  "journeyPreparationPhase": "PREPARATION PHASE",
-  "journeyMainEventTitle": "THE MAIN EVENT",
-  "journeyMainEventSubtitle": "RUNWAY EXCLUSIVE",
-  "stepOf": "Step {completed} of {total}",
-  "@stepOf": {
-    "placeholders": {
-      "completed": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "next": "Next: {text}",
-  "@next": {
-    "placeholders": {
-      "text": {
-        "type": "String"
-      }
-    }
-  },
-  "viewProgress": "VIEW PROGRESS",
-  "eventSettings": "EVENT SETTINGS",
-  "homeEventCardMyEvent": "MY EVENT",
-  "homeEventCardRunwayJourney": "RUNWAY JOURNEY",
-  "eventSettingsPlaceholder": "Event settings will appear here soon.",
-  "eventSettingsConfigurationPortal": "CONFIGURATION PORTAL",
-  "eventSettingsMainHeadline": "Event Settings",
-  "eventSettingsFamilyButton": "Family",
-  "familyManageTitle": "Family",
-  "familyManageEnabled": "Enable family connections",
-  "familyManageCodeLabel": "Family code",
-  "familyManageRegenerateCode": "Regenerate code",
-  "familyManageConnectionsTitle": "Active family connections",
-  "familyManageNoConnections": "No active family connections yet.",
-  "familyManageUnknownUser": "Unknown user",
-  "eventSettingsLeaveFamilyButton": "Disconnect from family",
-  "eventSettingsLeaveFamilyConfirmTitle": "Disconnect family access?",
-  "eventSettingsLeaveFamilyConfirmText": "You will lose family event access until you join again by code.",
-  "eventSettingsLeaveFamilySuccess": "Family access has been disconnected.",
-  "eventSettingsMealTitle": "Meal Selection",
-  "eventSettingsMealSubtitle": "Choose a meal for the current event",
-  "eventSettingsMealCta": "MANAGE MENU",
-  "eventSettingsMealOrderedPcs": "Ordered: {count} pc",
-  "@eventSettingsMealOrderedPcs": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "eventSettingsMealPurchasesListHeading": "Placed orders",
-  "eventSettingsMealPurchaseChildLine": "Child: {name}",
-  "@eventSettingsMealPurchaseChildLine": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
-  "mealPurchaseIssued": "Issued",
-  "mealPurchaseNotIssued": "Not handed out yet",
-  "eventSettingsRehearsalTitle": "Rehearsal Booking",
-  "eventSettingsRehearsalSubtitle": "Book your spot for rehearsal",
-  "eventSettingsRehearsalCta": "BOOK NOW",
-  "eventSettingsBrandRehearsalsHeading": "Your brand rehearsals",
-  "rehearsalModalTitle": "Rehearsal booking",
-  "rehearsalSelectDate": "Select date",
-  "rehearsalAvailableSlots": "Available slots",
-  "rehearsalFreeLabel": "Available:",
-  "rehearsalNoSlotsConfigured": "No rehearsal slots for this event yet.",
-  "rehearsalLoadError": "Could not load slots. Try again.",
-  "rehearsalBrandNotAssigned": "Brand is not assigned for this child. Rehearsal booking is unavailable.",
-  "rehearsalFull": "Full",
-  "rehearsalConfirmBooking": "Confirm booking",
-  "rehearsalBookingFooterNote": "Changes must be made 24 hours before the session when possible.",
-  "rehearsalBookedTitle": "Your rehearsal is booked",
-  "rehearsalChangeBooking": "Change booking",
-  "rehearsalProgramLabel": "Details",
-  "rehearsalArriveEarly": "Please arrive 15 minutes early.",
-  "rehearsalBookingSaved": "Booking saved",
-  "rehearsalBookingError": "Could not complete booking.",
-  "rehearsalSelectChild": "Child",
-  "rehearsalUpdateBooking": "Add and update booking",
-  "rehearsalCancelChange": "Cancel",
-  "rehearsalChangeBookingLockedHint": "The organizer has closed booking changes. Contact support if you need help.",
-  "rehearsalMilestoneTitle": "General rehearsal",
-  "rehearsalBrandMilestoneTitle": "Brand rehearsal: {brandName}",
-  "@rehearsalBrandMilestoneTitle": {
-    "placeholders": {
-      "brandName": {
-        "type": "String"
-      }
-    }
-  },
-  "rehearsalBrandMilestoneShort": "Brand rehearsal",
-  "rehearsalNextBookHint": "Book your rehearsal slot in Event settings.",
-  "eventSettingsPackingTitle": "Don't Forget List",
-  "eventSettingsPackingSubtitle": "",
-  "eventSettingsPackingCta": "VIEW LIST",
-  "eventPackingLoadFailed": "Could not load packing info. Try again.",
-  "eventPackingEmpty": "Packing information has not been added for this event yet.",
-  "eventDescriptionTitle": "Event info",
-  "eventProgressShowGallery": "Show gallery",
-  "eventProgressCheckin": "Check-in",
-  "eventProgressCheckinPrompt": "Scan to start the event",
-  "eventProgressCheckinUnavailable": "Check-in code is not available yet.",
-  "eventDescriptionLoadFailed": "Could not load event description. Try again.",
-  "eventDescriptionEmpty": "No description has been added for this event yet.",
-  "eventSettingsBrandTitle": "Shoes & socks",
-  "eventSettingsBrandSubtitle": "Read the brand's recommendations for taking part in the event",
-  "eventSettingsBrandCta": "VIEW GUIDELINES",
-  "brandRequirementsLoadFailed": "Could not load brand requirements. Try again.",
-  "brandRequirementsEmpty": "No brand requirements have been added for this event yet.",
-  "brandRequirementsEmptyItem": "No requirements text has been added for this brand yet.",
-  "brandRequirementsPickBrandTitle": "Choose a brand",
-  "brandRequirementsBrandNumber": "Brand {brandId}",
-  "@brandRequirementsBrandNumber": {
-    "placeholders": {
-      "brandId": { "type": "int" }
-    }
-  },
-  "eventSettingsParkingTitle": "Valet Parking",
-  "eventSettingsParkingSubtitle": "Open your valet parking pass and arrival status",
-  "eventSettingsParkingCta": "OPEN VALET PARKING",
-  "parkingChooseModeTitle": "Valet parking mode",
-  "parkingChooseModeHint": "Choose screen state for visual testing.",
-  "parkingModeInactive": "INACTIVE",
-  "parkingModeActive": "ACTIVE",
-  "parkingInactiveHeadline": "NO ACTIVE VALET PARKING",
-  "parkingInactiveBody": "VALET PARKING WILL APPEAR HERE AFTER TICKET PURCHASE.",
-  "parkingInactiveBuyCta": "BUY",
-  "parkingInactiveVipBody": "FOR VIP VALET PARKING — RESERVE A SPOT FOR YOUR CAR.",
-  "parkingInactiveVipBookCta": "BOOK VALET PARKING",
-  "parkingPayForParkingCta": "PAY FOR VALET PARKING",
-  "parkingVipQuotaNextPaymentBody": "YOUR COMPLIMENTARY VALET TICKETS FOR THIS EVENT ARE USED UP. YOU CAN STILL ADD A SPOT AT THE REGULAR PRICE.",
-  "parkingFreeTicketsQuotaLine": "Complimentary valet: {used} of {quota} used ({remaining} left)",
-  "@parkingFreeTicketsQuotaLine": {
-    "placeholders": {
-      "used": { "type": "int" },
-      "quota": { "type": "int" },
-      "remaining": { "type": "int" }
-    }
-  },
-  "parkingActiveTicketLabel": "TICKET",
-  "parkingTicketMock1": "TICKET A1 · MODEL",
-  "parkingTicketMock2": "TICKET B7 · GUEST",
-  "parkingActiveValetLabel": "VALET SERVICE",
-  "parkingActiveStatusLine": "VALET PARKING ACTIVE",
-  "parkingActiveShowEntryPointCta": "SHOW ENTRY POINT",
-  "parkingActiveCarLabel": "CAR",
-  "parkingActiveRegistrationNumberLabel": "PLATE NUMBER",
-  "parkingCreateTicketTitle": "Create Ticket",
-  "parkingCreateEventLabel": "Event",
-  "parkingCreateAccountNameLabel": "Name",
-  "parkingCreateCarModelLabel": "MAKE AND MODEL",
-  "parkingCreateCarModelHint": "For example: Ford Mustang",
-  "parkingCreatePlateNumberLabel": "PLATE NUMBER",
-  "parkingCreatePlateNumberHint": "For example: CA 7JXK921",
-  "parkingCreateRepeatPlateNumberLabel": "REPEAT PLATE NUMBER",
-  "parkingCreateRepeatPlateNumberHint": "Re-enter plate number",
-  "parkingCreatePlateNumberMismatch": "Plate numbers do not match",
-  "parkingCreateBuyCta": "BUY",
-  "parkingCreateBookCta": "BOOK VALET PARKING",
-  "parkingCheckoutInBrowser": "Complete payment in your browser.",
-  "parkingPurchasedWithoutPayment": "Ticket purchased successfully.",
-  "parkingVipBooked": "VIP valet parking booked successfully.",
-  "parkingCheckoutError": "Could not start valet parking payment. Try again.",
-  "clientTicketServiceUnavailableTitle": "Service unavailable",
-  "clientTicketServiceUnavailableBody": "This ticket service is not active right now.",
-  "parkingActivePassLabel": "PASS CODE",
-  "eventSettingsChatTitle": "Group Chat",
-  "eventSettingsChatSubtitle": "Group chat with group participants and managers",
-  "eventSettingsChatCta": "OPEN CHAT",
-  "chatRoomsLoadFailed": "Could not load chat rooms. Try again.",
-  "chatNoRooms": "No chat rooms are available for your brands in this event yet.",
-  "chatNoMessagesYet": "No messages yet",
-  "chatLoadFailed": "Could not load chat messages. Try again.",
-  "chatSendFailed": "Could not send message. Try again.",
-  "chatMessagePlaceholder": "Message group...",
-  "chatReply": "Reply",
-  "chatReplyCancel": "Cancel",
-  "chatReplyingTo": "Replying to {name}",
-  "@chatReplyingTo": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "chatReplyPreviewPhoto": "Photo",
-  "chatEdit": "Edit",
-  "chatDelete": "Delete",
-  "chatDeleteTitle": "Delete message?",
-  "chatDeleteMessageConfirm": "This action cannot be undone.",
-  "chatDeleteFailed": "Could not delete message. Try again.",
-  "chatEditFailed": "Could not edit message. Try again.",
-  "chatEditingLabel": "Editing message",
-  "chatCancelEdit": "Cancel edit",
-  "eventSettingsChatMoreParticipants": "+{count}",
-  "@eventSettingsChatMoreParticipants": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "mealChoiceTitle": "Choose lunch",
-  "mealSelectChildLabel": "Child",
-  "mealSelectDishLabel": "Dish",
-  "mealSave": "ORDER",
-  "mealNoMealsConfigured": "No dishes have been added for this event yet.",
-  "mealSaved": "Saved",
-  "mealSaveError": "Could not save. Try again.",
-  "mealOrdersClosed": "Order acceptance is closed",
-  "mealPaid": "Paid",
-  "mealPaidDetail": "Lunch for this event is paid.",
-  "mealPayInBrowser": "Complete payment in the browser, then return to the app.",
-  "mealCheckoutError": "Could not start payment. Try again.",
-  "mealAwaitingPayment": "Order placed — awaiting payment",
-  "mealAwaitingPaymentDetail": "Your dish is saved. Finish payment in the browser; status will update after Stripe confirms it.",
-  "mealPaymentContinue": "Continue payment",
-  "mealPaymentCancel": "Cancel payment",
-  "mealPaymentStartAgain": "Start payment again",
-  "mealPaymentCanceled": "Payment canceled. You can start again when ready.",
-  "mealPaymentStatusLoadError": "Could not load payment status. Try again.",
-  "noActiveEvents": "No active events",
-  "becomeModelTitle": "Start your child's modeling journey today",
-  "becomeAModel": "BECOME A MODEL",
-  "latestHighlights": "Latest Highlights",
-  "viewAll": "VIEW ALL",
-  "quickActions": "Quick Actions",
-  "fillOutApplication": "Fill Out\nApplication",
-  "upcomingShows": "Upcoming\nShows",
-  "manageKids": "Manage\nKids",
-  "navHome": "Home",
-  "navEvents": "Events",
-  "eventsYoutubeLiveButton": "YouTube live",
-  "eventsYoutubeLiveInvalidUrl": "Could not open this YouTube link.",
-  "eventsYoutubeLiveOpenExternally": "Open in YouTube",
-  "navProfile": "Profile",
-  "navInfo": "Info",
-  "continueButton": "Continue",
-  "loading": "Loading...",
-  "signOut": "Sign out",
-  "tokenValidNext": "Token valid. Next: Home page.",
-  "homePageTitle": "Home",
-  "youAreSignedIn": "You are signed in{name}.",
-  "@youAreSignedIn": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "yourRole": "Your role: {role}",
-  "@yourRole": {
-    "placeholders": {
-      "role": {
-        "type": "String"
-      }
-    }
-  },
-  "phoneHint": "+1234567890",
-  "enterValidEmailShort": "Enter a valid email",
-  "phoneMustStartWithPlusShort": "Phone must start with +",
-  "comingSoon": "Coming soon",
-  "hello": "Hello",
-  "helloName": "Hello, {name}",
-  "@helloName": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
-  "noRolesAssigned": "You have not been assigned any roles yet. Please contact the administration.",
-  "signedInAs": "Signed in as {name}",
-  "@signedInAs": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
-  "staff": "Staff",
-  "birthdateDialogTitle": "Birthdate",
-  "nextShowsTitle": "Next Shows",
-  "nextShowsSeason": "2026 Season",
-  "details": "Details",
-  "contact": "Contact",
-  "registrationOpen": "Registration Open",
-  "myTicketsButton": "MY TICKETS",
-  "myTicketsTitle": "My tickets",
-  "selectEventForTickets": "Select event",
-  "ticketsMomName": "Parent name",
-  "ticketsEventDate": "Date",
-  "ticketsOpenPdf": "OPEN",
-  "ticketsPdfUnavailable": "PDF not available yet",
-  "ticketsBuy": "BUY TICKET",
-  "ticketsBuyNoLink": "No purchase link is set. Add a ticket store URL for this event in the admin, or a website URL in Info.",
-  "ticketsBuyCouldNotOpen": "Could not open the link.",
-  "ticketsBuySubtitle": "VIP and standard seats available",
-  "ticketsBuyEmailHint": "Your tickets will be sent to the email address provided during purchase.",
-  "extraTicketButton": "OPEN BAR",
-  "extraTicketSelectEventFirst": "Select an event first.",
-  "extraTicketNoActiveHeadline": "NO ACTIVE BEVERAGE PACKAGES",
-  "extraTicketBuyCta": "BUY",
-  "extraTicketAccessOpen": "ACCESS TO BEVERAGE PACKAGE IS OPEN",
-  "extraTicketCheckoutInBrowser": "Complete payment in your browser.",
-  "extraTicketCheckoutError": "Could not start beverage package payment. Try again.",
-  "backstageTicketButton": "BACKSTAGE PASS",
-  "backstageTicketSelectEventFirst": "Select an event first.",
-  "backstageTicketNoActiveHeadline": "NO ACTIVE BACKSTAGE PASSES",
-  "backstageTicketBuyCta": "BUY",
-  "backstageTicketAccessOpen": "ACCESS TO BACKSTAGE PASS IS OPEN",
-  "backstageTicketCheckoutInBrowser": "Complete payment in your browser.",
-  "backstageTicketCheckoutError": "Could not start backstage pass payment. Try again.",
-  "ticketsNoEvents": "No events with tickets yet",
-  "ticketsNoneForEvent": "No tickets for this event",
-  "ticketsLoadError": "Could not load tickets",
-  "ticketsEventsLoadError": "Could not load events",
-  "faqBrandCatalogTitle": "Clothing brands",
-  "pdfViewerTitle": "Ticket",
-  "contactFormLinkMissing": "No form link is set. Add В«Contact / signup form URLВ» in Application settings in the admin.",
-  "infoHubTitle": "Information Hub",
-  "infoMenuAboutYfs": "About YFS",
-  "infoMenuGeneralFaq": "General FAQ",
-  "infoMenuContactManager": "Contact Manager",
-  "infoFooterBrand": "YFS",
-  "infoFooterCopyright": "В© 2024 Young Fashion Series. All rights reserved.",
-  "parentProgressLabel": "Parent progress: {completed}/{total}",
-  "@parentProgressLabel": {
-    "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
-    }
-  },
-  "appUpdateRequiredMessage": "Please update the app to continue.",
-  "appUpdateButton": "Update app",
-  "showAll": "Show all",
-  "staffNoneSelected": "-- None --",
-  "staffRoleInactive": "INACTIVE",
-  "staffWorkerStatusRefreshFailed": "Could not update role status. Check your connection.",
-  "staffScanRoleInactive": "This role has been deactivated in the admin panel. Scanning is not available.",
-  "staffScanFailed": "Scan failed: {error}",
-  "@staffScanFailed": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "staffScanSelectEventStageFirst": "Select active event and stage in Staff Settings before scanning.",
-  "staffScanProcessed": "Scan processed",
-  "chatCouldNotPickPhoto": "Could not pick photo",
-  "staffChildProfileTitle": "Child Profile",
-  "staffEventTimelineButton": "TIMELINE",
-  "staffEventTimelineTitle": "Event timeline",
-  "staffParentTimelineButton1": "PARENT 1 TIMELINE",
-  "staffParentTimelineButton2": "PARENT 2 TIMELINE",
-  "staffParentTimelineTitle1": "Parent 1 timeline",
-  "staffParentTimelineTitle2": "Parent 2 timeline",
-  "staffCurrentStage": "CURRENT STAGE",
-  "staffProgressPercentComplete": "{percent}% Complete",
-  "@staffProgressPercentComplete": {
-    "placeholders": {
-      "percent": { "type": "int" }
-    }
-  },
-  "staffChildDetailEmpty": "No child details in DB",
-  "staffLoadFailed": "Failed to load",
-  "staffGuardianLiaison": "GUARDIAN LIAISON",
-  "staffAssignedBrand": "ASSIGNED BRAND",
-  "staffAssignedPackage": "PACKAGE",
-  "staffSupervisor": "SUPERVISOR",
-  "staffSectionCoreDetails": "Core Details",
-  "staffSectionParentContact": "Parent Contact",
-  "staffPhaseWithName": "Phase: {stageName}",
-  "@staffPhaseWithName": {
-    "placeholders": {
-      "stageName": { "type": "String" }
-    }
-  },
-  "staffNoCurrentStage": "No current stage",
-  "staffAgeYearsOld": "{age} years old",
-  "@staffAgeYearsOld": {
-    "placeholders": {
-      "age": { "type": "int" }
-    }
-  },
-  "staffNotesLabel": "Notes",
-  "staffParentRoleDefault": "Parent",
-  "contactManagerIntro": "You can leave a message about any question. We will get back to you as soon as possible.",
-  "contactManagerMessageLabel": "Your message",
-  "contactManagerMessageRequired": "Please enter your message",
-  "contactManagerSend": "Send",
-  "contactManagerSent": "Your message has been sent. We will contact you soon.",
-  "contactManagerSendFailed": "Could not send. Try again later.",
-  "contactManagerServiceUnavailable": "Contact is temporarily unavailable. Please try again later.",
-  "close": "Close",
-  "staffPortalTitle": "Staff Portal",
-  "staffActiveEvent": "Active event",
-  "staffActiveStage": "Active stage",
-  "staffSelectEvent": "Select event",
-  "staffSelectEventInSettings": "Select an event in Staff Settings",
-  "staffSelectStage": "Select stage",
-  "staffPreparatoryStageLabel": "Prep: {stageName}",
-  "@staffPreparatoryStageLabel": {
-    "placeholders": {
-      "stageName": { "type": "String" }
-    }
-  },
-  "staffScanButton": "SCAN",
-  "staffQrCheckButton": "QR CHECK",
-  "staffParkingButton": "VALET PARKING",
-  "staffExtraZoneButton": "BEVERAGE PACKAGE",
-  "staffBackstageButton": "BACKSTAGE PASS",
-  "staffRehearsalCheckinButton": "REHEARSAL CHECK-IN",
-  "staffTapToScanModelLanyard": "TAP TO SCAN MODEL LANYARD",
-  "staffTapToScanParkingQr": "TAP TO SCAN VALET PARKING QR",
-  "staffTapToScanExtraZoneQr": "TAP TO SCAN BEVERAGE PACKAGE QR",
-  "staffTapToScanBackstageQr": "TAP TO SCAN BACKSTAGE PASS QR",
-  "staffTapToScanRehearsalCheckinQr": "TAP TO SCAN REHEARSAL CHECK-IN QR",
-  "staffMealHandoutButton": "LUNCH",
-  "staffTapToScanMealBadge": "TAP TO SCAN A CHILD OR PARENT BADGE",
-  "staffMealIssueTitle": "Lunch handout",
-  "staffMealIssueNoMeals": "No lunch orders for this pass.",
-  "staffMealIssueHandOut": "Hand out",
-  "staffMealIssueSuccess": "Marked as handed out.",
-  "staffMealIssueFailure": "Could not update: {error}",
-  "@staffMealIssueFailure": {
-    "placeholders": {
-      "error": { "type": "String" }
-    }
-  },
-  "staffMealIssueAlreadyIssued": "already handed out",
-  "staffTapToScanQrCheck": "TAP TO SCAN BADGE — STAGE & CHILD CARD",
-  "staffCurrentTask": "Current Task",
-  "staffUtilitiesAndTools": "UTILITIES & TOOLS",
-  "staffScanForInfoTitle": "Scan for Info",
-  "staffScanForInfoSubtitle": "General purpose assets & ID scanner",
-  "staffToiletRequest": "Toilet Request",
-  "staffRestroomLog": "RESTROOM LOG",
-  "staffSettingsCardTitle": "Staff Settings",
-  "staffPreferences": "PREFERENCES",
-  "staffSupervisorRoleTitle": "Supervisor Role",
-  "staffSupervisorRoleDescription": "Manage event flow, oversee photographers, and ensure all children are captured effectively. Track progress in real-time.",
-  "staffCurrentStageLabel": "Current stage",
-  "staffNoMainStagesAvailable": "No main stages available for this event.",
-  "staffChildRegistry": "Child Registry",
-  "staffChildrenListed": "{count} Children Listed",
-  "@staffChildrenListed": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
-  "staffSelectActiveEventForRegistry": "Select an active event in Settings to see the child registry.",
-  "staffNoChildrenAssigned": "No children assigned for this event.",
-  "staffRehearsalAdminSlotsTitle": "Rehearsal Slots",
-  "staffRehearsalCheckinActiveSlot": "Active rehearsal slot",
-  "staffRehearsalAdminSelectSlot": "Select rehearsal slot",
-  "staffRehearsalCheckinSelectSlotFirst": "Select rehearsal slot first",
-  "staffRehearsalAdminBookedChildrenTitle": "Booked Children",
-  "staffRehearsalAdminNoSlots": "No rehearsal slots created for this event.",
-  "staffRehearsalAdminNoChildrenForSlot": "No children booked for this slot.",
-  "staffGiftControlButton": "CONTROL",
-  "staffGiftControlTitle": "Gift Issue Control",
-  "staffGiftControlSelectStage": "Select report stage",
-  "staffGiftControlFilterAll": "All",
-  "staffGiftControlFilterPassed": "Passed",
-  "staffGiftControlFilterNotPassed": "Not passed",
-  "staffGiftControlNoChildren": "No children for selected filters.",
-  "staffTableProfile": "PROFILE",
-  "staffTableName": "NAME",
-  "staffTableStatus": "STATUS",
-  "staffTableAction": "ACTION",
-  "staffYes": "Yes",
-  "staffNo": "No",
-  "staffRoleHostessTitle": "Role: hostess",
-  "staffRoleHostessPlaceholder": "The hostess role screen will be added later.",
-  "staffRoleInterviewTitle": "Role: interview",
-  "staffRoleInterviewPlaceholder": "The interview role screen will be added later.",
-  "staffRoleLunchesTitle": "Role: lunches",
-  "staffRoleLunchesPlaceholder": "The lunches role screen will be added later.",
-  "staffRoleSuperadminTitle": "Role: superadmin",
-  "staffRoleSuperadminPlaceholder": "The superadmin role screen will be added later.",
-  "staffRoleRehearsalAdminTitle": "Role: rehearsal admin",
-  "staffRoleRehearsalAdminPlaceholder": "The rehearsal admin role screen will be added later.",
-  "staffNavHome": "Home",
-  "staffNavEvent": "Event",
-  "staffNavMore": "More",
-  "staffAccessBadge": "STAFF ACCESS",
-  "staffVenueAndContact": "Venue & Contact",
-  "staffMainOffice": "Main Office",
-  "staffSecurity": "Security",
-  "staffScanHeaderParking": "Valet Parking Scan",
-  "staffScanHeaderExtraZone": "Beverage package entry",
-  "staffScanHeaderBackstage": "Backstage pass entry",
-  "staffScanHeaderRehearsalCheckin": "Rehearsal Check-in",
-  "staffScanHeaderInfo": "Scan for Info",
-  "staffScanHeaderQr": "Scan QR Code",
-  "staffScanHintParking": "Scan valet parking QR code to show ticket details",
-  "staffScanHintExtraZone": "Scan beverage package QR code to allow entry",
-  "staffScanHintBackstage": "Scan backstage pass QR code to allow entry",
-  "staffScanHintRehearsalCheckin": "Scan child check-in QR to close rehearsal check-in",
-  "staffScanHintInfo": "Scan child or parent badge to view profile",
-  "staffScanHintQr": "Align QR code within the frame",
-  "staffScanHeaderQrCheck": "QR check",
-  "staffScanHintQrCheck": "Scan the child badge to mark the selected stage complete, then open the child card",
-  "staffQrCheckSuccessTitle": "Stage marked complete",
-  "staffQrCheckSuccessContinue": "Continue",
-  "staffScanErrorTitle": "Scan Error",
-  "staffScanErrorUnknown": "Unknown scan error.",
-  "staffParkingTicketTitle": "Valet Parking Ticket",
-  "staffExtraZonePassTitle": "Beverage package pass",
-  "staffExtraZoneScanResultTitle": "Scan Result",
-  "staffExtraZoneResultNotFound": "CODE NOT FOUND IN DATABASE",
-  "staffExtraZoneResultAccessGranted": "CODE ACCEPTED, ACCESS GRANTED",
-  "staffExtraZoneResultAccessClosed": "CODE ACCEPTED, BUT ACCESS CLOSED",
-  "staffBackstageScanResultTitle": "Scan Result",
-  "staffBackstageResultNotFound": "CODE NOT FOUND IN DATABASE",
-  "staffBackstageResultAccessGranted": "CODE ACCEPTED, ACCESS GRANTED",
-  "staffBackstageResultAccessClosed": "CODE ACCEPTED, BUT ACCESS CLOSED",
-  "staffRehearsalCheckinScanResultTitle": "Scan Result",
-  "staffRehearsalCheckinResultNotFound": "CHECK-IN CODE NOT FOUND",
-  "staffRehearsalCheckinResultWrongSlot": "CHILD IS NOT IN THE SELECTED SLOT",
-  "staffRehearsalCheckinResultAlreadyClosed": "REHEARSAL CHECK-IN ALREADY CLOSED",
-  "staffRehearsalCheckinResultClosedNow": "REHEARSAL CHECK-IN CLOSED",
-  "staffRehearsalCheckinFieldChild": "Child",
-  "staffRehearsalCheckinFieldSlot": "Slot",
-  "staffParkingFieldEvent": "Event",
-  "staffParkingFieldClient": "Client",
-  "staffParkingFieldCar": "Car",
-  "staffParkingFieldPlateNumber": "Plate number",
-  "staffParkingFieldVipClient": "VIP client",
-  "staffShowProgressTitle": "Show Progress",
-  "staffCouldNotOpenDialer": "Could not open the phone dialer",
-  "staffRealtimeTracking": "REAL-TIME TRACKING",
-  "staffEstimatedCompletion": "EST. COMPLETION",
-  "staffNoMainStagesInPlan": "No main stages in plan yet.",
-  "staffStatusDone": "DONE",
-  "staffStatusInProgress": "IN PROGRESS",
-  "staffStatusPending": "PENDING",
-  "staffContactDetails": "Contact Details",
-  "staffPrimaryParent": "PRIMARY PARENT",
-  "staffIdLabel": "Staff ID: {id}",
-  "@staffIdLabel": {
-    "placeholders": {
-      "id": { "type": "String" }
-    }
-  },
-  "staffSwitchRole": "Switch Role",
-  "staffCurrentRoleLabel": "CURRENT: {role}",
-  "@staffCurrentRoleLabel": {
-    "placeholders": {
-      "role": { "type": "String" }
-    }
-  },
-  "staffRoleSubtitleScan": "QR scan & stage flow",
-  "staffRoleSubtitleQrCheck": "Mark stage by badge, then child details",
-  "staffRoleSubtitleSupervisor": "Full access & management",
-  "staffRoleSubtitleHostess": "Guest & zone support",
-  "staffRoleSubtitleParking": "Valet parking flow & access",
-  "staffRoleSubtitleExtraZone": "Beverage package access",
-  "staffRoleSubtitleBackstage": "Backstage pass access",
-  "staffRoleSubtitleRehearsalAdmin": "Rehearsal administration",
-  "staffRoleSubtitleRehearsalCheckin": "Rehearsal slot check-in scan",
-  "staffRoleSubtitleGiftIssue": "Gift issue control",
-  "staffRoleSubtitleInterview": "Interview flow",
-  "staffRoleSubtitleLunches": "Meals & lunches",
-  "staffRoleSubtitleSuperadmin": "Super admin tools",
-  "staffRoleSubtitlePhotographer": "Media capture & uploads",
-  "staffRoleSubtitleStylist": "Wardrobe & makeup logs",
-  "staffHostessEntryMode": "ENTRY",
-  "staffHostessExitMode": "EXIT",
-  "staffHostessEntryHint": "Scan child badge to close selected stage and sync Family Look parents",
-  "staffHostessExitHint": "Scan child or parent badge, review progress and close event stage",
-  "staffHostessEntryResultTitle": "Entry scan result",
-  "staffHostessExitResultTitle": "Exit scan result",
-  "staffHostessFieldChildName": "Name",
-  "staffHostessFieldParent": "Parent",
-  "staffHostessFieldBrandsAndSupervisors": "Brands and supervisors",
-  "staffHostessFieldFamilyLook": "Family Look",
-  "staffHostessFamilyLookEnabled": "Family Look is enabled",
-  "staffHostessFieldStages": "Stages",
-  "staffHostessCloseEventAction": "Close Event",
-  "staffHostessStageAlreadySelectedOtherMode": "This stage is already selected for the other hostess mode.",
-  "staffHostessRequiredProgress": "Required stages completed: {completed}/{total}",
-  "@staffHostessRequiredProgress": {
-    "placeholders": {
-      "completed": { "type": "int" },
-      "total": { "type": "int" }
-    }
-  }
+﻿{
+    "@@locale":  "en",
+    "signIn":  "Sign in",
+    "signUp":  "Sign up",
+    "email":  "Email",
+    "password":  "Password",
+    "emailRequired":  "Email is required",
+    "enterValidEmail":  "Enter a valid email",
+    "passwordRequired":  "Password is required",
+    "hidePassword":  "Hide password",
+    "showPassword":  "Show password",
+    "signInFailed":  "Sign in failed: {error}",
+    "@signInFailed":  {
+                          "placeholders":  {
+                                               "error":  {
+                                                             "type":  "String"
+                                                         }
+                                           }
+                      },
+    "apiEndpointNotFoundHint":  "The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api вЂ” the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).",
+    "notificationsTitle":  "Notifications",
+    "notificationsLoadFailed":  "Could not load notifications. Try again.",
+    "notificationsEmpty":  "No notifications yet.",
+    "notificationsNewMark":  "New",
+    "notificationDetailsTitle":  "Notification",
+    "createAccount":  "Create account",
+    "name":  "Name",
+    "registerNameLabel":  "Enter first and last name",
+    "nameRequired":  "Name is required",
+    "phone":  "Phone",
+    "phoneRequired":  "Phone is required",
+    "phoneMustStartWithPlus":  "Phone must start with +",
+    "enterValidPhone":  "Enter a valid phone number",
+    "confirmPassword":  "Confirm password",
+    "passwordsDoNotMatch":  "Passwords do not match",
+    "passwordMinLength":  "Password must be at least 8 characters",
+    "atLeast8Chars":  "At least 8 characters",
+    "backToSignIn":  "Back to sign in",
+    "registrationFailed":  "Registration failed: {error}",
+    "@registrationFailed":  {
+                                "placeholders":  {
+                                                     "error":  {
+                                                                   "type":  "String"
+                                                               }
+                                                 }
+                            },
+    "loginPasswordOptionalHint":  "If your profile was created by admin/import, leave password empty and continue.",
+    "setPasswordTitle":  "Set password",
+    "setPasswordSubtitle":  "Create a password for {email}",
+    "@setPasswordSubtitle":  {
+                                 "placeholders":  {
+                                                      "email":  {
+                                                                    "type":  "String"
+                                                                }
+                                                  }
+                             },
+    "passwordSetupMinLength":  "Password must be at least 6 characters",
+    "savePasswordAndContinue":  "Save password and continue",
+    "passwordSetupFailed":  "Password setup failed: {error}",
+    "@passwordSetupFailed":  {
+                                 "placeholders":  {
+                                                      "error":  {
+                                                                    "type":  "String"
+                                                                }
+                                                  }
+                             },
+    "account":  "Account",
+    "editInfo":  "EDIT INFO",
+    "fullName":  "Name",
+    "retry":  "Retry",
+    "accountSettings":  "Account settings",
+    "editProfile":  "Edit profile",
+    "deleteAccount":  "Delete account",
+    "deleteAccountConfirmTitle":  "Delete account?",
+    "deleteAccountConfirmMessage":  "Are you sure you want to permanently delete your account? This cannot be undone.",
+    "deleteAccountSecondTitle":  "What will be deleted",
+    "deleteAccountSecondMessage":  "The following will be permanently removed from our systems:\n\nвЂў Your account and profile\nвЂў All children linked to your account\nвЂў All event assignments, stage progress, tickets, and meal selections\nвЂў Photos and other data stored for your children\nвЂў Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.",
+    "deleteAccountContinue":  "Continue",
+    "deleteAccountConfirmAction":  "Delete permanently",
+    "deleteAccountWorking":  "Deleting accountвЂ¦",
+    "save":  "Save",
+    "edit":  "Edit",
+    "role":  "Role",
+    "myChildren":  "My Children",
+    "addChild":  "Add Child",
+    "noChildrenAddedYet":  "No children added yet",
+    "ageLabel":  "Age",
+    "settings":  "Settings",
+    "aboutTheApp":  "About the app",
+    "aboutAppDisplayName":  "YoungFashionShow",
+    "aboutPublisherLine":  "YOUNGFASHIONSHOW",
+    "aboutVersionLabel":  "VERSION",
+    "aboutReleaseDateLabel":  "RELEASE DATE",
+    "aboutDevelopedByPrefix":  "Developed by:",
+    "aboutDeveloperBrand":  "OWLSOLUTIONS",
+    "aboutLinkCouldNotOpen":  "Could not open the link.",
+    "appLanguage":  "App language",
+    "unitsOfMeasurement":  "Units of measurement",
+    "timeDisplayFormat":  "Time display format",
+    "timeFormat24Hour":  "24-hour",
+    "timeFormat12Hour":  "12-hour (AM/PM)",
+    "metricUnits":  "Metric (cm, kg)",
+    "imperialUnits":  "American (in, lb)",
+    "systemLanguage":  "System",
+    "languageRussian":  "Russian",
+    "languageEnglish":  "English",
+    "languageUkrainian":  "Ukrainian",
+    "languageSpanishUS":  "Spanish (U.S.)",
+    "addChildTitle":  "Add child",
+    "firstName":  "First name",
+    "gender":  "Gender",
+    "genderBoy":  "Boy",
+    "genderGirl":  "Girl",
+    "lastName":  "Last name",
+    "birthdate":  "Birthdate",
+    "chooseDate":  "Choose date",
+    "create":  "Create",
+    "enterFirstName":  "Enter first name",
+    "mainPhoto":  "Main photo",
+    "changePhoto":  "Change",
+    "deletePhoto":  "Delete",
+    "addPhoto":  "Add photo",
+    "photoSaved":  "Photo saved",
+    "photoDeleted":  "Photo deleted",
+    "photoAdded":  "Photo added",
+    "extraPhotos":  "Extra photos",
+    "cancel":  "Cancel",
+    "clear":  "Clear",
+    "height":  "Height",
+    "weight":  "Weight",
+    "shoulders":  "Shoulders",
+    "chest":  "Chest",
+    "waist":  "Waist",
+    "hips":  "Hips",
+    "measurementLengthUnitCm":  "cm",
+    "measurementLengthUnitIn":  "in",
+    "currentParticipation":  "Current Participation",
+    "childSubscribedBrands":  "Brands: {brands}",
+    "@childSubscribedBrands":  {
+                                   "placeholders":  {
+                                                        "brands":  {
+                                                                       "type":  "String"
+                                                                   }
+                                                    }
+                               },
+    "unknownError":  "Unknown error",
+    "model":  "Model: {name}",
+    "@model":  {
+                   "placeholders":  {
+                                        "name":  {
+                                                     "type":  "String"
+                                                 }
+                                    }
+               },
+    "active":  "ACTIVE",
+    "familyLabel":  "FAMILY",
+    "familyJoinButton":  "JOIN FAMILY",
+    "familyJoinDialogHint":  "Enter the 6-digit family code.",
+    "familyJoinAction":  "Join",
+    "familyJoinInvalidCode":  "Enter a valid 6-digit code.",
+    "familyJoinSuccess":  "Family subscription connected.",
+    "contractWarningTitle":  "Warning",
+    "contractWarningFallbackText":  "Before purchasing tickets, please review and sign the contract.",
+    "contractViewButton":  "View",
+    "contractPreviewTitle":  "Contract text",
+    "contractSignButton":  "Sign",
+    "contractSignatureTitle":  "Add signature",
+    "contractSignedSuccess":  "Contract signed successfully.",
+    "journeyProgress":  "JOURNEY PROGRESS",
+    "journeyPreparationPhase":  "PREPARATION PHASE",
+    "journeyMainEventTitle":  "THE MAIN EVENT",
+    "journeyMainEventSubtitle":  "RUNWAY EXCLUSIVE",
+    "stepOf":  "Step {completed} of {total}",
+    "@stepOf":  {
+                    "placeholders":  {
+                                         "completed":  {
+                                                           "type":  "int"
+                                                       },
+                                         "total":  {
+                                                       "type":  "int"
+                                                   }
+                                     }
+                },
+    "next":  "Next: {text}",
+    "@next":  {
+                  "placeholders":  {
+                                       "text":  {
+                                                    "type":  "String"
+                                                }
+                                   }
+              },
+    "viewProgress":  "VIEW PROGRESS",
+    "eventSettings":  "EVENT SETTINGS",
+    "homeEventCardMyEvent":  "MY EVENT",
+    "homeEventCardRunwayJourney":  "RUNWAY JOURNEY",
+    "eventSettingsPlaceholder":  "Event settings will appear here soon.",
+    "eventSettingsConfigurationPortal":  "CONFIGURATION PORTAL",
+    "eventSettingsMainHeadline":  "Event Settings",
+    "eventSettingsFamilyButton":  "Family",
+    "familyManageTitle":  "Family",
+    "familyManageEnabled":  "Enable family connections",
+    "familyManageCodeLabel":  "Family code",
+    "familyManageRegenerateCode":  "Regenerate code",
+    "familyManageConnectionsTitle":  "Active family connections",
+    "familyManageNoConnections":  "No active family connections yet.",
+    "familyManageUnknownUser":  "Unknown user",
+    "eventSettingsLeaveFamilyButton":  "Disconnect from family",
+    "eventSettingsLeaveFamilyConfirmTitle":  "Disconnect family access?",
+    "eventSettingsLeaveFamilyConfirmText":  "You will lose family event access until you join again by code.",
+    "eventSettingsLeaveFamilySuccess":  "Family access has been disconnected.",
+    "eventSettingsMealTitle":  "Meal Selection",
+    "eventSettingsMealSubtitle":  "Choose a meal for the current event",
+    "eventSettingsMealCta":  "MANAGE MENU",
+    "eventSettingsMealOrderedPcs":  "Ordered: {count} pc",
+    "@eventSettingsMealOrderedPcs":  {
+                                         "placeholders":  {
+                                                              "count":  {
+                                                                            "type":  "int"
+                                                                        }
+                                                          }
+                                     },
+    "eventSettingsMealPurchasesListHeading":  "Placed orders",
+    "eventSettingsMealPurchaseChildLine":  "Child: {name}",
+    "@eventSettingsMealPurchaseChildLine":  {
+                                                "placeholders":  {
+                                                                     "name":  {
+                                                                                  "type":  "String"
+                                                                              }
+                                                                 }
+                                            },
+    "mealPurchaseIssued":  "Issued",
+    "mealPurchaseNotIssued":  "Not handed out yet",
+    "eventSettingsRehearsalTitle":  "Rehearsal Booking",
+    "eventSettingsRehearsalSubtitle":  "Book your spot for rehearsal",
+    "eventSettingsRehearsalCta":  "BOOK NOW",
+    "eventSettingsBrandRehearsalsHeading":  "Your brand rehearsals",
+    "rehearsalModalTitle":  "Rehearsal booking",
+    "rehearsalSelectDate":  "Select date",
+    "rehearsalAvailableSlots":  "Available slots",
+    "rehearsalFreeLabel":  "Available:",
+    "rehearsalNoSlotsConfigured":  "No rehearsal slots for this event yet.",
+    "rehearsalLoadError":  "Could not load slots. Try again.",
+    "rehearsalBrandNotAssigned":  "Brand is not assigned for this child. Rehearsal booking is unavailable.",
+    "rehearsalFull":  "Full",
+    "rehearsalConfirmBooking":  "Confirm booking",
+    "rehearsalBookingFooterNote":  "Changes must be made 24 hours before the session when possible.",
+    "rehearsalBookedTitle":  "Your rehearsal is booked",
+    "rehearsalChangeBooking":  "Change booking",
+    "rehearsalProgramLabel":  "Details",
+    "rehearsalArriveEarly":  "Please arrive 15 minutes early.",
+    "rehearsalBookingSaved":  "Booking saved",
+    "rehearsalBookingError":  "Could not complete booking.",
+    "rehearsalSelectChild":  "Child",
+    "rehearsalUpdateBooking":  "Add and update booking",
+    "rehearsalCancelChange":  "Cancel",
+    "rehearsalChangeBookingLockedHint":  "The organizer has closed booking changes. Contact support if you need help.",
+    "rehearsalMilestoneTitle":  "General rehearsal",
+    "rehearsalBrandMilestoneTitle":  "Brand rehearsal: {brandName}",
+    "@rehearsalBrandMilestoneTitle":  {
+                                          "placeholders":  {
+                                                               "brandName":  {
+                                                                                 "type":  "String"
+                                                                             }
+                                                           }
+                                      },
+    "rehearsalBrandMilestoneShort":  "Brand rehearsal",
+    "rehearsalNextBookHint":  "Book your rehearsal slot in Event settings.",
+    "eventSettingsPackingTitle":  "Don\u0027t Forget List",
+    "eventSettingsPackingSubtitle":  "",
+    "eventSettingsPackingCta":  "VIEW LIST",
+    "eventPackingLoadFailed":  "Could not load packing info. Try again.",
+    "eventPackingEmpty":  "Packing information has not been added for this event yet.",
+    "eventDescriptionTitle":  "Event info",
+    "eventProgressShowGallery":  "Show gallery",
+    "eventProgressCheckin":  "Check-in",
+    "eventProgressCheckinPrompt":  "Scan to start the event",
+    "eventProgressCheckinUnavailable":  "Check-in code is not available yet.",
+    "eventDescriptionLoadFailed":  "Could not load event description. Try again.",
+    "eventDescriptionEmpty":  "No description has been added for this event yet.",
+    "eventSettingsBrandTitle":  "Shoes \u0026 socks",
+    "eventSettingsBrandSubtitle":  "Read the brand\u0027s recommendations for taking part in the event",
+    "eventSettingsBrandCta":  "VIEW GUIDELINES",
+    "brandRequirementsLoadFailed":  "Could not load brand requirements. Try again.",
+    "brandRequirementsEmpty":  "No brand requirements have been added for this event yet.",
+    "brandRequirementsEmptyItem":  "No requirements text has been added for this brand yet.",
+    "brandRequirementsPickBrandTitle":  "Choose a brand",
+    "brandRequirementsBrandNumber":  "Brand {brandId}",
+    "@brandRequirementsBrandNumber":  {
+                                          "placeholders":  {
+                                                               "brandId":  {
+                                                                               "type":  "int"
+                                                                           }
+                                                           }
+                                      },
+    "eventSettingsParkingTitle":  "Valet Parking",
+    "eventSettingsParkingSubtitle":  "Open your valet parking pass and arrival status",
+    "eventSettingsParkingCta":  "OPEN VALET PARKING",
+    "parkingChooseModeTitle":  "Valet parking mode",
+    "parkingChooseModeHint":  "Choose screen state for visual testing.",
+    "parkingModeInactive":  "INACTIVE",
+    "parkingModeActive":  "ACTIVE",
+    "parkingInactiveHeadline":  "NO ACTIVE VALET PARKING",
+    "parkingInactiveBody":  "VALET PARKING WILL APPEAR HERE AFTER TICKET PURCHASE.",
+    "parkingInactiveBuyCta":  "BUY",
+    "parkingInactiveVipBody":  "FOR VIP VALET PARKING вЂ” RESERVE A SPOT FOR YOUR CAR.",
+    "parkingInactiveVipBookCta":  "BOOK VALET PARKING",
+    "parkingPayForParkingCta":  "PAY FOR VALET PARKING",
+    "parkingVipQuotaNextPaymentBody":  "YOUR COMPLIMENTARY VALET TICKETS FOR THIS EVENT ARE USED UP. YOU CAN STILL ADD A SPOT AT THE REGULAR PRICE.",
+    "parkingFreeTicketsQuotaLine":  "Complimentary valet: {used} of {quota} used ({remaining} left)",
+    "@parkingFreeTicketsQuotaLine":  {
+                                         "placeholders":  {
+                                                              "used":  {
+                                                                           "type":  "int"
+                                                                       },
+                                                              "quota":  {
+                                                                            "type":  "int"
+                                                                        },
+                                                              "remaining":  {
+                                                                                "type":  "int"
+                                                                            }
+                                                          }
+                                     },
+    "parkingActiveTicketLabel":  "TICKET",
+    "parkingTicketMock1":  "TICKET A1 В· MODEL",
+    "parkingTicketMock2":  "TICKET B7 В· GUEST",
+    "parkingActiveValetLabel":  "VALET SERVICE",
+    "parkingActiveStatusLine":  "VALET PARKING ACTIVE",
+    "parkingActiveShowEntryPointCta":  "SHOW ENTRY POINT",
+    "parkingActiveCarLabel":  "CAR",
+    "parkingActiveRegistrationNumberLabel":  "PLATE NUMBER",
+    "parkingCreateTicketTitle":  "Create Ticket",
+    "parkingCreateEventLabel":  "Event",
+    "parkingCreateAccountNameLabel":  "Name",
+    "parkingCreateCarModelLabel":  "MAKE AND MODEL",
+    "parkingCreateCarModelHint":  "For example: Ford Mustang",
+    "parkingCreatePlateNumberLabel":  "PLATE NUMBER",
+    "parkingCreatePlateNumberHint":  "For example: CA 7JXK921",
+    "parkingCreateRepeatPlateNumberLabel":  "REPEAT PLATE NUMBER",
+    "parkingCreateRepeatPlateNumberHint":  "Re-enter plate number",
+    "parkingCreatePlateNumberMismatch":  "Plate numbers do not match",
+    "parkingCreateBuyCta":  "BUY",
+    "parkingCreateBookCta":  "BOOK VALET PARKING",
+    "parkingCheckoutInBrowser":  "Complete payment in your browser.",
+    "parkingPurchasedWithoutPayment":  "Ticket purchased successfully.",
+    "parkingVipBooked":  "VIP valet parking booked successfully.",
+    "parkingCheckoutError":  "Could not start valet parking payment. Try again.",
+    "clientTicketServiceUnavailableTitle":  "Service unavailable",
+    "clientTicketServiceUnavailableBody":  "This ticket service is not active right now.",
+    "parkingActivePassLabel":  "PASS CODE",
+    "eventSettingsChatTitle":  "Group Chat",
+    "eventSettingsChatSubtitle":  "Group chat with group participants and managers",
+    "eventSettingsChatCta":  "OPEN CHAT",
+    "chatRoomsLoadFailed":  "Could not load chat rooms. Try again.",
+    "chatNoRooms":  "No chat rooms are available for your brands in this event yet.",
+    "chatNoMessagesYet":  "No messages yet",
+    "chatLoadFailed":  "Could not load chat messages. Try again.",
+    "chatSendFailed":  "Could not send message. Try again.",
+    "chatMessagePlaceholder":  "Message group...",
+    "chatReply":  "Reply",
+    "chatReplyCancel":  "Cancel",
+    "chatReplyingTo":  "Replying to {name}",
+    "@chatReplyingTo":  {
+                            "placeholders":  {
+                                                 "name":  {
+                                                              "type":  "String"
+                                                          }
+                                             }
+                        },
+    "chatReplyPreviewPhoto":  "Photo",
+    "chatEdit":  "Edit",
+    "chatDelete":  "Delete",
+    "chatDeleteTitle":  "Delete message?",
+    "chatDeleteMessageConfirm":  "This action cannot be undone.",
+    "chatDeleteFailed":  "Could not delete message. Try again.",
+    "chatEditFailed":  "Could not edit message. Try again.",
+    "chatEditingLabel":  "Editing message",
+    "chatCancelEdit":  "Cancel edit",
+    "eventSettingsChatMoreParticipants":  "+{count}",
+    "@eventSettingsChatMoreParticipants":  {
+                                               "placeholders":  {
+                                                                    "count":  {
+                                                                                  "type":  "int"
+                                                                              }
+                                                                }
+                                           },
+    "mealChoiceTitle":  "Choose lunch",
+    "mealSelectChildLabel":  "Child",
+    "mealSelectDishLabel":  "Dish",
+    "mealSave":  "ORDER",
+    "mealNoMealsConfigured":  "No dishes have been added for this event yet.",
+    "mealSaved":  "Saved",
+    "mealSaveError":  "Could not save. Try again.",
+    "mealOrdersClosed":  "Order acceptance is closed",
+    "mealPaid":  "Paid",
+    "mealPaidDetail":  "Lunch for this event is paid.",
+    "mealPayInBrowser":  "Complete payment in the browser, then return to the app.",
+    "mealCheckoutError":  "Could not start payment. Try again.",
+    "mealAwaitingPayment":  "Order placed вЂ” awaiting payment",
+    "mealAwaitingPaymentDetail":  "Your dish is saved. Finish payment in the browser; status will update after Stripe confirms it.",
+    "mealPaymentContinue":  "Continue payment",
+    "mealPaymentCancel":  "Cancel payment",
+    "mealPaymentStartAgain":  "Start payment again",
+    "mealPaymentCanceled":  "Payment canceled. You can start again when ready.",
+    "mealPaymentStatusLoadError":  "Could not load payment status. Try again.",
+    "noActiveEvents":  "No active events",
+    "becomeModelTitle":  "Start your child\u0027s modeling journey today",
+    "becomeAModel":  "BECOME A MODEL",
+    "latestHighlights":  "Latest Highlights",
+    "viewAll":  "VIEW ALL",
+    "quickActions":  "Quick Actions",
+    "fillOutApplication":  "Fill Out\nApplication",
+    "upcomingShows":  "Upcoming\nShows",
+    "manageKids":  "Manage\nKids",
+    "navHome":  "Home",
+    "navEvents":  "Events",
+    "eventsYoutubeLiveButton":  "YouTube live",
+    "eventsYoutubeLiveInvalidUrl":  "Could not open this YouTube link.",
+    "eventsYoutubeLiveOpenExternally":  "Open in YouTube",
+    "navProfile":  "Profile",
+    "navInfo":  "Info",
+    "continueButton":  "Continue",
+    "loading":  "Loading...",
+    "signOut":  "Sign out",
+    "tokenValidNext":  "Token valid. Next: Home page.",
+    "homePageTitle":  "Home",
+    "youAreSignedIn":  "You are signed in{name}.",
+    "@youAreSignedIn":  {
+                            "placeholders":  {
+                                                 "name":  {
+                                                              "type":  "String"
+                                                          }
+                                             }
+                        },
+    "yourRole":  "Your role: {role}",
+    "@yourRole":  {
+                      "placeholders":  {
+                                           "role":  {
+                                                        "type":  "String"
+                                                    }
+                                       }
+                  },
+    "phoneHint":  "+1234567890",
+    "enterValidEmailShort":  "Enter a valid email",
+    "phoneMustStartWithPlusShort":  "Phone must start with +",
+    "comingSoon":  "Coming soon",
+    "hello":  "Hello",
+    "helloName":  "Hello, {name}",
+    "@helloName":  {
+                       "placeholders":  {
+                                            "name":  {
+                                                         "type":  "String"
+                                                     }
+                                        }
+                   },
+    "noRolesAssigned":  "You have not been assigned any roles yet. Please contact the administration.",
+    "signedInAs":  "Signed in as {name}",
+    "@signedInAs":  {
+                        "placeholders":  {
+                                             "name":  {
+                                                          "type":  "String"
+                                                      }
+                                         }
+                    },
+    "birthdateDialogTitle":  "Birthdate",
+    "nextShowsTitle":  "Next Shows",
+    "nextShowsSeason":  "2026 Season",
+    "details":  "Details",
+    "contact":  "Contact",
+    "registrationOpen":  "Registration Open",
+    "myTicketsButton":  "MY TICKETS",
+    "myTicketsTitle":  "My tickets",
+    "selectEventForTickets":  "Select event",
+    "ticketsMomName":  "Parent name",
+    "ticketsEventDate":  "Date",
+    "ticketsOpenPdf":  "OPEN",
+    "ticketsPdfUnavailable":  "PDF not available yet",
+    "ticketsBuy":  "BUY TICKET",
+    "ticketsBuyNoLink":  "No purchase link is set. Add a ticket store URL for this event in the admin, or a website URL in Info.",
+    "ticketsBuyCouldNotOpen":  "Could not open the link.",
+    "ticketsBuySubtitle":  "VIP and standard seats available",
+    "ticketsBuyEmailHint":  "Your tickets will be sent to the email address provided during purchase.",
+    "extraTicketButton":  "OPEN BAR",
+    "extraTicketSelectEventFirst":  "Select an event first.",
+    "extraTicketNoActiveHeadline":  "NO ACTIVE BEVERAGE PACKAGES",
+    "extraTicketBuyCta":  "BUY",
+    "extraTicketAccessOpen":  "ACCESS TO BEVERAGE PACKAGE IS OPEN",
+    "extraTicketCheckoutInBrowser":  "Complete payment in your browser.",
+    "extraTicketCheckoutError":  "Could not start beverage package payment. Try again.",
+    "backstageTicketButton":  "BACKSTAGE PASS",
+    "backstageTicketSelectEventFirst":  "Select an event first.",
+    "backstageTicketNoActiveHeadline":  "NO ACTIVE BACKSTAGE PASSES",
+    "backstageTicketBuyCta":  "BUY",
+    "backstageTicketAccessOpen":  "ACCESS TO BACKSTAGE PASS IS OPEN",
+    "backstageTicketCheckoutInBrowser":  "Complete payment in your browser.",
+    "backstageTicketCheckoutError":  "Could not start backstage pass payment. Try again.",
+    "ticketsNoEvents":  "No events with tickets yet",
+    "ticketsNoneForEvent":  "No tickets for this event",
+    "ticketsLoadError":  "Could not load tickets",
+    "ticketsEventsLoadError":  "Could not load events",
+    "faqBrandCatalogTitle":  "Clothing brands",
+    "pdfViewerTitle":  "Ticket",
+    "contactFormLinkMissing":  "No form link is set. Add Р’В«Contact / signup form URLР’В» in Application settings in the admin.",
+    "infoHubTitle":  "Information Hub",
+    "infoMenuAboutYfs":  "About YFS",
+    "infoMenuGeneralFaq":  "General FAQ",
+    "infoMenuContactManager":  "Contact Manager",
+    "infoFooterBrand":  "YFS",
+    "infoFooterCopyright":  "Р’В© 2024 Young Fashion Series. All rights reserved.",
+    "parentProgressLabel":  "Parent progress: {completed}/{total}",
+    "@parentProgressLabel":  {
+                                 "placeholders":  {
+                                                      "completed":  {
+                                                                        "type":  "int"
+                                                                    },
+                                                      "total":  {
+                                                                    "type":  "int"
+                                                                }
+                                                  }
+                             },
+    "appUpdateRequiredMessage":  "Please update the app to continue.",
+    "appUpdateButton":  "Update app",
+    "showAll":  "Show all",
+    "chatCouldNotPickPhoto":  "Could not pick photo",
+    "contactManagerIntro":  "You can leave a message about any question. We will get back to you as soon as possible.",
+    "contactManagerMessageLabel":  "Your message",
+    "contactManagerMessageRequired":  "Please enter your message",
+    "contactManagerSend":  "Send",
+    "contactManagerSent":  "Your message has been sent. We will contact you soon.",
+    "contactManagerSendFailed":  "Could not send. Try again later.",
+    "contactManagerServiceUnavailable":  "Contact is temporarily unavailable. Please try again later.",
+    "close":  "Close"
 }
-
-
-
-

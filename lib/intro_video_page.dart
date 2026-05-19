@@ -11,7 +11,6 @@ import 'client_home_page.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
 import 'push/push_token_service.dart';
-import 'staff_home_page.dart';
 
 /// Экран при запуске: проигрывает видеоролик, по окончании переходит на вход.
 class IntroVideoPage extends StatefulWidget {
@@ -33,6 +32,11 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
   bool _checkingSession = false;
   Timer? _videoEndFallbackTimer;
   bool _introExitStarted = false;
+
+  bool _isClientRole(Map<String, dynamic> user) {
+    final role = (user['role'] ?? '').toString().trim().toLowerCase();
+    return role == 'client';
+  }
 
   @override
   void initState() {
@@ -137,11 +141,8 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
     try {
       final user = await widget.auth.restoreSessionIfPossible();
       if (!mounted) return;
-      if (user != null) {
-        final role = (user['role'] ?? '').toString().toLowerCase();
-        final next = role == 'worker'
-            ? StaffHomePage(auth: widget.auth, user: user)
-            : ClientHomePage(auth: widget.auth, user: user);
+      if (user != null && _isClientRole(user)) {
+        final next = ClientHomePage(auth: widget.auth, user: user);
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => next),
         );
@@ -149,6 +150,9 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
           PushTokenServiceHolder.instance?.syncWithBackendIfLoggedIn(),
         );
       } else {
+        if (user != null) {
+          await widget.auth.clearToken();
+        }
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => LoginPage(auth: widget.auth)),
         );
