@@ -3,10 +3,26 @@ import 'account_settings_page.dart';
 import 'api/auth_service.dart';
 import 'child_edit_page.dart';
 import 'create_child_page.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'gen_l10n/app_localizations.dart';
 
 const _kGold = Color(0xFFD4AF37);
 const _kCardBg = Color(0xFF121212);
+const _kPastShowDialogShape = RoundedRectangleBorder(
+  borderRadius: BorderRadius.all(Radius.circular(6)),
+);
+const _kPastShowDialogTitleStyle = TextStyle(
+  color: _kGold,
+  fontSize: 15,
+  fontWeight: FontWeight.w600,
+  letterSpacing: 0.4,
+  height: 1.2,
+);
+const _kPastShowDialogTitlePadding = EdgeInsets.fromLTRB(20, 18, 20, 6);
+const _kPastShowDialogContentPadding = EdgeInsets.fromLTRB(20, 0, 20, 4);
+const _kPastShowDialogActionsPadding = EdgeInsets.fromLTRB(16, 0, 16, 10);
 
 class ClientProfileTab extends StatefulWidget {
   const ClientProfileTab({
@@ -65,10 +81,381 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
           _buildAccountSection(),
           const SizedBox(height: 36),
           _buildChildrenSection(),
+          const SizedBox(height: 20),
+          _buildPastShowPhotosButton(),
           const SizedBox(height: 24),
         ],
       ),
     );
+  }
+
+  Widget _buildPastShowPhotosButton() {
+    final l10n = AppLocalizations.of(context)!;
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton(
+        onPressed: _onPastShowPhotosTap,
+        style: FilledButton.styleFrom(
+          backgroundColor: _kGold,
+          foregroundColor: Colors.black,
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              l10n.pastShowPhotosButtonTitle.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.5,
+                height: 1.1,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.pastShowPhotosButtonSubtitle.toLowerCase(),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.3,
+                height: 1.2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _onPastShowPhotosTap() async {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(
+        child: CircularProgressIndicator(color: _kGold),
+      ),
+    );
+    try {
+      final result = await widget.auth.getClientPastShowPhotos();
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).pop();
+
+      if (!result.hasAnyAssignment) {
+        await _showPastShowPhotosMessageDialog(
+          l10n.pastShowPhotosNotParticipatedMessage,
+        );
+        return;
+      }
+
+      final photos = result.photos;
+      if (photos.isEmpty) {
+        await _showPastShowPhotosMessageDialog(
+          l10n.pastShowPhotosPendingMessage,
+        );
+        return;
+      }
+
+      if (photos.length == 1) {
+        final onlyLink = photos.first.singleMediaLink;
+        if (onlyLink != null) {
+          await _openPastShowPhotoLink(onlyLink);
+          return;
+        }
+      }
+
+      final byEvent = _groupPastShowPhotosByEvent(photos);
+      final eventEntries = _sortedPastShowEventEntries(byEvent);
+
+      if (eventEntries.length == 1 && eventEntries.first.value.length == 1) {
+        final onlyLink = eventEntries.first.value.first.singleMediaLink;
+        if (onlyLink != null) {
+          await _openPastShowPhotoLink(onlyLink);
+          return;
+        }
+      }
+
+      int? eventId;
+      if (eventEntries.length == 1) {
+        eventId = eventEntries.first.key;
+      } else {
+        eventId = await _showPastShowEventPicker(eventEntries);
+      }
+      if (eventId == null || !mounted) {
+        return;
+      }
+
+      final childrenForEvent = byEvent[eventId] ?? [];
+      if (childrenForEvent.isEmpty) {
+        return;
+      }
+
+      if (childrenForEvent.length == 1) {
+        final onlyLink = childrenForEvent.first.singleMediaLink;
+        if (onlyLink != null) {
+          await _openPastShowPhotoLink(onlyLink);
+          return;
+        }
+      }
+
+      await _showPastShowChildrenPicker(childrenForEvent);
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
+
+  Future<void> _showPastShowPhotosMessageDialog(String message) async {
+    final l10n = AppLocalizations.of(context)!;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _kCardBg,
+        shape: _kPastShowDialogShape,
+        titlePadding: _kPastShowDialogTitlePadding,
+        contentPadding: _kPastShowDialogContentPadding,
+        actionsPadding: _kPastShowDialogActionsPadding,
+        actionsAlignment: MainAxisAlignment.end,
+        title: Center(
+          child: Text(
+            l10n.pastShowPhotosTitle.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: _kPastShowDialogTitleStyle,
+          ),
+        ),
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.white70, fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              l10n.close,
+              style: const TextStyle(color: _kGold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Map<int, List<PastShowPhotoItem>> _groupPastShowPhotosByEvent(
+    List<PastShowPhotoItem> photos,
+  ) {
+    final byEvent = <int, List<PastShowPhotoItem>>{};
+    for (final photo in photos) {
+      byEvent.putIfAbsent(photo.eventId, () => []).add(photo);
+    }
+    for (final list in byEvent.values) {
+      list.sort((a, b) => a.childName.compareTo(b.childName));
+    }
+    return byEvent;
+  }
+
+  List<MapEntry<int, List<PastShowPhotoItem>>> _sortedPastShowEventEntries(
+    Map<int, List<PastShowPhotoItem>> byEvent,
+  ) {
+    return byEvent.entries.toList()
+      ..sort((a, b) {
+        final aDate =
+            a.value.first.eventStartsAt ??
+            DateTime.fromMillisecondsSinceEpoch(0);
+        final bDate =
+            b.value.first.eventStartsAt ??
+            DateTime.fromMillisecondsSinceEpoch(0);
+        return bDate.compareTo(aDate);
+      });
+  }
+
+  Future<int?> _showPastShowEventPicker(
+    List<MapEntry<int, List<PastShowPhotoItem>>> eventEntries,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).toString();
+    return showDialog<int>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _kCardBg,
+        shape: _kPastShowDialogShape,
+        titlePadding: _kPastShowDialogTitlePadding,
+        contentPadding: _kPastShowDialogContentPadding,
+        actionsPadding: _kPastShowDialogActionsPadding,
+        actionsAlignment: MainAxisAlignment.end,
+        title: Center(
+          child: Text(
+            l10n.pastShowPhotosChooseEventTitle.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: _kPastShowDialogTitleStyle,
+          ),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.separated(
+            shrinkWrap: true,
+            itemCount: eventEntries.length,
+            separatorBuilder: (_, __) =>
+                const Divider(height: 1, color: Colors.white12),
+            itemBuilder: (context, index) {
+              final sample = eventEntries[index].value.first;
+              final dateLine = sample.eventStartsAt != null
+                  ? DateFormat('d MMM yyyy', locale).format(
+                      sample.eventStartsAt!.toLocal(),
+                    )
+                  : null;
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  sample.eventName.isNotEmpty ? sample.eventName : '—',
+                  style: const TextStyle(color: Colors.white),
+                ),
+                subtitle: dateLine != null
+                    ? Text(
+                        dateLine,
+                        style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                      )
+                    : null,
+                trailing: const Icon(
+                  Icons.chevron_right,
+                  color: _kGold,
+                  size: 22,
+                ),
+                onTap: () => Navigator.of(ctx).pop(eventEntries[index].key),
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              l10n.close,
+              style: const TextStyle(color: _kGold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showPastShowChildrenPicker(
+    List<PastShowPhotoItem> childrenForEvent,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _kCardBg,
+        shape: _kPastShowDialogShape,
+        titlePadding: _kPastShowDialogTitlePadding,
+        contentPadding: _kPastShowDialogContentPadding,
+        actionsPadding: _kPastShowDialogActionsPadding,
+        actionsAlignment: MainAxisAlignment.end,
+        title: Center(
+          child: Text(
+            l10n.pastShowPhotosChooseChildTitle.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: _kPastShowDialogTitleStyle,
+          ),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.separated(
+            shrinkWrap: true,
+            itemCount: childrenForEvent.length,
+            separatorBuilder: (_, __) =>
+                const Divider(height: 1, color: Colors.white12),
+            itemBuilder: (context, index) {
+              final item = childrenForEvent[index];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Text(
+                      item.childName.isNotEmpty ? item.childName : '—',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  if (item.hasPhotoLink)
+                    _PastShowMediaLinkTile(
+                      label: l10n.pastShowPhotosOpenPhoto,
+                      icon: Icons.photo_outlined,
+                      onTap: () async {
+                        Navigator.of(ctx).pop();
+                        await _openPastShowPhotoLink(item.photoLink);
+                      },
+                    ),
+                  if (item.hasVideoLink)
+                    _PastShowMediaLinkTile(
+                      label: l10n.pastShowPhotosOpenVideo,
+                      icon: Icons.videocam_outlined,
+                      onTap: () async {
+                        Navigator.of(ctx).pop();
+                        await _openPastShowPhotoLink(item.videoLink);
+                      },
+                    ),
+                ],
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              l10n.close,
+              style: const TextStyle(color: _kGold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openPastShowPhotoLink(String url) async {
+    final l10n = AppLocalizations.of(context)!;
+    final uri = Uri.tryParse(url);
+    if (uri == null || !await canLaunchUrl(uri)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.pastShowPhotosLinkCouldNotOpen)),
+      );
+      return;
+    }
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   // ---------------------------------------------------------------------------
@@ -307,6 +694,45 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
 // =============================================================================
 // Private sub-widgets
 // =============================================================================
+
+class _PastShowMediaLinkTile extends StatelessWidget {
+  const _PastShowMediaLinkTile({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Row(
+            children: [
+              Icon(icon, color: _kGold, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ),
+              const Icon(Icons.open_in_new, color: _kGold, size: 18),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _InfoField extends StatelessWidget {
   const _InfoField({required this.label, required this.value});

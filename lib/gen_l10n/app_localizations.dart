@@ -2364,6 +2364,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
+
+  /// No description provided for @pastShowPhotosButtonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo & video'**
+  String get pastShowPhotosButtonTitle;
+
+  /// No description provided for @pastShowPhotosButtonSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'from past shows'**
+  String get pastShowPhotosButtonSubtitle;
+
+  /// No description provided for @pastShowPhotosTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo & video'**
+  String get pastShowPhotosTitle;
+
+  /// No description provided for @pastShowPhotosNotParticipatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not participated in any show yet. Photos and videos will be added after the show.'**
+  String get pastShowPhotosNotParticipatedMessage;
+
+  /// No description provided for @pastShowPhotosPendingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos and videos will be added after the show.'**
+  String get pastShowPhotosPendingMessage;
+
+  /// No description provided for @pastShowPhotosChooseEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a show'**
+  String get pastShowPhotosChooseEventTitle;
+
+  /// No description provided for @pastShowPhotosChooseChildTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo & video'**
+  String get pastShowPhotosChooseChildTitle;
+
+  /// No description provided for @pastShowPhotosOpenPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get pastShowPhotosOpenPhoto;
+
+  /// No description provided for @pastShowPhotosOpenVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get pastShowPhotosOpenVideo;
+
+  /// No description provided for @pastShowPhotosLinkCouldNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link.'**
+  String get pastShowPhotosLinkCouldNotOpen;
 }
 
 class _AppLocalizationsDelegate

@@ -1248,6 +1248,38 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get close => 'Cerrar';
+
+  @override
+  String get pastShowPhotosButtonTitle => 'Foto & video';
+
+  @override
+  String get pastShowPhotosButtonSubtitle => 'de desfiles pasados';
+
+  @override
+  String get pastShowPhotosTitle => 'Foto & video';
+
+  @override
+  String get pastShowPhotosNotParticipatedMessage =>
+      'Aún no has participado en ningún desfile. Las fotos y los vídeos se añadirán después del desfile.';
+
+  @override
+  String get pastShowPhotosPendingMessage =>
+      'Las fotos y los vídeos se añadirán después del desfile.';
+
+  @override
+  String get pastShowPhotosChooseEventTitle => 'Elige el desfile';
+
+  @override
+  String get pastShowPhotosChooseChildTitle => 'Foto & video';
+
+  @override
+  String get pastShowPhotosOpenPhoto => 'Foto';
+
+  @override
+  String get pastShowPhotosOpenVideo => 'Video';
+
+  @override
+  String get pastShowPhotosLinkCouldNotOpen => 'No se pudo abrir el enlace.';
 }
 
 /// The translations for Spanish Castilian, as used in the United States (`es_US`).
@@ -2494,4 +2526,36 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get close => 'Cerrar';
+
+  @override
+  String get pastShowPhotosButtonTitle => 'Foto & video';
+
+  @override
+  String get pastShowPhotosButtonSubtitle => 'de desfiles pasados';
+
+  @override
+  String get pastShowPhotosTitle => 'Foto & video';
+
+  @override
+  String get pastShowPhotosNotParticipatedMessage =>
+      'Aún no has participado en ningún desfile. Las fotos y los vídeos se añadirán después del desfile.';
+
+  @override
+  String get pastShowPhotosPendingMessage =>
+      'Las fotos y los vídeos se añadirán después del desfile.';
+
+  @override
+  String get pastShowPhotosChooseEventTitle => 'Elige el desfile';
+
+  @override
+  String get pastShowPhotosChooseChildTitle => 'Foto & video';
+
+  @override
+  String get pastShowPhotosOpenPhoto => 'Foto';
+
+  @override
+  String get pastShowPhotosOpenVideo => 'Video';
+
+  @override
+  String get pastShowPhotosLinkCouldNotOpen => 'No se pudo abrir el enlace.';
 }

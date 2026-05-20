@@ -1227,4 +1227,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get close => 'Close';
+
+  @override
+  String get pastShowPhotosButtonTitle => 'Photo & video';
+
+  @override
+  String get pastShowPhotosButtonSubtitle => 'from past shows';
+
+  @override
+  String get pastShowPhotosTitle => 'Photo & video';
+
+  @override
+  String get pastShowPhotosNotParticipatedMessage =>
+      'You have not participated in any show yet. Photos and videos will be added after the show.';
+
+  @override
+  String get pastShowPhotosPendingMessage =>
+      'Photos and videos will be added after the show.';
+
+  @override
+  String get pastShowPhotosChooseEventTitle => 'Choose a show';
+
+  @override
+  String get pastShowPhotosChooseChildTitle => 'Photo & video';
+
+  @override
+  String get pastShowPhotosOpenPhoto => 'Photo';
+
+  @override
+  String get pastShowPhotosOpenVideo => 'Video';
+
+  @override
+  String get pastShowPhotosLinkCouldNotOpen => 'Could not open the link.';
 }

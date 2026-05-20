@@ -476,5 +476,15 @@
     "contactManagerSent":  "РџРѕРІС–РґРѕРјР»РµРЅРЅСЏ РЅР°РґС–СЃР»Р°РЅРѕ. РњРё Р·РІвЂ™СЏР¶РµРјРѕСЃСЏ Р· РІР°РјРё РЅР°Р№Р±Р»РёР¶С‡РёРј С‡Р°СЃРѕРј.",
     "contactManagerSendFailed":  "РќРµ РІРґР°Р»РѕСЃСЏ РЅР°РґС–СЃР»Р°С‚Рё. РЎРїСЂРѕР±СѓР№С‚Рµ РїС–Р·РЅС–С€Рµ.",
     "contactManagerServiceUnavailable":  "Р—РІвЂ™СЏР·РѕРє С‚РёРјС‡Р°СЃРѕРІРѕ РЅРµРґРѕСЃС‚СѓРїРЅРёР№. РЎРїСЂРѕР±СѓР№С‚Рµ РїС–Р·РЅС–С€Рµ.",
-    "close":  "Р—Р°РєСЂРёС‚Рё"
+    "close":  "Закрити",
+    "pastShowPhotosButtonTitle":  "Фото & відео",
+    "pastShowPhotosButtonSubtitle":  "з минулих показів",
+    "pastShowPhotosTitle":  "Фото & відео",
+    "pastShowPhotosNotParticipatedMessage":  "Ви ще не брали участі в жодному показі. Фото і відео будуть додані після проходження показу.",
+    "pastShowPhotosPendingMessage":  "Фото і відео будуть додані після проходження показу.",
+    "pastShowPhotosChooseEventTitle":  "Оберіть показ",
+    "pastShowPhotosChooseChildTitle":  "Фото & відео",
+    "pastShowPhotosOpenPhoto":  "Фото",
+    "pastShowPhotosOpenVideo":  "Відео",
+    "pastShowPhotosLinkCouldNotOpen":  "Не вдалося відкрити посилання."
 }

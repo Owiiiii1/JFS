@@ -1303,5 +1303,37 @@ class AppLocalizationsRu extends AppLocalizations {
       'РЎРІСЏР·СЊ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРЅР°. РџРѕРїСЂРѕР±СѓР№С‚Рµ РїРѕР·Р¶Рµ.';
 
   @override
-  String get close => 'Р—Р°РєСЂС‹С‚СЊ';
+  String get close => 'Закрыть';
+
+  @override
+  String get pastShowPhotosButtonTitle => 'Фото & видео';
+
+  @override
+  String get pastShowPhotosButtonSubtitle => 'с прошедших показов';
+
+  @override
+  String get pastShowPhotosTitle => 'Фото & видео';
+
+  @override
+  String get pastShowPhotosNotParticipatedMessage =>
+      'Вы еще не участвовали ни в одном показе. Фото и видео будут добавлены после прохождения показа.';
+
+  @override
+  String get pastShowPhotosPendingMessage =>
+      'Фото и видео будут добавлены после прохождения показа.';
+
+  @override
+  String get pastShowPhotosChooseEventTitle => 'Выберите показ';
+
+  @override
+  String get pastShowPhotosChooseChildTitle => 'Фото & видео';
+
+  @override
+  String get pastShowPhotosOpenPhoto => 'Фото';
+
+  @override
+  String get pastShowPhotosOpenVideo => 'Видео';
+
+  @override
+  String get pastShowPhotosLinkCouldNotOpen => 'Не удалось открыть ссылку.';
 }

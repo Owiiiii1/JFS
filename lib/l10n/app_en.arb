@@ -528,5 +528,15 @@
     "contactManagerSent":  "Your message has been sent. We will contact you soon.",
     "contactManagerSendFailed":  "Could not send. Try again later.",
     "contactManagerServiceUnavailable":  "Contact is temporarily unavailable. Please try again later.",
-    "close":  "Close"
+    "close":  "Close",
+    "pastShowPhotosButtonTitle":  "Photo & video",
+    "pastShowPhotosButtonSubtitle":  "from past shows",
+    "pastShowPhotosTitle":  "Photo & video",
+    "pastShowPhotosNotParticipatedMessage":  "You have not participated in any show yet. Photos and videos will be added after the show.",
+    "pastShowPhotosPendingMessage":  "Photos and videos will be added after the show.",
+    "pastShowPhotosChooseEventTitle":  "Choose a show",
+    "pastShowPhotosChooseChildTitle":  "Photo & video",
+    "pastShowPhotosOpenPhoto":  "Photo",
+    "pastShowPhotosOpenVideo":  "Video",
+    "pastShowPhotosLinkCouldNotOpen":  "Could not open the link."
 }

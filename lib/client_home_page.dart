@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'api/auth_service.dart';
+import 'app_route_observer.dart';
 import 'app_settings.dart';
 import 'client_profile_tab.dart';
 import 'gen_l10n/app_localizations.dart';
@@ -78,8 +79,9 @@ class ClientHomePage extends StatefulWidget {
 }
 
 class _ClientHomePageState extends State<ClientHomePage>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, RouteAware {
   int _currentTab = 0;
+  bool _routeObserverSubscribed = false;
   int? _selectedDashboardChildId;
   ClientDashboard? _dashboard;
   bool _loading = true;
@@ -87,6 +89,7 @@ class _ClientHomePageState extends State<ClientHomePage>
   Timer? _dashboardRefreshTimer;
 
   List<UpcomingEvent>? _upcomingEvents;
+  ClientHomeButtonSettings? _homeButtonSettings;
   bool _upcomingLoading = false;
   String? _upcomingError;
 
@@ -159,6 +162,9 @@ class _ClientHomePageState extends State<ClientHomePage>
 
   @override
   void dispose() {
+    if (_routeObserverSubscribed) {
+      appRouteObserver.unsubscribe(this);
+    }
     InAppNotificationBellHint.hasPendingHint.removeListener(
       _bellLocalHintListener,
     );
@@ -178,6 +184,13 @@ class _ClientHomePageState extends State<ClientHomePage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (!_routeObserverSubscribed) {
+      final route = ModalRoute.of(context);
+      if (route is ModalRoute<void>) {
+        appRouteObserver.subscribe(this, route);
+        _routeObserverSubscribed = true;
+      }
+    }
     final tag = _tagForContentLocale(AppSettings.contentLocaleForApi());
     if (_homeInfoContentLocaleTag == tag) return;
     _homeInfoContentLocaleTag = tag;
@@ -186,11 +199,27 @@ class _ClientHomePageState extends State<ClientHomePage>
   }
 
   @override
+  void didPopNext() {
+    if (_currentTab == 0) {
+      _onHomeTabBecameVisible();
+    }
+  }
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _refreshDashboardSilently();
       _refreshUnreadSilently();
+      if (_currentTab == 0) {
+        _onHomeTabBecameVisible();
+      } else {
+        _refreshDashboardSilently();
+      }
     }
+  }
+
+  /// Дашборд + upcoming/home_buttons при показе вкладки «Дом» (смена экрана, повторный тап).
+  void _onHomeTabBecameVisible() {
+    unawaited(_refreshDashboardSilently());
   }
 
   Future<void> _loadDashboard() async {
@@ -213,6 +242,9 @@ class _ClientHomePageState extends State<ClientHomePage>
         _selectedDashboardChildId = _resolveDashboardChildId(dashboard);
         _loading = false;
       });
+      if (_homeButtonSettings == null && !_upcomingLoading) {
+        unawaited(_refreshUpcomingSilently());
+      }
     } catch (e) {
       debugPrint('[ClientDashboard] ERROR: $e');
       if (!mounted) return;
@@ -231,6 +263,21 @@ class _ClientHomePageState extends State<ClientHomePage>
         _dashboard = dashboard;
         _selectedDashboardChildId = _resolveDashboardChildId(dashboard);
         _error = null;
+      });
+      unawaited(_refreshUpcomingSilently());
+    } catch (_) {
+      // Silent refresh intentionally ignores transient errors.
+    }
+  }
+
+  Future<void> _refreshUpcomingSilently() async {
+    try {
+      final payload = await widget.auth.getClientUpcomingEvents();
+      if (!mounted) return;
+      setState(() {
+        _upcomingEvents = payload.events;
+        _homeButtonSettings = payload.homeButtons;
+        _upcomingError = null;
       });
     } catch (_) {
       // Silent refresh intentionally ignores transient errors.
@@ -311,10 +358,11 @@ class _ClientHomePageState extends State<ClientHomePage>
       _upcomingError = null;
     });
     try {
-      final list = await widget.auth.getClientUpcomingEvents();
+      final payload = await widget.auth.getClientUpcomingEvents();
       if (!mounted) return;
       setState(() {
-        _upcomingEvents = list;
+        _upcomingEvents = payload.events;
+        _homeButtonSettings = payload.homeButtons;
         _upcomingLoading = false;
       });
     } catch (e) {
@@ -564,18 +612,100 @@ class _ClientHomePageState extends State<ClientHomePage>
     }
   }
 
+  ClientHomeButtonSettings get _effectiveHomeButtons =>
+      _homeButtonSettings ?? ClientHomeButtonSettings();
+
   Future<List<UpcomingEvent>> _ensureUpcomingEventsLoaded() async {
     if (_upcomingEvents != null) {
       return _upcomingEvents!;
     }
-    final list = await widget.auth.getClientUpcomingEvents();
-    if (!mounted) return list;
+    final payload = await widget.auth.getClientUpcomingEvents();
+    if (!mounted) return payload.events;
     setState(() {
-      _upcomingEvents = list;
+      _upcomingEvents = payload.events;
+      _homeButtonSettings = payload.homeButtons;
       _upcomingLoading = false;
       _upcomingError = null;
     });
-    return list;
+    return payload.events;
+  }
+
+  List<UpcomingEvent> _buyTicketEligibleEvents(List<UpcomingEvent> source) {
+    source = source
+        .where((e) => !_activeParticipationEventIds().contains(e.id))
+        .toList();
+    final buttons = _effectiveHomeButtons;
+    if (!buttons.buyTicketEnabled) {
+      return const [];
+    }
+    return source
+        .where((e) => (e.ticketStoreUrl ?? '').trim().isNotEmpty)
+        .where((e) => buttons.allowsEvent(e.id, buttons.buyTicketEventIds))
+        .toList();
+  }
+
+  List<UpcomingEvent> _parkingEligibleEvents(List<UpcomingEvent> source) {
+    final buttons = _effectiveHomeButtons;
+    if (!buttons.parkingEnabled) {
+      return const [];
+    }
+    final exclude = _activeParticipationEventIds();
+    return source
+        .where((e) => !exclude.contains(e.id))
+        .where((e) => e.clientParkingServiceEnabled)
+        .where((e) => buttons.allowsEvent(e.id, buttons.parkingEventIds))
+        .toList();
+  }
+
+  bool get _showBuyTicketHomeButton =>
+      _effectiveHomeButtons.buyTicketEnabled;
+
+  bool get _showParkingHomeButton => _effectiveHomeButtons.parkingEnabled;
+
+  bool get _showHotelBookingHomeButton {
+    final buttons = _effectiveHomeButtons;
+    if (!buttons.hotelBookingEnabled) {
+      return false;
+    }
+    final label = buttons.hotelBookingLabel?.trim() ?? '';
+    final url = buttons.hotelBookingUrl?.trim() ?? '';
+    return label.isNotEmpty && url.isNotEmpty;
+  }
+
+  /// Ивенты с активным участием (любой ребёнок в дашборде) — не показываем в «будущих».
+  Set<int> _activeParticipationEventIds() {
+    final ids = <int>{};
+    for (final child in _dashboard?.children ?? const <ChildWithAssignment>[]) {
+      final eventId = child.activeAssignment?.event.id ?? 0;
+      if (eventId > 0) {
+        ids.add(eventId);
+      }
+    }
+    return ids;
+  }
+
+  List<UpcomingEvent> get _upcomingEventsExcludingActiveParticipation {
+    final exclude = _activeParticipationEventIds();
+    if (exclude.isEmpty) {
+      return _upcomingEvents ?? const [];
+    }
+    return (_upcomingEvents ?? const <UpcomingEvent>[])
+        .where((e) => !exclude.contains(e.id))
+        .toList();
+  }
+
+  bool _showParkingForActiveAssignment(ChildWithAssignment child) {
+    if (!_showParkingHomeButton) {
+      return false;
+    }
+    final eventId = child.activeAssignment?.event.id ?? 0;
+    if (eventId <= 0) {
+      return false;
+    }
+    return _effectiveHomeButtons.allowsEvent(
+      eventId,
+      _effectiveHomeButtons.parkingEventIds,
+    );
   }
 
   Future<void> _openBuyTicketForNoActive() async {
@@ -598,9 +728,7 @@ class _ClientHomePageState extends State<ClientHomePage>
       return;
     }
     if (!mounted) return;
-    final events = source
-        .where((e) => (e.ticketStoreUrl ?? '').trim().isNotEmpty)
-        .toList();
+    final events = _buyTicketEligibleEvents(source);
     if (events.isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -766,7 +894,8 @@ class _ClientHomePageState extends State<ClientHomePage>
       return;
     }
     if (!mounted) return;
-    if (events.isEmpty) {
+    final parkingEvents = _parkingEligibleEvents(events);
+    if (parkingEvents.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.ticketsNoEvents)));
@@ -781,7 +910,7 @@ class _ClientHomePageState extends State<ClientHomePage>
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setModalState) {
           UpcomingEvent? selected;
-          for (final event in events) {
+          for (final event in parkingEvents) {
             if (event.id == selectedEventId) {
               selected = event;
               break;
@@ -831,7 +960,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                           l10n.selectEventForTickets,
                           style: const TextStyle(color: Colors.white70),
                         ),
-                        items: events
+                        items: parkingEvents
                             .map(
                               (e) => DropdownMenuItem<int>(
                                 value: e.id,
@@ -1457,7 +1586,7 @@ class _ClientHomePageState extends State<ClientHomePage>
     if (ev != null) {
       push(ev.id, ev.name, ev.youtubeLiveUrl, ev.youtubeLiveActive);
     }
-    for (final e in _upcomingEvents ?? const <UpcomingEvent>[]) {
+    for (final e in _upcomingEventsExcludingActiveParticipation) {
       push(e.id, e.name, e.youtubeLiveUrl, e.youtubeLiveActive);
     }
     return out;
@@ -1605,7 +1734,7 @@ class _ClientHomePageState extends State<ClientHomePage>
               ),
             ),
           )
-        else if (_upcomingEvents == null || _upcomingEvents!.isEmpty)
+        else if (_upcomingEventsExcludingActiveParticipation.isEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: Center(
@@ -1616,7 +1745,7 @@ class _ClientHomePageState extends State<ClientHomePage>
             ),
           )
         else
-          ..._upcomingEvents!.map((event) {
+          ..._upcomingEventsExcludingActiveParticipation.map((event) {
             final imageUrl =
                 event.imageUrl != null && !event.imageUrl!.startsWith('http')
                 ? '${widget.auth.baseUrl}${event.imageUrl}'
@@ -1768,7 +1897,90 @@ class _ClientHomePageState extends State<ClientHomePage>
   Widget _buildEventActionsCard(ChildWithAssignment child) {
     final l10n = AppLocalizations.of(context)!;
     final assignment = child.activeAssignment;
+    final showParking = _homeButtonSettings != null &&
+        _showParkingForActiveAssignment(child);
+    final showHotel =
+        _homeButtonSettings != null && _showHotelBookingHomeButton;
+
+    Widget myTicketsButton() => ElevatedButton(
+          onPressed: () async {
+            final requireContractGate =
+                (assignment?.accessMode ?? 'parent') == 'family';
+            if (requireContractGate) {
+              final allowed = await ensureContractSignedBeforeTicketPurchase(
+                context,
+                auth: widget.auth,
+              );
+              if (!allowed) {
+                return;
+              }
+            }
+            showMyTicketsSheet(
+              context,
+              auth: widget.auth,
+              canPurchaseTickets: _canPurchaseTickets,
+              requireContractGate: false,
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _kGold,
+            foregroundColor: Colors.black,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            minimumSize: const Size.fromHeight(48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 0,
+          ),
+          child: Text(
+            l10n.myTicketsButton,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              letterSpacing: 1.4,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        );
+
+    Widget parkingButton() => OutlinedButton(
+          onPressed: assignment == null
+              ? null
+              : () => _openParkingFlowFromAssignment(assignment),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.white,
+            side: const BorderSide(color: _kGold),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            minimumSize: const Size.fromHeight(48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Text(
+            l10n.eventSettingsParkingTitle,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              letterSpacing: 1.4,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        );
+
+    final row1Children = <Widget>[
+      Expanded(child: myTicketsButton()),
+    ];
+    if (showParking) {
+      row1Children.add(const SizedBox(width: 12));
+      row1Children.add(Expanded(child: parkingButton()));
+    }
+
     return Container(
+      width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white10),
@@ -1776,82 +1988,11 @@ class _ClientHomePageState extends State<ClientHomePage>
       ),
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final requireContractGate =
-                        (assignment?.accessMode ?? 'parent') == 'family';
-                    if (requireContractGate) {
-                      final allowed = await ensureContractSignedBeforeTicketPurchase(
-                        context,
-                        auth: widget.auth,
-                      );
-                      if (!allowed) {
-                        return;
-                      }
-                    }
-                    showMyTicketsSheet(
-                      context,
-                      auth: widget.auth,
-                      canPurchaseTickets: _canPurchaseTickets,
-                      // Contract flow for family access is now started
-                      // before opening "My tickets" modal.
-                      requireContractGate: false,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _kGold,
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    l10n.myTicketsButton,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                      letterSpacing: 1.4,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: assignment == null
-                      ? null
-                      : () => _openParkingFlowFromAssignment(assignment),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: _kGold),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    l10n.eventSettingsParkingTitle,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                      letterSpacing: 1.4,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: row1Children,
           ),
           const SizedBox(height: 10),
           Row(
@@ -1912,72 +2053,184 @@ class _ClientHomePageState extends State<ClientHomePage>
               ),
             ],
           ),
+          if (showHotel) ...[
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: _openHotelBookingUrl,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  side: const BorderSide(color: _kGold),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  minimumSize: const Size.fromHeight(48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  _effectiveHomeButtons.hotelBookingLabel?.trim() ?? '',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    letterSpacing: 1.2,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildNoActiveActionsCard() {
+  Future<void> _openHotelBookingUrl() async {
     final l10n = AppLocalizations.of(context)!;
+    final buttons = _effectiveHomeButtons;
+    final normalized = _normalizeHttpUrl(buttons.hotelBookingUrl ?? '');
+    if (normalized == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.ticketsBuyNoLink)),
+      );
+      return;
+    }
+    final uri = Uri.tryParse(normalized);
+    if (uri == null || !uri.hasScheme) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
+      );
+      return;
+    }
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.ticketsBuyCouldNotOpen)),
+      );
+    }
+  }
+
+  Widget? _buildNoActiveActionsCard() {
+    if (_homeButtonSettings == null) {
+      return null;
+    }
+    final l10n = AppLocalizations.of(context)!;
+    final showBuy = _showBuyTicketHomeButton;
+    final showParking = _showParkingHomeButton;
+    final showHotel = _showHotelBookingHomeButton;
+    if (!showBuy && !showParking && !showHotel) {
+      return null;
+    }
+
+    Widget buyButton() => ElevatedButton(
+          onPressed: _openBuyTicketForNoActive,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _kGold,
+            foregroundColor: Colors.black,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            minimumSize: const Size.fromHeight(48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 0,
+          ),
+          child: Text(
+            l10n.ticketsBuy,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              letterSpacing: 1.2,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        );
+
+    Widget parkingButton() => OutlinedButton(
+          onPressed: _openParkingForNoActive,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.white,
+            side: const BorderSide(color: _kGold),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            minimumSize: const Size.fromHeight(48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Text(
+            l10n.eventSettingsParkingTitle,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              letterSpacing: 1.2,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        );
+
+    final firstRowChildren = <Widget>[];
+    if (showBuy) {
+      firstRowChildren.add(Expanded(child: buyButton()));
+    }
+    if (showBuy && showParking) {
+      firstRowChildren.add(const SizedBox(width: 12));
+    }
+    if (showParking) {
+      firstRowChildren.add(Expanded(child: parkingButton()));
+    }
+
     return Container(
+      width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white10),
         color: _kCardBg,
       ),
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: _openBuyTicketForNoActive,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _kGold,
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          if (firstRowChildren.isNotEmpty)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: firstRowChildren,
+            ),
+          if (showHotel) ...[
+            if (firstRowChildren.isNotEmpty) const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: _openHotelBookingUrl,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  side: const BorderSide(color: _kGold),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  minimumSize: const Size.fromHeight(48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                elevation: 0,
-              ),
-              child: Text(
-                l10n.ticketsBuy,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
-                  letterSpacing: 1.2,
+                child: Text(
+                  _effectiveHomeButtons.hotelBookingLabel?.trim() ?? '',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    letterSpacing: 1.2,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: OutlinedButton(
-              onPressed: _openParkingForNoActive,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
-                side: const BorderSide(color: _kGold),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                l10n.eventSettingsParkingTitle,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
-                  letterSpacing: 1.2,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
+          ],
         ],
       ),
     );
@@ -2057,6 +2310,9 @@ class _ClientHomePageState extends State<ClientHomePage>
               onChanged: (value) {
                 if (value == null) return;
                 setState(() => _selectedDashboardChildId = value);
+                if (_currentTab == 0) {
+                  _onHomeTabBecameVisible();
+                }
               },
             ),
           ),
@@ -2902,7 +3158,10 @@ class _ClientHomePageState extends State<ClientHomePage>
                   activeIcon: Icons.home,
                   label: AppLocalizations.of(context)!.navHome,
                   isActive: _currentTab == 0,
-                  onTap: () => setState(() => _currentTab = 0),
+                  onTap: () {
+                    setState(() => _currentTab = 0);
+                    _onHomeTabBecameVisible();
+                  },
                 ),
               ),
               Expanded(
@@ -2915,8 +3174,11 @@ class _ClientHomePageState extends State<ClientHomePage>
                     setState(() => _currentTab = 1);
                     _refreshDashboardSilently();
                     _loadInfoSettings();
-                    if (_upcomingEvents == null && !_upcomingLoading) {
-                      _loadUpcomingEvents();
+                    if (_upcomingLoading) return;
+                    if (_upcomingEvents == null) {
+                      unawaited(_loadUpcomingEvents());
+                    } else {
+                      unawaited(_refreshUpcomingSilently());
                     }
                   },
                 ),

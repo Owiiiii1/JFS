@@ -306,6 +306,27 @@ class AuthService {
     return ClientProfile.fromJson(json);
   }
 
+  /// GET /api/app/client/past-show-photos — участие и ссылки на фото с прошедших показов
+  Future<ClientPastShowPhotosResult> getClientPastShowPhotos() async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse('$baseUrl/api/app/client/past-show-photos');
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load past show photos (${res.statusCode})',
+      );
+    }
+    final json = jsonDecode(res.body) as Map<String, dynamic>;
+    return ClientPastShowPhotosResult.fromJson(json);
+  }
+
   /// POST /api/app/client/contact-manager — сообщение менеджеру (Bearer).
   Future<void> submitContactManager({
     required String name,
@@ -1638,8 +1659,8 @@ class AuthService {
         .toList();
   }
 
-  /// GET /api/app/client/upcoming-events — события в будущем, в которые ребёнок ещё не записан
-  Future<List<UpcomingEvent>> getClientUpcomingEvents() async {
+  /// GET /api/app/client/upcoming-events — upcoming-ивенты и настройки кнопок главной.
+  Future<ClientUpcomingEventsPayload> getClientUpcomingEvents() async {
     final token = await getToken();
     if (token == null || token.isEmpty) {
       throw Exception('Not authenticated');
@@ -1656,11 +1677,7 @@ class AuthService {
       );
     }
     final json = jsonDecode(res.body) as Map<String, dynamic>;
-    final list = json['events'];
-    if (list is! List) return [];
-    return list
-        .map((e) => UpcomingEvent.fromJson(e as Map<String, dynamic>))
-        .toList();
+    return ClientUpcomingEventsPayload.fromJson(json);
   }
 
   /// GET /api/app/client/ticket-events — события, по которым у клиента есть билеты.
@@ -2243,6 +2260,26 @@ String? _optionalTrimmedApiString(dynamic v) {
   final s = v is String ? v : v.toString();
   final t = s.trim();
   return t.isEmpty ? null : t;
+}
+
+bool _apiBool(dynamic value, {required bool defaultValue}) {
+  if (value == null) {
+    return defaultValue;
+  }
+  if (value is bool) {
+    return value;
+  }
+  if (value is num) {
+    return value != 0;
+  }
+  final normalized = value.toString().trim().toLowerCase();
+  if (normalized == 'true' || normalized == '1') {
+    return true;
+  }
+  if (normalized == 'false' || normalized == '0') {
+    return false;
+  }
+  return defaultValue;
 }
 
 int _jsonInt(dynamic v, [int fallback = 0]) => _jsonIntNullable(v) ?? fallback;
@@ -3784,6 +3821,86 @@ class ClientTicketItem {
   }
 }
 
+/// Настройки кнопок главной (без активного назначения) из API.
+class ClientHomeButtonSettings {
+  ClientHomeButtonSettings({
+    this.buyTicketEnabled = true,
+    this.buyTicketEventIds = const [],
+    this.parkingEnabled = true,
+    this.parkingEventIds = const [],
+    this.hotelBookingEnabled = false,
+    this.hotelBookingLabel,
+    this.hotelBookingUrl,
+  });
+
+  final bool buyTicketEnabled;
+  final List<int> buyTicketEventIds;
+  final bool parkingEnabled;
+  final List<int> parkingEventIds;
+  final bool hotelBookingEnabled;
+  final String? hotelBookingLabel;
+  final String? hotelBookingUrl;
+
+  static List<int> _parseEventIds(dynamic raw) {
+    if (raw is! List) {
+      return const [];
+    }
+    return raw
+        .map((e) => int.tryParse(e.toString()) ?? 0)
+        .where((id) => id > 0)
+        .toList();
+  }
+
+  factory ClientHomeButtonSettings.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return ClientHomeButtonSettings();
+    }
+    return ClientHomeButtonSettings(
+      buyTicketEnabled: _apiBool(json['buy_ticket_enabled'], defaultValue: true),
+      buyTicketEventIds: _parseEventIds(json['buy_ticket_event_ids']),
+      parkingEnabled: _apiBool(json['parking_enabled'], defaultValue: true),
+      parkingEventIds: _parseEventIds(json['parking_event_ids']),
+      hotelBookingEnabled:
+          _apiBool(json['hotel_booking_enabled'], defaultValue: false),
+      hotelBookingLabel: _optionalTrimmedApiString(json['hotel_booking_label']),
+      hotelBookingUrl: _optionalTrimmedApiString(json['hotel_booking_url']),
+    );
+  }
+
+  bool allowsEvent(int eventId, List<int> allowedIds) {
+    if (allowedIds.isEmpty) {
+      return true;
+    }
+    return allowedIds.contains(eventId);
+  }
+}
+
+class ClientUpcomingEventsPayload {
+  ClientUpcomingEventsPayload({
+    required this.events,
+    required this.homeButtons,
+  });
+
+  final List<UpcomingEvent> events;
+  final ClientHomeButtonSettings homeButtons;
+
+  factory ClientUpcomingEventsPayload.fromJson(Map<String, dynamic> json) {
+    final list = json['events'];
+    final events = list is List
+        ? list
+              .map((e) => UpcomingEvent.fromJson(e as Map<String, dynamic>))
+              .toList()
+        : <UpcomingEvent>[];
+    final buttonsRaw = json['home_buttons'];
+    return ClientUpcomingEventsPayload(
+      events: events,
+      homeButtons: buttonsRaw is Map<String, dynamic>
+          ? ClientHomeButtonSettings.fromJson(buttonsRaw)
+          : ClientHomeButtonSettings(),
+    );
+  }
+}
+
 class UpcomingEvent {
   UpcomingEvent({
     required this.id,
@@ -3948,6 +4065,81 @@ class ParentProgressInfo {
 }
 
 // ---------------------------------------------------------------------------`r`n// Client profile models`r`n// ---------------------------------------------------------------------------
+
+class ClientPastShowPhotosResult {
+  ClientPastShowPhotosResult({
+    required this.hasAnyAssignment,
+    required this.photos,
+  });
+
+  final bool hasAnyAssignment;
+  final List<PastShowPhotoItem> photos;
+
+  factory ClientPastShowPhotosResult.fromJson(Map<String, dynamic> json) {
+    final list = json['photos'];
+    return ClientPastShowPhotosResult(
+      hasAnyAssignment: json['has_any_assignment'] == true,
+      photos: list is List
+          ? list
+                .map(
+                  (e) => PastShowPhotoItem.fromJson(e as Map<String, dynamic>),
+                )
+                .toList()
+          : [],
+    );
+  }
+}
+
+class PastShowPhotoItem {
+  PastShowPhotoItem({
+    required this.assignmentId,
+    required this.childId,
+    required this.childName,
+    required this.eventId,
+    required this.eventName,
+    this.eventStartsAt,
+    required this.photoLink,
+    required this.videoLink,
+  });
+
+  final int assignmentId;
+  final int childId;
+  final String childName;
+  final int eventId;
+  final String eventName;
+  final DateTime? eventStartsAt;
+  final String photoLink;
+  final String videoLink;
+
+  bool get hasPhotoLink => photoLink.isNotEmpty;
+  bool get hasVideoLink => videoLink.isNotEmpty;
+  int get mediaLinkCount => (hasPhotoLink ? 1 : 0) + (hasVideoLink ? 1 : 0);
+
+  String? get singleMediaLink {
+    if (mediaLinkCount != 1) {
+      return null;
+    }
+    return hasPhotoLink ? photoLink : videoLink;
+  }
+
+  factory PastShowPhotoItem.fromJson(Map<String, dynamic> json) {
+    final rawDate = json['event_starts_at'];
+    DateTime? startsAt;
+    if (rawDate is String && rawDate.isNotEmpty) {
+      startsAt = DateTime.tryParse(rawDate);
+    }
+    return PastShowPhotoItem(
+      assignmentId: json['assignment_id'] as int? ?? 0,
+      childId: json['child_id'] as int? ?? 0,
+      childName: (json['child_name'] as String? ?? '').trim(),
+      eventId: json['event_id'] as int? ?? 0,
+      eventName: (json['event_name'] as String? ?? '').trim(),
+      eventStartsAt: startsAt,
+      photoLink: (json['photo_link'] as String? ?? '').trim(),
+      videoLink: (json['video_link'] as String? ?? '').trim(),
+    );
+  }
+}
 
 class ClientProfile {
   ClientProfile({required this.user, required this.children});

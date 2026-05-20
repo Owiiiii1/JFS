@@ -528,5 +528,15 @@
     "contactManagerSent":  "Tu mensaje se ha enviado. Nos pondremos en contacto contigo pronto.",
     "contactManagerSendFailed":  "No se pudo enviar. IntР“В©ntalo mР“РЋs tarde.",
     "contactManagerServiceUnavailable":  "El contacto no estР“РЋ disponible temporalmente. IntР“В©ntalo mР“РЋs tarde.",
-    "close":  "Cerrar"
+    "close":  "Cerrar",
+    "pastShowPhotosButtonTitle":  "Foto & video",
+    "pastShowPhotosButtonSubtitle":  "de desfiles pasados",
+    "pastShowPhotosTitle":  "Foto & video",
+    "pastShowPhotosNotParticipatedMessage":  "Aún no has participado en ningún desfile. Las fotos y los vídeos se añadirán después del desfile.",
+    "pastShowPhotosPendingMessage":  "Las fotos y los vídeos se añadirán después del desfile.",
+    "pastShowPhotosChooseEventTitle":  "Elige el desfile",
+    "pastShowPhotosChooseChildTitle":  "Foto & video",
+    "pastShowPhotosOpenPhoto":  "Foto",
+    "pastShowPhotosOpenVideo":  "Video",
+    "pastShowPhotosLinkCouldNotOpen":  "No se pudo abrir el enlace."
 }
