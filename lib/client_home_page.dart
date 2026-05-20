@@ -1355,7 +1355,7 @@ class _ClientHomePageState extends State<ClientHomePage>
 
   /// Открывает ссылку из админки; относительные пути к API — через baseUrl; иначе https:// при отсутствии схемы.
   Widget _infoSocialIconButton({
-    required IconData icon,
+    required FaIconData icon,
     required String? rawUrl,
   }) {
     return IconButton(
