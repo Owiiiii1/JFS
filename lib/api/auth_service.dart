@@ -1,10 +1,12 @@
 ﻿import 'dart:convert';
 import 'dart:developer' as developer;
+import 'dart:io' show Platform;
 import 'dart:ui' show Locale;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../app_settings.dart';
 import '../gen_l10n/app_localizations.dart';
@@ -2002,7 +2004,53 @@ class AuthService {
       storeUrl: storeUrlRaw is String && storeUrlRaw.isNotEmpty
           ? storeUrlRaw
           : null,
+      appActive: _parseAppActiveFlag(json['app_active']),
     );
+  }
+
+  /// GET /api/app/status — client app maintenance gate.
+  /// Falls back to POST /api/app/version/check when the status route is unavailable.
+  Future<bool> checkAppActive() async {
+    final cacheBust = DateTime.now().millisecondsSinceEpoch.toString();
+    final headers = {
+      'Accept': 'application/json',
+      'Cache-Control': 'no-cache',
+    };
+
+    try {
+      final uri = Uri.parse('$baseUrl/api/app/status').replace(
+        queryParameters: {'_': cacheBust},
+      );
+      final res = await http.get(uri, headers: headers);
+      if (res.statusCode == 200) {
+        final json = jsonDecode(res.body) as Map<String, dynamic>;
+        return _parseAppActiveFlag(json['app_active']);
+      }
+    } catch (_) {}
+
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      try {
+        final info = await PackageInfo.fromPlatform();
+        final platform = Platform.isAndroid ? 'android' : 'ios';
+        final result = await checkAppVersion(
+          platform: platform,
+          version: info.version,
+        );
+        return result.appActive;
+      } catch (_) {}
+    }
+
+    throw Exception('Unable to check app status');
+  }
+
+  static bool _parseAppActiveFlag(dynamic raw) {
+    if (raw == true || raw == 1 || raw == '1' || raw == 'true') {
+      return true;
+    }
+    if (raw == false || raw == 0 || raw == '0' || raw == 'false') {
+      return false;
+    }
+    return true;
   }
 
   String? _tryMessage(String body) {
@@ -2230,10 +2278,15 @@ class LoginResult {
 }
 
 class AppVersionCheckResult {
-  AppVersionCheckResult({required this.allowed, this.storeUrl});
+  AppVersionCheckResult({
+    required this.allowed,
+    this.storeUrl,
+    this.appActive = true,
+  });
 
   final bool allowed;
   final String? storeUrl;
+  final bool appActive;
 }
 
 // ---------------------------------------------------------------------------
@@ -3831,6 +3884,12 @@ class ClientHomeButtonSettings {
     this.hotelBookingEnabled = false,
     this.hotelBookingLabel,
     this.hotelBookingUrl,
+    this.openBarEnabled = false,
+    this.openBarLabel,
+    this.openBarEventId,
+    this.openBarEventName,
+    this.openBarServiceEnabled = false,
+    this.userHasOpenBarTicket = false,
   });
 
   final bool buyTicketEnabled;
@@ -3840,6 +3899,12 @@ class ClientHomeButtonSettings {
   final bool hotelBookingEnabled;
   final String? hotelBookingLabel;
   final String? hotelBookingUrl;
+  final bool openBarEnabled;
+  final String? openBarLabel;
+  final int? openBarEventId;
+  final String? openBarEventName;
+  final bool openBarServiceEnabled;
+  final bool userHasOpenBarTicket;
 
   static List<int> _parseEventIds(dynamic raw) {
     if (raw is! List) {
@@ -3864,7 +3929,23 @@ class ClientHomeButtonSettings {
           _apiBool(json['hotel_booking_enabled'], defaultValue: false),
       hotelBookingLabel: _optionalTrimmedApiString(json['hotel_booking_label']),
       hotelBookingUrl: _optionalTrimmedApiString(json['hotel_booking_url']),
+      openBarEnabled: _apiBool(json['open_bar_enabled'], defaultValue: false),
+      openBarLabel: _optionalTrimmedApiString(json['open_bar_label']),
+      openBarEventId: _optionalPositiveInt(json['open_bar_event_id']),
+      openBarEventName: _optionalTrimmedApiString(json['open_bar_event_name']),
+      openBarServiceEnabled:
+          _apiBool(json['open_bar_service_enabled'], defaultValue: false),
+      userHasOpenBarTicket:
+          _apiBool(json['user_has_open_bar_ticket'], defaultValue: false),
     );
+  }
+
+  static int? _optionalPositiveInt(dynamic raw) {
+    if (raw == null) {
+      return null;
+    }
+    final id = int.tryParse(raw.toString()) ?? 0;
+    return id > 0 ? id : null;
   }
 
   bool allowsEvent(int eventId, List<int> allowedIds) {

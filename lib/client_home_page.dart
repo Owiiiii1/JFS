@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'api/auth_service.dart';
+import 'app_maintenance_page.dart';
 import 'app_route_observer.dart';
 import 'app_settings.dart';
 import 'client_profile_tab.dart';
@@ -510,36 +511,38 @@ class _ClientHomePageState extends State<ClientHomePage>
     );
   }
 
-  Future<void> _openExtraTicketFlowFromAssignment(
-    ActiveAssignment assignment,
-  ) async {
+  Future<void> _openOpenBarFlow() async {
     final l10n = AppLocalizations.of(context)!;
-    final ev = assignment.event;
-    if (ev.id <= 0) return;
+    final buttons = _effectiveHomeButtons;
+    final eventId = buttons.openBarEventId ?? 0;
+    final eventName = buttons.openBarEventName?.trim() ?? '';
+    if (eventId <= 0 || eventName.isEmpty) {
+      return;
+    }
     if (shouldBlockClientTicketPrefetch(
-      serviceEnabled: ev.clientExtraTicketsServiceEnabled,
-      userHasTicket: ev.userHasExtraTicket,
+      serviceEnabled: buttons.openBarServiceEnabled,
+      userHasTicket: buttons.userHasOpenBarTicket,
     )) {
       await showClientTicketServiceUnavailableDialog(context, l10n);
       return;
     }
     try {
-      final payload = await widget.auth.getEventExtraTickets(ev.id);
+      final payload = await widget.auth.getEventExtraTickets(eventId);
       if (!mounted) return;
       final page = payload.hasActiveTickets
           ? ClientExtraTicketActiveScreen(
-              eventName: ev.name,
+              eventName: eventName,
               l10n: l10n,
               auth: widget.auth,
-              eventId: ev.id,
+              eventId: eventId,
               canBuy: payload.canBuy,
               tickets: payload.tickets,
             )
           : ClientExtraTicketInactiveScreen(
               l10n: l10n,
-              eventName: ev.name,
+              eventName: eventName,
               auth: widget.auth,
-              eventId: ev.id,
+              eventId: eventId,
               canBuy: payload.canBuy,
             );
       await Navigator.of(
@@ -670,6 +673,44 @@ class _ClientHomePageState extends State<ClientHomePage>
     final label = buttons.hotelBookingLabel?.trim() ?? '';
     final url = buttons.hotelBookingUrl?.trim() ?? '';
     return label.isNotEmpty && url.isNotEmpty;
+  }
+
+  bool get _showOpenBarHomeButton {
+    final buttons = _effectiveHomeButtons;
+    if (!buttons.openBarEnabled) {
+      return false;
+    }
+    final label = buttons.openBarLabel?.trim() ?? '';
+    final eventId = buttons.openBarEventId ?? 0;
+    return label.isNotEmpty && eventId > 0;
+  }
+
+  Future<bool> _ensureClientAppActive() async {
+    try {
+      if (!await widget.auth.checkAppActive()) {
+        if (mounted) {
+          openClientAppMaintenanceScreen(context, auth: widget.auth);
+        }
+        return false;
+      }
+    } catch (_) {}
+    return true;
+  }
+
+  Future<void> _onClientBottomNavTap(
+    int index, {
+    Future<void> Function()? onSelected,
+  }) async {
+    if (!await _ensureClientAppActive()) {
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+    setState(() => _currentTab = index);
+    if (onSelected != null) {
+      await onSelected();
+    }
   }
 
   /// Ивенты с активным участием (любой ребёнок в дашборде) — не показываем в «будущих».
@@ -1901,6 +1942,10 @@ class _ClientHomePageState extends State<ClientHomePage>
         _showParkingForActiveAssignment(child);
     final showHotel =
         _homeButtonSettings != null && _showHotelBookingHomeButton;
+    final showOpenBar =
+        _homeButtonSettings != null && _showOpenBarHomeButton;
+    final openBarLabel =
+        _effectiveHomeButtons.openBarLabel?.trim() ?? l10n.extraTicketButton;
 
     Widget myTicketsButton() => ElevatedButton(
           onPressed: () async {
@@ -1979,6 +2024,65 @@ class _ClientHomePageState extends State<ClientHomePage>
       row1Children.add(Expanded(child: parkingButton()));
     }
 
+    final row2Children = <Widget>[];
+    if (showOpenBar) {
+      row2Children.add(
+        Expanded(
+          child: OutlinedButton(
+            onPressed: _openOpenBarFlow,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: const BorderSide(color: _kGold),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              openBarLabel,
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+                letterSpacing: 1.1,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
+      row2Children.add(const SizedBox(width: 12));
+    }
+    row2Children.add(
+      Expanded(
+        child: OutlinedButton(
+          onPressed: assignment == null
+              ? null
+              : () => _openBackstageTicketFlowFromAssignment(assignment),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.white,
+            side: const BorderSide(color: _kGold),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Text(
+            l10n.backstageTicketButton,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              letterSpacing: 1.1,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -1996,62 +2100,8 @@ class _ClientHomePageState extends State<ClientHomePage>
           ),
           const SizedBox(height: 10),
           Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: assignment == null
-                      ? null
-                      : () => _openExtraTicketFlowFromAssignment(assignment),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: _kGold),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    l10n.extraTicketButton,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                      letterSpacing: 1.1,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: assignment == null
-                      ? null
-                      : () =>
-                            _openBackstageTicketFlowFromAssignment(assignment),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: _kGold),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    l10n.backstageTicketButton,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                      letterSpacing: 1.1,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: row2Children,
           ),
           if (showHotel) ...[
             const SizedBox(height: 10),
@@ -2122,9 +2172,12 @@ class _ClientHomePageState extends State<ClientHomePage>
     final showBuy = _showBuyTicketHomeButton;
     final showParking = _showParkingHomeButton;
     final showHotel = _showHotelBookingHomeButton;
-    if (!showBuy && !showParking && !showHotel) {
+    final showOpenBar = _showOpenBarHomeButton;
+    if (!showBuy && !showParking && !showHotel && !showOpenBar) {
       return null;
     }
+    final openBarLabel =
+        _effectiveHomeButtons.openBarLabel?.trim() ?? l10n.extraTicketButton;
 
     Widget buyButton() => ElevatedButton(
           onPressed: _openBuyTicketForNoActive,
@@ -2175,15 +2228,63 @@ class _ClientHomePageState extends State<ClientHomePage>
           ),
         );
 
-    final firstRowChildren = <Widget>[];
-    if (showBuy) {
-      firstRowChildren.add(Expanded(child: buyButton()));
-    }
-    if (showBuy && showParking) {
-      firstRowChildren.add(const SizedBox(width: 12));
-    }
+    Widget openBarButton() => OutlinedButton(
+          onPressed: _openOpenBarFlow,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.white,
+            side: const BorderSide(color: _kGold),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            minimumSize: const Size.fromHeight(48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Text(
+            openBarLabel,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              letterSpacing: 1.2,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        );
+
+    Widget hotelButton() => OutlinedButton(
+          onPressed: _openHotelBookingUrl,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.white,
+            side: const BorderSide(color: _kGold),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            minimumSize: const Size.fromHeight(48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Text(
+            _effectiveHomeButtons.hotelBookingLabel?.trim() ?? '',
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+              letterSpacing: 1.2,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        );
+
+    final secondRowChildren = <Widget>[];
     if (showParking) {
-      firstRowChildren.add(Expanded(child: parkingButton()));
+      secondRowChildren.add(Expanded(child: parkingButton()));
+    }
+    if (showParking && showOpenBar) {
+      secondRowChildren.add(const SizedBox(width: 12));
+    }
+    if (showOpenBar) {
+      secondRowChildren.add(Expanded(child: openBarButton()));
     }
 
     return Container(
@@ -2197,39 +2298,17 @@ class _ClientHomePageState extends State<ClientHomePage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (firstRowChildren.isNotEmpty)
+          if (showBuy) SizedBox(width: double.infinity, child: buyButton()),
+          if (secondRowChildren.isNotEmpty) ...[
+            if (showBuy) const SizedBox(height: 12),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: firstRowChildren,
+              children: secondRowChildren,
             ),
+          ],
           if (showHotel) ...[
-            if (firstRowChildren.isNotEmpty) const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: _openHotelBookingUrl,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: const BorderSide(color: _kGold),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  minimumSize: const Size.fromHeight(48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  _effectiveHomeButtons.hotelBookingLabel?.trim() ?? '',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12,
-                    letterSpacing: 1.2,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
+            if (showBuy || secondRowChildren.isNotEmpty) const SizedBox(height: 12),
+            SizedBox(width: double.infinity, child: hotelButton()),
           ],
         ],
       ),
@@ -3158,10 +3237,12 @@ class _ClientHomePageState extends State<ClientHomePage>
                   activeIcon: Icons.home,
                   label: AppLocalizations.of(context)!.navHome,
                   isActive: _currentTab == 0,
-                  onTap: () {
-                    setState(() => _currentTab = 0);
-                    _onHomeTabBecameVisible();
-                  },
+                  onTap: () => unawaited(
+                    _onClientBottomNavTap(
+                      0,
+                      onSelected: () async => _onHomeTabBecameVisible(),
+                    ),
+                  ),
                 ),
               ),
               Expanded(
@@ -3170,17 +3251,21 @@ class _ClientHomePageState extends State<ClientHomePage>
                   activeIcon: Icons.event,
                   label: AppLocalizations.of(context)!.navEvents,
                   isActive: _currentTab == 1,
-                  onTap: () {
-                    setState(() => _currentTab = 1);
-                    _refreshDashboardSilently();
-                    _loadInfoSettings();
-                    if (_upcomingLoading) return;
-                    if (_upcomingEvents == null) {
-                      unawaited(_loadUpcomingEvents());
-                    } else {
-                      unawaited(_refreshUpcomingSilently());
-                    }
-                  },
+                  onTap: () => unawaited(
+                    _onClientBottomNavTap(
+                      1,
+                      onSelected: () async {
+                        await _refreshDashboardSilently();
+                        await _loadInfoSettings();
+                        if (_upcomingLoading) return;
+                        if (_upcomingEvents == null) {
+                          await _loadUpcomingEvents();
+                        } else {
+                          await _refreshUpcomingSilently();
+                        }
+                      },
+                    ),
+                  ),
                 ),
               ),
               Expanded(
@@ -3189,7 +3274,7 @@ class _ClientHomePageState extends State<ClientHomePage>
                   activeIcon: Icons.person,
                   label: AppLocalizations.of(context)!.navProfile,
                   isActive: _currentTab == 2,
-                  onTap: () => setState(() => _currentTab = 2),
+                  onTap: () => unawaited(_onClientBottomNavTap(2)),
                 ),
               ),
               Expanded(
@@ -3198,12 +3283,16 @@ class _ClientHomePageState extends State<ClientHomePage>
                   activeIcon: Icons.info,
                   label: AppLocalizations.of(context)!.navInfo,
                   isActive: _currentTab == 3,
-                  onTap: () {
-                    setState(() => _currentTab = 3);
-                    if (_infoSettings == null && !_infoSettingsLoading) {
-                      _loadInfoSettings();
-                    }
-                  },
+                  onTap: () => unawaited(
+                    _onClientBottomNavTap(
+                      3,
+                      onSelected: () async {
+                        if (_infoSettings == null && !_infoSettingsLoading) {
+                          await _loadInfoSettings();
+                        }
+                      },
+                    ),
+                  ),
                 ),
               ),
             ],
