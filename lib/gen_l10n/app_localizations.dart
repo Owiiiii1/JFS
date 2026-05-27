@@ -166,7 +166,7 @@ abstract class AppLocalizations {
   /// No description provided for @apiEndpointNotFoundHint.
   ///
   /// In en, this message translates to:
-  /// **'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api вЂ” the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).'**
+  /// **'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).'**
   String get apiEndpointNotFoundHint;
 
   /// No description provided for @notificationsTitle.
@@ -382,7 +382,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountSecondMessage.
   ///
   /// In en, this message translates to:
-  /// **'The following will be permanently removed from our systems:\n\nвЂў Your account and profile\nвЂў All children linked to your account\nвЂў All event assignments, stage progress, tickets, and meal selections\nвЂў Photos and other data stored for your children\nвЂў Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.'**
+  /// **'The following will be permanently removed from our systems:\n\n• Your account and profile\n• All children linked to your account\n• All event assignments, stage progress, tickets, and meal selections\n• Photos and other data stored for your children\n• Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.'**
   String get deleteAccountSecondMessage;
 
   /// No description provided for @deleteAccountContinue.
@@ -400,7 +400,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountWorking.
   ///
   /// In en, this message translates to:
-  /// **'Deleting accountвЂ¦'**
+  /// **'Deleting account…'**
   String get deleteAccountWorking;
 
   /// No description provided for @save.
@@ -1396,7 +1396,7 @@ abstract class AppLocalizations {
   /// No description provided for @parkingInactiveVipBody.
   ///
   /// In en, this message translates to:
-  /// **'FOR VIP VALET PARKING вЂ” RESERVE A SPOT FOR YOUR CAR.'**
+  /// **'FOR VIP VALET PARKING — RESERVE A SPOT FOR YOUR CAR.'**
   String get parkingInactiveVipBody;
 
   /// No description provided for @parkingInactiveVipBookCta.
@@ -1432,13 +1432,13 @@ abstract class AppLocalizations {
   /// No description provided for @parkingTicketMock1.
   ///
   /// In en, this message translates to:
-  /// **'TICKET A1 В· MODEL'**
+  /// **'TICKET A1 · MODEL'**
   String get parkingTicketMock1;
 
   /// No description provided for @parkingTicketMock2.
   ///
   /// In en, this message translates to:
-  /// **'TICKET B7 В· GUEST'**
+  /// **'TICKET B7 · GUEST'**
   String get parkingTicketMock2;
 
   /// No description provided for @parkingActiveValetLabel.
@@ -1792,7 +1792,7 @@ abstract class AppLocalizations {
   /// No description provided for @mealAwaitingPayment.
   ///
   /// In en, this message translates to:
-  /// **'Order placed вЂ” awaiting payment'**
+  /// **'Order placed — awaiting payment'**
   String get mealAwaitingPayment;
 
   /// No description provided for @mealAwaitingPaymentDetail.
@@ -2248,7 +2248,7 @@ abstract class AppLocalizations {
   /// No description provided for @contactFormLinkMissing.
   ///
   /// In en, this message translates to:
-  /// **'No form link is set. Add Р’В«Contact / signup form URLР’В» in Application settings in the admin.'**
+  /// **'No form link is set. Add «Contact / signup form URL» in Application settings in the admin.'**
   String get contactFormLinkMissing;
 
   /// No description provided for @infoHubTitle.
@@ -2284,7 +2284,7 @@ abstract class AppLocalizations {
   /// No description provided for @infoFooterCopyright.
   ///
   /// In en, this message translates to:
-  /// **'Р’В© 2024 Young Fashion Series. All rights reserved.'**
+  /// **'© 2024 Young Fashion Series. All rights reserved.'**
   String get infoFooterCopyright;
 
   /// No description provided for @parentProgressLabel.

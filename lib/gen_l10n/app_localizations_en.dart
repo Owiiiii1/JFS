@@ -42,7 +42,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apiEndpointNotFoundHint =>
-      'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api вЂ” the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).';
+      'The server could not find the API (404). Set API_BASE_URL to your site root without a trailing /api — the app calls /api/app/login itself. If Laravel is in a subfolder, include the path to the public directory (e.g. https://example.com/myapp/public).';
 
   @override
   String get notificationsTitle => 'Notifications';
@@ -160,7 +160,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountSecondMessage =>
-      'The following will be permanently removed from our systems:\n\nвЂў Your account and profile\nвЂў All children linked to your account\nвЂў All event assignments, stage progress, tickets, and meal selections\nвЂў Photos and other data stored for your children\nвЂў Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.';
+      'The following will be permanently removed from our systems:\n\n• Your account and profile\n• All children linked to your account\n• All event assignments, stage progress, tickets, and meal selections\n• Photos and other data stored for your children\n• Your membership in event chats and in-app notifications\n\nSome payment or accounting records may be kept where required by law.';
 
   @override
   String get deleteAccountContinue => 'Continue';
@@ -169,7 +169,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccountConfirmAction => 'Delete permanently';
 
   @override
-  String get deleteAccountWorking => 'Deleting accountвЂ¦';
+  String get deleteAccountWorking => 'Deleting account…';
 
   @override
   String get save => 'Save';
@@ -705,7 +705,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get parkingInactiveVipBody =>
-      'FOR VIP VALET PARKING вЂ” RESERVE A SPOT FOR YOUR CAR.';
+      'FOR VIP VALET PARKING — RESERVE A SPOT FOR YOUR CAR.';
 
   @override
   String get parkingInactiveVipBookCta => 'BOOK VALET PARKING';
@@ -726,10 +726,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get parkingActiveTicketLabel => 'TICKET';
 
   @override
-  String get parkingTicketMock1 => 'TICKET A1 В· MODEL';
+  String get parkingTicketMock1 => 'TICKET A1 · MODEL';
 
   @override
-  String get parkingTicketMock2 => 'TICKET B7 В· GUEST';
+  String get parkingTicketMock2 => 'TICKET B7 · GUEST';
 
   @override
   String get parkingActiveValetLabel => 'VALET SERVICE';
@@ -916,7 +916,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mealCheckoutError => 'Could not start payment. Try again.';
 
   @override
-  String get mealAwaitingPayment => 'Order placed вЂ” awaiting payment';
+  String get mealAwaitingPayment => 'Order placed — awaiting payment';
 
   @override
   String get mealAwaitingPaymentDetail =>
@@ -1163,7 +1163,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contactFormLinkMissing =>
-      'No form link is set. Add Р’В«Contact / signup form URLР’В» in Application settings in the admin.';
+      'No form link is set. Add «Contact / signup form URL» in Application settings in the admin.';
 
   @override
   String get infoHubTitle => 'Information Hub';
@@ -1182,7 +1182,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get infoFooterCopyright =>
-      'Р’В© 2024 Young Fashion Series. All rights reserved.';
+      '© 2024 Young Fashion Series. All rights reserved.';
 
   @override
   String parentProgressLabel(int completed, int total) {
