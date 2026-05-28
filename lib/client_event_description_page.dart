@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'api/auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
@@ -66,6 +67,40 @@ class _ClientEventDescriptionPageState extends State<ClientEventDescriptionPage>
     return '${widget.auth.baseUrl}/$raw';
   }
 
+  String? _normalizeHttpUrl(String raw) {
+    final t = raw.trim();
+    if (t.isEmpty) return null;
+    if (t.startsWith('http://') || t.startsWith('https://')) return t;
+    if (t.startsWith('/')) return '${widget.auth.baseUrl}$t';
+    return 'https://$t';
+  }
+
+  Future<void> _openGeolocation() async {
+    final l10n = AppLocalizations.of(context)!;
+    final normalized = _normalizeHttpUrl(_data?.geolocationUrl ?? '');
+    if (normalized == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.aboutLinkCouldNotOpen)),
+      );
+      return;
+    }
+    final uri = Uri.tryParse(normalized);
+    if (uri == null || !uri.hasScheme) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.aboutLinkCouldNotOpen)),
+      );
+      return;
+    }
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.aboutLinkCouldNotOpen)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -110,6 +145,12 @@ class _ClientEventDescriptionPageState extends State<ClientEventDescriptionPage>
   Widget _buildBody(AppLocalizations l10n) {
     final imageUrl = _resolvedImageUrl;
     final desc = (_data?.description ?? '').trim();
+    final city = (_data?.city ?? '').trim();
+    final location = (_data?.location ?? '').trim();
+    final geolocationTitle = [city, location]
+        .where((s) => s.isNotEmpty)
+        .join(', ');
+    final hasGeolocationLabel = geolocationTitle.isNotEmpty;
     return RefreshIndicator(
       color: _kGold,
       onRefresh: _load,
@@ -131,6 +172,47 @@ class _ClientEventDescriptionPageState extends State<ClientEventDescriptionPage>
                       Icons.image_not_supported_outlined,
                       color: Colors.white38,
                       size: 38,
+                    ),
+                  ),
+                ),
+              ),
+            if (hasGeolocationLabel)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                child: InkWell(
+                  onTap: _openGeolocation,
+                  borderRadius: BorderRadius.circular(14),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _kGold.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: _kGold.withOpacity(0.35)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_rounded,
+                          color: _kGold,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            geolocationTitle,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

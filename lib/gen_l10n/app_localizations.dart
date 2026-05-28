@@ -2419,6 +2419,48 @@ abstract class AppLocalizations {
   /// **'Video'**
   String get pastShowPhotosOpenVideo;
 
+  /// No description provided for @pastShowPhotosOpenPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Open preview'**
+  String get pastShowPhotosOpenPreview;
+
+  /// No description provided for @pastShowPhotosOpenPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Open paid photos'**
+  String get pastShowPhotosOpenPaid;
+
+  /// No description provided for @pastShowPhotosOrderFromPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Order photo from preview'**
+  String get pastShowPhotosOrderFromPreview;
+
+  /// No description provided for @pastShowPhotosManagePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage payment'**
+  String get pastShowPhotosManagePayment;
+
+  /// No description provided for @pastShowPhotosManagePaymentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment in progress'**
+  String get pastShowPhotosManagePaymentTitle;
+
+  /// No description provided for @pastShowPhotosManagePaymentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You can continue the current payment or cancel it.'**
+  String get pastShowPhotosManagePaymentMessage;
+
+  /// No description provided for @pastShowPhotosAdditionalPhotoPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: {price}'**
+  String pastShowPhotosAdditionalPhotoPrice(Object price);
+
   /// No description provided for @pastShowPhotosLinkCouldNotOpen.
   ///
   /// In en, this message translates to:

@@ -1275,6 +1275,30 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pastShowPhotosOpenVideo => 'Video';
 
   @override
+  String get pastShowPhotosOpenPreview => 'Abrir vista previa';
+
+  @override
+  String get pastShowPhotosOpenPaid => 'Abrir fotos pagadas';
+
+  @override
+  String get pastShowPhotosOrderFromPreview => 'Pedir foto desde vista previa';
+
+  @override
+  String get pastShowPhotosManagePayment => 'Gestionar pago';
+
+  @override
+  String get pastShowPhotosManagePaymentTitle => 'Pago en proceso';
+
+  @override
+  String get pastShowPhotosManagePaymentMessage =>
+      'Puedes continuar el pago actual o cancelarlo.';
+
+  @override
+  String pastShowPhotosAdditionalPhotoPrice(Object price) {
+    return 'Precio: $price';
+  }
+
+  @override
   String get pastShowPhotosLinkCouldNotOpen => 'No se pudo abrir el enlace.';
 }
 
@@ -2547,6 +2571,30 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get pastShowPhotosOpenVideo => 'Video';
+
+  @override
+  String get pastShowPhotosOpenPreview => 'Abrir vista previa';
+
+  @override
+  String get pastShowPhotosOpenPaid => 'Abrir fotos pagadas';
+
+  @override
+  String get pastShowPhotosOrderFromPreview => 'Pedir foto desde vista previa';
+
+  @override
+  String get pastShowPhotosManagePayment => 'Gestionar pago';
+
+  @override
+  String get pastShowPhotosManagePaymentTitle => 'Pago en proceso';
+
+  @override
+  String get pastShowPhotosManagePaymentMessage =>
+      'Puedes continuar el pago actual o cancelarlo.';
+
+  @override
+  String pastShowPhotosAdditionalPhotoPrice(Object price) {
+    return 'Precio: $price';
+  }
 
   @override
   String get pastShowPhotosLinkCouldNotOpen => 'No se pudo abrir el enlace.';

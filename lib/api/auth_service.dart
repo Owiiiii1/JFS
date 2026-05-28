@@ -671,6 +671,104 @@ class AuthService {
     }
   }
 
+  Future<String> createAssignmentAdditionalPhotoCheckoutSession(
+    int assignmentId,
+  ) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/assignments/$assignmentId/additional-photo-checkout',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to start additional photo checkout (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final url = map['checkout_url'] as String?;
+    if (url == null || url.isEmpty) {
+      throw Exception('No checkout URL in response');
+    }
+    return url;
+  }
+
+  Future<MealPaymentStatusPayload> getAssignmentAdditionalPhotoPaymentStatus(
+    int assignmentId,
+  ) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/assignments/$assignmentId/additional-photo-payment-status',
+    );
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load additional photo payment status (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return MealPaymentStatusPayload.fromJson(map);
+  }
+
+  Future<String> resumeAssignmentAdditionalPhotoPayment(int assignmentId) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/assignments/$assignmentId/additional-photo-payment-resume',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to resume additional photo checkout (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final url = map['checkout_url'] as String?;
+    if (url == null || url.isEmpty) {
+      throw Exception('No checkout URL in response');
+    }
+    return url;
+  }
+
+  Future<void> cancelAssignmentAdditionalPhotoPayment(int assignmentId) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/assignments/$assignmentId/additional-photo-payment-cancel',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to cancel additional photo checkout (${res.statusCode})',
+      );
+    }
+  }
+
   Future<MealPaymentStatusPayload> getEventParkingPaymentStatus(int eventId) =>
       _getEventTicketStripePaymentStatus(eventId, 'parking-payment');
 
@@ -2583,12 +2681,18 @@ class EventDescriptionInfo {
     required this.eventId,
     required this.eventName,
     this.imageUrl,
+    this.city = '',
+    this.location = '',
+    this.geolocationUrl,
     this.description = '',
   });
 
   final int eventId;
   final String eventName;
   final String? imageUrl;
+  final String city;
+  final String location;
+  final String? geolocationUrl;
   final String description;
 
   bool get hasContent =>
@@ -2600,6 +2704,9 @@ class EventDescriptionInfo {
       eventId: _jsonInt(json['event_id']),
       eventName: (json['event_name'] as String? ?? '').trim(),
       imageUrl: json['image_url'] as String?,
+      city: (json['city'] as String? ?? '').trim(),
+      location: (json['location'] as String? ?? '').trim(),
+      geolocationUrl: _optionalTrimmedApiString(json['geolocation_url']),
       description: (json['description'] as String? ?? '').trim(),
     );
   }
@@ -3662,6 +3769,7 @@ class MainStageInfo {
     required this.id,
     required this.name,
     this.description,
+    this.imageUrl,
     this.brandName,
     this.status,
   });
@@ -3671,6 +3779,7 @@ class MainStageInfo {
 
   /// Локализованное описание этапа (из API), для деталей в таймлайне.
   final String? description;
+  final String? imageUrl;
 
   /// Под подписью этапа: бренд (для этапов сегмента brand в пакете); с API `brand_name`.
   final String? brandName;
@@ -3686,6 +3795,7 @@ class MainStageInfo {
       description: rawDesc is String && rawDesc.trim().isNotEmpty
           ? rawDesc.trim()
           : null,
+      imageUrl: _optionalTrimmedApiString(json['image_url']),
       brandName: _optionalTrimmedApiString(json['brand_name']),
       status: _optionalTrimmedApiString(json['status']),
     );
@@ -3700,6 +3810,7 @@ class EventSummary {
     this.startsAt,
     this.endsAt,
     this.imageUrl,
+    this.geolocationUrl,
     this.clientParkingServiceEnabled = true,
     this.clientExtraTicketsServiceEnabled = true,
     this.clientBackstageTicketsServiceEnabled = true,
@@ -3715,6 +3826,7 @@ class EventSummary {
   final DateTime? startsAt;
   final DateTime? endsAt;
   final String? imageUrl;
+  final String? geolocationUrl;
 
   /// When true and [youtubeLiveUrl] is set, Events tab may show a live button.
   final bool youtubeLiveActive;
@@ -3749,6 +3861,7 @@ class EventSummary {
           ? DateTime.tryParse(json['ends_at'] as String)
           : null,
       imageUrl: json['image_url'] as String?,
+      geolocationUrl: _optionalTrimmedApiString(json['geolocation_url']),
       clientParkingServiceEnabled:
           json['client_parking_service_enabled'] != false,
       clientExtraTicketsServiceEnabled:
@@ -3991,6 +4104,7 @@ class UpcomingEvent {
     this.startsAt,
     this.endsAt,
     this.imageUrl,
+    this.geolocationUrl,
     this.ticketStoreUrl,
     this.clientParkingServiceEnabled = true,
     this.userHasParkingTicket,
@@ -4006,6 +4120,7 @@ class UpcomingEvent {
 
   /// URL фото ивента (из настроек ивента), может быть относительным.
   final String? imageUrl;
+  final String? geolocationUrl;
   final String? ticketStoreUrl;
   final bool clientParkingServiceEnabled;
   final bool? userHasParkingTicket;
@@ -4031,6 +4146,7 @@ class UpcomingEvent {
           ? DateTime.tryParse(json['ends_at'] as String)
           : null,
       imageUrl: json['image_url'] as String?,
+      geolocationUrl: _optionalTrimmedApiString(json['geolocation_url']),
       ticketStoreUrl: _optionalTrimmedApiString(json['ticket_store_url']),
       clientParkingServiceEnabled:
           json['client_parking_service_enabled'] != false,
@@ -4049,6 +4165,7 @@ class PreparatoryStageInfo {
     this.scheduledAtWall,
     this.address,
     this.description,
+    this.imageUrl,
     this.brandName,
     this.isCompleted = false,
     this.kind,
@@ -4064,6 +4181,7 @@ class PreparatoryStageInfo {
 
   /// Admin notes for brand rehearsal rows (API `description`); optional.
   final String? description;
+  final String? imageUrl;
 
   /// Brand display name for [kind] `brand_rehearsal` (API `brand_name`); app builds the title in l10n.
   final String? brandName;
@@ -4095,6 +4213,7 @@ class PreparatoryStageInfo {
       scheduledAtWall: _optionalTrimmedApiString(json['scheduled_at_wall']),
       address: json['address'] as String?,
       description: json['description'] as String?,
+      imageUrl: _optionalTrimmedApiString(json['image_url']),
       brandName: json['brand_name'] as String?,
       isCompleted: json['is_completed'] == true,
       kind: json['kind'] as String?,
@@ -4181,6 +4300,9 @@ class PastShowPhotoItem {
     this.eventStartsAt,
     required this.photoLink,
     required this.videoLink,
+    required this.previewLink,
+    required this.paidLink,
+    this.additionalPhotoPrice,
   });
 
   final int assignmentId;
@@ -4191,9 +4313,16 @@ class PastShowPhotoItem {
   final DateTime? eventStartsAt;
   final String photoLink;
   final String videoLink;
+  final String previewLink;
+  final String paidLink;
+  final double? additionalPhotoPrice;
 
   bool get hasPhotoLink => photoLink.isNotEmpty;
   bool get hasVideoLink => videoLink.isNotEmpty;
+  bool get hasPreviewLink => previewLink.isNotEmpty;
+  bool get hasPaidLink => paidLink.isNotEmpty;
+  bool get hasAdditionalPhotoPrice =>
+      additionalPhotoPrice != null && additionalPhotoPrice! > 0;
   int get mediaLinkCount => (hasPhotoLink ? 1 : 0) + (hasVideoLink ? 1 : 0);
 
   String? get singleMediaLink {
@@ -4210,14 +4339,17 @@ class PastShowPhotoItem {
       startsAt = DateTime.tryParse(rawDate);
     }
     return PastShowPhotoItem(
-      assignmentId: json['assignment_id'] as int? ?? 0,
-      childId: json['child_id'] as int? ?? 0,
+      assignmentId: _jsonInt(json['assignment_id']),
+      childId: _jsonInt(json['child_id']),
       childName: (json['child_name'] as String? ?? '').trim(),
-      eventId: json['event_id'] as int? ?? 0,
+      eventId: _jsonInt(json['event_id']),
       eventName: (json['event_name'] as String? ?? '').trim(),
       eventStartsAt: startsAt,
       photoLink: (json['photo_link'] as String? ?? '').trim(),
       videoLink: (json['video_link'] as String? ?? '').trim(),
+      previewLink: (json['preview_link'] as String? ?? '').trim(),
+      paidLink: (json['paid_link'] as String? ?? '').trim(),
+      additionalPhotoPrice: _jsonDoubleNullable(json['additional_photo_price']),
     );
   }
 }

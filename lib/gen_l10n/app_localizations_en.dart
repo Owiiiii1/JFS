@@ -1258,5 +1258,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pastShowPhotosOpenVideo => 'Video';
 
   @override
+  String get pastShowPhotosOpenPreview => 'Open preview';
+
+  @override
+  String get pastShowPhotosOpenPaid => 'Open paid photos';
+
+  @override
+  String get pastShowPhotosOrderFromPreview => 'Order photo from preview';
+
+  @override
+  String get pastShowPhotosManagePayment => 'Manage payment';
+
+  @override
+  String get pastShowPhotosManagePaymentTitle => 'Payment in progress';
+
+  @override
+  String get pastShowPhotosManagePaymentMessage =>
+      'You can continue the current payment or cancel it.';
+
+  @override
+  String pastShowPhotosAdditionalPhotoPrice(Object price) {
+    return 'Price: $price';
+  }
+
+  @override
   String get pastShowPhotosLinkCouldNotOpen => 'Could not open the link.';
 }

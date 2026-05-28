@@ -1262,5 +1262,29 @@ class AppLocalizationsUk extends AppLocalizations {
   String get pastShowPhotosOpenVideo => 'Відео';
 
   @override
+  String get pastShowPhotosOpenPreview => 'Відкрити прев\'ю';
+
+  @override
+  String get pastShowPhotosOpenPaid => 'Відкрити оплачені фото';
+
+  @override
+  String get pastShowPhotosOrderFromPreview => 'Замовити фото з прев\'ю';
+
+  @override
+  String get pastShowPhotosManagePayment => 'Керування оплатою';
+
+  @override
+  String get pastShowPhotosManagePaymentTitle => 'Оплата в процесі';
+
+  @override
+  String get pastShowPhotosManagePaymentMessage =>
+      'Ви можете продовжити поточну оплату або скасувати її.';
+
+  @override
+  String pastShowPhotosAdditionalPhotoPrice(Object price) {
+    return 'Ціна: $price';
+  }
+
+  @override
   String get pastShowPhotosLinkCouldNotOpen => 'Не вдалося відкрити посилання.';
 }

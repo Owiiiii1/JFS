@@ -160,24 +160,8 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
         return;
       }
 
-      if (photos.length == 1) {
-        final onlyLink = photos.first.singleMediaLink;
-        if (onlyLink != null) {
-          await _openPastShowPhotoLink(onlyLink);
-          return;
-        }
-      }
-
       final byEvent = _groupPastShowPhotosByEvent(photos);
       final eventEntries = _sortedPastShowEventEntries(byEvent);
-
-      if (eventEntries.length == 1 && eventEntries.first.value.length == 1) {
-        final onlyLink = eventEntries.first.value.first.singleMediaLink;
-        if (onlyLink != null) {
-          await _openPastShowPhotoLink(onlyLink);
-          return;
-        }
-      }
 
       int? eventId;
       if (eventEntries.length == 1) {
@@ -194,15 +178,18 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
         return;
       }
 
+      PastShowPhotoItem? selectedItem;
       if (childrenForEvent.length == 1) {
-        final onlyLink = childrenForEvent.first.singleMediaLink;
-        if (onlyLink != null) {
-          await _openPastShowPhotoLink(onlyLink);
-          return;
-        }
+        selectedItem = childrenForEvent.first;
+      } else {
+        selectedItem = await _showPastShowChildrenPicker(childrenForEvent);
       }
 
-      await _showPastShowChildrenPicker(childrenForEvent);
+      if (selectedItem == null || !mounted) {
+        return;
+      }
+
+      await _showPastShowActionsDialog(selectedItem);
     } catch (e) {
       if (!mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
@@ -310,33 +297,67 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
           child: ListView.separated(
             shrinkWrap: true,
             itemCount: eventEntries.length,
-            separatorBuilder: (_, __) =>
-                const Divider(height: 1, color: Colors.white12),
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final sample = eventEntries[index].value.first;
+              final count = eventEntries[index].value.length;
               final dateLine = sample.eventStartsAt != null
                   ? DateFormat('d MMM yyyy', locale).format(
                       sample.eventStartsAt!.toLocal(),
                     )
                   : null;
-              return ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  sample.eventName.isNotEmpty ? sample.eventName : '—',
-                  style: const TextStyle(color: Colors.white),
-                ),
-                subtitle: dateLine != null
-                    ? Text(
-                        dateLine,
-                        style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                      )
-                    : null,
-                trailing: const Icon(
-                  Icons.chevron_right,
-                  color: _kGold,
-                  size: 22,
-                ),
+              return InkWell(
+                borderRadius: BorderRadius.circular(12),
                 onTap: () => Navigator.of(ctx).pop(eventEntries[index].key),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.04),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white10),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              sample.eventName.isNotEmpty ? sample.eventName : '—',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              [
+                                if (dateLine != null) dateLine,
+                                count == 1
+                                    ? '1 item'
+                                    : '${count.toString()} items',
+                              ].join(' • '),
+                              style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: _kGold,
+                        size: 22,
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
           ),
@@ -359,11 +380,11 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
     );
   }
 
-  Future<void> _showPastShowChildrenPicker(
+  Future<PastShowPhotoItem?> _showPastShowChildrenPicker(
     List<PastShowPhotoItem> childrenForEvent,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    await showDialog<void>(
+    return showDialog<PastShowPhotoItem>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: _kCardBg,
@@ -386,45 +407,195 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
           child: ListView.separated(
             shrinkWrap: true,
             itemCount: childrenForEvent.length,
-            separatorBuilder: (_, __) =>
-                const Divider(height: 1, color: Colors.white12),
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final item = childrenForEvent[index];
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Text(
-                      item.childName.isNotEmpty ? item.childName : '—',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+              final mediaIcons = <IconData>[
+                if (item.hasPhotoLink) Icons.photo_outlined,
+                if (item.hasVideoLink) Icons.videocam_outlined,
+                if (item.hasPreviewLink) Icons.remove_red_eye_outlined,
+                if (item.hasPaidLink) Icons.verified_outlined,
+              ];
+              return InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => Navigator.of(ctx).pop(item),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 12,
                   ),
-                  if (item.hasPhotoLink)
-                    _PastShowMediaLinkTile(
-                      label: l10n.pastShowPhotosOpenPhoto,
-                      icon: Icons.photo_outlined,
-                      onTap: () async {
-                        Navigator.of(ctx).pop();
-                        await _openPastShowPhotoLink(item.photoLink);
-                      },
-                    ),
-                  if (item.hasVideoLink)
-                    _PastShowMediaLinkTile(
-                      label: l10n.pastShowPhotosOpenVideo,
-                      icon: Icons.videocam_outlined,
-                      onTap: () async {
-                        Navigator.of(ctx).pop();
-                        await _openPastShowPhotoLink(item.videoLink);
-                      },
-                    ),
-                ],
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.04),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white10),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.childName.isNotEmpty ? item.childName : '—',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            if (mediaIcons.isNotEmpty) ...[
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  for (final icon in mediaIcons) ...[
+                                    Icon(icon, color: Colors.grey[400], size: 14),
+                                    const SizedBox(width: 6),
+                                  ],
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: _kGold,
+                        size: 22,
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
+          ),
+        ),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              l10n.close,
+              style: const TextStyle(color: _kGold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showPastShowActionsDialog(PastShowPhotoItem item) async {
+    final l10n = AppLocalizations.of(context)!;
+    final priceText = item.additionalPhotoPrice?.toStringAsFixed(2);
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _kCardBg,
+        shape: _kPastShowDialogShape,
+        titlePadding: _kPastShowDialogTitlePadding,
+        contentPadding: _kPastShowDialogContentPadding,
+        actionsPadding: _kPastShowDialogActionsPadding,
+        actionsAlignment: MainAxisAlignment.end,
+        title: Center(
+          child: Text(
+            l10n.pastShowPhotosTitle.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: _kPastShowDialogTitleStyle,
+          ),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  item.childName.isNotEmpty ? item.childName : '—',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              if (item.hasPhotoLink)
+                _PastShowMediaLinkTile(
+                  label: l10n.pastShowPhotosOpenPhoto,
+                  icon: Icons.photo_outlined,
+                  onTap: () async {
+                    Navigator.of(ctx).pop();
+                    await _openPastShowPhotoLink(item.photoLink);
+                  },
+                ),
+              if (item.hasVideoLink)
+                _PastShowMediaLinkTile(
+                  label: l10n.pastShowPhotosOpenVideo,
+                  icon: Icons.videocam_outlined,
+                  onTap: () async {
+                    Navigator.of(ctx).pop();
+                    await _openPastShowPhotoLink(item.videoLink);
+                  },
+                ),
+              if (item.hasPreviewLink)
+                _PastShowMediaLinkTile(
+                  label: l10n.pastShowPhotosOpenPreview,
+                  icon: Icons.remove_red_eye_outlined,
+                  onTap: () async {
+                    Navigator.of(ctx).pop();
+                    await _openPastShowPhotoLink(item.previewLink);
+                  },
+                ),
+              if (item.hasPaidLink)
+                _PastShowMediaLinkTile(
+                  label: l10n.pastShowPhotosOpenPaid,
+                  icon: Icons.verified_outlined,
+                  onTap: () async {
+                    Navigator.of(ctx).pop();
+                    await _openPastShowPhotoLink(item.paidLink);
+                  },
+                ),
+              if (item.hasPreviewLink &&
+                  item.hasAdditionalPhotoPrice &&
+                  !item.hasPaidLink)
+                FutureBuilder<MealPaymentStatusPayload>(
+                  future: widget.auth.getAssignmentAdditionalPhotoPaymentStatus(
+                    item.assignmentId,
+                  ),
+                  builder: (context, snap) {
+                    final st = snap.data;
+                    final hasPendingState = st != null &&
+                        (st.canContinuePayment || st.canCancelPayment);
+                    if (hasPendingState) {
+                      return _PastShowMediaLinkTile(
+                        label: l10n.pastShowPhotosManagePayment,
+                        icon: Icons.manage_accounts_outlined,
+                        onTap: () async {
+                          Navigator.of(ctx).pop();
+                          await _showPastShowManagePaymentSheet(item);
+                        },
+                      );
+                    }
+
+                    return _PastShowMediaLinkTile(
+                      label:
+                          '${l10n.pastShowPhotosOrderFromPreview}${priceText != null ? ' (${l10n.pastShowPhotosAdditionalPhotoPrice(priceText)})' : ''}',
+                      icon: Icons.shopping_cart_checkout_outlined,
+                      onTap: () async {
+                        Navigator.of(ctx).pop();
+                        await _handlePastShowOrderFromPreview(item);
+                      },
+                    );
+                  },
+                ),
+            ],
           ),
         ),
         actions: [
@@ -456,6 +627,112 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
       return;
     }
     await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Future<void> _handlePastShowOrderFromPreview(PastShowPhotoItem item) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final status = await widget.auth.getAssignmentAdditionalPhotoPaymentStatus(
+        item.assignmentId,
+      );
+      if (status.canContinuePayment || status.canCancelPayment) {
+        await _showPastShowManagePaymentSheet(item);
+        return;
+      }
+
+      final checkoutUrl = await widget.auth
+          .createAssignmentAdditionalPhotoCheckoutSession(item.assignmentId);
+      await _openPastShowPhotoLink(checkoutUrl);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().isEmpty ? l10n.pastShowPhotosLinkCouldNotOpen : e.toString())),
+      );
+    }
+  }
+
+  Future<void> _showPastShowManagePaymentSheet(PastShowPhotoItem item) async {
+    final l10n = AppLocalizations.of(context)!;
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: _kCardBg,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  l10n.pastShowPhotosManagePaymentTitle,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  l10n.pastShowPhotosManagePaymentMessage,
+                  style: const TextStyle(color: Colors.white70),
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: () async {
+                    Navigator.of(sheetContext).pop();
+                    try {
+                      final url = await widget.auth
+                          .resumeAssignmentAdditionalPhotoPayment(
+                            item.assignmentId,
+                          );
+                      await _openPastShowPhotoLink(url);
+                    } catch (e) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _kGold,
+                    foregroundColor: Colors.black,
+                  ),
+                  child: Text(l10n.mealPaymentContinue),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(sheetContext).pop();
+                    try {
+                      await widget.auth.cancelAssignmentAdditionalPhotoPayment(
+                        item.assignmentId,
+                      );
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.mealPaymentCanceled)),
+                      );
+                    } catch (e) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  },
+                  child: Text(
+                    l10n.mealPaymentCancel,
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -712,9 +989,15 @@ class _PastShowMediaLinkTile extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.04),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white10),
+          ),
           child: Row(
             children: [
               Icon(icon, color: _kGold, size: 20),
@@ -722,10 +1005,15 @@ class _PastShowMediaLinkTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              const Icon(Icons.open_in_new, color: _kGold, size: 18),
+              const SizedBox(width: 8),
+              const Icon(Icons.chevron_right, color: _kGold, size: 22),
             ],
           ),
         ),

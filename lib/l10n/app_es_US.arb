@@ -538,5 +538,17 @@
     "pastShowPhotosChooseChildTitle":  "Foto \u0026 video",
     "pastShowPhotosOpenPhoto":  "Foto",
     "pastShowPhotosOpenVideo":  "Video",
+  "pastShowPhotosOpenPreview": "Abrir vista previa",
+  "pastShowPhotosOpenPaid": "Abrir fotos pagadas",
+  "pastShowPhotosOrderFromPreview": "Pedir foto desde vista previa",
+  "pastShowPhotosManagePayment": "Gestionar pago",
+  "pastShowPhotosManagePaymentTitle": "Pago en proceso",
+  "pastShowPhotosManagePaymentMessage": "Puedes continuar el pago actual o cancelarlo.",
+  "pastShowPhotosAdditionalPhotoPrice": "Precio: {price}",
+  "@pastShowPhotosAdditionalPhotoPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
     "pastShowPhotosLinkCouldNotOpen":  "No se pudo abrir el enlace."
 }

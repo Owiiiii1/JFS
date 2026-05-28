@@ -480,11 +480,23 @@
     "pastShowPhotosButtonTitle":  "Фото \u0026 видео",
     "pastShowPhotosButtonSubtitle":  "с прошедших показов",
     "pastShowPhotosTitle":  "Фото \u0026 видео",
-    "pastShowPhotosNotParticipatedMessage":  "Вы еще не участвовали ни в одном показе. Фото и видео будут добавлены после прохождения показа.",
-    "pastShowPhotosPendingMessage":  "Фото и видео будут добавлены после прохождения показа.",
+  "pastShowPhotosNotParticipatedMessage":  "Вы еще не участвовали ни в одном показе. Фото и видео будут добавлены после окончания показа.",
+  "pastShowPhotosPendingMessage":  "Фото и видео будут добавлены после окончания показа.",
     "pastShowPhotosChooseEventTitle":  "Выберите показ",
     "pastShowPhotosChooseChildTitle":  "Фото \u0026 видео",
     "pastShowPhotosOpenPhoto":  "Фото",
     "pastShowPhotosOpenVideo":  "Видео",
+  "pastShowPhotosOpenPreview": "Открыть превью",
+  "pastShowPhotosOpenPaid": "Открыть оплаченные фото",
+  "pastShowPhotosOrderFromPreview": "Заказать фото из превью",
+  "pastShowPhotosManagePayment": "Управление оплатой",
+  "pastShowPhotosManagePaymentTitle": "Оплата в процессе",
+  "pastShowPhotosManagePaymentMessage": "Вы можете продолжить текущую оплату или отменить её.",
+  "pastShowPhotosAdditionalPhotoPrice": "Цена: {price}",
+  "@pastShowPhotosAdditionalPhotoPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
     "pastShowPhotosLinkCouldNotOpen":  "Не удалось открыть ссылку."
 }

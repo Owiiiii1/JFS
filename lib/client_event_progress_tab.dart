@@ -503,6 +503,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
       final String? address;
       final String? addressMapUrl;
       final String? detailDesc;
+      final String? prepImage;
       if (b != null) {
         // Prefer API slot_date + slot_time so the timeline matches the admin grid (event-local wall clock).
         final wallFromSlot = _rehearsalSlotWallClockLabel(b);
@@ -523,6 +524,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
             : null;
         final slotDesc = b.description.trim();
         detailDesc = slotDesc.isNotEmpty ? slotDesc : null;
+        prepImage = prep.imageUrl?.trim();
       } else {
         final wallDt = parseScheduleWallToDateTime(prep.scheduledAtWall);
         if (wallDt != null) {
@@ -544,6 +546,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
         addressMapUrl = null;
         final desc = prep.description?.trim();
         detailDesc = desc != null && desc.isNotEmpty ? desc : null;
+        prepImage = prep.imageUrl?.trim();
       }
 
       final hasPrepSchedule =
@@ -564,6 +567,9 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           address: address,
           addressMapUrl: addressMapUrl,
           detailDescription: detailDesc,
+          detailImageUrl: prepImage != null && prepImage.isNotEmpty
+              ? prepImage
+              : null,
           rehearsalBookingHint: rehearsalHint,
           isMainStage: false,
           parentDots: 0,
@@ -594,6 +600,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           ? (stage.id > 0 ? 'Stage #${stage.id}' : 'Stage')
           : stage.name.trim();
       final mainDesc = stage.description?.trim();
+      final stageImage = stage.imageUrl?.trim();
       final brandLine = stage.brandName?.trim() ?? '';
       items.add(
         _JourneyMilestone(
@@ -603,6 +610,9 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           address: null,
           detailDescription: mainDesc != null && mainDesc.isNotEmpty
               ? mainDesc
+              : null,
+          detailImageUrl: stageImage != null && stageImage.isNotEmpty
+              ? stageImage
               : null,
           isMainStage: true,
           parentDots: parentDots,
@@ -740,6 +750,7 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           ? (stage.id > 0 ? 'Stage #${stage.id}' : 'Stage')
           : stage.name.trim();
       final mainDesc = stage.description?.trim();
+      final stageImage = stage.imageUrl?.trim();
       final brandLine = stage.brandName?.trim() ?? '';
       items.add(
         _JourneyMilestone(
@@ -749,6 +760,9 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
           address: null,
           detailDescription: mainDesc != null && mainDesc.isNotEmpty
               ? mainDesc
+              : null,
+          detailImageUrl: stageImage != null && stageImage.isNotEmpty
+              ? stageImage
               : null,
           isMainStage: true,
           parentDots: 0,
@@ -985,12 +999,111 @@ class _ClientEventProgressTabState extends State<ClientEventProgressTab> {
                 const SizedBox(height: 18),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      _openMilestoneDescriptionPage(context, m);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _kProgressGold,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                     child: Text(
                       l10n.details,
-                      style: const TextStyle(color: _kProgressGold),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
+                      ),
                     ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static Future<void> _openMilestoneDescriptionPage(
+    BuildContext context,
+    _JourneyMilestone m,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final desc = (m.detailDescription ?? '').trim();
+    final imageUrl = (m.detailImageUrl ?? '').trim();
+
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: _kLuxuryGray,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 38,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  m.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 14),
+                if (imageUrl.isNotEmpty)
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: Colors.black26,
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.image_not_supported_outlined,
+                            color: Colors.white38,
+                            size: 36,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                if (imageUrl.isNotEmpty) const SizedBox(height: 14),
+                Text(
+                  desc.isNotEmpty ? desc : l10n.eventDescriptionEmpty,
+                  style: TextStyle(
+                    color: desc.isNotEmpty ? Colors.white : Colors.white70,
+                    fontSize: 15,
+                    height: 1.45,
                   ),
                 ),
               ],
@@ -1663,6 +1776,7 @@ class _JourneyMilestone {
     required this.address,
     this.addressMapUrl,
     this.detailDescription,
+    this.detailImageUrl,
     this.rehearsalBookingHint,
     required this.isMainStage,
     required this.parentDots,
@@ -1682,6 +1796,7 @@ class _JourneyMilestone {
 
   /// Shown only in the details modal (e.g. brand rehearsal notes from API).
   final String? detailDescription;
+  final String? detailImageUrl;
 
   /// Shown only in the modal when rehearsal is not yet booked.
   final String? rehearsalBookingHint;
@@ -1699,6 +1814,7 @@ class _JourneyMilestone {
     String? address,
     String? addressMapUrl,
     String? detailDescription,
+    String? detailImageUrl,
     String? rehearsalBookingHint,
     bool? isMainStage,
     int? parentDots,
@@ -1714,6 +1830,7 @@ class _JourneyMilestone {
       address: address ?? this.address,
       addressMapUrl: addressMapUrl ?? this.addressMapUrl,
       detailDescription: detailDescription ?? this.detailDescription,
+      detailImageUrl: detailImageUrl ?? this.detailImageUrl,
       rehearsalBookingHint: rehearsalBookingHint ?? this.rehearsalBookingHint,
       isMainStage: isMainStage ?? this.isMainStage,
       parentDots: parentDots ?? this.parentDots,

@@ -2448,7 +2448,7 @@ class _ClientHomePageState extends State<ClientHomePage>
 
   Widget _buildEventCard(ChildWithAssignment child) {
     final a = child.activeAssignment!;
-    final isFamilyAccess = a.accessMode == 'family';
+    final geolocationUrl = _normalizeHttpUrl(a.event.geolocationUrl ?? '');
     final totalStages = a.totalMainStages + a.totalPreparatoryStages;
     final completed = a.completedStages;
     final progress = totalStages > 0 ? completed / totalStages : 0.0;
@@ -2503,27 +2503,9 @@ class _ClientHomePageState extends State<ClientHomePage>
                 ),
               ),
               const SizedBox(width: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: _kGold.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: _kGold.withOpacity(0.25)),
-                ),
-                child: Text(
-                  isFamilyAccess
-                      ? AppLocalizations.of(context)!.familyLabel
-                      : AppLocalizations.of(context)!.active,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: _kGold,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
-                  ),
-                ),
+              _PressableGeoIcon(
+                enabled: geolocationUrl != null,
+                onTap: geolocationUrl == null ? null : () => _openUrl(geolocationUrl),
               ),
             ],
           ),
@@ -2747,10 +2729,9 @@ class _ClientHomePageState extends State<ClientHomePage>
     );
   }
 
-  /// Карточка текущего участия в стиле референса: фото фона, градиент, ACTIVE справа сверху, название и дата поверх фото, прогресс и кнопка снизу.
+  /// Карточка текущего участия в стиле референса: фото фона, градиент, кнопка геолокации справа сверху, название и дата поверх фото, прогресс и кнопка снизу.
   Widget _buildCurrentParticipationEventCard(ChildWithAssignment child) {
     final a = child.activeAssignment!;
-    final isFamilyAccess = a.accessMode == 'family';
     final totalStages = a.totalMainStages + a.totalPreparatoryStages;
     final completed = a.completedStages;
     final progress = totalStages > 0 ? completed / totalStages : 0.0;
@@ -2763,6 +2744,7 @@ class _ClientHomePageState extends State<ClientHomePage>
         a.event.imageUrl != null && !a.event.imageUrl!.startsWith('http')
         ? '${widget.auth.baseUrl}${a.event.imageUrl}'
         : a.event.imageUrl;
+    final geolocationUrl = _normalizeHttpUrl(a.event.geolocationUrl ?? '');
 
     final dateText = a.event.startsAt != null
         ? (a.event.endsAt != null && a.event.endsAt != a.event.startsAt
@@ -2828,25 +2810,11 @@ class _ClientHomePageState extends State<ClientHomePage>
                   Positioned(
                     top: 16,
                     right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _kGold,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        (isFamilyAccess ? l10n.familyLabel : l10n.active)
-                            .toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.black,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
+                    child: _PressableGeoIcon(
+                      enabled: geolocationUrl != null,
+                      onTap: geolocationUrl == null
+                          ? null
+                          : () => _openUrl(geolocationUrl),
                     ),
                   ),
                   Positioned(
@@ -3647,6 +3615,51 @@ class _NavItem extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PressableGeoIcon extends StatefulWidget {
+  const _PressableGeoIcon({required this.enabled, this.onTap});
+
+  final bool enabled;
+  final VoidCallback? onTap;
+
+  @override
+  State<_PressableGeoIcon> createState() => _PressableGeoIconState();
+}
+
+class _PressableGeoIconState extends State<_PressableGeoIcon> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedScale(
+      duration: const Duration(milliseconds: 90),
+      curve: Curves.easeOut,
+      scale: _pressed ? 0.92 : 1,
+      child: AnimatedSlide(
+        duration: const Duration(milliseconds: 90),
+        curve: Curves.easeOut,
+        offset: _pressed ? const Offset(0, 0.03) : Offset.zero,
+        child: InkWell(
+          onTap: widget.onTap,
+          onHighlightChanged: (v) => setState(() => _pressed = v),
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _kGold,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              Icons.location_on_rounded,
+              size: 20,
+              color: Colors.black,
+            ),
           ),
         ),
       ),

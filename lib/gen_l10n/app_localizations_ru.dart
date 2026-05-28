@@ -1248,11 +1248,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pastShowPhotosNotParticipatedMessage =>
-      'Вы еще не участвовали ни в одном показе. Фото и видео будут добавлены после прохождения показа.';
+      'Вы еще не участвовали ни в одном показе. Фото и видео будут добавлены после окончания показа.';
 
   @override
   String get pastShowPhotosPendingMessage =>
-      'Фото и видео будут добавлены после прохождения показа.';
+      'Фото и видео будут добавлены после окончания показа.';
 
   @override
   String get pastShowPhotosChooseEventTitle => 'Выберите показ';
@@ -1265,6 +1265,30 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pastShowPhotosOpenVideo => 'Видео';
+
+  @override
+  String get pastShowPhotosOpenPreview => 'Открыть превью';
+
+  @override
+  String get pastShowPhotosOpenPaid => 'Открыть оплаченные фото';
+
+  @override
+  String get pastShowPhotosOrderFromPreview => 'Заказать фото из превью';
+
+  @override
+  String get pastShowPhotosManagePayment => 'Управление оплатой';
+
+  @override
+  String get pastShowPhotosManagePaymentTitle => 'Оплата в процессе';
+
+  @override
+  String get pastShowPhotosManagePaymentMessage =>
+      'Вы можете продолжить текущую оплату или отменить её.';
+
+  @override
+  String pastShowPhotosAdditionalPhotoPrice(Object price) {
+    return 'Цена: $price';
+  }
 
   @override
   String get pastShowPhotosLinkCouldNotOpen => 'Не удалось открыть ссылку.';

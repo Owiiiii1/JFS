@@ -486,5 +486,17 @@
     "pastShowPhotosChooseChildTitle":  "Фото \u0026 відео",
     "pastShowPhotosOpenPhoto":  "Фото",
     "pastShowPhotosOpenVideo":  "Відео",
+  "pastShowPhotosOpenPreview": "Відкрити прев'ю",
+  "pastShowPhotosOpenPaid": "Відкрити оплачені фото",
+  "pastShowPhotosOrderFromPreview": "Замовити фото з прев'ю",
+  "pastShowPhotosManagePayment": "Керування оплатою",
+  "pastShowPhotosManagePaymentTitle": "Оплата в процесі",
+  "pastShowPhotosManagePaymentMessage": "Ви можете продовжити поточну оплату або скасувати її.",
+  "pastShowPhotosAdditionalPhotoPrice": "Ціна: {price}",
+  "@pastShowPhotosAdditionalPhotoPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
     "pastShowPhotosLinkCouldNotOpen":  "Не вдалося відкрити посилання."
 }
