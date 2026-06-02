@@ -687,9 +687,6 @@ class _ClientHomePageState extends State<ClientHomePage>
   }
 
   Future<bool> _ensureClientAppActive() async {
-    if (kDebugMode) {
-      return true;
-    }
     try {
       if (!await widget.auth.checkAppActive()) {
         if (mounted) {
