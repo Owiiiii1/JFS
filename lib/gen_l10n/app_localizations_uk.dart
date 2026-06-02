@@ -1253,13 +1253,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get close => 'Закрити';
 
   @override
-  String get pastShowPhotosButtonTitle => 'Фото & відео';
+  String get pastShowPhotosButtonTitle => 'Фото';
 
   @override
   String get pastShowPhotosButtonSubtitle => 'з минулих показів';
 
   @override
-  String get pastShowPhotosTitle => 'Фото & відео';
+  String get pastShowPhotosTitle => 'Фото';
 
   @override
   String get pastShowPhotosNotParticipatedMessage =>
@@ -1273,7 +1273,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get pastShowPhotosChooseEventTitle => 'Оберіть показ';
 
   @override
-  String get pastShowPhotosChooseChildTitle => 'Фото & відео';
+  String get pastShowPhotosChooseChildTitle => 'Фото';
 
   @override
   String get pastShowPhotosOpenPhoto => 'Фото';
@@ -1307,4 +1307,102 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get pastShowPhotosLinkCouldNotOpen => 'Не вдалося відкрити посилання.';
+
+  @override
+  String get photoServiceModePhotosTitle => 'ФОТО';
+
+  @override
+  String get photoServiceModePhotosSubtitle => 'Безкоштовні + куплені';
+
+  @override
+  String get photoServiceModeShopTitle => 'ФОТО МАГАЗИН';
+
+  @override
+  String get photoServiceModeShopSubtitle => 'Не куплені';
+
+  @override
+  String get photoServiceCouldNotOpenLink => 'Не вдалося відкрити посилання';
+
+  @override
+  String get photoServiceInvalidPhotoUrl => 'Некоректне посилання на фото';
+
+  @override
+  String photoServiceDownloadFailed(int code) {
+    return 'Помилка завантаження ($code)';
+  }
+
+  @override
+  String get photoServiceSaveCanceled => 'Збереження скасовано';
+
+  @override
+  String get photoServiceSavedToDownloads => 'Фото збережено в Завантаження';
+
+  @override
+  String get photoServiceOk => 'OK';
+
+  @override
+  String get photoServiceRestartRequired =>
+      'Модуль збереження оновлено. Повністю перезапустіть застосунок.';
+
+  @override
+  String get photoServiceSelectAtLeastOnePhoto => 'Оберіть хоча б одне фото';
+
+  @override
+  String get photoServiceCheckoutOpenedInBrowser =>
+      'Оплату відкрито в браузері';
+
+  @override
+  String get photoServicePurchaseCompleted => 'Покупку завершено';
+
+  @override
+  String get photoServiceNoPhotosAvailableForBulkPurchase =>
+      'Немає фото для гуртової покупки';
+
+  @override
+  String get photoServiceBulkCheckoutOpenedInBrowser =>
+      'Гуртову оплату відкрито в браузері';
+
+  @override
+  String get photoServiceBulkPurchaseCompleted => 'Гуртову покупку завершено';
+
+  @override
+  String get photoServiceGalleryTitleShop => 'Фото Магазин';
+
+  @override
+  String get photoServiceGalleryTitlePhotos => 'Фото';
+
+  @override
+  String get photoServiceBuy => 'Купити';
+
+  @override
+  String get photoServiceBuyAll => 'Купити все';
+
+  @override
+  String photoServiceBuyAllFor(Object price) {
+    return 'Купити все за $price';
+  }
+
+  @override
+  String photoServiceSelectedCount(int count) {
+    return 'Обрано: $count';
+  }
+
+  @override
+  String get photoServiceNoPhotosYet => 'Фото поки немає';
+
+  @override
+  String get photoServiceView => 'Відкрити';
+
+  @override
+  String photoServiceParticipationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count участі',
+      many: '$count участей',
+      few: '$count участі',
+      one: '1 участь',
+    );
+    return '$_temp0';
+  }
 }

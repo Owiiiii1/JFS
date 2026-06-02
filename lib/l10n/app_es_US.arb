@@ -535,13 +535,13 @@
     "contactManagerSendFailed":  "No se pudo enviar. Inténtalo más tarde.",
     "contactManagerServiceUnavailable":  "El contacto no está disponible temporalmente. Inténtalo más tarde.",
     "close":  "Cerrar",
-    "pastShowPhotosButtonTitle":  "Foto \u0026 video",
+    "pastShowPhotosButtonTitle":  "Foto",
     "pastShowPhotosButtonSubtitle":  "de desfiles pasados",
-    "pastShowPhotosTitle":  "Foto \u0026 video",
+    "pastShowPhotosTitle":  "Foto",
     "pastShowPhotosNotParticipatedMessage":  "Aun no has participado en ningun desfile. Las fotos y los videos se anadiran despues del desfile.",
     "pastShowPhotosPendingMessage":  "Las fotos y los videos se anadiran despues del desfile.",
     "pastShowPhotosChooseEventTitle":  "Elige el desfile",
-    "pastShowPhotosChooseChildTitle":  "Foto \u0026 video",
+    "pastShowPhotosChooseChildTitle":  "Foto",
     "pastShowPhotosOpenPhoto":  "Foto",
     "pastShowPhotosOpenVideo":  "Video",
   "pastShowPhotosOpenPreview": "Abrir vista previa",
@@ -556,5 +556,57 @@
       "price": {}
     }
   },
-    "pastShowPhotosLinkCouldNotOpen":  "No se pudo abrir el enlace."
+    "pastShowPhotosLinkCouldNotOpen":  "No se pudo abrir el enlace.",
+    "photoServiceModePhotosTitle": "FOTOS",
+    "photoServiceModePhotosSubtitle": "Gratis + compradas",
+    "photoServiceModeShopTitle": "TIENDA DE FOTOS",
+    "photoServiceModeShopSubtitle": "Sin comprar",
+    "photoServiceCouldNotOpenLink": "No se pudo abrir el enlace",
+    "photoServiceInvalidPhotoUrl": "URL de foto no valida",
+    "photoServiceDownloadFailed": "Descarga fallida ({code})",
+    "@photoServiceDownloadFailed": {
+      "placeholders": {
+        "code": {
+          "type": "int"
+        }
+      }
+    },
+    "photoServiceSaveCanceled": "Guardado cancelado",
+    "photoServiceSavedToDownloads": "Foto guardada en Descargas",
+    "photoServiceOk": "OK",
+    "photoServiceRestartRequired": "El modulo de guardado fue actualizado. Reinicia completamente la app.",
+    "photoServiceSelectAtLeastOnePhoto": "Selecciona al menos una foto",
+    "photoServiceCheckoutOpenedInBrowser": "Pago abierto en el navegador",
+    "photoServicePurchaseCompleted": "Compra completada",
+    "photoServiceNoPhotosAvailableForBulkPurchase": "No hay fotos para compra al por mayor",
+    "photoServiceBulkCheckoutOpenedInBrowser": "Pago al por mayor abierto en el navegador",
+    "photoServiceBulkPurchaseCompleted": "Compra al por mayor completada",
+    "photoServiceGalleryTitleShop": "Tienda de Fotos",
+    "photoServiceGalleryTitlePhotos": "Fotos",
+    "photoServiceBuy": "Comprar",
+    "photoServiceBuyAll": "Comprar todo",
+    "photoServiceBuyAllFor": "Comprar todo por {price}",
+    "@photoServiceBuyAllFor": {
+      "placeholders": {
+        "price": {}
+      }
+    },
+    "photoServiceSelectedCount": "Seleccionadas: {count}",
+    "@photoServiceSelectedCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "photoServiceNoPhotosYet": "Aun no hay fotos",
+    "photoServiceView": "Ver",
+    "photoServiceParticipationsCount": "{count, plural, =1{1 participacion} other{{count} participaciones}}",
+    "@photoServiceParticipationsCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    }
 }

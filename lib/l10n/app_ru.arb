@@ -483,13 +483,13 @@
     "contactManagerSendFailed":  "Не удалось отправить. Попробуйте позже.",
     "contactManagerServiceUnavailable":  "Связь временно недоступна. Попробуйте позже.",
     "close":  "Закрыть",
-    "pastShowPhotosButtonTitle":  "Фото \u0026 видео",
+    "pastShowPhotosButtonTitle":  "Фото",
     "pastShowPhotosButtonSubtitle":  "с прошедших показов",
-    "pastShowPhotosTitle":  "Фото \u0026 видео",
+    "pastShowPhotosTitle":  "Фото",
   "pastShowPhotosNotParticipatedMessage":  "Вы еще не участвовали ни в одном показе. Фото и видео будут добавлены после окончания показа.",
   "pastShowPhotosPendingMessage":  "Фото и видео будут добавлены после окончания показа.",
     "pastShowPhotosChooseEventTitle":  "Выберите показ",
-    "pastShowPhotosChooseChildTitle":  "Фото \u0026 видео",
+    "pastShowPhotosChooseChildTitle":  "Фото",
     "pastShowPhotosOpenPhoto":  "Фото",
     "pastShowPhotosOpenVideo":  "Видео",
   "pastShowPhotosOpenPreview": "Открыть превью",
@@ -504,5 +504,57 @@
       "price": {}
     }
   },
-    "pastShowPhotosLinkCouldNotOpen":  "Не удалось открыть ссылку."
+    "pastShowPhotosLinkCouldNotOpen":  "Не удалось открыть ссылку.",
+    "photoServiceModePhotosTitle": "ФОТО",
+    "photoServiceModePhotosSubtitle": "Бесплатные + купленные",
+    "photoServiceModeShopTitle": "ФОТО МАГАЗИН",
+    "photoServiceModeShopSubtitle": "Не купленные",
+    "photoServiceCouldNotOpenLink": "Не удалось открыть ссылку",
+    "photoServiceInvalidPhotoUrl": "Некорректная ссылка на фото",
+    "photoServiceDownloadFailed": "Ошибка загрузки ({code})",
+    "@photoServiceDownloadFailed": {
+      "placeholders": {
+        "code": {
+          "type": "int"
+        }
+      }
+    },
+    "photoServiceSaveCanceled": "Сохранение отменено",
+    "photoServiceSavedToDownloads": "Фото сохранено в Загрузки",
+    "photoServiceOk": "OK",
+    "photoServiceRestartRequired": "Модуль сохранения обновлен. Полностью перезапустите приложение.",
+    "photoServiceSelectAtLeastOnePhoto": "Выберите хотя бы одно фото",
+    "photoServiceCheckoutOpenedInBrowser": "Оплата открыта в браузере",
+    "photoServicePurchaseCompleted": "Покупка завершена",
+    "photoServiceNoPhotosAvailableForBulkPurchase": "Нет фото для оптовой покупки",
+    "photoServiceBulkCheckoutOpenedInBrowser": "Оптовая оплата открыта в браузере",
+    "photoServiceBulkPurchaseCompleted": "Оптовая покупка завершена",
+    "photoServiceGalleryTitleShop": "Фото Магазин",
+    "photoServiceGalleryTitlePhotos": "Фото",
+    "photoServiceBuy": "Купить",
+    "photoServiceBuyAll": "Купить все",
+    "photoServiceBuyAllFor": "Купить все за {price}",
+    "@photoServiceBuyAllFor": {
+      "placeholders": {
+        "price": {}
+      }
+    },
+    "photoServiceSelectedCount": "Выбрано: {count}",
+    "@photoServiceSelectedCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "photoServiceNoPhotosYet": "Фото пока нет",
+    "photoServiceView": "Открыть",
+    "photoServiceParticipationsCount": "{count, plural, =1{1 участие} few{{count} участия} many{{count} участий} other{{count} участия}}",
+    "@photoServiceParticipationsCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    }
 }

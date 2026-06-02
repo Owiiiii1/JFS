@@ -2404,7 +2404,7 @@ abstract class AppLocalizations {
   /// No description provided for @pastShowPhotosButtonTitle.
   ///
   /// In en, this message translates to:
-  /// **'Photo & video'**
+  /// **'Photo'**
   String get pastShowPhotosButtonTitle;
 
   /// No description provided for @pastShowPhotosButtonSubtitle.
@@ -2416,7 +2416,7 @@ abstract class AppLocalizations {
   /// No description provided for @pastShowPhotosTitle.
   ///
   /// In en, this message translates to:
-  /// **'Photo & video'**
+  /// **'Photo'**
   String get pastShowPhotosTitle;
 
   /// No description provided for @pastShowPhotosNotParticipatedMessage.
@@ -2440,7 +2440,7 @@ abstract class AppLocalizations {
   /// No description provided for @pastShowPhotosChooseChildTitle.
   ///
   /// In en, this message translates to:
-  /// **'Photo & video'**
+  /// **'Photo'**
   String get pastShowPhotosChooseChildTitle;
 
   /// No description provided for @pastShowPhotosOpenPhoto.
@@ -2502,6 +2502,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open the link.'**
   String get pastShowPhotosLinkCouldNotOpen;
+
+  /// No description provided for @photoServiceModePhotosTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PHOTOS'**
+  String get photoServiceModePhotosTitle;
+
+  /// No description provided for @photoServiceModePhotosSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Free + purchased'**
+  String get photoServiceModePhotosSubtitle;
+
+  /// No description provided for @photoServiceModeShopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PHOTO SHOP'**
+  String get photoServiceModeShopTitle;
+
+  /// No description provided for @photoServiceModeShopSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not purchased'**
+  String get photoServiceModeShopSubtitle;
+
+  /// No description provided for @photoServiceCouldNotOpenLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open link'**
+  String get photoServiceCouldNotOpenLink;
+
+  /// No description provided for @photoServiceInvalidPhotoUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid photo URL'**
+  String get photoServiceInvalidPhotoUrl;
+
+  /// No description provided for @photoServiceDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Download failed ({code})'**
+  String photoServiceDownloadFailed(int code);
+
+  /// No description provided for @photoServiceSaveCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Save canceled'**
+  String get photoServiceSaveCanceled;
+
+  /// No description provided for @photoServiceSavedToDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo saved to Downloads'**
+  String get photoServiceSavedToDownloads;
+
+  /// No description provided for @photoServiceOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get photoServiceOk;
+
+  /// No description provided for @photoServiceRestartRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'The save module was updated. Please fully restart the app.'**
+  String get photoServiceRestartRequired;
+
+  /// No description provided for @photoServiceSelectAtLeastOnePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one photo'**
+  String get photoServiceSelectAtLeastOnePhoto;
+
+  /// No description provided for @photoServiceCheckoutOpenedInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout opened in browser'**
+  String get photoServiceCheckoutOpenedInBrowser;
+
+  /// No description provided for @photoServicePurchaseCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase completed'**
+  String get photoServicePurchaseCompleted;
+
+  /// No description provided for @photoServiceNoPhotosAvailableForBulkPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'No photos available for bulk purchase'**
+  String get photoServiceNoPhotosAvailableForBulkPurchase;
+
+  /// No description provided for @photoServiceBulkCheckoutOpenedInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk checkout opened in browser'**
+  String get photoServiceBulkCheckoutOpenedInBrowser;
+
+  /// No description provided for @photoServiceBulkPurchaseCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk purchase completed'**
+  String get photoServiceBulkPurchaseCompleted;
+
+  /// No description provided for @photoServiceGalleryTitleShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Shop'**
+  String get photoServiceGalleryTitleShop;
+
+  /// No description provided for @photoServiceGalleryTitlePhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get photoServiceGalleryTitlePhotos;
+
+  /// No description provided for @photoServiceBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get photoServiceBuy;
+
+  /// No description provided for @photoServiceBuyAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy all'**
+  String get photoServiceBuyAll;
+
+  /// No description provided for @photoServiceBuyAllFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy all for {price}'**
+  String photoServiceBuyAllFor(Object price);
+
+  /// No description provided for @photoServiceSelectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected: {count}'**
+  String photoServiceSelectedCount(int count);
+
+  /// No description provided for @photoServiceNoPhotosYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No photos yet'**
+  String get photoServiceNoPhotosYet;
+
+  /// No description provided for @photoServiceView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get photoServiceView;
+
+  /// No description provided for @photoServiceParticipationsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 participation} other{{count} participations}}'**
+  String photoServiceParticipationsCount(int count);
 }
 
 class _AppLocalizationsDelegate

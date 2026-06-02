@@ -483,13 +483,13 @@
     "contactManagerSendFailed":  "Не вдалося надіслати. Спробуйте пізніше.",
     "contactManagerServiceUnavailable":  "Зв’язок тимчасово недоступний. Спробуйте пізніше.",
     "close":  "Закрити",
-    "pastShowPhotosButtonTitle":  "Фото \u0026 відео",
+    "pastShowPhotosButtonTitle":  "Фото",
     "pastShowPhotosButtonSubtitle":  "з минулих показів",
-    "pastShowPhotosTitle":  "Фото \u0026 відео",
+    "pastShowPhotosTitle":  "Фото",
     "pastShowPhotosNotParticipatedMessage":  "Ви ще не брали участі в жодному показі. Фото і відео будуть додані після проходження показу.",
     "pastShowPhotosPendingMessage":  "Фото і відео будуть додані після проходження показу.",
     "pastShowPhotosChooseEventTitle":  "Оберіть показ",
-    "pastShowPhotosChooseChildTitle":  "Фото \u0026 відео",
+    "pastShowPhotosChooseChildTitle":  "Фото",
     "pastShowPhotosOpenPhoto":  "Фото",
     "pastShowPhotosOpenVideo":  "Відео",
   "pastShowPhotosOpenPreview": "Відкрити прев'ю",
@@ -504,5 +504,57 @@
       "price": {}
     }
   },
-    "pastShowPhotosLinkCouldNotOpen":  "Не вдалося відкрити посилання."
+    "pastShowPhotosLinkCouldNotOpen":  "Не вдалося відкрити посилання.",
+    "photoServiceModePhotosTitle": "ФОТО",
+    "photoServiceModePhotosSubtitle": "Безкоштовні + куплені",
+    "photoServiceModeShopTitle": "ФОТО МАГАЗИН",
+    "photoServiceModeShopSubtitle": "Не куплені",
+    "photoServiceCouldNotOpenLink": "Не вдалося відкрити посилання",
+    "photoServiceInvalidPhotoUrl": "Некоректне посилання на фото",
+    "photoServiceDownloadFailed": "Помилка завантаження ({code})",
+    "@photoServiceDownloadFailed": {
+      "placeholders": {
+        "code": {
+          "type": "int"
+        }
+      }
+    },
+    "photoServiceSaveCanceled": "Збереження скасовано",
+    "photoServiceSavedToDownloads": "Фото збережено в Завантаження",
+    "photoServiceOk": "OK",
+    "photoServiceRestartRequired": "Модуль збереження оновлено. Повністю перезапустіть застосунок.",
+    "photoServiceSelectAtLeastOnePhoto": "Оберіть хоча б одне фото",
+    "photoServiceCheckoutOpenedInBrowser": "Оплату відкрито в браузері",
+    "photoServicePurchaseCompleted": "Покупку завершено",
+    "photoServiceNoPhotosAvailableForBulkPurchase": "Немає фото для гуртової покупки",
+    "photoServiceBulkCheckoutOpenedInBrowser": "Гуртову оплату відкрито в браузері",
+    "photoServiceBulkPurchaseCompleted": "Гуртову покупку завершено",
+    "photoServiceGalleryTitleShop": "Фото Магазин",
+    "photoServiceGalleryTitlePhotos": "Фото",
+    "photoServiceBuy": "Купити",
+    "photoServiceBuyAll": "Купити все",
+    "photoServiceBuyAllFor": "Купити все за {price}",
+    "@photoServiceBuyAllFor": {
+      "placeholders": {
+        "price": {}
+      }
+    },
+    "photoServiceSelectedCount": "Обрано: {count}",
+    "@photoServiceSelectedCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "photoServiceNoPhotosYet": "Фото поки немає",
+    "photoServiceView": "Відкрити",
+    "photoServiceParticipationsCount": "{count, plural, =1{1 участь} few{{count} участі} many{{count} участей} other{{count} участі}}",
+    "@photoServiceParticipationsCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    }
 }

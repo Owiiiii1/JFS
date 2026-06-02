@@ -1249,13 +1249,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
-  String get pastShowPhotosButtonTitle => 'Photo & video';
+  String get pastShowPhotosButtonTitle => 'Photo';
 
   @override
   String get pastShowPhotosButtonSubtitle => 'from past shows';
 
   @override
-  String get pastShowPhotosTitle => 'Photo & video';
+  String get pastShowPhotosTitle => 'Photo';
 
   @override
   String get pastShowPhotosNotParticipatedMessage =>
@@ -1269,7 +1269,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pastShowPhotosChooseEventTitle => 'Choose a show';
 
   @override
-  String get pastShowPhotosChooseChildTitle => 'Photo & video';
+  String get pastShowPhotosChooseChildTitle => 'Photo';
 
   @override
   String get pastShowPhotosOpenPhoto => 'Photo';
@@ -1303,4 +1303,100 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pastShowPhotosLinkCouldNotOpen => 'Could not open the link.';
+
+  @override
+  String get photoServiceModePhotosTitle => 'PHOTOS';
+
+  @override
+  String get photoServiceModePhotosSubtitle => 'Free + purchased';
+
+  @override
+  String get photoServiceModeShopTitle => 'PHOTO SHOP';
+
+  @override
+  String get photoServiceModeShopSubtitle => 'Not purchased';
+
+  @override
+  String get photoServiceCouldNotOpenLink => 'Could not open link';
+
+  @override
+  String get photoServiceInvalidPhotoUrl => 'Invalid photo URL';
+
+  @override
+  String photoServiceDownloadFailed(int code) {
+    return 'Download failed ($code)';
+  }
+
+  @override
+  String get photoServiceSaveCanceled => 'Save canceled';
+
+  @override
+  String get photoServiceSavedToDownloads => 'Photo saved to Downloads';
+
+  @override
+  String get photoServiceOk => 'OK';
+
+  @override
+  String get photoServiceRestartRequired =>
+      'The save module was updated. Please fully restart the app.';
+
+  @override
+  String get photoServiceSelectAtLeastOnePhoto => 'Select at least one photo';
+
+  @override
+  String get photoServiceCheckoutOpenedInBrowser =>
+      'Checkout opened in browser';
+
+  @override
+  String get photoServicePurchaseCompleted => 'Purchase completed';
+
+  @override
+  String get photoServiceNoPhotosAvailableForBulkPurchase =>
+      'No photos available for bulk purchase';
+
+  @override
+  String get photoServiceBulkCheckoutOpenedInBrowser =>
+      'Bulk checkout opened in browser';
+
+  @override
+  String get photoServiceBulkPurchaseCompleted => 'Bulk purchase completed';
+
+  @override
+  String get photoServiceGalleryTitleShop => 'Photo Shop';
+
+  @override
+  String get photoServiceGalleryTitlePhotos => 'Photos';
+
+  @override
+  String get photoServiceBuy => 'Buy';
+
+  @override
+  String get photoServiceBuyAll => 'Buy all';
+
+  @override
+  String photoServiceBuyAllFor(Object price) {
+    return 'Buy all for $price';
+  }
+
+  @override
+  String photoServiceSelectedCount(int count) {
+    return 'Selected: $count';
+  }
+
+  @override
+  String get photoServiceNoPhotosYet => 'No photos yet';
+
+  @override
+  String get photoServiceView => 'View';
+
+  @override
+  String photoServiceParticipationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count participations',
+      one: '1 participation',
+    );
+    return '$_temp0';
+  }
 }

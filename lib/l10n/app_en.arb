@@ -535,13 +535,13 @@
     "contactManagerSendFailed":  "Could not send. Try again later.",
     "contactManagerServiceUnavailable":  "Contact is temporarily unavailable. Please try again later.",
     "close":  "Close",
-    "pastShowPhotosButtonTitle":  "Photo \u0026 video",
+    "pastShowPhotosButtonTitle":  "Photo",
     "pastShowPhotosButtonSubtitle":  "from past shows",
-    "pastShowPhotosTitle":  "Photo \u0026 video",
+    "pastShowPhotosTitle":  "Photo",
     "pastShowPhotosNotParticipatedMessage":  "You have not participated in any show yet. Photos and videos will be added after the show.",
     "pastShowPhotosPendingMessage":  "Photos and videos will be added after the show.",
     "pastShowPhotosChooseEventTitle":  "Choose a show",
-    "pastShowPhotosChooseChildTitle":  "Photo \u0026 video",
+    "pastShowPhotosChooseChildTitle":  "Photo",
     "pastShowPhotosOpenPhoto":  "Photo",
     "pastShowPhotosOpenVideo":  "Video",
   "pastShowPhotosOpenPreview": "Open preview",
@@ -556,5 +556,57 @@
       "price": {}
     }
   },
-    "pastShowPhotosLinkCouldNotOpen":  "Could not open the link."
+    "pastShowPhotosLinkCouldNotOpen":  "Could not open the link.",
+    "photoServiceModePhotosTitle": "PHOTOS",
+    "photoServiceModePhotosSubtitle": "Free + purchased",
+    "photoServiceModeShopTitle": "PHOTO SHOP",
+    "photoServiceModeShopSubtitle": "Not purchased",
+    "photoServiceCouldNotOpenLink": "Could not open link",
+    "photoServiceInvalidPhotoUrl": "Invalid photo URL",
+    "photoServiceDownloadFailed": "Download failed ({code})",
+    "@photoServiceDownloadFailed": {
+      "placeholders": {
+        "code": {
+          "type": "int"
+        }
+      }
+    },
+    "photoServiceSaveCanceled": "Save canceled",
+    "photoServiceSavedToDownloads": "Photo saved to Downloads",
+    "photoServiceOk": "OK",
+    "photoServiceRestartRequired": "The save module was updated. Please fully restart the app.",
+    "photoServiceSelectAtLeastOnePhoto": "Select at least one photo",
+    "photoServiceCheckoutOpenedInBrowser": "Checkout opened in browser",
+    "photoServicePurchaseCompleted": "Purchase completed",
+    "photoServiceNoPhotosAvailableForBulkPurchase": "No photos available for bulk purchase",
+    "photoServiceBulkCheckoutOpenedInBrowser": "Bulk checkout opened in browser",
+    "photoServiceBulkPurchaseCompleted": "Bulk purchase completed",
+    "photoServiceGalleryTitleShop": "Photo Shop",
+    "photoServiceGalleryTitlePhotos": "Photos",
+    "photoServiceBuy": "Buy",
+    "photoServiceBuyAll": "Buy all",
+    "photoServiceBuyAllFor": "Buy all for {price}",
+    "@photoServiceBuyAllFor": {
+      "placeholders": {
+        "price": {}
+      }
+    },
+    "photoServiceSelectedCount": "Selected: {count}",
+    "@photoServiceSelectedCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "photoServiceNoPhotosYet": "No photos yet",
+    "photoServiceView": "View",
+    "photoServiceParticipationsCount": "{count, plural, =1{1 participation} other{{count} participations}}",
+    "@photoServiceParticipationsCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    }
 }

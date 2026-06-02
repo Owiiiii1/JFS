@@ -309,9 +309,9 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              child.assignmentCount == 1
-                                  ? '1 participation'
-                                  : '${child.assignmentCount} participations',
+                              l10n.photoServiceParticipationsCount(
+                                child.assignmentCount,
+                              ),
                               style: TextStyle(
                                 color: Colors.grey[400],
                                 fontSize: 12,
@@ -772,8 +772,8 @@ class _PhotoServiceEntryPage extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               _PhotoModeButton(
-                title: 'PHOTOS',
-                subtitle: 'Free + purchased',
+                title: l10n.photoServiceModePhotosTitle,
+                subtitle: l10n.photoServiceModePhotosSubtitle,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => _PhotoServiceGalleryPage(
@@ -787,8 +787,8 @@ class _PhotoServiceEntryPage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               _PhotoModeButton(
-                title: 'PHOTO SHOP',
-                subtitle: 'Not purchased',
+                title: l10n.photoServiceModeShopTitle,
+                subtitle: l10n.photoServiceModeShopSubtitle,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => _PhotoServiceGalleryPage(
@@ -992,7 +992,7 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
     if (uri == null || !await canLaunchUrl(uri)) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open link')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.photoServiceCouldNotOpenLink)),
       );
       return;
     }
@@ -1007,11 +1007,13 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
     try {
       final uri = Uri.tryParse(url);
       if (uri == null) {
-        throw Exception('Invalid photo URL');
+        throw Exception(AppLocalizations.of(context)!.photoServiceInvalidPhotoUrl);
       }
       final response = await http.get(uri, headers: const {'Accept': '*/*'});
       if (response.statusCode != 200 || response.bodyBytes.isEmpty) {
-        throw Exception('Download failed (${response.statusCode})');
+        throw Exception(
+          AppLocalizations.of(context)!.photoServiceDownloadFailed(response.statusCode),
+        );
       }
 
       final cd = response.headers['content-disposition'] ?? '';
@@ -1032,7 +1034,7 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
       if (!mounted) return;
       if (savedPath == null || savedPath.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Сохранение отменено')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.photoServiceSaveCanceled)),
         );
         return;
       }
@@ -1043,17 +1045,17 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
           backgroundColor: _kCardBg,
           shape: _kPastShowDialogShape,
           title: const Text(
-            'Готово',
+            '',
             style: TextStyle(color: _kGold),
           ),
-          content: const Text(
-            'Фото сохранено в Загрузки',
-            style: TextStyle(color: Colors.white70),
+          content: Text(
+            AppLocalizations.of(context)!.photoServiceSavedToDownloads,
+            style: const TextStyle(color: Colors.white70),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('OK', style: TextStyle(color: _kGold)),
+              child: Text(AppLocalizations.of(context)!.photoServiceOk, style: const TextStyle(color: _kGold)),
             ),
           ],
         ),
@@ -1061,11 +1063,7 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
     } on MissingPluginException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Модуль сохранения обновлен. Полностью перезапустите приложение.',
-          ),
-        ),
+        SnackBar(content: Text(AppLocalizations.of(context)!.photoServiceRestartRequired)),
       );
     } catch (e) {
       if (!mounted) return;
@@ -1110,7 +1108,7 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
     }
     if (_selectedPhotoAssetIds.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Select at least one photo')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.photoServiceSelectAtLeastOnePhoto)),
       );
       return;
     }
@@ -1128,8 +1126,8 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
         SnackBar(
           content: Text(
             (checkoutUrl != null && checkoutUrl.isNotEmpty)
-                ? 'Checkout opened in browser'
-                : 'Purchase completed',
+                ? AppLocalizations.of(context)!.photoServiceCheckoutOpenedInBrowser
+                : AppLocalizations.of(context)!.photoServicePurchaseCompleted,
           ),
         ),
       );
@@ -1158,7 +1156,7 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
     final shopCount = gallery.shopPhotoCount ?? gallery.photos.length;
     if (shopCount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No photos available for bulk purchase')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.photoServiceNoPhotosAvailableForBulkPurchase)),
       );
       return;
     }
@@ -1175,8 +1173,8 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
         SnackBar(
           content: Text(
             (checkoutUrl != null && checkoutUrl.isNotEmpty)
-                ? 'Bulk checkout opened in browser'
-                : 'Bulk purchase completed',
+                ? AppLocalizations.of(context)!.photoServiceBulkCheckoutOpenedInBrowser
+                : AppLocalizations.of(context)!.photoServiceBulkPurchaseCompleted,
           ),
         ),
       );
@@ -1281,10 +1279,12 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final photos = _gallery?.photos ?? const <ClientPhotoServicePhotoItem>[];
-    final title = _isShopMode ? 'Photo Shop' : 'Photos';
+    final title = _isShopMode
+        ? l10n.photoServiceGalleryTitleShop
+        : l10n.photoServiceGalleryTitlePhotos;
     final buyLabel = _selectionLocked
         ? l10n.pastShowPhotosManagePayment
-        : 'Buy';
+        : l10n.photoServiceBuy;
     final bulkPrice = _gallery?.bulkPricePerPhoto;
     final bulkCount = _gallery?.shopPhotoCount ?? photos.length;
     final bulkTotal = (bulkPrice != null && bulkCount > 0)
@@ -1293,8 +1293,8 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
     final bulkBuyLabel = _selectionLocked
         ? l10n.pastShowPhotosManagePayment
         : (bulkTotal == null
-              ? 'Buy all'
-              : 'Buy all for ${bulkTotal.toStringAsFixed(2)}');
+              ? l10n.photoServiceBuyAll
+              : l10n.photoServiceBuyAllFor(bulkTotal.toStringAsFixed(2)));
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -1333,8 +1333,8 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
             if (_isShopMode)
               Container(
                 width: double.infinity,
-                margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                margin: const EdgeInsets.fromLTRB(12, 0, 12, 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1A1A1A),
                   borderRadius: BorderRadius.circular(12),
@@ -1344,38 +1344,100 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
                   children: [
                     Expanded(
                       child: Text(
-                        'Selected: ${_selectedPhotoAssetIds.length}',
-                        style: const TextStyle(color: Colors.white),
+                        l10n.photoServiceSelectedCount(
+                          _selectedPhotoAssetIds.length,
+                        ),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
-                    if (_selectionLocked)
-                      FilledButton(
-                        onPressed: _busy ? null : _runCheckout,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: _kGold,
-                          foregroundColor: Colors.black,
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (_selectionLocked)
+                              FilledButton(
+                                onPressed: _busy ? null : _runCheckout,
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: _kGold,
+                                  foregroundColor: Colors.black,
+                                  minimumSize: const Size(0, 34),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  textStyle: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  visualDensity: const VisualDensity(
+                                    horizontal: -2,
+                                    vertical: -2,
+                                  ),
+                                ),
+                                child: Text(buyLabel),
+                              )
+                            else ...[
+                              FilledButton(
+                                onPressed: _busy ? null : _runBulkCheckout,
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: _kGold,
+                                  foregroundColor: Colors.black,
+                                  minimumSize: const Size(0, 34),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  textStyle: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  visualDensity: const VisualDensity(
+                                    horizontal: -2,
+                                    vertical: -2,
+                                  ),
+                                ),
+                                child: Text(bulkBuyLabel),
+                              ),
+                              const SizedBox(width: 6),
+                              FilledButton(
+                                onPressed: _busy ? null : _runCheckout,
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: _kGold,
+                                  foregroundColor: Colors.black,
+                                  minimumSize: const Size(0, 34),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  textStyle: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  visualDensity: const VisualDensity(
+                                    horizontal: -2,
+                                    vertical: -2,
+                                  ),
+                                ),
+                                child: Text(buyLabel),
+                              ),
+                            ],
+                          ],
                         ),
-                        child: Text(buyLabel),
-                      )
-                    else ...[
-                      FilledButton(
-                        onPressed: _busy ? null : _runBulkCheckout,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: _kGold,
-                          foregroundColor: Colors.black,
-                        ),
-                        child: Text(bulkBuyLabel),
                       ),
-                      const SizedBox(width: 8),
-                      FilledButton(
-                        onPressed: _busy ? null : _runCheckout,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: _kGold,
-                          foregroundColor: Colors.black,
-                        ),
-                        child: Text(buyLabel),
-                      ),
-                    ],
+                    ),
                   ],
                 ),
               ),
@@ -1396,10 +1458,10 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
                       ),
                     )
                   : photos.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
-                        'No photos yet',
-                        style: TextStyle(color: Colors.white70),
+                        l10n.photoServiceNoPhotosYet,
+                        style: const TextStyle(color: Colors.white70),
                       ),
                     )
                   : GridView.builder(
@@ -1540,9 +1602,9 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
                                           borderRadius: BorderRadius.circular(8),
                                         ),
                                       ),
-                                      child: const Text(
-                                        'View',
-                                        style: TextStyle(
+                                      child: Text(
+                                        l10n.photoServiceView,
+                                        style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
                                         ),
