@@ -104,6 +104,88 @@ class _LoginPageState extends State<LoginPage> {
     ).push(MaterialPageRoute(builder: (_) => RegisterPage(auth: widget.auth)));
   }
 
+  Future<void> _onForgotPasswordTap() async {
+    final l10n = AppLocalizations.of(context)!;
+    final emailController = TextEditingController(
+      text: _emailController.text.trim(),
+    );
+    bool modalLoading = false;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return AlertDialog(
+              title: Text(l10n.forgotPasswordTitle),
+              content: TextField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: l10n.email,
+                  hintText: l10n.forgotPasswordEmailHint,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: modalLoading
+                      ? null
+                      : () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.cancel),
+                ),
+                FilledButton(
+                  onPressed: modalLoading
+                      ? null
+                      : () async {
+                          final email = emailController.text.trim();
+                          if (email.isEmpty || !email.contains('@')) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(l10n.enterValidEmail)),
+                            );
+                            return;
+                          }
+                          setModalState(() => modalLoading = true);
+                          try {
+                            final found = await widget.auth
+                                .checkClientForgotPasswordEmail(email);
+                            if (!mounted) return;
+                            Navigator.of(dialogContext).pop();
+                            ScaffoldMessenger.of(this.context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  found
+                                      ? l10n.forgotPasswordInstructionsSent
+                                      : l10n.forgotPasswordUserNotFound,
+                                ),
+                              ),
+                            );
+                          } catch (e) {
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())),
+                            );
+                          } finally {
+                            if (context.mounted) {
+                              setModalState(() => modalLoading = false);
+                            }
+                          }
+                        },
+                  child: modalLoading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(l10n.forgotPasswordSend),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -261,6 +343,20 @@ class _LoginPageState extends State<LoginPage> {
                                     onPressed: _isLoading ? null : _onSignUp,
                                     child: Text(
                                       AppLocalizations.of(context)!.signUp,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: TextButton(
+                                    onPressed: _isLoading
+                                        ? null
+                                        : _onForgotPasswordTap,
+                                    child: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.forgotPasswordLink,
                                     ),
                                   ),
                                 ),

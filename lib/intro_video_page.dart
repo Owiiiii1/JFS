@@ -47,7 +47,8 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
 
   Future<void> _checkVersionAndStart() async {
     try {
-      if (!await widget.auth.checkAppActive()) {
+      final appActive = await widget.auth.checkAppActive();
+      if (!appActive && !kDebugMode) {
         if (!mounted) return;
         setState(() => _checkingVersion = false);
         openClientAppMaintenanceScreen(context, auth: widget.auth);
@@ -72,7 +73,7 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
 
         if (!mounted) return;
 
-        if (!result.appActive) {
+        if (!result.appActive && !kDebugMode) {
           setState(() => _checkingVersion = false);
           openClientAppMaintenanceScreen(context, auth: widget.auth);
           return;

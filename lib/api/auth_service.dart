@@ -158,6 +158,32 @@ class AuthService {
     );
   }
 
+  Future<bool> checkClientForgotPasswordEmail(String email) async {
+    final uri = Uri.parse('$baseUrl/api/app/client/password/forgot-check');
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({'email': email.trim()}),
+    );
+
+    if (res.statusCode == 200) {
+      return true;
+    }
+    if (res.statusCode == 404) {
+      return false;
+    }
+    if (res.statusCode == 422) {
+      throw Exception(_tryMessage(res.body) ?? 'Enter a valid email');
+    }
+    throw Exception(
+      _tryMessage(res.body) ??
+          'Failed to check email for password recovery (${res.statusCode})',
+    );
+  }
+
   Future<LoginResult> register({
     required String name,
     required String email,
@@ -765,6 +791,189 @@ class AuthService {
       throw Exception(
         _tryMessage(res.body) ??
             'Failed to cancel additional photo checkout (${res.statusCode})',
+      );
+    }
+  }
+
+  Future<ClientPhotoServiceChildrenEventsResult>
+  getClientPhotoServiceChildrenEvents() async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse('$baseUrl/api/app/client/photo-service/children-events');
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load photo service children/events (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return ClientPhotoServiceChildrenEventsResult.fromJson(map);
+  }
+
+  Future<ClientPhotoServiceGalleryResult> getClientPhotoServiceGallery({
+    required int childId,
+    required int eventId,
+    required String mode,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse('$baseUrl/api/app/client/photo-service/gallery').replace(
+      queryParameters: {
+        'child_id': childId.toString(),
+        'event_id': eventId.toString(),
+        'mode': mode,
+      },
+    );
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load photo service gallery (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return ClientPhotoServiceGalleryResult.fromJson(map);
+  }
+
+  Future<String?> createPhotoServiceCheckoutSession({
+    required int assignmentId,
+    required List<int> photoAssetIds,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/photo-service/assignments/$assignmentId/checkout',
+    );
+    final res = await http.post(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'photo_asset_ids': photoAssetIds}),
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to start photo service checkout (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final url = map['checkout_url'] as String?;
+    if (url == null || url.trim().isEmpty) {
+      return null;
+    }
+    return url.trim();
+  }
+
+  Future<String?> createPhotoServiceBulkCheckoutSession({
+    required int assignmentId,
+  }) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/photo-service/assignments/$assignmentId/checkout-all',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to start photo service bulk checkout (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final url = map['checkout_url'] as String?;
+    if (url == null || url.trim().isEmpty) {
+      return null;
+    }
+    return url.trim();
+  }
+
+  Future<MealPaymentStatusPayload> getPhotoServicePaymentStatus(
+    int assignmentId,
+  ) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/photo-service/assignments/$assignmentId/payment-status',
+    );
+    final res = await http.get(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to load photo service payment status (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    return MealPaymentStatusPayload.fromJson(map);
+  }
+
+  Future<String> resumePhotoServicePayment(int assignmentId) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/photo-service/assignments/$assignmentId/payment-resume',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to resume photo service checkout (${res.statusCode})',
+      );
+    }
+    final map = jsonDecode(res.body) as Map<String, dynamic>;
+    final url = map['checkout_url'] as String?;
+    if (url == null || url.trim().isEmpty) {
+      throw Exception('No checkout URL in response');
+    }
+    return url.trim();
+  }
+
+  Future<void> cancelPhotoServicePayment(int assignmentId) async {
+    final token = await getToken();
+    if (token == null || token.isEmpty) {
+      throw Exception('Not authenticated');
+    }
+    final uri = Uri.parse(
+      '$baseUrl/api/app/client/photo-service/assignments/$assignmentId/payment-cancel',
+    );
+    final res = await http.post(
+      uri,
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+        _tryMessage(res.body) ??
+            'Failed to cancel photo service checkout (${res.statusCode})',
       );
     }
   }
@@ -3669,6 +3878,7 @@ class MealPaymentStatusPayload {
     required this.canCancelPayment,
     required this.canStartNewCheckout,
     this.paymentCheckoutUrl,
+    this.selectedPhotoAssetIds = const <int>[],
   });
 
   /// Обед: `meal_fulfillment_status` с API. Билеты: обычно `none`, см. [pendingCheckout].
@@ -3680,14 +3890,23 @@ class MealPaymentStatusPayload {
   final bool canCancelPayment;
   final bool canStartNewCheckout;
   final String? paymentCheckoutUrl;
+  final List<int> selectedPhotoAssetIds;
 
   factory MealPaymentStatusPayload.fromJson(Map<String, dynamic> json) {
     final pay = json['payment'];
     String? url;
+    List<int> selectedIds = const <int>[];
     if (pay is Map<String, dynamic>) {
       final u = pay['checkout_url'];
       if (u is String && u.trim().isNotEmpty) {
         url = u.trim();
+      }
+      final ids = pay['selected_photo_asset_ids'];
+      if (ids is List) {
+        selectedIds = ids
+            .map((e) => _jsonInt(e))
+            .where((id) => id > 0)
+            .toList(growable: false);
       }
     }
     return MealPaymentStatusPayload(
@@ -3698,6 +3917,148 @@ class MealPaymentStatusPayload {
       canCancelPayment: json['can_cancel_payment'] == true,
       canStartNewCheckout: json['can_start_new_checkout'] == true,
       paymentCheckoutUrl: url,
+      selectedPhotoAssetIds: selectedIds,
+    );
+  }
+}
+
+class ClientPhotoServiceChildrenEventsResult {
+  ClientPhotoServiceChildrenEventsResult({
+    required this.hasAnyParticipation,
+    required this.children,
+  });
+
+  final bool hasAnyParticipation;
+  final List<ClientPhotoServiceChildEntry> children;
+
+  factory ClientPhotoServiceChildrenEventsResult.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    final rows = json['children'];
+    return ClientPhotoServiceChildrenEventsResult(
+      hasAnyParticipation: json['has_any_participation'] == true,
+      children: rows is List
+          ? rows
+                .whereType<Map<String, dynamic>>()
+                .map(ClientPhotoServiceChildEntry.fromJson)
+                .toList()
+          : const [],
+    );
+  }
+}
+
+class ClientPhotoServiceChildEntry {
+  ClientPhotoServiceChildEntry({
+    required this.childId,
+    required this.childName,
+    required this.assignmentCount,
+    required this.hasParticipation,
+    required this.events,
+  });
+
+  final int childId;
+  final String childName;
+  final int assignmentCount;
+  final bool hasParticipation;
+  final List<ClientPhotoServiceEventEntry> events;
+
+  factory ClientPhotoServiceChildEntry.fromJson(Map<String, dynamic> json) {
+    final rows = json['events'];
+    return ClientPhotoServiceChildEntry(
+      childId: _jsonInt(json['child_id']),
+      childName: (json['child_name'] as String? ?? '').trim(),
+      assignmentCount: _jsonInt(json['assignment_count']),
+      hasParticipation: json['has_participation'] == true,
+      events: rows is List
+          ? rows
+                .whereType<Map<String, dynamic>>()
+                .map(ClientPhotoServiceEventEntry.fromJson)
+                .toList()
+          : const [],
+    );
+  }
+}
+
+class ClientPhotoServiceEventEntry {
+  ClientPhotoServiceEventEntry({
+    required this.eventId,
+    required this.eventName,
+    this.eventStartsAt,
+  });
+
+  final int eventId;
+  final String eventName;
+  final DateTime? eventStartsAt;
+
+  factory ClientPhotoServiceEventEntry.fromJson(Map<String, dynamic> json) {
+    return ClientPhotoServiceEventEntry(
+      eventId: _jsonInt(json['event_id']),
+      eventName: (json['event_name'] as String? ?? '').trim(),
+      eventStartsAt: _jsonDateTimeNullable(json['event_starts_at']),
+    );
+  }
+}
+
+class ClientPhotoServiceGalleryResult {
+  ClientPhotoServiceGalleryResult({
+    required this.assignmentId,
+    required this.mode,
+    required this.photos,
+    required this.pricePerPhoto,
+    required this.bulkPricePerPhoto,
+    required this.shopPhotoCount,
+    required this.payment,
+  });
+
+  final int assignmentId;
+  final String mode;
+  final List<ClientPhotoServicePhotoItem> photos;
+  final double? pricePerPhoto;
+  final double? bulkPricePerPhoto;
+  final int? shopPhotoCount;
+  final MealPaymentStatusPayload payment;
+
+  factory ClientPhotoServiceGalleryResult.fromJson(Map<String, dynamic> json) {
+    final rows = json['photos'];
+    final paymentPayload = (json['payment'] as Map<String, dynamic>?) ?? const {};
+    return ClientPhotoServiceGalleryResult(
+      assignmentId: _jsonInt(json['assignment_id']),
+      mode: (json['mode'] as String? ?? '').trim(),
+      photos: rows is List
+          ? rows
+                .whereType<Map<String, dynamic>>()
+                .map(ClientPhotoServicePhotoItem.fromJson)
+                .toList()
+          : const [],
+      pricePerPhoto: _jsonDoubleNullable(json['price_per_photo']),
+      bulkPricePerPhoto: _jsonDoubleNullable(json['bulk_price_per_photo']),
+      shopPhotoCount: _jsonIntNullable(json['shop_photo_count']),
+      payment: MealPaymentStatusPayload.fromJson(paymentPayload),
+    );
+  }
+}
+
+class ClientPhotoServicePhotoItem {
+  ClientPhotoServicePhotoItem({
+    required this.photoAssetId,
+    required this.photoType,
+    this.previewUrl,
+    this.originalUrl,
+  });
+
+  final int photoAssetId;
+  final String photoType;
+  final String? previewUrl;
+  final String? originalUrl;
+
+  factory ClientPhotoServicePhotoItem.fromJson(Map<String, dynamic> json) {
+    final preview = (json['preview_url'] as String?)?.trim();
+    final original = (json['original_url'] as String?)?.trim();
+    return ClientPhotoServicePhotoItem(
+      photoAssetId: _jsonInt(json['photo_asset_id']),
+      photoType: (json['photo_type'] as String? ?? 'paid').trim(),
+      previewUrl: (preview == null || preview.isEmpty) ? null : preview,
+      originalUrl: (original == null || original.isEmpty) ? null : original,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -686,6 +687,9 @@ class _ClientHomePageState extends State<ClientHomePage>
   }
 
   Future<bool> _ensureClientAppActive() async {
+    if (kDebugMode) {
+      return true;
+    }
     try {
       if (!await widget.auth.checkAppActive()) {
         if (mounted) {

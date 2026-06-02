@@ -36,6 +36,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get showPassword => 'Mostrar contraseña';
 
   @override
+  String get forgotPasswordLink => '¿Olvidaste tu contraseña?';
+
+  @override
+  String get forgotPasswordTitle => 'Recuperación de contraseña';
+
+  @override
+  String get forgotPasswordEmailHint => 'Ingresa tu correo';
+
+  @override
+  String get forgotPasswordSend => 'Enviar';
+
+  @override
+  String get forgotPasswordInstructionsSent =>
+      'Las instrucciones para recuperar la contraseña fueron enviadas al correo.';
+
+  @override
+  String get forgotPasswordUserNotFound =>
+      'No se encontró un usuario con este correo.';
+
+  @override
   String signInFailed(String error) {
     return 'Error al iniciar sesión: $error';
   }
@@ -1332,6 +1352,26 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get showPassword => 'Mostrar contraseña';
+
+  @override
+  String get forgotPasswordLink => '¿Olvidaste tu contraseña?';
+
+  @override
+  String get forgotPasswordTitle => 'Recuperación de contraseña';
+
+  @override
+  String get forgotPasswordEmailHint => 'Ingresa tu correo';
+
+  @override
+  String get forgotPasswordSend => 'Enviar';
+
+  @override
+  String get forgotPasswordInstructionsSent =>
+      'Las instrucciones para recuperar la contraseña fueron enviadas al correo.';
+
+  @override
+  String get forgotPasswordUserNotFound =>
+      'No se encontró un usuario con este correo.';
 
   @override
   String signInFailed(String error) {

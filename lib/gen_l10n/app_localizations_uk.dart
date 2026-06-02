@@ -36,6 +36,26 @@ class AppLocalizationsUk extends AppLocalizations {
   String get showPassword => 'Показати пароль';
 
   @override
+  String get forgotPasswordLink => 'Забули пароль?';
+
+  @override
+  String get forgotPasswordTitle => 'Відновлення пароля';
+
+  @override
+  String get forgotPasswordEmailHint => 'Введіть email';
+
+  @override
+  String get forgotPasswordSend => 'Надіслати';
+
+  @override
+  String get forgotPasswordInstructionsSent =>
+      'Інструкції для відновлення пароля відправлено на пошту.';
+
+  @override
+  String get forgotPasswordUserNotFound =>
+      'Користувача з таким email не знайдено.';
+
+  @override
   String signInFailed(String error) {
     return 'Помилка входу: $error';
   }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
+import 'package:flutter/services.dart';
 import 'account_settings_page.dart';
 import 'api/auth_service.dart';
 import 'child_edit_page.dart';
 import 'create_child_page.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'gen_l10n/app_localizations.dart';
@@ -141,55 +144,61 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
       ),
     );
     try {
-      final result = await widget.auth.getClientPastShowPhotos();
+      final result = await widget.auth.getClientPhotoServiceChildrenEvents();
       if (!mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
 
-      if (!result.hasAnyAssignment) {
+      if (!result.hasAnyParticipation) {
         await _showPastShowPhotosMessageDialog(
           l10n.pastShowPhotosNotParticipatedMessage,
         );
         return;
       }
 
-      final photos = result.photos;
-      if (photos.isEmpty) {
+      final children = result.children.where((c) => c.hasParticipation).toList();
+      if (children.isEmpty) {
         await _showPastShowPhotosMessageDialog(
-          l10n.pastShowPhotosPendingMessage,
+          l10n.pastShowPhotosNotParticipatedMessage,
         );
         return;
       }
 
-      final byEvent = _groupPastShowPhotosByEvent(photos);
-      final eventEntries = _sortedPastShowEventEntries(byEvent);
-
-      int? eventId;
-      if (eventEntries.length == 1) {
-        eventId = eventEntries.first.key;
+      ClientPhotoServiceChildEntry? selectedChild;
+      if (children.length == 1) {
+        selectedChild = children.first;
       } else {
-        eventId = await _showPastShowEventPicker(eventEntries);
+        selectedChild = await _showPhotoServiceChildPicker(children);
       }
-      if (eventId == null || !mounted) {
+
+      if (selectedChild == null || !mounted) {
         return;
       }
 
-      final childrenForEvent = byEvent[eventId] ?? [];
-      if (childrenForEvent.isEmpty) {
+      if (selectedChild.events.isEmpty) {
+        await _showPastShowPhotosMessageDialog(l10n.pastShowPhotosPendingMessage);
         return;
       }
 
-      PastShowPhotoItem? selectedItem;
-      if (childrenForEvent.length == 1) {
-        selectedItem = childrenForEvent.first;
+      ClientPhotoServiceEventEntry? selectedEvent;
+      if (selectedChild.events.length == 1) {
+        selectedEvent = selectedChild.events.first;
       } else {
-        selectedItem = await _showPastShowChildrenPicker(childrenForEvent);
+        selectedEvent = await _showPhotoServiceEventPicker(selectedChild.events);
       }
 
-      if (selectedItem == null || !mounted) {
+      if (selectedEvent == null || !mounted) {
         return;
       }
 
-      await _showPastShowActionsDialog(selectedItem);
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => _PhotoServiceEntryPage(
+            auth: widget.auth,
+            childEntry: selectedChild!,
+            eventEntry: selectedEvent!,
+          ),
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
@@ -241,40 +250,11 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
     );
   }
 
-  Map<int, List<PastShowPhotoItem>> _groupPastShowPhotosByEvent(
-    List<PastShowPhotoItem> photos,
-  ) {
-    final byEvent = <int, List<PastShowPhotoItem>>{};
-    for (final photo in photos) {
-      byEvent.putIfAbsent(photo.eventId, () => []).add(photo);
-    }
-    for (final list in byEvent.values) {
-      list.sort((a, b) => a.childName.compareTo(b.childName));
-    }
-    return byEvent;
-  }
-
-  List<MapEntry<int, List<PastShowPhotoItem>>> _sortedPastShowEventEntries(
-    Map<int, List<PastShowPhotoItem>> byEvent,
-  ) {
-    return byEvent.entries.toList()
-      ..sort((a, b) {
-        final aDate =
-            a.value.first.eventStartsAt ??
-            DateTime.fromMillisecondsSinceEpoch(0);
-        final bDate =
-            b.value.first.eventStartsAt ??
-            DateTime.fromMillisecondsSinceEpoch(0);
-        return bDate.compareTo(aDate);
-      });
-  }
-
-  Future<int?> _showPastShowEventPicker(
-    List<MapEntry<int, List<PastShowPhotoItem>>> eventEntries,
+  Future<ClientPhotoServiceChildEntry?> _showPhotoServiceChildPicker(
+    List<ClientPhotoServiceChildEntry> children,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    final locale = Localizations.localeOf(context).toString();
-    return showDialog<int>(
+    return showDialog<ClientPhotoServiceChildEntry>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: _kCardBg,
@@ -285,7 +265,7 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
         actionsAlignment: MainAxisAlignment.end,
         title: Center(
           child: Text(
-            l10n.pastShowPhotosChooseEventTitle.toUpperCase(),
+            l10n.pastShowPhotosChooseChildTitle.toUpperCase(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
@@ -296,19 +276,13 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
           width: double.maxFinite,
           child: ListView.separated(
             shrinkWrap: true,
-            itemCount: eventEntries.length,
+            itemCount: children.length,
             separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
-              final sample = eventEntries[index].value.first;
-              final count = eventEntries[index].value.length;
-              final dateLine = sample.eventStartsAt != null
-                  ? DateFormat('d MMM yyyy', locale).format(
-                      sample.eventStartsAt!.toLocal(),
-                    )
-                  : null;
+              final child = children[index];
               return InkWell(
                 borderRadius: BorderRadius.circular(12),
-                onTap: () => Navigator.of(ctx).pop(eventEntries[index].key),
+                onTap: () => Navigator.of(ctx).pop(child),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     vertical: 12,
@@ -326,7 +300,7 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              sample.eventName.isNotEmpty ? sample.eventName : '—',
+                              child.childName.isNotEmpty ? child.childName : '—',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
@@ -335,12 +309,9 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              [
-                                if (dateLine != null) dateLine,
-                                count == 1
-                                    ? '1 item'
-                                    : '${count.toString()} items',
-                              ].join(' • '),
+                              child.assignmentCount == 1
+                                  ? '1 participation'
+                                  : '${child.assignmentCount} participations',
                               style: TextStyle(
                                 color: Colors.grey[400],
                                 fontSize: 12,
@@ -380,11 +351,12 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
     );
   }
 
-  Future<PastShowPhotoItem?> _showPastShowChildrenPicker(
-    List<PastShowPhotoItem> childrenForEvent,
+  Future<ClientPhotoServiceEventEntry?> _showPhotoServiceEventPicker(
+    List<ClientPhotoServiceEventEntry> events,
   ) async {
     final l10n = AppLocalizations.of(context)!;
-    return showDialog<PastShowPhotoItem>(
+    final locale = Localizations.localeOf(context).toString();
+    return showDialog<ClientPhotoServiceEventEntry>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: _kCardBg,
@@ -395,7 +367,7 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
         actionsAlignment: MainAxisAlignment.end,
         title: Center(
           child: Text(
-            l10n.pastShowPhotosChooseChildTitle.toUpperCase(),
+            l10n.pastShowPhotosChooseEventTitle.toUpperCase(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
@@ -406,19 +378,18 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
           width: double.maxFinite,
           child: ListView.separated(
             shrinkWrap: true,
-            itemCount: childrenForEvent.length,
+            itemCount: events.length,
             separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
-              final item = childrenForEvent[index];
-              final mediaIcons = <IconData>[
-                if (item.hasPhotoLink) Icons.photo_outlined,
-                if (item.hasVideoLink) Icons.videocam_outlined,
-                if (item.hasPreviewLink) Icons.remove_red_eye_outlined,
-                if (item.hasPaidLink) Icons.verified_outlined,
-              ];
+              final event = events[index];
+              final dateLine = event.eventStartsAt != null
+                  ? DateFormat('d MMM yyyy', locale).format(
+                      event.eventStartsAt!.toLocal(),
+                    )
+                  : null;
               return InkWell(
                 borderRadius: BorderRadius.circular(12),
-                onTap: () => Navigator.of(ctx).pop(item),
+                onTap: () => Navigator.of(ctx).pop(event),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     vertical: 12,
@@ -436,24 +407,23 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              item.childName.isNotEmpty ? item.childName : '—',
+                              event.eventName.isNotEmpty ? event.eventName : '—',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            if (mediaIcons.isNotEmpty) ...[
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  for (final icon in mediaIcons) ...[
-                                    Icon(icon, color: Colors.grey[400], size: 14),
-                                    const SizedBox(width: 6),
-                                  ],
-                                ],
+                            const SizedBox(height: 4),
+                            Text(
+                              [
+                                if (dateLine != null) dateLine,
+                              ].join(' • '),
+                              style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 12,
                               ),
-                            ],
+                            ),
                           ],
                         ),
                       ),
@@ -485,253 +455,6 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
           ),
         ],
       ),
-    );
-  }
-
-  Future<void> _showPastShowActionsDialog(PastShowPhotoItem item) async {
-    final l10n = AppLocalizations.of(context)!;
-    final priceText = item.additionalPhotoPrice?.toStringAsFixed(2);
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: _kCardBg,
-        shape: _kPastShowDialogShape,
-        titlePadding: _kPastShowDialogTitlePadding,
-        contentPadding: _kPastShowDialogContentPadding,
-        actionsPadding: _kPastShowDialogActionsPadding,
-        actionsAlignment: MainAxisAlignment.end,
-        title: Center(
-          child: Text(
-            l10n.pastShowPhotosTitle.toUpperCase(),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: _kPastShowDialogTitleStyle,
-          ),
-        ),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(
-                  item.childName.isNotEmpty ? item.childName : '—',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              if (item.hasPhotoLink)
-                _PastShowMediaLinkTile(
-                  label: l10n.pastShowPhotosOpenPhoto,
-                  icon: Icons.photo_outlined,
-                  onTap: () async {
-                    Navigator.of(ctx).pop();
-                    await _openPastShowPhotoLink(item.photoLink);
-                  },
-                ),
-              if (item.hasVideoLink)
-                _PastShowMediaLinkTile(
-                  label: l10n.pastShowPhotosOpenVideo,
-                  icon: Icons.videocam_outlined,
-                  onTap: () async {
-                    Navigator.of(ctx).pop();
-                    await _openPastShowPhotoLink(item.videoLink);
-                  },
-                ),
-              if (item.hasPreviewLink)
-                _PastShowMediaLinkTile(
-                  label: l10n.pastShowPhotosOpenPreview,
-                  icon: Icons.remove_red_eye_outlined,
-                  onTap: () async {
-                    Navigator.of(ctx).pop();
-                    await _openPastShowPhotoLink(item.previewLink);
-                  },
-                ),
-              if (item.hasPaidLink)
-                _PastShowMediaLinkTile(
-                  label: l10n.pastShowPhotosOpenPaid,
-                  icon: Icons.verified_outlined,
-                  onTap: () async {
-                    Navigator.of(ctx).pop();
-                    await _openPastShowPhotoLink(item.paidLink);
-                  },
-                ),
-              if (item.hasPreviewLink &&
-                  item.hasAdditionalPhotoPrice &&
-                  !item.hasPaidLink)
-                FutureBuilder<MealPaymentStatusPayload>(
-                  future: widget.auth.getAssignmentAdditionalPhotoPaymentStatus(
-                    item.assignmentId,
-                  ),
-                  builder: (context, snap) {
-                    final st = snap.data;
-                    final hasPendingState = st != null &&
-                        (st.canContinuePayment || st.canCancelPayment);
-                    if (hasPendingState) {
-                      return _PastShowMediaLinkTile(
-                        label: l10n.pastShowPhotosManagePayment,
-                        icon: Icons.manage_accounts_outlined,
-                        onTap: () async {
-                          Navigator.of(ctx).pop();
-                          await _showPastShowManagePaymentSheet(item);
-                        },
-                      );
-                    }
-
-                    return _PastShowMediaLinkTile(
-                      label:
-                          '${l10n.pastShowPhotosOrderFromPreview}${priceText != null ? ' (${l10n.pastShowPhotosAdditionalPhotoPrice(priceText)})' : ''}',
-                      icon: Icons.shopping_cart_checkout_outlined,
-                      onTap: () async {
-                        Navigator.of(ctx).pop();
-                        await _handlePastShowOrderFromPreview(item);
-                      },
-                    );
-                  },
-                ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(
-              l10n.close,
-              style: const TextStyle(color: _kGold),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _openPastShowPhotoLink(String url) async {
-    final l10n = AppLocalizations.of(context)!;
-    final uri = Uri.tryParse(url);
-    if (uri == null || !await canLaunchUrl(uri)) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.pastShowPhotosLinkCouldNotOpen)),
-      );
-      return;
-    }
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-
-  Future<void> _handlePastShowOrderFromPreview(PastShowPhotoItem item) async {
-    final l10n = AppLocalizations.of(context)!;
-    try {
-      final status = await widget.auth.getAssignmentAdditionalPhotoPaymentStatus(
-        item.assignmentId,
-      );
-      if (status.canContinuePayment || status.canCancelPayment) {
-        await _showPastShowManagePaymentSheet(item);
-        return;
-      }
-
-      final checkoutUrl = await widget.auth
-          .createAssignmentAdditionalPhotoCheckoutSession(item.assignmentId);
-      await _openPastShowPhotoLink(checkoutUrl);
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().isEmpty ? l10n.pastShowPhotosLinkCouldNotOpen : e.toString())),
-      );
-    }
-  }
-
-  Future<void> _showPastShowManagePaymentSheet(PastShowPhotoItem item) async {
-    final l10n = AppLocalizations.of(context)!;
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: _kCardBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  l10n.pastShowPhotosManagePaymentTitle,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  l10n.pastShowPhotosManagePaymentMessage,
-                  style: const TextStyle(color: Colors.white70),
-                ),
-                const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: () async {
-                    Navigator.of(sheetContext).pop();
-                    try {
-                      final url = await widget.auth
-                          .resumeAssignmentAdditionalPhotoPayment(
-                            item.assignmentId,
-                          );
-                      await _openPastShowPhotoLink(url);
-                    } catch (e) {
-                      if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: _kGold,
-                    foregroundColor: Colors.black,
-                  ),
-                  child: Text(l10n.mealPaymentContinue),
-                ),
-                const SizedBox(height: 8),
-                TextButton(
-                  onPressed: () async {
-                    Navigator.of(sheetContext).pop();
-                    try {
-                      await widget.auth.cancelAssignmentAdditionalPhotoPayment(
-                        item.assignmentId,
-                      );
-                      if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.mealPaymentCanceled)),
-                      );
-                    } catch (e) {
-                      if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
-                    }
-                  },
-                  child: Text(
-                    l10n.mealPaymentCancel,
-                    style: const TextStyle(color: Colors.white70),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -972,56 +695,6 @@ class _ClientProfileTabState extends State<ClientProfileTab> {
 // Private sub-widgets
 // =============================================================================
 
-class _PastShowMediaLinkTile extends StatelessWidget {
-  const _PastShowMediaLinkTile({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.04),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white10),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, color: _kGold, size: 20),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Icon(Icons.chevron_right, color: _kGold, size: 22),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _InfoField extends StatelessWidget {
   const _InfoField({required this.label, required this.value});
 
@@ -1053,6 +726,840 @@ class _InfoField extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
       ],
+    );
+  }
+}
+
+class _PhotoServiceEntryPage extends StatelessWidget {
+  const _PhotoServiceEntryPage({
+    required this.auth,
+    required this.childEntry,
+    required this.eventEntry,
+  });
+
+  final AuthService auth;
+  final ClientPhotoServiceChildEntry childEntry;
+  final ClientPhotoServiceEventEntry eventEntry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        title: Text(l10n.pastShowPhotosTitle),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                childEntry.childName,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                eventEntry.eventName,
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
+              ),
+              const SizedBox(height: 18),
+              _PhotoModeButton(
+                title: 'PHOTOS',
+                subtitle: 'Free + purchased',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => _PhotoServiceGalleryPage(
+                      auth: auth,
+                      childEntry: childEntry,
+                      eventEntry: eventEntry,
+                      mode: 'available',
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              _PhotoModeButton(
+                title: 'PHOTO SHOP',
+                subtitle: 'Not purchased',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => _PhotoServiceGalleryPage(
+                      auth: auth,
+                      childEntry: childEntry,
+                      eventEntry: eventEntry,
+                      mode: 'shop',
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PhotoModeButton extends StatelessWidget {
+  const _PhotoModeButton({
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton(
+        onPressed: onTap,
+        style: FilledButton.styleFrom(
+          backgroundColor: _kGold,
+          foregroundColor: Colors.black,
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2,
+                height: 1.1,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle.toLowerCase(),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.3,
+                height: 1.2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PhotoServiceGalleryPage extends StatefulWidget {
+  const _PhotoServiceGalleryPage({
+    required this.auth,
+    required this.childEntry,
+    required this.eventEntry,
+    required this.mode,
+  });
+
+  final AuthService auth;
+  final ClientPhotoServiceChildEntry childEntry;
+  final ClientPhotoServiceEventEntry eventEntry;
+  final String mode;
+
+  @override
+  State<_PhotoServiceGalleryPage> createState() => _PhotoServiceGalleryPageState();
+}
+
+class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
+    with WidgetsBindingObserver {
+  bool _loading = true;
+  String? _error;
+  ClientPhotoServiceGalleryResult? _gallery;
+  final ScrollController _scroll = ScrollController();
+  final Set<int> _selectedPhotoAssetIds = <int>{};
+  bool _busy = false;
+
+  bool get _isShopMode => widget.mode == 'shop';
+
+  bool get _selectionLocked {
+    final payment = _gallery?.payment;
+    return _isShopMode &&
+        payment != null &&
+        (payment.canContinuePayment || payment.canCancelPayment);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _loadGallery();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadGallery(silent: true);
+    }
+  }
+
+  Future<void> _loadGallery({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    }
+    try {
+      final loaded = await widget.auth.getClientPhotoServiceGallery(
+        childId: widget.childEntry.childId,
+        eventId: widget.eventEntry.eventId,
+        mode: widget.mode,
+      );
+      if (!mounted) return;
+      final availableIds = loaded.photos.map((e) => e.photoAssetId).toSet();
+      final lockSelection =
+          _isShopMode &&
+          (loaded.payment.canContinuePayment ||
+              loaded.payment.canCancelPayment);
+      setState(() {
+        _gallery = loaded;
+        _loading = false;
+        _error = null;
+        if (lockSelection) {
+          _selectedPhotoAssetIds
+            ..clear()
+            ..addAll(loaded.payment.selectedPhotoAssetIds);
+        } else {
+          _selectedPhotoAssetIds.removeWhere((id) => !availableIds.contains(id));
+        }
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _error = e.toString();
+      });
+    }
+  }
+
+  Future<void> _openFullscreen(String? url) async {
+    if (url == null || url.isEmpty) return;
+    await showDialog<void>(
+      context: context,
+      barrierColor: Colors.black,
+      builder: (ctx) => Dialog.fullscreen(
+        backgroundColor: Colors.black,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: InteractiveViewer(
+                minScale: 1,
+                maxScale: 4,
+                child: Center(child: Image.network(url, fit: BoxFit.contain)),
+              ),
+            ),
+            Positioned(
+              top: 12,
+              right: 12,
+              child: IconButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                icon: const Icon(Icons.close, color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openExternalUrl(String? url) async {
+    if (url == null || url.isEmpty) return;
+    final uri = Uri.tryParse(url);
+    if (uri == null || !await canLaunchUrl(uri)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open link')),
+      );
+      return;
+    }
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Future<void> _downloadOriginalPhoto(String? url) async {
+    if (url == null || url.isEmpty) return;
+    if (_busy) return;
+
+    setState(() => _busy = true);
+    try {
+      final uri = Uri.tryParse(url);
+      if (uri == null) {
+        throw Exception('Invalid photo URL');
+      }
+      final response = await http.get(uri, headers: const {'Accept': '*/*'});
+      if (response.statusCode != 200 || response.bodyBytes.isEmpty) {
+        throw Exception('Download failed (${response.statusCode})');
+      }
+
+      final cd = response.headers['content-disposition'] ?? '';
+      final nameFromHeader = _extractFilenameFromContentDisposition(cd);
+      final ext = _extensionFromContentType(response.headers['content-type']);
+      final fileName = nameFromHeader ?? 'photo_${DateTime.now().millisecondsSinceEpoch}$ext';
+
+      final savedPath = await FlutterFileDialog.saveFile(
+        params: SaveFileDialogParams(
+          data: response.bodyBytes,
+          fileName: fileName,
+          mimeTypesFilter: <String>[
+            response.headers['content-type'] ?? 'image/jpeg',
+          ],
+        ),
+      );
+
+      if (!mounted) return;
+      if (savedPath == null || savedPath.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Сохранение отменено')),
+        );
+        return;
+      }
+
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: _kCardBg,
+          shape: _kPastShowDialogShape,
+          title: const Text(
+            'Готово',
+            style: TextStyle(color: _kGold),
+          ),
+          content: const Text(
+            'Фото сохранено в Загрузки',
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('OK', style: TextStyle(color: _kGold)),
+            ),
+          ],
+        ),
+      );
+    } on MissingPluginException {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Модуль сохранения обновлен. Полностью перезапустите приложение.',
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  String? _extractFilenameFromContentDisposition(String value) {
+    final lower = value.toLowerCase();
+    final marker = 'filename=';
+    final idx = lower.indexOf(marker);
+    if (idx < 0) return null;
+    var part = value.substring(idx + marker.length).trim();
+    if (part.startsWith('"') && part.endsWith('"') && part.length >= 2) {
+      part = part.substring(1, part.length - 1);
+    }
+    final normalized = part.trim();
+    if (normalized.isEmpty) return null;
+    return normalized;
+  }
+
+  String _extensionFromContentType(String? contentType) {
+    final ct = (contentType ?? '').toLowerCase();
+    if (ct.contains('png')) return '.png';
+    if (ct.contains('webp')) return '.webp';
+    return '.jpg';
+  }
+
+  Future<void> _runCheckout() async {
+    if (!_isShopMode || _busy) return;
+    final payment = _gallery?.payment;
+    if (payment == null) return;
+    if (_selectionLocked) {
+      await _showManagePaymentSheet();
+      return;
+    }
+    if (_selectedPhotoAssetIds.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Select at least one photo')),
+      );
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      final checkoutUrl = await widget.auth.createPhotoServiceCheckoutSession(
+        assignmentId: _gallery!.assignmentId,
+        photoAssetIds: _selectedPhotoAssetIds.toList(growable: false),
+      );
+      if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
+        await _openExternalUrl(checkoutUrl);
+      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            (checkoutUrl != null && checkoutUrl.isNotEmpty)
+                ? 'Checkout opened in browser'
+                : 'Purchase completed',
+          ),
+        ),
+      );
+      await _loadGallery(silent: true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  Future<void> _runBulkCheckout() async {
+    if (!_isShopMode || _busy) return;
+    final gallery = _gallery;
+    final payment = gallery?.payment;
+    if (gallery == null || payment == null) return;
+    if (_selectionLocked) {
+      await _showManagePaymentSheet();
+      return;
+    }
+    final shopCount = gallery.shopPhotoCount ?? gallery.photos.length;
+    if (shopCount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No photos available for bulk purchase')),
+      );
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      final checkoutUrl = await widget.auth.createPhotoServiceBulkCheckoutSession(
+        assignmentId: gallery.assignmentId,
+      );
+      if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
+        await _openExternalUrl(checkoutUrl);
+      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            (checkoutUrl != null && checkoutUrl.isNotEmpty)
+                ? 'Bulk checkout opened in browser'
+                : 'Bulk purchase completed',
+          ),
+        ),
+      );
+      await _loadGallery(silent: true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  Future<void> _showManagePaymentSheet() async {
+    final l10n = AppLocalizations.of(context)!;
+    final assignmentId = _gallery?.assignmentId;
+    if (assignmentId == null) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: _kCardBg,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  l10n.pastShowPhotosManagePaymentTitle,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  l10n.pastShowPhotosManagePaymentMessage,
+                  style: const TextStyle(color: Colors.white70),
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: () async {
+                    Navigator.of(sheetContext).pop();
+                    try {
+                      final url = await widget.auth.resumePhotoServicePayment(
+                        assignmentId,
+                      );
+                      await _openExternalUrl(url);
+                    } catch (e) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _kGold,
+                    foregroundColor: Colors.black,
+                  ),
+                  child: Text(l10n.mealPaymentContinue),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(sheetContext).pop();
+                    try {
+                      await widget.auth.cancelPhotoServicePayment(assignmentId);
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.mealPaymentCanceled)),
+                      );
+                      await _loadGallery(silent: true);
+                    } catch (e) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  },
+                  child: Text(
+                    l10n.mealPaymentCancel,
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final photos = _gallery?.photos ?? const <ClientPhotoServicePhotoItem>[];
+    final title = _isShopMode ? 'Photo Shop' : 'Photos';
+    final buyLabel = _selectionLocked
+        ? l10n.pastShowPhotosManagePayment
+        : 'Buy';
+    final bulkPrice = _gallery?.bulkPricePerPhoto;
+    final bulkCount = _gallery?.shopPhotoCount ?? photos.length;
+    final bulkTotal = (bulkPrice != null && bulkCount > 0)
+        ? (bulkPrice * bulkCount)
+        : null;
+    final bulkBuyLabel = _selectionLocked
+        ? l10n.pastShowPhotosManagePayment
+        : (bulkTotal == null
+              ? 'Buy all'
+              : 'Buy all for ${bulkTotal.toStringAsFixed(2)}');
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        title: Text(title),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.childEntry.childName,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        Text(
+                          widget.eventEntry.eventName,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (_isShopMode)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A1A),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white10),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Selected: ${_selectedPhotoAssetIds.length}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    if (_selectionLocked)
+                      FilledButton(
+                        onPressed: _busy ? null : _runCheckout,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: _kGold,
+                          foregroundColor: Colors.black,
+                        ),
+                        child: Text(buyLabel),
+                      )
+                    else ...[
+                      FilledButton(
+                        onPressed: _busy ? null : _runBulkCheckout,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: _kGold,
+                          foregroundColor: Colors.black,
+                        ),
+                        child: Text(bulkBuyLabel),
+                      ),
+                      const SizedBox(width: 8),
+                      FilledButton(
+                        onPressed: _busy ? null : _runCheckout,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: _kGold,
+                          foregroundColor: Colors.black,
+                        ),
+                        child: Text(buyLabel),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            Expanded(
+              child: _loading
+                  ? const Center(
+                      child: CircularProgressIndicator(color: _kGold),
+                    )
+                  : _error != null
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text(
+                          _error!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
+                      ),
+                    )
+                  : photos.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No photos yet',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    )
+                  : GridView.builder(
+                      controller: _scroll,
+                      padding: const EdgeInsets.fromLTRB(12, 6, 12, 20),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 0.72,
+                          ),
+                      itemCount: photos.length,
+                      itemBuilder: (context, index) {
+                        final photo = photos[index];
+                        final selected = _selectedPhotoAssetIds.contains(
+                          photo.photoAssetId,
+                        );
+                        final preview = photo.previewUrl;
+                        final openUrl = _isShopMode
+                            ? photo.previewUrl
+                            : photo.originalUrl;
+                        return GestureDetector(
+                          onTap: !_isShopMode || _selectionLocked
+                              ? null
+                              : () {
+                                  setState(() {
+                                    if (selected) {
+                                      _selectedPhotoAssetIds.remove(
+                                        photo.photoAssetId,
+                                      );
+                                    } else {
+                                      _selectedPhotoAssetIds.add(
+                                        photo.photoAssetId,
+                                      );
+                                    }
+                                  });
+                                },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: selected ? _kGold : Colors.white10,
+                                width: selected ? 2 : 1,
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(9),
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  preview == null
+                                      ? Container(color: Colors.black26)
+                                      : Image.network(
+                                          preview,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) =>
+                                              Container(color: Colors.black26),
+                                        ),
+                                  Positioned(
+                                    top: 2,
+                                    right: 2,
+                                    child: _isShopMode
+                                        ? IgnorePointer(
+                                            ignoring: _selectionLocked,
+                                            child: Checkbox(
+                                              visualDensity:
+                                                  const VisualDensity(
+                                                    horizontal: -4,
+                                                    vertical: -4,
+                                                  ),
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                              value: selected,
+                                              onChanged: _selectionLocked
+                                                  ? null
+                                                  : (_) {
+                                                      setState(() {
+                                                        if (selected) {
+                                                          _selectedPhotoAssetIds
+                                                              .remove(
+                                                                photo.photoAssetId,
+                                                              );
+                                                        } else {
+                                                          _selectedPhotoAssetIds
+                                                              .add(
+                                                                photo.photoAssetId,
+                                                              );
+                                                        }
+                                                      });
+                                                    },
+                                              activeColor: _kGold,
+                                              side: const BorderSide(
+                                                color: Colors.white70,
+                                              ),
+                                            ),
+                                          )
+                                        : InkWell(
+                                            onTap: () => _downloadOriginalPhoto(
+                                              photo.originalUrl,
+                                            ),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black54,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: const Icon(
+                                                Icons.download_rounded,
+                                                color: Colors.white,
+                                                size: 16,
+                                              ),
+                                            ),
+                                          ),
+                                  ),
+                                  Positioned(
+                                    right: 6,
+                                    bottom: 6,
+                                    child: FilledButton(
+                                      onPressed: () => _openFullscreen(openUrl),
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor: _kGold,
+                                        foregroundColor: Colors.black,
+                                        minimumSize: const Size(64, 30),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 6,
+                                        ),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        visualDensity: const VisualDensity(
+                                          horizontal: -2,
+                                          vertical: -2,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'View',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

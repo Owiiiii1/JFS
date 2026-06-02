@@ -9,6 +9,12 @@
     "passwordRequired":  "Password is required",
     "hidePassword":  "Hide password",
     "showPassword":  "Show password",
+  "forgotPasswordLink": "Forgot password?",
+  "forgotPasswordTitle": "Password recovery",
+  "forgotPasswordEmailHint": "Enter email",
+  "forgotPasswordSend": "Send",
+  "forgotPasswordInstructionsSent": "Password recovery instructions have been sent to your email.",
+  "forgotPasswordUserNotFound": "User with this email was not found.",
     "signInFailed":  "Sign in failed: {error}",
     "@signInFailed":  {
                           "placeholders":  {

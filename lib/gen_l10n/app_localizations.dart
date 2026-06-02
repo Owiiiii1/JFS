@@ -157,6 +157,42 @@ abstract class AppLocalizations {
   /// **'Show password'**
   String get showPassword;
 
+  /// No description provided for @forgotPasswordLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPasswordLink;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Password recovery'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter email'**
+  String get forgotPasswordEmailHint;
+
+  /// No description provided for @forgotPasswordSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get forgotPasswordSend;
+
+  /// No description provided for @forgotPasswordInstructionsSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Password recovery instructions have been sent to your email.'**
+  String get forgotPasswordInstructionsSent;
+
+  /// No description provided for @forgotPasswordUserNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'User with this email was not found.'**
+  String get forgotPasswordUserNotFound;
+
   /// No description provided for @signInFailed.
   ///
   /// In en, this message translates to:

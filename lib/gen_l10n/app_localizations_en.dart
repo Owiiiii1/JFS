@@ -36,6 +36,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showPassword => 'Show password';
 
   @override
+  String get forgotPasswordLink => 'Forgot password?';
+
+  @override
+  String get forgotPasswordTitle => 'Password recovery';
+
+  @override
+  String get forgotPasswordEmailHint => 'Enter email';
+
+  @override
+  String get forgotPasswordSend => 'Send';
+
+  @override
+  String get forgotPasswordInstructionsSent =>
+      'Password recovery instructions have been sent to your email.';
+
+  @override
+  String get forgotPasswordUserNotFound =>
+      'User with this email was not found.';
+
+  @override
   String signInFailed(String error) {
     return 'Sign in failed: $error';
   }
