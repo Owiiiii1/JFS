@@ -832,9 +832,14 @@ class AuthService {
         'mode': mode,
       },
     );
+    final lang = apiContentLanguageForLocale(AppSettings.contentLocaleForApi());
     final res = await http.get(
       uri,
-      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+      headers: {
+        'Accept': 'application/json',
+        'Accept-Language': lang,
+        'Authorization': 'Bearer $token',
+      },
     );
     if (res.statusCode != 200) {
       throw Exception(
@@ -4007,6 +4012,7 @@ class ClientPhotoServiceGalleryResult {
     required this.pricePerPhoto,
     required this.bulkPricePerPhoto,
     required this.shopPhotoCount,
+    required this.shopHelperText,
     required this.payment,
   });
 
@@ -4016,6 +4022,7 @@ class ClientPhotoServiceGalleryResult {
   final double? pricePerPhoto;
   final double? bulkPricePerPhoto;
   final int? shopPhotoCount;
+  final String? shopHelperText;
   final MealPaymentStatusPayload payment;
 
   factory ClientPhotoServiceGalleryResult.fromJson(Map<String, dynamic> json) {
@@ -4033,6 +4040,10 @@ class ClientPhotoServiceGalleryResult {
       pricePerPhoto: _jsonDoubleNullable(json['price_per_photo']),
       bulkPricePerPhoto: _jsonDoubleNullable(json['bulk_price_per_photo']),
       shopPhotoCount: _jsonIntNullable(json['shop_photo_count']),
+      shopHelperText: (json['shop_helper_text'] as String?)?.trim().isNotEmpty ==
+              true
+          ? (json['shop_helper_text'] as String).trim()
+          : null,
       payment: MealPaymentStatusPayload.fromJson(paymentPayload),
     );
   }

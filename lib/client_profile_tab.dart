@@ -1287,6 +1287,7 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
         : l10n.photoServiceBuy;
     final bulkPrice = _gallery?.bulkPricePerPhoto;
     final bulkCount = _gallery?.shopPhotoCount ?? photos.length;
+    final shopHelperText = (_gallery?.shopHelperText ?? '').trim();
     final bulkTotal = (bulkPrice != null && bulkCount > 0)
         ? (bulkPrice * bulkCount)
         : null;
@@ -1294,7 +1295,7 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
         ? l10n.pastShowPhotosManagePayment
         : (bulkTotal == null
               ? l10n.photoServiceBuyAll
-              : l10n.photoServiceBuyAllFor(bulkTotal.toStringAsFixed(2)));
+              : l10n.photoServiceBuyAllFor('\$${bulkTotal.toStringAsFixed(2)}'));
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -1330,6 +1331,22 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
                 ],
               ),
             ),
+            if (_isShopMode)
+              if (shopHelperText.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 6),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      shopHelperText,
+                      style: const TextStyle(
+                        color: _kGold,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
             if (_isShopMode)
               Container(
                 width: double.infinity,
