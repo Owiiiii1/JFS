@@ -2551,11 +2551,11 @@ abstract class AppLocalizations {
   /// **'Save canceled'**
   String get photoServiceSaveCanceled;
 
-  /// No description provided for @photoServiceSavedToDownloads.
+  /// No description provided for @photoServiceSavedToGallery.
   ///
   /// In en, this message translates to:
-  /// **'Photo saved to Downloads'**
-  String get photoServiceSavedToDownloads;
+  /// **'Photo saved to Gallery'**
+  String get photoServiceSavedToGallery;
 
   /// No description provided for @photoServiceOk.
   ///
@@ -2646,6 +2646,17 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No photos yet'**
   String get photoServiceNoPhotosYet;
+
+  /// No description provided for @photoServiceBulkAdvantageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You selected {selectedCount} photos worth {selectedPrice}, and you can buy all {allCount} photos for {allPrice}.'**
+  String photoServiceBulkAdvantageHint(
+    int selectedCount,
+    Object selectedPrice,
+    int allCount,
+    Object allPrice,
+  );
 
   /// No description provided for @photoServiceView.
   ///

@@ -572,7 +572,7 @@
       }
     },
     "photoServiceSaveCanceled": "Guardado cancelado",
-    "photoServiceSavedToDownloads": "Foto guardada en Descargas",
+    "photoServiceSavedToGallery": "Foto guardada en la galeria",
     "photoServiceOk": "OK",
     "photoServiceRestartRequired": "El modulo de guardado fue actualizado. Reinicia completamente la app.",
     "photoServiceSelectAtLeastOnePhoto": "Selecciona al menos una foto",
@@ -600,6 +600,19 @@
       }
     },
     "photoServiceNoPhotosYet": "Aun no hay fotos",
+    "photoServiceBulkAdvantageHint": "Seleccionaste {selectedCount} fotos por {selectedPrice}, y puedes comprar las {allCount} fotos por {allPrice}.",
+    "@photoServiceBulkAdvantageHint": {
+      "placeholders": {
+        "selectedCount": {
+          "type": "int"
+        },
+        "selectedPrice": {},
+        "allCount": {
+          "type": "int"
+        },
+        "allPrice": {}
+      }
+    },
     "photoServiceView": "Ver",
     "photoServiceParticipationsCount": "{count, plural, =1{1 participacion} other{{count} participaciones}}",
     "@photoServiceParticipationsCount": {

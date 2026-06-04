@@ -1348,7 +1348,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get photoServiceSaveCanceled => 'Guardado cancelado';
 
   @override
-  String get photoServiceSavedToDownloads => 'Foto guardada en Descargas';
+  String get photoServiceSavedToGallery => 'Foto guardada en la galeria';
 
   @override
   String get photoServiceOk => 'OK';
@@ -1404,6 +1404,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get photoServiceNoPhotosYet => 'Aun no hay fotos';
+
+  @override
+  String photoServiceBulkAdvantageHint(
+    int selectedCount,
+    Object selectedPrice,
+    int allCount,
+    Object allPrice,
+  ) {
+    return 'Seleccionaste $selectedCount fotos por $selectedPrice, y puedes comprar las $allCount fotos por $allPrice.';
+  }
 
   @override
   String get photoServiceView => 'Ver';
@@ -2764,7 +2774,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get photoServiceSaveCanceled => 'Guardado cancelado';
 
   @override
-  String get photoServiceSavedToDownloads => 'Foto guardada en Descargas';
+  String get photoServiceSavedToGallery => 'Foto guardada en la galeria';
 
   @override
   String get photoServiceOk => 'OK';
@@ -2820,6 +2830,16 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get photoServiceNoPhotosYet => 'Aun no hay fotos';
+
+  @override
+  String photoServiceBulkAdvantageHint(
+    int selectedCount,
+    Object selectedPrice,
+    int allCount,
+    Object allPrice,
+  ) {
+    return 'Seleccionaste $selectedCount fotos por $selectedPrice, y puedes comprar las $allCount fotos por $allPrice.';
+  }
 
   @override
   String get photoServiceView => 'Ver';

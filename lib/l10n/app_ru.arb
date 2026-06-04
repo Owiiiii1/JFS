@@ -520,7 +520,7 @@
       }
     },
     "photoServiceSaveCanceled": "Сохранение отменено",
-    "photoServiceSavedToDownloads": "Фото сохранено в Загрузки",
+    "photoServiceSavedToGallery": "Фото сохранено в Галерею",
     "photoServiceOk": "OK",
     "photoServiceRestartRequired": "Модуль сохранения обновлен. Полностью перезапустите приложение.",
     "photoServiceSelectAtLeastOnePhoto": "Выберите хотя бы одно фото",
@@ -548,6 +548,19 @@
       }
     },
     "photoServiceNoPhotosYet": "Фото пока нет",
+    "photoServiceBulkAdvantageHint": "Вы выбрали {selectedCount} фото стоимостью {selectedPrice}, а можете купить все {allCount} фото за {allPrice}.",
+    "@photoServiceBulkAdvantageHint": {
+      "placeholders": {
+        "selectedCount": {
+          "type": "int"
+        },
+        "selectedPrice": {},
+        "allCount": {
+          "type": "int"
+        },
+        "allPrice": {}
+      }
+    },
     "photoServiceView": "Открыть",
     "photoServiceParticipationsCount": "{count, plural, =1{1 участие} few{{count} участия} many{{count} участий} other{{count} участия}}",
     "@photoServiceParticipationsCount": {

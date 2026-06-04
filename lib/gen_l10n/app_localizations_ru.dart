@@ -1340,7 +1340,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get photoServiceSaveCanceled => 'Сохранение отменено';
 
   @override
-  String get photoServiceSavedToDownloads => 'Фото сохранено в Загрузки';
+  String get photoServiceSavedToGallery => 'Фото сохранено в Галерею';
 
   @override
   String get photoServiceOk => 'OK';
@@ -1393,6 +1393,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get photoServiceNoPhotosYet => 'Фото пока нет';
+
+  @override
+  String photoServiceBulkAdvantageHint(
+    int selectedCount,
+    Object selectedPrice,
+    int allCount,
+    Object allPrice,
+  ) {
+    return 'Вы выбрали $selectedCount фото стоимостью $selectedPrice, а можете купить все $allCount фото за $allPrice.';
+  }
 
   @override
   String get photoServiceView => 'Открыть';

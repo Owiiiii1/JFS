@@ -572,7 +572,7 @@
       }
     },
     "photoServiceSaveCanceled": "Save canceled",
-    "photoServiceSavedToDownloads": "Photo saved to Downloads",
+    "photoServiceSavedToGallery": "Photo saved to Gallery",
     "photoServiceOk": "OK",
     "photoServiceRestartRequired": "The save module was updated. Please fully restart the app.",
     "photoServiceSelectAtLeastOnePhoto": "Select at least one photo",
@@ -600,6 +600,19 @@
       }
     },
     "photoServiceNoPhotosYet": "No photos yet",
+    "photoServiceBulkAdvantageHint": "You selected {selectedCount} photos worth {selectedPrice}, and you can buy all {allCount} photos for {allPrice}.",
+    "@photoServiceBulkAdvantageHint": {
+      "placeholders": {
+        "selectedCount": {
+          "type": "int"
+        },
+        "selectedPrice": {},
+        "allCount": {
+          "type": "int"
+        },
+        "allPrice": {}
+      }
+    },
     "photoServiceView": "View",
     "photoServiceParticipationsCount": "{count, plural, =1{1 participation} other{{count} participations}}",
     "@photoServiceParticipationsCount": {

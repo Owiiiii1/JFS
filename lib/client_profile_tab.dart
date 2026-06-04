@@ -1,6 +1,9 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:flutter/services.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'account_settings_page.dart';
 import 'api/auth_service.dart';
 import 'child_edit_page.dart';
@@ -1021,15 +1024,28 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
       final ext = _extensionFromContentType(response.headers['content-type']);
       final fileName = nameFromHeader ?? 'photo_${DateTime.now().millisecondsSinceEpoch}$ext';
 
-      final savedPath = await FlutterFileDialog.saveFile(
-        params: SaveFileDialogParams(
-          data: response.bodyBytes,
-          fileName: fileName,
-          mimeTypesFilter: <String>[
-            response.headers['content-type'] ?? 'image/jpeg',
-          ],
-        ),
-      );
+      String? savedPath;
+      if (Platform.isAndroid) {
+        final result = await ImageGallerySaverPlus.saveImage(
+          response.bodyBytes,
+          quality: 100,
+          name: fileName,
+        );
+        final ok = result is Map && result['isSuccess'] == true;
+        if (ok) {
+          savedPath = (result['filePath'] ?? result['path'] ?? '').toString();
+        }
+      } else {
+        savedPath = await FlutterFileDialog.saveFile(
+          params: SaveFileDialogParams(
+            data: response.bodyBytes,
+            fileName: fileName,
+            mimeTypesFilter: <String>[
+              response.headers['content-type'] ?? 'image/jpeg',
+            ],
+          ),
+        );
+      }
 
       if (!mounted) return;
       if (savedPath == null || savedPath.isEmpty) {
@@ -1049,7 +1065,7 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
             style: TextStyle(color: _kGold),
           ),
           content: Text(
-            AppLocalizations.of(context)!.photoServiceSavedToDownloads,
+            AppLocalizations.of(context)!.photoServiceSavedToGallery,
             style: const TextStyle(color: Colors.white70),
           ),
           actions: [
@@ -1285,12 +1301,23 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
     final buyLabel = _selectionLocked
         ? l10n.pastShowPhotosManagePayment
         : l10n.photoServiceBuy;
+    final selectedCount = _selectedPhotoAssetIds.length;
+    final singlePrice = _gallery?.pricePerPhoto;
     final bulkPrice = _gallery?.bulkPricePerPhoto;
     final bulkCount = _gallery?.shopPhotoCount ?? photos.length;
     final shopHelperText = (_gallery?.shopHelperText ?? '').trim();
+    final selectedTotal = (singlePrice != null && selectedCount > 0)
+        ? (singlePrice * selectedCount)
+        : null;
     final bulkTotal = (bulkPrice != null && bulkCount > 0)
         ? (bulkPrice * bulkCount)
         : null;
+    final showBulkHint = _isShopMode &&
+        !_selectionLocked &&
+        selectedCount > 0 &&
+        selectedTotal != null &&
+        bulkTotal != null &&
+        bulkCount > 0;
     final bulkBuyLabel = _selectionLocked
         ? l10n.pastShowPhotosManagePayment
         : (bulkTotal == null
@@ -1406,7 +1433,7 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
                               FilledButton(
                                 onPressed: _busy ? null : _runBulkCheckout,
                                 style: FilledButton.styleFrom(
-                                  backgroundColor: _kGold,
+                                  backgroundColor: Colors.redAccent,
                                   foregroundColor: Colors.black,
                                   minimumSize: const Size(0, 34),
                                   padding: const EdgeInsets.symmetric(
@@ -1456,6 +1483,25 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
                       ),
                     ),
                   ],
+                ),
+              ),
+            if (showBulkHint)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    l10n.photoServiceBulkAdvantageHint(
+                      selectedCount,
+                      '\$${selectedTotal.toStringAsFixed(2)}',
+                      bulkCount,
+                      '\$${bulkTotal.toStringAsFixed(2)}',
+                    ),
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
               ),
             Expanded(
@@ -1596,38 +1642,39 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
                                             ),
                                           ),
                                   ),
-                                  Positioned(
-                                    right: 6,
-                                    bottom: 6,
-                                    child: FilledButton(
-                                      onPressed: () => _openFullscreen(openUrl),
-                                      style: FilledButton.styleFrom(
-                                        backgroundColor: _kGold,
-                                        foregroundColor: Colors.black,
-                                        minimumSize: const Size(64, 30),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 6,
+                                  if (!_isShopMode)
+                                    Positioned(
+                                      right: 6,
+                                      bottom: 6,
+                                      child: FilledButton(
+                                        onPressed: () => _openFullscreen(openUrl),
+                                        style: FilledButton.styleFrom(
+                                          backgroundColor: _kGold,
+                                          foregroundColor: Colors.black,
+                                          minimumSize: const Size(64, 30),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 6,
+                                          ),
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          visualDensity: const VisualDensity(
+                                            horizontal: -2,
+                                            vertical: -2,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
                                         ),
-                                        tapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                        visualDensity: const VisualDensity(
-                                          horizontal: -2,
-                                          vertical: -2,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        l10n.photoServiceView,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
+                                        child: Text(
+                                          l10n.photoServiceView,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),

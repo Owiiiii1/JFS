@@ -520,7 +520,7 @@
       }
     },
     "photoServiceSaveCanceled": "Збереження скасовано",
-    "photoServiceSavedToDownloads": "Фото збережено в Завантаження",
+    "photoServiceSavedToGallery": "Фото збережено в Галерею",
     "photoServiceOk": "OK",
     "photoServiceRestartRequired": "Модуль збереження оновлено. Повністю перезапустіть застосунок.",
     "photoServiceSelectAtLeastOnePhoto": "Оберіть хоча б одне фото",
@@ -548,6 +548,19 @@
       }
     },
     "photoServiceNoPhotosYet": "Фото поки немає",
+    "photoServiceBulkAdvantageHint": "Ви обрали {selectedCount} фото вартістю {selectedPrice}, а можете купити всі {allCount} фото за {allPrice}.",
+    "@photoServiceBulkAdvantageHint": {
+      "placeholders": {
+        "selectedCount": {
+          "type": "int"
+        },
+        "selectedPrice": {},
+        "allCount": {
+          "type": "int"
+        },
+        "allPrice": {}
+      }
+    },
     "photoServiceView": "Відкрити",
     "photoServiceParticipationsCount": "{count, plural, =1{1 участь} few{{count} участі} many{{count} участей} other{{count} участі}}",
     "@photoServiceParticipationsCount": {

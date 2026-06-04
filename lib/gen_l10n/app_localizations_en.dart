@@ -1331,7 +1331,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoServiceSaveCanceled => 'Save canceled';
 
   @override
-  String get photoServiceSavedToDownloads => 'Photo saved to Downloads';
+  String get photoServiceSavedToGallery => 'Photo saved to Gallery';
 
   @override
   String get photoServiceOk => 'OK';
@@ -1385,6 +1385,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get photoServiceNoPhotosYet => 'No photos yet';
+
+  @override
+  String photoServiceBulkAdvantageHint(
+    int selectedCount,
+    Object selectedPrice,
+    int allCount,
+    Object allPrice,
+  ) {
+    return 'You selected $selectedCount photos worth $selectedPrice, and you can buy all $allCount photos for $allPrice.';
+  }
 
   @override
   String get photoServiceView => 'View';
