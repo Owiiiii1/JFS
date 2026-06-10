@@ -53,6 +53,8 @@
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Приложению нужен доступ к фото для загрузки фотографий ребёнка.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Приложению нужен доступ для сохранения фотографий в галерею.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Приложению нужен доступ к камере для сканирования QR-кодов.</string>
 	<key>LSApplicationQueriesSchemes</key>

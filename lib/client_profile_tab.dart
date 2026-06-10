@@ -1025,7 +1025,7 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
       final fileName = nameFromHeader ?? 'photo_${DateTime.now().millisecondsSinceEpoch}$ext';
 
       String? savedPath;
-      if (Platform.isAndroid) {
+      if (Platform.isAndroid || Platform.isIOS) {
         final result = await ImageGallerySaverPlus.saveImage(
           response.bodyBytes,
           quality: 100,
