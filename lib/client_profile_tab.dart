@@ -1025,14 +1025,17 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
       final fileName = nameFromHeader ?? 'photo_${DateTime.now().millisecondsSinceEpoch}$ext';
 
       String? savedPath;
+      var saveSucceeded = false;
       if (Platform.isAndroid || Platform.isIOS) {
         final result = await ImageGallerySaverPlus.saveImage(
           response.bodyBytes,
           quality: 100,
           name: fileName,
         );
-        final ok = result is Map && result['isSuccess'] == true;
+        final ok = result is Map &&
+            (result['isSuccess'] == true || result['success'] == true);
         if (ok) {
+          saveSucceeded = true;
           savedPath = (result['filePath'] ?? result['path'] ?? '').toString();
         }
       } else {
@@ -1045,10 +1048,11 @@ class _PhotoServiceGalleryPageState extends State<_PhotoServiceGalleryPage>
             ],
           ),
         );
+        saveSucceeded = savedPath != null && savedPath.isNotEmpty;
       }
 
       if (!mounted) return;
-      if (savedPath == null || savedPath.isEmpty) {
+      if (!saveSucceeded) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.photoServiceSaveCanceled)),
         );
