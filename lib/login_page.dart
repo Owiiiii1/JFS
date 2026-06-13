@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'api/auth_service.dart';
+import 'app_settings.dart';
+import 'biometric_auth_service.dart';
 import 'push/push_token_service.dart';
 import 'client_home_page.dart';
 import 'client_password_setup_page.dart';
@@ -25,10 +27,36 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  bool _isBiometricAvailable = false;
+  bool _hasBiometricToken = false;
+  bool _isBiometricLoading = false;
+  String _biometricLabel = 'Biometrics';
+  final BiometricAuthService _biometricAuth = BiometricAuthService();
 
   bool _isClientRole(Map<String, dynamic> user) {
     final role = (user['role'] ?? '').toString().trim().toLowerCase();
     return role == 'client';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_initBiometricQuickLogin());
+  }
+
+  Future<void> _initBiometricQuickLogin() async {
+    if (!AppSettings.biometricLoginEnabled) return;
+    final token = await widget.auth.getToken();
+    if (token == null || token.isEmpty) return;
+    final available = await _biometricAuth.isAvailable();
+    if (!available) return;
+    final methods = await _biometricAuth.availableBiometrics();
+    if (!mounted) return;
+    setState(() {
+      _isBiometricAvailable = true;
+      _hasBiometricToken = true;
+      _biometricLabel = _biometricAuth.preferredBiometricLabel(methods);
+    });
   }
 
   @override
@@ -95,6 +123,42 @@ class _LoginPageState extends State<LoginPage> {
       ).showSnackBar(SnackBar(content: Text(message)));
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _onBiometricSignIn() async {
+    if (_isLoading || _isBiometricLoading) return;
+    if (!_isBiometricAvailable || !_hasBiometricToken) return;
+    setState(() => _isBiometricLoading = true);
+    try {
+      final l10n = AppLocalizations.of(context)!;
+      final ok = await _biometricAuth.authenticateForLogin(
+        reason: l10n.biometricAuthReason,
+      );
+      if (!ok) return;
+      final user = await widget.auth.restoreSessionIfPossible();
+      if (user == null || !_isClientRole(user)) {
+        await widget.auth.clearToken();
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.biometricSessionExpired)),
+        );
+        return;
+      }
+      unawaited(PushTokenServiceHolder.instance?.syncWithBackendIfLoggedIn());
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => ClientHomePage(auth: widget.auth, user: user),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isBiometricLoading = false);
     }
   }
 
@@ -329,6 +393,36 @@ class _LoginPageState extends State<LoginPage> {
                                           ),
                                   ),
                                 ),
+                                if (_isBiometricAvailable && _hasBiometricToken) ...[
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 48,
+                                    child: OutlinedButton.icon(
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        side: const BorderSide(
+                                          color: Colors.white38,
+                                        ),
+                                      ),
+                                      onPressed: _isBiometricLoading
+                                          ? null
+                                          : _onBiometricSignIn,
+                                      icon: _isBiometricLoading
+                                          ? const SizedBox(
+                                              width: 18,
+                                              height: 18,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                              ),
+                                            )
+                                          : const Icon(Icons.fingerprint),
+                                      label: Text(
+                                        '${AppLocalizations.of(context)!.biometricQuickSignIn} ($_biometricLabel)',
+                                      ),
+                                    ),
+                                  ),
+                                ],
                                 const SizedBox(height: 12),
                                 SizedBox(
                                   width: double.infinity,

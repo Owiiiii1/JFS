@@ -18,6 +18,7 @@ class AppSettings {
   static const _keyUnit = 'measurement_unit';
   static const _keyLanguage = 'app_language';
   static const _keyTimeDisplayFormat = 'time_display_format';
+  static const _keyBiometricLoginEnabled = 'biometric_login_enabled';
 
   /// Вызывается после смены языка, чтобы приложение перестроилось с новой локалью.
   static void Function()? onLocaleChanged;
@@ -25,6 +26,7 @@ class AppSettings {
   static MeasurementUnit _unit = MeasurementUnit.metric;
   static AppLanguage _language = AppLanguage.system;
   static TimeDisplayFormat _timeDisplayFormat = TimeDisplayFormat.h12;
+  static bool _biometricLoginEnabled = false;
   static bool _loaded = false;
 
   static Future<void> load() async {
@@ -42,12 +44,14 @@ class AppSettings {
       (e) => e.name == prefs.getString(_keyTimeDisplayFormat),
       orElse: () => TimeDisplayFormat.h12,
     );
+    _biometricLoginEnabled = prefs.getBool(_keyBiometricLoginEnabled) ?? false;
     _loaded = true;
   }
 
   static MeasurementUnit get measurementUnit => _unit;
   static AppLanguage get language => _language;
   static TimeDisplayFormat get timeDisplayFormat => _timeDisplayFormat;
+  static bool get biometricLoginEnabled => _biometricLoginEnabled;
 
   /// Локаль для запросов контента к API (`Accept-Language`), совпадает с выбором языка в настройках.
   static Locale contentLocaleForApi() {
@@ -84,6 +88,13 @@ class AppSettings {
     _timeDisplayFormat = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyTimeDisplayFormat, value.name);
+  }
+
+  static Future<void> setBiometricLoginEnabled(bool value) async {
+    if (_biometricLoginEnabled == value) return;
+    _biometricLoginEnabled = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyBiometricLoginEnabled, value);
   }
 
   /// Формат времени в зависимости от пользовательской настройки (12/24).

@@ -278,6 +278,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String get languageSpanishUS => 'Español (EE. UU.)';
 
   @override
+  String get biometricQuickSignIn => 'Inicio rápido con biometría';
+
+  @override
+  String get biometricAuthReason => 'Confirma la biometría para iniciar sesión';
+
+  @override
+  String get biometricEnableReason =>
+      'Confirma para activar el inicio rápido con biometría';
+
+  @override
+  String get biometricSessionExpired =>
+      'El inicio biométrico no está disponible. Inicia sesión con correo y contraseña.';
+
+  @override
+  String get biometricNotConfigured =>
+      'La biometría no está configurada en este dispositivo.';
+
+  @override
   String get addChildTitle => 'Agregar hijo';
 
   @override
@@ -1266,7 +1284,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get close => 'Cerrar';
 
   @override
-  String get pastShowPhotosButtonTitle => 'Foto';
+  String get pastShowPhotosButtonTitle => 'Foto y video';
 
   @override
   String get pastShowPhotosButtonSubtitle => 'de desfiles pasados';
@@ -1332,6 +1350,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get photoServiceModeShopSubtitle => 'Sin comprar';
+
+  @override
+  String get photoServiceModeVideoTitle => 'VIDEO';
+
+  @override
+  String get photoServiceModeVideoSubtitle => 'Google Drive';
 
   @override
   String get photoServiceCouldNotOpenLink => 'No se pudo abrir el enlace';
@@ -1702,6 +1726,24 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get languageSpanishUS => 'Español (EE. UU.)';
+
+  @override
+  String get biometricQuickSignIn => 'Inicio rápido con biometría';
+
+  @override
+  String get biometricAuthReason => 'Confirma la biometría para iniciar sesión';
+
+  @override
+  String get biometricEnableReason =>
+      'Confirma para activar el inicio rápido con biometría';
+
+  @override
+  String get biometricSessionExpired =>
+      'El inicio biométrico no está disponible. Inicia sesión con correo y contraseña.';
+
+  @override
+  String get biometricNotConfigured =>
+      'La biometría no está configurada en este dispositivo.';
 
   @override
   String get addChildTitle => 'Agregar hijo';
@@ -2692,7 +2734,7 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   String get close => 'Cerrar';
 
   @override
-  String get pastShowPhotosButtonTitle => 'Foto';
+  String get pastShowPhotosButtonTitle => 'Foto y video';
 
   @override
   String get pastShowPhotosButtonSubtitle => 'de desfiles pasados';
@@ -2758,6 +2800,12 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get photoServiceModeShopSubtitle => 'Sin comprar';
+
+  @override
+  String get photoServiceModeVideoTitle => 'VIDEO';
+
+  @override
+  String get photoServiceModeVideoSubtitle => 'Google Drive';
 
   @override
   String get photoServiceCouldNotOpenLink => 'No se pudo abrir el enlace';

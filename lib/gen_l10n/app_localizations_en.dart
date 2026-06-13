@@ -276,6 +276,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSpanishUS => 'Spanish (U.S.)';
 
   @override
+  String get biometricQuickSignIn => 'Quick sign-in with biometrics';
+
+  @override
+  String get biometricAuthReason =>
+      'Confirm biometric authentication to sign in';
+
+  @override
+  String get biometricEnableReason =>
+      'Confirm to enable biometric quick sign-in';
+
+  @override
+  String get biometricSessionExpired =>
+      'Biometric sign-in is unavailable. Please sign in with email and password.';
+
+  @override
+  String get biometricNotConfigured =>
+      'Biometrics are not configured on this device.';
+
+  @override
   String get addChildTitle => 'Add child';
 
   @override
@@ -1249,7 +1268,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
-  String get pastShowPhotosButtonTitle => 'Photo';
+  String get pastShowPhotosButtonTitle => 'Photo and Video';
 
   @override
   String get pastShowPhotosButtonSubtitle => 'from past shows';
@@ -1315,6 +1334,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get photoServiceModeShopSubtitle => 'Not purchased';
+
+  @override
+  String get photoServiceModeVideoTitle => 'VIDEO';
+
+  @override
+  String get photoServiceModeVideoSubtitle => 'Google Drive';
 
   @override
   String get photoServiceCouldNotOpenLink => 'Could not open link';

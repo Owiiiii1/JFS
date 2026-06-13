@@ -200,6 +200,7 @@ class _FaqSectionsPageState extends State<FaqSectionsPage> {
                                     auth: widget.auth,
                                     sectionId: section.id,
                                     sectionName: section.name,
+                                    sectionPhotoUrl: section.photoUrl,
                                   ),
                                 ),
                               );

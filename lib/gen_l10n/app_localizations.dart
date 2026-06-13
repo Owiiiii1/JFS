@@ -607,6 +607,36 @@ abstract class AppLocalizations {
   /// **'Spanish (U.S.)'**
   String get languageSpanishUS;
 
+  /// No description provided for @biometricQuickSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick sign-in with biometrics'**
+  String get biometricQuickSignIn;
+
+  /// No description provided for @biometricAuthReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm biometric authentication to sign in'**
+  String get biometricAuthReason;
+
+  /// No description provided for @biometricEnableReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm to enable biometric quick sign-in'**
+  String get biometricEnableReason;
+
+  /// No description provided for @biometricSessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric sign-in is unavailable. Please sign in with email and password.'**
+  String get biometricSessionExpired;
+
+  /// No description provided for @biometricNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics are not configured on this device.'**
+  String get biometricNotConfigured;
+
   /// No description provided for @addChildTitle.
   ///
   /// In en, this message translates to:
@@ -2404,7 +2434,7 @@ abstract class AppLocalizations {
   /// No description provided for @pastShowPhotosButtonTitle.
   ///
   /// In en, this message translates to:
-  /// **'Photo'**
+  /// **'Photo and Video'**
   String get pastShowPhotosButtonTitle;
 
   /// No description provided for @pastShowPhotosButtonSubtitle.
@@ -2526,6 +2556,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not purchased'**
   String get photoServiceModeShopSubtitle;
+
+  /// No description provided for @photoServiceModeVideoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'VIDEO'**
+  String get photoServiceModeVideoTitle;
+
+  /// No description provided for @photoServiceModeVideoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Drive'**
+  String get photoServiceModeVideoSubtitle;
 
   /// No description provided for @photoServiceCouldNotOpenLink.
   ///

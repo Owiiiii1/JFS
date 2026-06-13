@@ -80,7 +80,10 @@ class AuthService {
   Future<String?> getToken() => _storage.read(key: _tokenKey);
   Future<void> saveToken(String token) =>
       _storage.write(key: _tokenKey, value: token);
-  Future<void> clearToken() => _storage.delete(key: _tokenKey);
+  Future<void> clearToken() async {
+    await _storage.delete(key: _tokenKey);
+    await AppSettings.setBiometricLoginEnabled(false);
+  }
 
   Future<LoginResult> login({required String email, String? password}) async {
     final uri = Uri.parse('$baseUrl/api/app/login');
@@ -3989,17 +3992,22 @@ class ClientPhotoServiceEventEntry {
     required this.eventId,
     required this.eventName,
     this.eventStartsAt,
+    this.videoLink,
   });
 
   final int eventId;
   final String eventName;
   final DateTime? eventStartsAt;
+  final String? videoLink;
 
   factory ClientPhotoServiceEventEntry.fromJson(Map<String, dynamic> json) {
     return ClientPhotoServiceEventEntry(
       eventId: _jsonInt(json['event_id']),
       eventName: (json['event_name'] as String? ?? '').trim(),
       eventStartsAt: _jsonDateTimeNullable(json['event_starts_at']),
+      videoLink: (json['video_link'] as String?)?.trim().isNotEmpty == true
+          ? (json['video_link'] as String).trim()
+          : null,
     );
   }
 }

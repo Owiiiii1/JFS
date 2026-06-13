@@ -276,6 +276,24 @@ class AppLocalizationsRu extends AppLocalizations {
   String get languageSpanishUS => 'Испанский (США)';
 
   @override
+  String get biometricQuickSignIn => 'Быстрый вход по биометрии';
+
+  @override
+  String get biometricAuthReason => 'Подтвердите биометрию для входа';
+
+  @override
+  String get biometricEnableReason =>
+      'Подтвердите, чтобы включить быстрый вход по биометрии';
+
+  @override
+  String get biometricSessionExpired =>
+      'Биометрический вход недоступен. Войдите по email и паролю.';
+
+  @override
+  String get biometricNotConfigured =>
+      'Биометрия не настроена на этом устройстве.';
+
+  @override
   String get addChildTitle => 'Добавить ребёнка';
 
   @override
@@ -1258,7 +1276,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get close => 'Закрыть';
 
   @override
-  String get pastShowPhotosButtonTitle => 'Фото';
+  String get pastShowPhotosButtonTitle => 'Фото и видео';
 
   @override
   String get pastShowPhotosButtonSubtitle => 'с прошедших показов';
@@ -1324,6 +1342,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get photoServiceModeShopSubtitle => 'Не купленные';
+
+  @override
+  String get photoServiceModeVideoTitle => 'ВИДЕО';
+
+  @override
+  String get photoServiceModeVideoSubtitle => 'Google Drive';
 
   @override
   String get photoServiceCouldNotOpenLink => 'Не удалось открыть ссылку';

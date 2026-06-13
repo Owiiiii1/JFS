@@ -744,9 +744,32 @@ class _PhotoServiceEntryPage extends StatelessWidget {
   final ClientPhotoServiceChildEntry childEntry;
   final ClientPhotoServiceEventEntry eventEntry;
 
+  Future<void> _openVideoLink(BuildContext context, String? rawUrl) async {
+    final l10n = AppLocalizations.of(context)!;
+    final url = (rawUrl ?? '').trim();
+    if (url.isEmpty) return;
+
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.photoServiceCouldNotOpenLink)),
+      );
+      return;
+    }
+
+    final ok = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+    if (!ok && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.photoServiceCouldNotOpenLink)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final videoLink = (eventEntry.videoLink ?? '').trim();
+    final hasVideoLink = videoLink.isNotEmpty;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -803,6 +826,16 @@ class _PhotoServiceEntryPage extends StatelessWidget {
                   ),
                 ),
               ),
+              if (hasVideoLink) ...[
+                const SizedBox(height: 14),
+                const Divider(color: Colors.white24, thickness: 1),
+                const SizedBox(height: 14),
+                _PhotoModeButton(
+                  title: l10n.photoServiceModeVideoTitle,
+                  subtitle: l10n.photoServiceModeVideoSubtitle,
+                  onTap: () => _openVideoLink(context, videoLink),
+                ),
+              ],
             ],
           ),
         ),

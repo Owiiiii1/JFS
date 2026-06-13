@@ -1799,7 +1799,17 @@ class _ClientHomePageState extends State<ClientHomePage>
                 label: l10n.registrationOpen,
                 title: event.name,
                 subtitle: _formatUpcomingEventSubtitle(event),
-                onDetails: () {},
+                onDetails: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => ClientEventDescriptionPage(
+                        auth: widget.auth,
+                        eventId: event.id,
+                        showGeolocation: false,
+                      ),
+                    ),
+                  );
+                },
                 onContact: _openContactFormUrl,
               ),
             );
@@ -3465,6 +3475,7 @@ class _ClientEventProgressPageState extends State<_ClientEventProgressPage> {
                             builder: (_) => ClientEventDescriptionPage(
                               auth: widget.auth,
                               eventId: a.event.id,
+                              showGeolocation: true,
                             ),
                           ),
                         );

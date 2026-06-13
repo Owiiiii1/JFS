@@ -30,54 +30,78 @@ class NewsDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (_photoUrl.isNotEmpty)
-              AspectRatio(
-                // Taller than 16:10 so preview photos (often portraits) have more room;
-                // BoxFit.contain shows the full image without cropping faces.
-                aspectRatio: 4 / 3,
-                child: ColoredBox(
-                  color: Colors.black,
-                  child: Image.network(
-                    _photoUrl,
-                    fit: BoxFit.contain,
-                    alignment: Alignment.topCenter,
-                    errorBuilder: (_, __, ___) => Container(
+            SizedBox(
+              height: 300,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (_photoUrl.isNotEmpty)
+                    Image.network(
+                      _photoUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: _kCardBg,
+                        alignment: Alignment.center,
+                        child: const Icon(
+                          Icons.image_not_supported_outlined,
+                          size: 44,
+                          color: Colors.white24,
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
                       color: _kCardBg,
+                      alignment: Alignment.center,
                       child: const Icon(
-                        Icons.image_not_supported_outlined,
-                        size: 48,
+                        Icons.image_outlined,
+                        size: 44,
                         color: Colors.white24,
                       ),
                     ),
+                  Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 24,
+                    child: Text(
+                      news.title,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: -0.3,
+                        height: 1.15,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-              )
-            else
-              Container(
-                height: 200,
-                color: _kCardBg,
-                child: const Icon(
-                  Icons.image_outlined,
-                  size: 48,
-                  color: Colors.white24,
-                ),
+                ],
               ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-              child: Text(
-                news.title,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: -0.5,
+            ),
+            Transform.translate(
+              offset: const Offset(0, -16),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF131313),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: Colors.white.withOpacity(0.04)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.35),
+                        blurRadius: 14,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: _buildBodyContent(),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-              child: _buildBodyContent(),
-            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),

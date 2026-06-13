@@ -8,6 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'api/auth_service.dart';
 import 'app_maintenance_page.dart';
+import 'app_settings.dart';
+import 'biometric_auth_service.dart';
 import 'client_home_page.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
@@ -33,6 +35,7 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
   bool _checkingSession = false;
   Timer? _videoEndFallbackTimer;
   bool _introExitStarted = false;
+  final BiometricAuthService _biometricAuth = BiometricAuthService();
 
   bool _isClientRole(Map<String, dynamic> user) {
     final role = (user['role'] ?? '').toString().trim().toLowerCase();
@@ -156,6 +159,25 @@ class _IntroVideoPageState extends State<IntroVideoPage> {
 
     setState(() => _checkingSession = true);
     try {
+      final token = await widget.auth.getToken();
+      if (token != null &&
+          token.isNotEmpty &&
+          AppSettings.biometricLoginEnabled) {
+        final available = await _biometricAuth.isAvailable();
+        if (available) {
+          final ok = await _biometricAuth.authenticateForLogin(
+            reason: AppLocalizations.of(context)!.biometricAuthReason,
+          );
+          if (!ok) {
+            if (!mounted) return;
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => LoginPage(auth: widget.auth)),
+            );
+            return;
+          }
+        }
+      }
+
       final user = await widget.auth.restoreSessionIfPossible();
       if (!mounted) return;
       if (user != null && _isClientRole(user)) {
