@@ -295,6 +295,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Biometrics are not configured on this device.';
 
   @override
+  String get biometricOnboardingTitle => 'Enable quick biometric sign-in?';
+
+  @override
+  String get biometricOnboardingMessage =>
+      'You can sign in faster with Face ID / Touch ID / fingerprint. You can always change this later in app settings.';
+
+  @override
+  String get biometricOnboardingEnable => 'Enable';
+
+  @override
+  String get biometricOnboardingLater => 'Later';
+
+  @override
   String get addChildTitle => 'Add child';
 
   @override
@@ -1343,6 +1356,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get photoServiceCouldNotOpenLink => 'Could not open link';
+
+  @override
+  String get photoServiceVideoEmpty => 'No videos in this folder yet';
+
+  @override
+  String get photoServiceVideoLoadError => 'Could not load videos';
 
   @override
   String get photoServiceInvalidPhotoUrl => 'Invalid photo URL';

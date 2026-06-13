@@ -294,6 +294,20 @@ class AppLocalizationsUk extends AppLocalizations {
       'Біометрію не налаштовано на цьому пристрої.';
 
   @override
+  String get biometricOnboardingTitle =>
+      'Увімкнути швидкий вхід за біометрією?';
+
+  @override
+  String get biometricOnboardingMessage =>
+      'Ви зможете входити швидше за допомогою Face ID / Touch ID / відбитка пальця. Цей вибір завжди можна змінити в налаштуваннях застосунку.';
+
+  @override
+  String get biometricOnboardingEnable => 'Увімкнути';
+
+  @override
+  String get biometricOnboardingLater => 'Пізніше';
+
+  @override
   String get addChildTitle => 'Додати дитину';
 
   @override
@@ -1346,6 +1360,12 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get photoServiceCouldNotOpenLink => 'Не вдалося відкрити посилання';
+
+  @override
+  String get photoServiceVideoEmpty => 'У цій папці поки немає відео';
+
+  @override
+  String get photoServiceVideoLoadError => 'Не вдалося завантажити відео';
 
   @override
   String get photoServiceInvalidPhotoUrl => 'Некоректне посилання на фото';

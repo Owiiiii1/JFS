@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
 import 'api/auth_service.dart';
 import 'app_settings.dart';
+import 'biometric_auth_service.dart';
 import 'gen_l10n/app_localizations.dart';
 
 /// Страница настроек: язык приложения, единицы измерения, аккаунт.
@@ -19,10 +23,32 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  bool _biometricSupported = false;
+  bool _biometricConfigured = false;
+  String _biometricLabel = 'Biometrics';
+  final BiometricAuthService _biometricAuth = BiometricAuthService();
+
   @override
   void initState() {
     super.initState();
-    AppSettings.load();
+    unawaited(_initSettings());
+  }
+
+  Future<void> _initSettings() async {
+    await AppSettings.load();
+    final supported = await _biometricAuth.isSupported();
+    final configured = await _biometricAuth.isAvailable();
+    final methods = configured
+        ? await _biometricAuth.availableBiometrics()
+        : const <BiometricType>[];
+    if (!mounted) return;
+    setState(() {
+      _biometricSupported = supported;
+      _biometricConfigured = configured;
+      if (configured) {
+        _biometricLabel = _biometricAuth.preferredBiometricLabel(methods);
+      }
+    });
   }
 
   Future<void> _reloadAndRebuild() async {
@@ -64,6 +90,30 @@ class _SettingsPageState extends State<SettingsPage> {
                 : l10n.timeFormat12Hour,
             onTap: () => _showTimeFormatPicker(context),
           ),
+          if (_biometricSupported) ...[
+            const SizedBox(height: 12),
+            Material(
+              color: Colors.white.withOpacity(0.06),
+              borderRadius: BorderRadius.circular(12),
+              child: SwitchListTile.adaptive(
+                value: AppSettings.biometricLoginEnabled,
+                onChanged: _toggleBiometric,
+                title: Text(
+                  l10n.biometricQuickSignIn,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                ),
+                subtitle: Text(
+                  _biometricConfigured
+                      ? _biometricLabel
+                      : l10n.biometricNotConfigured,
+                  style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                ),
+                activeColor: Colors.white,
+                activeTrackColor: Colors.grey[700],
+                inactiveThumbColor: Colors.grey[400],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -203,6 +253,26 @@ class _SettingsPageState extends State<SettingsPage> {
       await AppSettings.setTimeDisplayFormat(chosen);
       _reloadAndRebuild();
     }
+  }
+
+  Future<void> _toggleBiometric(bool value) async {
+    final l10n = AppLocalizations.of(context)!;
+    if (value && !_biometricConfigured) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.biometricNotConfigured)));
+      return;
+    }
+    if (value) {
+      final ok = await _biometricAuth.authenticateForLogin(
+        reason: l10n.biometricEnableReason,
+      );
+      if (!ok) return;
+    }
+    await AppSettings.setBiometricLoginEnabled(value);
+    if (!mounted) return;
+    setState(() {});
   }
 }
 

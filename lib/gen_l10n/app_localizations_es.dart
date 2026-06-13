@@ -296,6 +296,20 @@ class AppLocalizationsEs extends AppLocalizations {
       'La biometría no está configurada en este dispositivo.';
 
   @override
+  String get biometricOnboardingTitle =>
+      '¿Activar inicio rápido con biometría?';
+
+  @override
+  String get biometricOnboardingMessage =>
+      'Podrás iniciar sesión más rápido con Face ID / Touch ID / huella. Siempre podrás cambiar esta opción en la configuración de la app.';
+
+  @override
+  String get biometricOnboardingEnable => 'Activar';
+
+  @override
+  String get biometricOnboardingLater => 'Más tarde';
+
+  @override
   String get addChildTitle => 'Agregar hijo';
 
   @override
@@ -1361,6 +1375,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get photoServiceCouldNotOpenLink => 'No se pudo abrir el enlace';
 
   @override
+  String get photoServiceVideoEmpty => 'Aun no hay videos en esta carpeta';
+
+  @override
+  String get photoServiceVideoLoadError => 'No se pudieron cargar los videos';
+
+  @override
   String get photoServiceInvalidPhotoUrl => 'URL de foto no valida';
 
   @override
@@ -1744,6 +1764,20 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
   @override
   String get biometricNotConfigured =>
       'La biometría no está configurada en este dispositivo.';
+
+  @override
+  String get biometricOnboardingTitle =>
+      '¿Activar inicio rápido con biometría?';
+
+  @override
+  String get biometricOnboardingMessage =>
+      'Podrás iniciar sesión más rápido con Face ID / Touch ID / huella. Siempre podrás cambiar esta opción en la configuración de la app.';
+
+  @override
+  String get biometricOnboardingEnable => 'Activar';
+
+  @override
+  String get biometricOnboardingLater => 'Más tarde';
 
   @override
   String get addChildTitle => 'Agregar hijo';
@@ -2809,6 +2843,12 @@ class AppLocalizationsEsUs extends AppLocalizationsEs {
 
   @override
   String get photoServiceCouldNotOpenLink => 'No se pudo abrir el enlace';
+
+  @override
+  String get photoServiceVideoEmpty => 'Aun no hay videos en esta carpeta';
+
+  @override
+  String get photoServiceVideoLoadError => 'No se pudieron cargar los videos';
 
   @override
   String get photoServiceInvalidPhotoUrl => 'URL de foto no valida';

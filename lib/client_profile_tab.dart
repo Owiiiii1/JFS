@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'account_settings_page.dart';
 import 'api/auth_service.dart';
 import 'child_edit_page.dart';
@@ -744,25 +746,58 @@ class _PhotoServiceEntryPage extends StatelessWidget {
   final ClientPhotoServiceChildEntry childEntry;
   final ClientPhotoServiceEventEntry eventEntry;
 
+  String? _extractDriveFolderId(String rawUrl) {
+    final uri = Uri.tryParse(rawUrl);
+    if (uri == null) return null;
+    if (!uri.host.toLowerCase().contains('drive.google.com')) return null;
+
+    final segments = uri.pathSegments;
+    final foldersIdx = segments.indexOf('folders');
+    if (foldersIdx >= 0 && foldersIdx + 1 < segments.length) {
+      final candidate = segments[foldersIdx + 1].trim();
+      if (candidate.isNotEmpty) return candidate;
+    }
+    final idParam = (uri.queryParameters['id'] ?? '').trim();
+    if (idParam.isNotEmpty) return idParam;
+    return null;
+  }
+
   Future<void> _openVideoLink(BuildContext context, String? rawUrl) async {
     final l10n = AppLocalizations.of(context)!;
     final url = (rawUrl ?? '').trim();
     if (url.isEmpty) return;
 
-    final uri = Uri.tryParse(url);
-    if (uri == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.photoServiceCouldNotOpenLink)),
+    final folderId = _extractDriveFolderId(url);
+
+    if (folderId == null) {
+      final uri = Uri.tryParse(url);
+      if (uri == null || !uri.hasScheme) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.photoServiceCouldNotOpenLink)),
+        );
+        return;
+      }
+      if (!context.mounted) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => _DriveFilePlayerPage(
+            title: l10n.photoServiceModeVideoTitle,
+            url: url,
+          ),
+        ),
       );
       return;
     }
 
-    final ok = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-    if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.photoServiceCouldNotOpenLink)),
-      );
-    }
+    if (!context.mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => _PhotoServiceVideoGalleryPage(
+          title: l10n.photoServiceModeVideoTitle,
+          folderId: folderId,
+        ),
+      ),
+    );
   }
 
   @override
@@ -839,6 +874,365 @@ class _PhotoServiceEntryPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _PhotoServiceVideoGalleryPage extends StatefulWidget {
+  const _PhotoServiceVideoGalleryPage({
+    required this.title,
+    required this.folderId,
+  });
+
+  final String title;
+  final String folderId;
+
+  @override
+  State<_PhotoServiceVideoGalleryPage> createState() =>
+      _PhotoServiceVideoGalleryPageState();
+}
+
+class _PhotoServiceVideoGalleryPageState
+    extends State<_PhotoServiceVideoGalleryPage> {
+  late Future<List<_DriveEntry>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = _loadEntries();
+  }
+
+  void _reload() {
+    setState(() {
+      _future = _loadEntries();
+    });
+  }
+
+  Future<List<_DriveEntry>> _loadEntries() async {
+    final url =
+        'https://drive.google.com/embeddedfolderview?id=${widget.folderId}#grid';
+    final response = await http.get(
+      Uri.parse(url),
+      headers: const {
+        'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+            '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      },
+    );
+    if (response.statusCode != 200) {
+      throw Exception('HTTP ${response.statusCode}');
+    }
+    return _parseEntries(response.body);
+  }
+
+  List<_DriveEntry> _parseEntries(String html) {
+    final ids = <String>[];
+    final seen = <String>{};
+    final idRegExp = RegExp(r'id="entry-([A-Za-z0-9_-]+)"');
+    for (final m in idRegExp.allMatches(html)) {
+      final id = m.group(1);
+      if (id == null || id.isEmpty || seen.contains(id)) continue;
+      seen.add(id);
+      ids.add(id);
+    }
+
+    final titles = <String>[];
+    final titleRegExp = RegExp(
+      r'flip-entry-title[^>]*>([^<]*)<',
+      caseSensitive: false,
+    );
+    for (final m in titleRegExp.allMatches(html)) {
+      titles.add(_decodeHtml((m.group(1) ?? '').trim()));
+    }
+
+    final entries = <_DriveEntry>[];
+    for (var i = 0; i < ids.length; i++) {
+      final title = i < titles.length && titles[i].isNotEmpty
+          ? titles[i]
+          : 'Video ${i + 1}';
+      entries.add(_DriveEntry(id: ids[i], title: title));
+    }
+    return entries;
+  }
+
+  String _decodeHtml(String input) {
+    return input
+        .replaceAll('&amp;', '&')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&quot;', '"')
+        .replaceAll('&#39;', "'")
+        .replaceAll('&#039;', "'");
+  }
+
+  Future<void> _openEntry(_DriveEntry entry) async {
+    final l10n = AppLocalizations.of(context)!;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => _DriveFilePlayerPage(
+          title: entry.title.isNotEmpty
+              ? entry.title
+              : l10n.photoServiceModeVideoTitle,
+          url: 'https://drive.google.com/file/d/${entry.id}/preview',
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        title: Text(widget.title),
+      ),
+      body: FutureBuilder<List<_DriveEntry>>(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(
+              child: CircularProgressIndicator(color: _kGold),
+            );
+          }
+          if (snapshot.hasError) {
+            return _VideoGalleryMessage(
+              message: l10n.photoServiceVideoLoadError,
+              actionLabel: l10n.retry,
+              onAction: _reload,
+            );
+          }
+          final entries = snapshot.data ?? const <_DriveEntry>[];
+          if (entries.isEmpty) {
+            return _VideoGalleryMessage(
+              message: l10n.photoServiceVideoEmpty,
+              actionLabel: l10n.retry,
+              onAction: _reload,
+            );
+          }
+          return GridView.builder(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 20),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 0.72,
+            ),
+            itemCount: entries.length,
+            itemBuilder: (context, index) {
+              final entry = entries[index];
+              return _DriveVideoCard(
+                entry: entry,
+                onTap: () => _openEntry(entry),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _DriveEntry {
+  const _DriveEntry({required this.id, required this.title});
+
+  final String id;
+  final String title;
+
+  String get thumbnailUrl =>
+      'https://drive.google.com/thumbnail?id=$id&sz=w640';
+}
+
+class _DriveVideoCard extends StatelessWidget {
+  const _DriveVideoCard({required this.entry, required this.onTap});
+
+  final _DriveEntry entry;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: const Color(0xFF141414),
+      borderRadius: BorderRadius.circular(16),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(color: const Color(0xFF0A0A0A)),
+                  Image.network(
+                    entry.thumbnailUrl,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return const Center(
+                        child: SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: _kGold,
+                          ),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stack) => const Center(
+                      child: Icon(
+                        Icons.movie_outlined,
+                        color: Colors.white24,
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.center,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.transparent, Colors.black54],
+                      ),
+                    ),
+                  ),
+                  const Center(
+                    child: Icon(
+                      Icons.play_circle_fill,
+                      color: Colors.white,
+                      size: 46,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+              child: Text(
+                entry.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  height: 1.2,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _VideoGalleryMessage extends StatelessWidget {
+  const _VideoGalleryMessage({
+    required this.message,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  final String message;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.movie_outlined, color: Colors.white38, size: 48),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton(
+              onPressed: onAction,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: _kGold,
+                side: const BorderSide(color: _kGold),
+              ),
+              child: Text(actionLabel),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DriveFilePlayerPage extends StatefulWidget {
+  const _DriveFilePlayerPage({required this.title, required this.url});
+
+  final String title;
+  final String url;
+
+  @override
+  State<_DriveFilePlayerPage> createState() => _DriveFilePlayerPageState();
+}
+
+class _DriveFilePlayerPageState extends State<_DriveFilePlayerPage> {
+  late final WebViewController _controller;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.black)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (_) {
+            if (!mounted) return;
+            setState(() => _loading = true);
+          },
+          onPageFinished: (_) {
+            if (!mounted) return;
+            setState(() => _loading = false);
+          },
+          onWebResourceError: (_) {
+            if (!mounted) return;
+            setState(() => _loading = false);
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        title: Text(widget.title),
+      ),
+      body: Stack(
+        children: [
+          Container(
+            color: Colors.black,
+            child: WebViewWidget(controller: _controller),
+          ),
+          if (_loading)
+            const Center(
+              child: CircularProgressIndicator(color: _kGold),
+            ),
+        ],
       ),
     );
   }

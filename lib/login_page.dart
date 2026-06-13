@@ -38,6 +38,51 @@ class _LoginPageState extends State<LoginPage> {
     return role == 'client';
   }
 
+  Future<void> _offerBiometricEnrollment() async {
+    if (AppSettings.biometricOnboardingShown) return;
+    final supported = await _biometricAuth.isSupported();
+    if (!supported || !mounted) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final enable = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text(l10n.biometricOnboardingTitle),
+          content: Text(l10n.biometricOnboardingMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(l10n.biometricOnboardingLater),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(l10n.biometricOnboardingEnable),
+            ),
+          ],
+        );
+      },
+    );
+
+    await AppSettings.setBiometricOnboardingShown(true);
+    if (enable != true) return;
+
+    final configured = await _biometricAuth.isAvailable();
+    if (!configured) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.biometricNotConfigured)),
+      );
+      return;
+    }
+
+    final ok = await _biometricAuth.authenticateForLogin(
+      reason: l10n.biometricEnableReason,
+    );
+    if (!ok) return;
+    await AppSettings.setBiometricLoginEnabled(true);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -105,6 +150,7 @@ class _LoginPageState extends State<LoginPage> {
       // сохраняем токен (пригодится позже)
       await widget.auth.saveToken(token);
       unawaited(PushTokenServiceHolder.instance?.syncWithBackendIfLoggedIn());
+      await _offerBiometricEnrollment();
 
       final next = ClientHomePage(auth: widget.auth, user: user);
 

@@ -1,11 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:local_auth/local_auth.dart';
 import 'api/auth_service.dart';
-import 'app_settings.dart';
-import 'biometric_auth_service.dart';
 import 'push/push_token_service.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'login_page.dart';
@@ -24,11 +19,6 @@ class AccountSettingsPage extends StatefulWidget {
 class _AccountSettingsPageState extends State<AccountSettingsPage> {
   bool _isEditing = false;
   bool _isSaving = false;
-  bool _biometricEnabled = false;
-  bool _biometricSupported = false;
-  bool _biometricConfigured = false;
-  String _biometricLabel = 'Biometrics';
-  final BiometricAuthService _biometricAuth = BiometricAuthService();
 
   bool get _isClient =>
       (widget.user['role'] ?? '').toString().toLowerCase() == 'client';
@@ -47,46 +37,6 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   void initState() {
     super.initState();
     _data = Map<String, dynamic>.from(widget.user);
-    _biometricEnabled = AppSettings.biometricLoginEnabled;
-    unawaited(_loadBiometricState());
-  }
-
-  Future<void> _loadBiometricState() async {
-    final supported = await _biometricAuth.isSupported();
-    final available = await _biometricAuth.isAvailable();
-    final methods = available
-        ? await _biometricAuth.availableBiometrics()
-        : const <BiometricType>[];
-    if (!mounted) return;
-    setState(() {
-      _biometricSupported = supported;
-      _biometricConfigured = available;
-      if (available) {
-        _biometricLabel = _biometricAuth.preferredBiometricLabel(methods);
-      }
-    });
-  }
-
-  Future<void> _toggleBiometric(bool value) async {
-    if (value && !_biometricConfigured) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.biometricNotConfigured),
-        ),
-      );
-      return;
-    }
-    if (value) {
-      final l10n = AppLocalizations.of(context)!;
-      final ok = await _biometricAuth.authenticateForLogin(
-        reason: l10n.biometricEnableReason,
-      );
-      if (!ok) return;
-    }
-    await AppSettings.setBiometricLoginEnabled(value);
-    if (!mounted) return;
-    setState(() => _biometricEnabled = value);
   }
 
   @override
@@ -270,24 +220,6 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           _DataRow(label: AppLocalizations.of(context)!.email, value: email.isNotEmpty ? email : '—'),
           const SizedBox(height: 16),
           _DataRow(label: AppLocalizations.of(context)!.phone, value: phone.isNotEmpty ? phone : '—'),
-          if (_biometricSupported) ...[
-            const SizedBox(height: 16),
-            SwitchListTile.adaptive(
-              contentPadding: EdgeInsets.zero,
-              value: _biometricEnabled,
-              onChanged: _toggleBiometric,
-              title: Text(
-                AppLocalizations.of(context)!.biometricQuickSignIn,
-                style: const TextStyle(color: Colors.white),
-              ),
-              subtitle: Text(
-                _biometricConfigured
-                    ? _biometricLabel
-                    : AppLocalizations.of(context)!.biometricNotConfigured,
-                style: const TextStyle(color: Colors.white70),
-              ),
-            ),
-          ],
           const SizedBox(height: 32),
           SizedBox(
             height: 48,

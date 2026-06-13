@@ -637,6 +637,30 @@ abstract class AppLocalizations {
   /// **'Biometrics are not configured on this device.'**
   String get biometricNotConfigured;
 
+  /// No description provided for @biometricOnboardingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable quick biometric sign-in?'**
+  String get biometricOnboardingTitle;
+
+  /// No description provided for @biometricOnboardingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You can sign in faster with Face ID / Touch ID / fingerprint. You can always change this later in app settings.'**
+  String get biometricOnboardingMessage;
+
+  /// No description provided for @biometricOnboardingEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get biometricOnboardingEnable;
+
+  /// No description provided for @biometricOnboardingLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get biometricOnboardingLater;
+
   /// No description provided for @addChildTitle.
   ///
   /// In en, this message translates to:
@@ -2574,6 +2598,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open link'**
   String get photoServiceCouldNotOpenLink;
+
+  /// No description provided for @photoServiceVideoEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No videos in this folder yet'**
+  String get photoServiceVideoEmpty;
+
+  /// No description provided for @photoServiceVideoLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load videos'**
+  String get photoServiceVideoLoadError;
 
   /// No description provided for @photoServiceInvalidPhotoUrl.
   ///

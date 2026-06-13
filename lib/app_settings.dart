@@ -19,6 +19,7 @@ class AppSettings {
   static const _keyLanguage = 'app_language';
   static const _keyTimeDisplayFormat = 'time_display_format';
   static const _keyBiometricLoginEnabled = 'biometric_login_enabled';
+  static const _keyBiometricOnboardingShown = 'biometric_onboarding_shown';
 
   /// Вызывается после смены языка, чтобы приложение перестроилось с новой локалью.
   static void Function()? onLocaleChanged;
@@ -27,6 +28,7 @@ class AppSettings {
   static AppLanguage _language = AppLanguage.system;
   static TimeDisplayFormat _timeDisplayFormat = TimeDisplayFormat.h12;
   static bool _biometricLoginEnabled = false;
+  static bool _biometricOnboardingShown = false;
   static bool _loaded = false;
 
   static Future<void> load() async {
@@ -45,6 +47,8 @@ class AppSettings {
       orElse: () => TimeDisplayFormat.h12,
     );
     _biometricLoginEnabled = prefs.getBool(_keyBiometricLoginEnabled) ?? false;
+    _biometricOnboardingShown =
+        prefs.getBool(_keyBiometricOnboardingShown) ?? false;
     _loaded = true;
   }
 
@@ -52,6 +56,7 @@ class AppSettings {
   static AppLanguage get language => _language;
   static TimeDisplayFormat get timeDisplayFormat => _timeDisplayFormat;
   static bool get biometricLoginEnabled => _biometricLoginEnabled;
+  static bool get biometricOnboardingShown => _biometricOnboardingShown;
 
   /// Локаль для запросов контента к API (`Accept-Language`), совпадает с выбором языка в настройках.
   static Locale contentLocaleForApi() {
@@ -95,6 +100,13 @@ class AppSettings {
     _biometricLoginEnabled = value;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_keyBiometricLoginEnabled, value);
+  }
+
+  static Future<void> setBiometricOnboardingShown(bool value) async {
+    if (_biometricOnboardingShown == value) return;
+    _biometricOnboardingShown = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyBiometricOnboardingShown, value);
   }
 
   /// Формат времени в зависимости от пользовательской настройки (12/24).

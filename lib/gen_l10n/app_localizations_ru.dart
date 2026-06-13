@@ -294,6 +294,19 @@ class AppLocalizationsRu extends AppLocalizations {
       'Биометрия не настроена на этом устройстве.';
 
   @override
+  String get biometricOnboardingTitle => 'Включить быстрый вход по биометрии?';
+
+  @override
+  String get biometricOnboardingMessage =>
+      'Вы сможете входить быстрее с Face ID / Touch ID / отпечатком пальца. Этот выбор всегда можно изменить в настройках приложения.';
+
+  @override
+  String get biometricOnboardingEnable => 'Включить';
+
+  @override
+  String get biometricOnboardingLater => 'Позже';
+
+  @override
   String get addChildTitle => 'Добавить ребёнка';
 
   @override
@@ -1351,6 +1364,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get photoServiceCouldNotOpenLink => 'Не удалось открыть ссылку';
+
+  @override
+  String get photoServiceVideoEmpty => 'В этой папке пока нет видео';
+
+  @override
+  String get photoServiceVideoLoadError => 'Не удалось загрузить видео';
 
   @override
   String get photoServiceInvalidPhotoUrl => 'Некорректная ссылка на фото';

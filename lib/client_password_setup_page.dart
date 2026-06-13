@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'api/auth_service.dart';
+import 'app_settings.dart';
+import 'biometric_auth_service.dart';
 import 'client_home_page.dart';
 import 'gen_l10n/app_localizations.dart';
 import 'push/push_token_service.dart';
@@ -30,6 +32,52 @@ class _ClientPasswordSetupPageState extends State<ClientPasswordSetupPage> {
   bool _isPasswordVisible = false;
   bool _isPasswordConfirmVisible = false;
   bool _isLoading = false;
+  final BiometricAuthService _biometricAuth = BiometricAuthService();
+
+  Future<void> _offerBiometricEnrollment() async {
+    if (AppSettings.biometricOnboardingShown) return;
+    final supported = await _biometricAuth.isSupported();
+    if (!supported || !mounted) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    final enable = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text(l10n.biometricOnboardingTitle),
+          content: Text(l10n.biometricOnboardingMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(l10n.biometricOnboardingLater),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(l10n.biometricOnboardingEnable),
+            ),
+          ],
+        );
+      },
+    );
+
+    await AppSettings.setBiometricOnboardingShown(true);
+    if (enable != true) return;
+
+    final configured = await _biometricAuth.isAvailable();
+    if (!configured) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.biometricNotConfigured)),
+      );
+      return;
+    }
+
+    final ok = await _biometricAuth.authenticateForLogin(
+      reason: l10n.biometricEnableReason,
+    );
+    if (!ok) return;
+    await AppSettings.setBiometricLoginEnabled(true);
+  }
 
   @override
   void dispose() {
@@ -59,6 +107,7 @@ class _ClientPasswordSetupPageState extends State<ClientPasswordSetupPage> {
 
       await widget.auth.saveToken(token);
       unawaited(PushTokenServiceHolder.instance?.syncWithBackendIfLoggedIn());
+      await _offerBiometricEnrollment();
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
